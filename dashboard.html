@@ -1,0 +1,569 @@
+<title>Longwave — Studio Dashboard</title>
+<style>
+  :root {
+    color-scheme: light dark;
+    /* neutrals biased warm toward the amber accent */
+    --bg:        #14100c;
+    --panel:     #1d1812;
+    --panel-2:   #241e16;
+    --line:      #322a20;
+    --ink:       #f4ede1;
+    --ink-soft:  #b7ac9b;
+    --ink-mute:  #7d7364;
+    --accent:    #e8a33d;
+    --accent-dim:#8a6526;
+    --cyan:      #5fb3c4;
+    --good:      #7bc47f;
+    --bad:       #e0745f;
+    --grid:      rgba(244,237,225,.06);
+    --shadow:    0 1px 0 rgba(255,255,255,.03) inset, 0 18px 40px -24px rgba(0,0,0,.8);
+    --mono: ui-monospace, "SF Mono", "SFMono-Regular", Menlo, Consolas, monospace;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  }
+  :root[data-theme="light"] {
+    --bg:        #f3efe7;
+    --panel:     #fbf8f2;
+    --panel-2:   #f6f1e7;
+    --line:      #e4dccc;
+    --ink:       #241d13;
+    --ink-soft:  #5f5646;
+    --ink-mute:  #8c8271;
+    --accent:    #b9781a;
+    --accent-dim:#e6c894;
+    --cyan:      #2f8497;
+    --good:      #3f8a48;
+    --bad:       #c0492f;
+    --grid:      rgba(36,29,19,.07);
+    --shadow:    0 1px 0 rgba(255,255,255,.6) inset, 0 16px 34px -26px rgba(60,45,20,.5);
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+      --bg:#f3efe7; --panel:#fbf8f2; --panel-2:#f6f1e7; --line:#e4dccc;
+      --ink:#241d13; --ink-soft:#5f5646; --ink-mute:#8c8271;
+      --accent:#b9781a; --accent-dim:#e6c894; --cyan:#2f8497;
+      --good:#3f8a48; --bad:#c0492f; --grid:rgba(36,29,19,.07);
+      --shadow:0 1px 0 rgba(255,255,255,.6) inset, 0 16px 34px -26px rgba(60,45,20,.5);
+    }
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(1100px 500px at 82% -8%, rgba(232,163,61,.10), transparent 60%),
+      var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    -webkit-font-smoothing: antialiased;
+    line-height: 1.45;
+  }
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 26px 22px 60px; }
+
+  /* ---------- top bar ---------- */
+  .top {
+    display: flex; align-items: center; gap: 18px;
+    flex-wrap: wrap;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--line);
+  }
+  .brand { display: flex; align-items: center; gap: 13px; }
+  .logo {
+    width: 40px; height: 40px; display: block;
+  }
+  .brand h1 {
+    font-size: 19px; margin: 0; letter-spacing: -.02em; font-weight: 800;
+    line-height: 1;
+  }
+  .brand .sub {
+    font-size: 11px; color: var(--ink-mute); letter-spacing: .14em;
+    text-transform: uppercase; margin-top: 3px;
+  }
+  .spacer { flex: 1 1 auto; }
+
+  .onair {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 11px; letter-spacing: .13em; text-transform: uppercase;
+    color: var(--ink-soft); font-weight: 600;
+    padding: 7px 12px; border: 1px solid var(--line); border-radius: 999px;
+    background: var(--panel);
+  }
+  .dot {
+    width: 8px; height: 8px; border-radius: 50%; background: var(--bad);
+    box-shadow: 0 0 0 0 rgba(224,116,95,.6);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(224,116,95,.55); }
+    70%  { box-shadow: 0 0 0 7px rgba(224,116,95,0); }
+    100% { box-shadow: 0 0 0 0 rgba(224,116,95,0); }
+  }
+  @media (prefers-reduced-motion: reduce) { .dot { animation: none; } }
+
+  .range { display: inline-flex; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 3px; gap: 2px; }
+  .range button {
+    font: inherit; font-size: 12px; font-weight: 600; color: var(--ink-soft);
+    background: transparent; border: 0; padding: 7px 13px; border-radius: 7px;
+    cursor: pointer; letter-spacing: .01em;
+  }
+  .range button[aria-pressed="true"] {
+    background: var(--accent); color: #17110a;
+  }
+  .range button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- kpi row ---------- */
+  .kpis {
+    display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+    margin: 22px 0;
+  }
+  .tile {
+    background: linear-gradient(180deg, var(--panel), var(--panel-2));
+    border: 1px solid var(--line); border-radius: 14px;
+    padding: 16px 16px 12px; box-shadow: var(--shadow);
+    display: flex; flex-direction: column; gap: 8px;
+    position: relative; overflow: hidden;
+  }
+  .tile .label {
+    font-size: 11px; letter-spacing: .09em; text-transform: uppercase;
+    color: var(--ink-mute); font-weight: 600;
+  }
+  .tile .num {
+    font-family: var(--mono); font-size: 27px; font-weight: 600;
+    letter-spacing: -.02em; font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .tile .foot { display: flex; align-items: baseline; gap: 8px; }
+  .delta { font-family: var(--mono); font-size: 12.5px; font-weight: 600; font-variant-numeric: tabular-nums; }
+  .delta.up { color: var(--good); }
+  .delta.down { color: var(--bad); }
+  .delta .arw { font-size: 10px; }
+  .tile .vs { font-size: 11px; color: var(--ink-mute); }
+  .spark { position: absolute; right: 12px; top: 14px; opacity: .9; }
+
+  /* ---------- panels grid ---------- */
+  .grid {
+    display: grid; grid-template-columns: 1.6fr 1fr; gap: 14px;
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--line);
+    border-radius: 14px; box-shadow: var(--shadow); overflow: hidden;
+  }
+  .card > header {
+    display: flex; align-items: center; gap: 10px;
+    padding: 15px 17px 12px;
+  }
+  .card > header h2 {
+    font-size: 13.5px; margin: 0; font-weight: 700; letter-spacing: -.005em;
+  }
+  .card > header .hint { font-size: 11.5px; color: var(--ink-mute); }
+  .card .body { padding: 4px 17px 18px; }
+
+  .chartwrap { position: relative; }
+  canvas { display: block; width: 100%; }
+  .tip {
+    position: absolute; pointer-events: none; opacity: 0;
+    transform: translate(-50%, -118%); transition: opacity .12s;
+    background: var(--bg); border: 1px solid var(--line);
+    border-radius: 8px; padding: 7px 10px; font-size: 11.5px;
+    white-space: nowrap; box-shadow: 0 10px 24px -14px rgba(0,0,0,.7); z-index: 4;
+  }
+  .tip b { font-family: var(--mono); font-variant-numeric: tabular-nums; font-weight: 600; }
+  .tip .d { color: var(--ink-mute); display: block; font-size: 10.5px; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 2px; }
+
+  /* top shows list */
+  .rows { display: flex; flex-direction: column; }
+  .row {
+    display: grid; grid-template-columns: 22px 1fr auto; align-items: center;
+    gap: 12px; padding: 11px 4px; border-top: 1px solid var(--line);
+    cursor: default;
+  }
+  .row:first-child { border-top: 0; }
+  .row .rk { font-family: var(--mono); font-size: 12px; color: var(--ink-mute); }
+  .row .nm { font-size: 13.5px; font-weight: 600; }
+  .row .meta { font-size: 11px; color: var(--ink-mute); margin-top: 3px; }
+  .bar { height: 5px; border-radius: 3px; background: var(--line); margin-top: 7px; overflow: hidden; }
+  .bar > i { display: block; height: 100%; border-radius: 3px;
+    background: linear-gradient(90deg, var(--accent-dim), var(--accent)); }
+  .row .plays { font-family: var(--mono); font-size: 13px; font-variant-numeric: tabular-nums; text-align: right; }
+  .row .trend { font-family: var(--mono); font-size: 11px; text-align: right; }
+
+  /* sources */
+  .src { display: flex; flex-direction: column; gap: 13px; }
+  .srow { display: grid; grid-template-columns: 1fr auto; gap: 6px 12px; align-items: center; }
+  .srow .sn { font-size: 12.5px; display: flex; align-items: center; gap: 8px; }
+  .swatch { width: 9px; height: 9px; border-radius: 2px; }
+  .srow .sv { font-family: var(--mono); font-size: 12.5px; font-variant-numeric: tabular-nums; color: var(--ink-soft); }
+  .track { grid-column: 1 / -1; height: 6px; border-radius: 4px; background: var(--line); overflow: hidden; }
+  .track > i { display: block; height: 100%; }
+
+  /* live feed */
+  .feed { display: flex; flex-direction: column; }
+  .ev { display: grid; grid-template-columns: auto 1fr auto; gap: 11px; align-items: center;
+    padding: 10px 2px; border-top: 1px solid var(--line); font-size: 12.5px; }
+  .ev:first-child { border-top: 0; }
+  .ev .ic { width: 26px; height: 26px; border-radius: 7px; display: grid; place-items: center;
+    background: var(--panel-2); border: 1px solid var(--line); font-size: 12px; }
+  .ev .tx b { font-weight: 700; }
+  .ev .tx span { color: var(--ink-mute); }
+  .ev .ago { font-family: var(--mono); font-size: 10.5px; color: var(--ink-mute); white-space: nowrap; }
+  .ev.fresh { animation: fadein .5s ease; }
+  @keyframes fadein { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: none; } }
+  @media (prefers-reduced-motion: reduce) { .ev.fresh { animation: none; } }
+
+  .foot-note { margin-top: 26px; font-size: 11px; color: var(--ink-mute); text-align: center; letter-spacing: .03em; }
+
+  @media (max-width: 860px) {
+    .kpis { grid-template-columns: repeat(2, 1fr); }
+    .grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .kpis { grid-template-columns: 1fr; }
+  }
+</style>
+
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <svg class="logo" viewBox="0 0 40 40" aria-hidden="true">
+        <rect width="40" height="40" rx="10" fill="var(--accent)"/>
+        <g fill="none" stroke="#17110a" stroke-width="2.4" stroke-linecap="round">
+          <path d="M9 20 h3"/><path d="M15 14 v12" opacity=".9"/>
+          <path d="M20 8 v24"/><path d="M25 12 v16" opacity=".9"/>
+          <path d="M30 17 v6"/>
+        </g>
+      </svg>
+      <div>
+        <h1>Longwave</h1>
+        <div class="sub">Studio Dashboard</div>
+      </div>
+    </div>
+    <div class="spacer"></div>
+    <div class="onair"><span class="dot"></span> <span id="live-label">Live · 3 shows recording</span></div>
+    <div class="range" role="group" aria-label="Time range">
+      <button data-range="7"  aria-pressed="false">7D</button>
+      <button data-range="30" aria-pressed="true">30D</button>
+      <button data-range="90" aria-pressed="false">90D</button>
+    </div>
+  </div>
+
+  <section class="kpis" id="kpis" aria-label="Key metrics"></section>
+
+  <div class="grid">
+    <div class="card">
+      <header>
+        <h2>Plays over time</h2>
+        <span class="hint" id="chart-hint">Daily streams + downloads</span>
+      </header>
+      <div class="body">
+        <div class="chartwrap">
+          <canvas id="chart" height="220" role="img" aria-label="Line chart of daily plays"></canvas>
+          <div class="tip" id="tip"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <header><h2>Top shows</h2><span class="hint">by plays this period</span></header>
+      <div class="body"><div class="rows" id="shows"></div></div>
+    </div>
+  </div>
+
+  <div class="grid" style="margin-top:14px">
+    <div class="card">
+      <header><h2>Live activity</h2><span class="hint">last few minutes</span></header>
+      <div class="body"><div class="feed" id="feed"></div></div>
+    </div>
+
+    <div class="card">
+      <header><h2>Where listeners come from</h2><span class="hint">share of plays</span></header>
+      <div class="body"><div class="src" id="sources"></div></div>
+    </div>
+  </div>
+
+  <p class="foot-note">Longwave Studio Dashboard · demo data, regenerated on load · figures update as the range changes</p>
+</div>
+
+<script>
+(() => {
+  const $ = s => document.querySelector(s);
+  const rand = (a, b) => a + Math.random() * (b - a);
+  const fmt = n => n >= 1e6 ? (n/1e6).toFixed(2)+'M' : n >= 1e3 ? (n/1e3).toFixed(1)+'k' : Math.round(n).toString();
+  const commas = n => Math.round(n).toLocaleString('en-US');
+  const css = v => getComputedStyle(document.documentElement).getPropertyValue(v).trim();
+
+  const SHOWS = [
+    ['The Static Hour', 'true crime · weekly'],
+    ['Deep Field', 'science · biweekly'],
+    ['Night Kitchen', 'food & culture · weekly'],
+    ['Margin Notes', 'books · weekly'],
+    ['Signal Lost', 'tech · daily'],
+    ['Slow Rivers', 'ambient · monthly'],
+    ['The Back Booth', 'interviews · weekly'],
+  ];
+  const SOURCES = [
+    ['Apple Podcasts', 0.34, css('--accent')],
+    ['Spotify',        0.29, css('--cyan')],
+    ['Web player',     0.17, css('--good')],
+    ['Overcast',       0.11, '#a98bd0'],
+    ['Other apps',     0.09, css('--ink-mute')],
+  ];
+  const EVENTS = [
+    ['▶', '<b>Signal Lost</b> <span>ep. 214 published</span>'],
+    ['★', '<span>new 5★ review on</span> <b>Deep Field</b>'],
+    ['◈', '<b>The Static Hour</b> <span>crossed 1M plays</span>'],
+    ['+', '<span>127 new subscribers</span> <span>from Apple</span>'],
+    ['▶', '<b>Night Kitchen</b> <span>ep. 88 published</span>'],
+    ['⤴', '<b>Margin Notes</b> <span>trending in Books</span>'],
+    ['+', '<span>Slow Rivers added to</span> <b>3.2k</b> <span>queues</span>'],
+  ];
+
+  // --- state / data model ---
+  let range = 30;
+  let series = [];
+
+  function buildSeries(days) {
+    const out = [];
+    let base = rand(9000, 12000);
+    const trend = rand(-30, 120);
+    for (let i = 0; i < days; i++) {
+      const dow = i % 7;
+      const weekend = (dow === 5 || dow === 6) ? 0.82 : 1;   // podcasts dip on weekends
+      const wobble = rand(0.86, 1.14);
+      const spike = Math.random() < 0.06 ? rand(1.4, 1.9) : 1; // an episode drop
+      base += trend + rand(-160, 160);
+      out.push(Math.max(2500, base * weekend * wobble * spike));
+    }
+    return out;
+  }
+
+  const sum = a => a.reduce((x, y) => x + y, 0);
+  const avg = a => sum(a) / a.length;
+
+  // --- KPI tiles ---
+  function renderKPIs() {
+    const total = sum(series);
+    const prev = total * rand(0.82, 0.98);
+    const completion = rand(61, 78);
+    const subs = Math.round(total / rand(140, 200));
+    const active = SHOWS.length;
+
+    const tiles = [
+      { label: 'Total plays', value: commas(total), delta: (total/prev - 1) * 100, spark: series },
+      { label: 'Avg completion', value: completion.toFixed(1) + '%', delta: rand(-3, 6), spark: series.map(v => v*rand(.6,.7)) },
+      { label: 'New subscribers', value: commas(subs), delta: rand(4, 22), spark: series.map(v => v*rand(.3,.5)) },
+      { label: 'Active shows', value: active + ' / ' + (active+1), delta: 0, spark: series.map((_,i)=> active*10 + (i%3)) , flat:true },
+    ];
+
+    $('#kpis').innerHTML = tiles.map(t => {
+      const up = t.delta >= 0;
+      const dcls = t.flat ? '' : (up ? 'up' : 'down');
+      const arw = t.flat ? '·' : (up ? '▲' : '▼');
+      const dtxt = t.flat ? 'steady' : (up ? '+' : '−') + Math.abs(t.delta).toFixed(1) + '%';
+      return `<div class="tile">
+        <div class="label">${t.label}</div>
+        <div class="num">${t.value}</div>
+        <div class="foot">
+          <span class="delta ${dcls}"><span class="arw">${arw}</span> ${dtxt}</span>
+          <span class="vs">vs prev ${range}d</span>
+        </div>
+        <div class="spark">${sparkline(t.spark)}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function sparkline(data) {
+    const w = 68, h = 26, n = data.length;
+    const mn = Math.min(...data), mx = Math.max(...data);
+    const x = i => (i/(n-1))*w;
+    const y = v => h - 2 - ((v-mn)/((mx-mn)||1))*(h-4);
+    let d = '';
+    data.forEach((v,i)=> d += (i? 'L':'M') + x(i).toFixed(1) + ' ' + y(v).toFixed(1) + ' ');
+    const up = data[n-1] >= data[0];
+    const col = up ? css('--good') : css('--bad');
+    return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" fill="none">
+      <path d="${d}" stroke="${col}" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" opacity=".85"/>
+      <circle cx="${x(n-1).toFixed(1)}" cy="${y(data[n-1]).toFixed(1)}" r="2" fill="${col}"/>
+    </svg>`;
+  }
+
+  // --- top shows ---
+  function renderShows() {
+    const total = sum(series);
+    const shares = SHOWS.map(() => rand(0.4, 1));
+    const norm = sum(shares);
+    const rows = SHOWS.map((s, i) => ({
+      name: s[0], meta: s[1],
+      plays: total * (shares[i]/norm) * rand(.7, 1.1),
+      trend: rand(-8, 24),
+    })).sort((a,b)=> b.plays - a.plays).slice(0, 6);
+    const top = rows[0].plays;
+    $('#shows').innerHTML = rows.map((r, i) => {
+      const up = r.trend >= 0;
+      return `<div class="row">
+        <div class="rk">${(i+1).toString().padStart(2,'0')}</div>
+        <div>
+          <div class="nm">${r.name}</div>
+          <div class="meta">${r.meta}</div>
+          <div class="bar"><i style="width:${(r.plays/top*100).toFixed(0)}%"></i></div>
+        </div>
+        <div>
+          <div class="plays">${fmt(r.plays)}</div>
+          <div class="trend" style="color:${up?css('--good'):css('--bad')}">${up?'+':'−'}${Math.abs(r.trend).toFixed(0)}%</div>
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // --- sources ---
+  function renderSources() {
+    const jitter = SOURCES.map(s => Math.max(0.02, s[1] * rand(0.85, 1.15)));
+    const norm = sum(jitter);
+    $('#sources').innerHTML = SOURCES.map((s, i) => {
+      const pct = jitter[i]/norm*100;
+      return `<div class="srow">
+        <div class="sn"><span class="swatch" style="background:${s[2]}"></span>${s[0]}</div>
+        <div class="sv">${pct.toFixed(1)}%</div>
+        <div class="track"><i style="width:${pct.toFixed(1)}%;background:${s[2]}"></i></div>
+      </div>`;
+    }).join('');
+  }
+
+  // --- live feed ---
+  let feedItems = [];
+  function seedFeed() {
+    feedItems = EVENTS.map((e, i) => ({ ic: e[0], tx: e[1], t: (i+1)*rand(20,70) }));
+    paintFeed();
+  }
+  function paintFeed() {
+    $('#feed').innerHTML = feedItems.slice(0, 6).map((e, i) =>
+      `<div class="ev${e.fresh && i===0 ? ' fresh':''}">
+        <div class="ic">${e.ic}</div>
+        <div class="tx">${e.tx}</div>
+        <div class="ago">${e.t < 60 ? Math.round(e.t)+'s' : Math.round(e.t/60)+'m'} ago</div>
+      </div>`).join('');
+    feedItems.forEach(e => e.fresh = false);
+  }
+  function pushEvent() {
+    const e = EVENTS[Math.floor(Math.random()*EVENTS.length)];
+    feedItems.unshift({ ic: e[0], tx: e[1], t: rand(2, 8), fresh: true });
+    feedItems.forEach((it, i) => { if (i>0) it.t += rand(15, 45); });
+    feedItems = feedItems.slice(0, 6);
+    paintFeed();
+  }
+
+  // --- main canvas chart ---
+  const canvas = $('#chart'), ctx = canvas.getContext('2d');
+  let geo = null;
+  function drawChart() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const cssW = canvas.clientWidth, cssH = 220;
+    canvas.width = cssW * dpr; canvas.height = cssH * dpr;
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    ctx.clearRect(0, 0, cssW, cssH);
+
+    const padL = 44, padR = 8, padT = 12, padB = 24;
+    const w = cssW - padL - padR, h = cssH - padT - padB;
+    const n = series.length;
+    const mx = Math.max(...series), mn = Math.min(...series) * 0.9;
+    const X = i => padL + (i/(n-1)) * w;
+    const Y = v => padT + h - ((v-mn)/((mx-mn)||1)) * h;
+
+    // grid + y labels
+    ctx.font = '11px ' + css('--mono');
+    ctx.textBaseline = 'middle';
+    ctx.fillStyle = css('--ink-mute');
+    const ticks = 4;
+    for (let i = 0; i <= ticks; i++) {
+      const v = mn + (mx-mn) * (i/ticks);
+      const y = Y(v);
+      ctx.strokeStyle = css('--grid'); ctx.lineWidth = 1;
+      ctx.beginPath(); ctx.moveTo(padL, y); ctx.lineTo(cssW - padR, y); ctx.stroke();
+      ctx.textAlign = 'right';
+      ctx.fillText(fmt(v), padL - 8, y);
+    }
+    // x labels (sparse)
+    ctx.textAlign = 'center'; ctx.textBaseline = 'top';
+    const step = Math.max(1, Math.round(n/6));
+    for (let i = 0; i < n; i += step) {
+      ctx.fillText('d' + (i+1), X(i), padT + h + 7);
+    }
+
+    // area fill
+    const grad = ctx.createLinearGradient(0, padT, 0, padT + h);
+    grad.addColorStop(0, hexA(css('--accent'), .28));
+    grad.addColorStop(1, hexA(css('--accent'), 0));
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(series[0]));
+    for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(series[i]));
+    ctx.lineTo(X(n-1), padT + h); ctx.lineTo(X(0), padT + h); ctx.closePath();
+    ctx.fillStyle = grad; ctx.fill();
+
+    // line
+    ctx.beginPath();
+    ctx.moveTo(X(0), Y(series[0]));
+    for (let i = 1; i < n; i++) ctx.lineTo(X(i), Y(series[i]));
+    ctx.strokeStyle = css('--accent'); ctx.lineWidth = 2; ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // endpoint marker
+    ctx.beginPath();
+    ctx.arc(X(n-1), Y(series[n-1]), 3.6, 0, 7);
+    ctx.fillStyle = css('--accent'); ctx.fill();
+    ctx.strokeStyle = css('--bg'); ctx.lineWidth = 2; ctx.stroke();
+
+    geo = { padL, padR, padT, padB, w, h, n, X, Y };
+  }
+
+  function hexA(hex, a) {
+    hex = hex.replace('#','');
+    if (hex.length === 3) hex = hex.split('').map(c=>c+c).join('');
+    const r = parseInt(hex.slice(0,2),16), g = parseInt(hex.slice(2,4),16), b = parseInt(hex.slice(4,6),16);
+    return `rgba(${r},${g},${b},${a})`;
+  }
+
+  // hover tooltip
+  const tip = $('#tip');
+  canvas.addEventListener('mousemove', e => {
+    if (!geo) return;
+    const r = canvas.getBoundingClientRect();
+    const mxp = e.clientX - r.left;
+    const i = Math.round(((mxp - geo.padL) / geo.w) * (geo.n - 1));
+    if (i < 0 || i >= geo.n) { tip.style.opacity = 0; return; }
+    drawChart();
+    const x = geo.X(i), y = geo.Y(series[i]);
+    ctx.strokeStyle = hexA(css('--ink'), .25); ctx.lineWidth = 1;
+    ctx.beginPath(); ctx.moveTo(x, geo.padT); ctx.lineTo(x, geo.padT + geo.h); ctx.stroke();
+    ctx.beginPath(); ctx.arc(x, y, 4, 0, 7); ctx.fillStyle = css('--accent'); ctx.fill();
+    ctx.strokeStyle = css('--bg'); ctx.lineWidth = 2; ctx.stroke();
+    tip.style.left = x + 'px'; tip.style.top = y + 'px'; tip.style.opacity = 1;
+    tip.innerHTML = `<span class="d">Day ${i+1}</span><b>${commas(series[i])}</b> plays`;
+  });
+  canvas.addEventListener('mouseleave', () => { tip.style.opacity = 0; drawChart(); });
+
+  // --- orchestrate ---
+  function rebuild() {
+    series = buildSeries(range);
+    $('#chart-hint').textContent = 'Daily streams + downloads · last ' + range + ' days';
+    renderKPIs(); renderShows(); renderSources(); drawChart();
+  }
+
+  document.querySelectorAll('.range button').forEach(b => {
+    b.addEventListener('click', () => {
+      document.querySelectorAll('.range button').forEach(x => x.setAttribute('aria-pressed','false'));
+      b.setAttribute('aria-pressed','true');
+      range = +b.dataset.range;
+      rebuild();
+    });
+  });
+
+  window.addEventListener('resize', drawChart);
+  // redraw on theme flip so canvas colors track tokens
+  new MutationObserver(drawChart).observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+  if (window.matchMedia) window.matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change', drawChart);
+
+  seedFeed();
+  rebuild();
+  if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    setInterval(pushEvent, 4200);
+  }
+})();
+</script>
