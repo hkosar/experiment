@@ -109,11 +109,11 @@ $ git -c core.whitespace=blank-at-eol,space-before-tab,blank-at-eof diff --cache
 (no output; exit 0)
 
 $ git diff --cached --stat <BASE>
- .../04_Proposed_Operating_Manual_v1.1.md  | 69 ++++++++++++++++++-
+ .../04_Proposed_Operating_Manual_v1.1.md  | 68 ++++++++++++++++++-
  .../05_Requirements_Register_v1.1.csv     | 16 ++++-
  .../05_Requirements_Register_v1.1.md      | 20 +++++-
  .../07a_Change_Log_v1.1_to_v1.2.md        | 77 ++++++++++++++++++++++
- 4 files changed, 178 insertions(+), 4 deletions(-)
+ 4 files changed, 177 insertions(+), 4 deletions(-)
 ```
 
 `<BASE>` is a commit of the **pinned snapshot originals**, with the snapshot `.gitattributes` in place, so the attribute policy above is actually active. The `--stat` output is included deliberately: **an empty diff is the most likely mechanism of a false PASS**, and this diff is demonstrably non-empty.
@@ -122,7 +122,7 @@ $ git diff --cached --stat <BASE>
 
 ```
 file                                     bytes     CR   CRLF trail-ws  final-LF
-04_Proposed_Operating_Manual_v1.1.md    142887      0      0        0       yes
+04_Proposed_Operating_Manual_v1.1.md    142849      0      0        0       yes
 05_Requirements_Register_v1.1.csv        36020      0      0        0       yes
 05_Requirements_Register_v1.1.md         34587      0      0        0       yes
 07a_Change_Log_v1.1_to_v1.2.md           15681      0      0        0       yes
