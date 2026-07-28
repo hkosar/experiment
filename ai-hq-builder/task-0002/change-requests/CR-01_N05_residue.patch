@@ -1,0 +1,21 @@
+--- a/fable/v1.2-ideas-pass/bootstrap_id_registry.md
++++ b/fable/v1.2-ideas-pass/bootstrap_id_registry.md
+@@ -8,6 +8,6 @@
+ | --- | --- | --- | --- | --- |
+ | TOPIC-0001 | Topic | v1.2 ideas pass — peer dual-agent workflow adoption and Nate Herk idea-register adoption (CP-v1.2-A, CP-v1.2-B; title clarified 2026-07-27 per N-02, trail entry 68) | 2026-07-25 | Active |
+ | TASK-0001 | Task | Integrate accepted CP-v1.2-A into the accepted v1.1 baseline (Builder: Opus 4.8) | 2026-07-25 | CLOSED 2026-07-27 — released (content commit 5d148074, tree 19aa1c32…, trail entry 59); owner v1.2 acceptance recorded 2026-07-27 (trail entry 65, echoing receipt commit 19c3612…) — cycle fully closed |
+-| TASK-0002 | Task | Integrate owner-approved CP-v1.2-B Revision 2 into the accepted v1.2 baseline (Builder: Opus 4.8) | 2026-07-27 | Allocated (owner authorization trail entry 64; Fable control-plane atomic append per M-05); release packet `17_` + APP-05 conformance addendum `19_`. Built (return SHA-256 8eaeba48…); post-build PASS WITH CHANGES (`18_`); N-01..N-04 control-plane corrections applied; successor identity v1.3-proposed (N-03); N-05 resolved — owner-confirmed standing Builder substitution to Claude Opus 5 (trail entry 69). Release pending final scoped acknowledgment |
++| TASK-0002 | Task | Integrate owner-approved CP-v1.2-B Revision 2 into the accepted v1.2 baseline (Builder: Claude Opus 5) | 2026-07-27 | Allocated (owner authorization trail entry 64; Fable control-plane atomic append per M-05); release packet `17_` + APP-05 conformance addendum `19_`. Built (return SHA-256 8eaeba48…); post-build PASS WITH CHANGES (`18_`); N-01..N-04 control-plane corrections applied; successor identity v1.3-proposed (N-03); N-05 resolved — owner-confirmed standing Builder substitution to Claude Opus 5 (trail entry 69). Release pending final scoped acknowledgment |
+ 
+ Next allocations: TOPIC-0002, TASK-0003.
+--- a/fable/phase1-audit-v1.0/00_READ_ME_FIRST.md
++++ b/fable/phase1-audit-v1.0/00_READ_ME_FIRST.md
+@@ -29,7 +29,7 @@
+ 
+ ## Program governance
+ 
+-Fable — architect/designer, project manager, stage-gate approver. ChatGPT — independent verifier. Opus 4.8 — builder. Sonnet — reader/context librarian. Hunter — owner and final authority. Gate rule: verifier feedback → implementation → Fable approval → owner acceptance of owner-level decisions. Full boundaries: Manual section 20A.
++Fable — architect/designer, project manager, stage-gate approver. ChatGPT — independent verifier. Claude Opus 5 — builder (owner-confirmed standing substitution, trail entry 69). Sonnet — reader/context librarian. Hunter — owner and final authority. Gate rule: verifier feedback → implementation → Fable approval → owner acceptance of owner-level decisions. Full boundaries: Manual section 20A.
+ 
+ ## What v1.1 acceptance unlocked (accepted 2026-07-25, trail entry 53)
+ 
