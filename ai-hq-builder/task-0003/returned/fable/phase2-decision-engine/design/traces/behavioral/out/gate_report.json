@@ -1,0 +1,101 @@
+{
+  "all_passed": true,
+  "anticircularity_passed": true,
+  "base_summary": {
+    "combinations_computed": 81,
+    "combinations_expected": 81,
+    "divergences": 81,
+    "failures": 0,
+    "fixtures": 27,
+    "forbidden_predicates_evaluated": 171,
+    "passes": 81,
+    "shapes": 3,
+    "unclassifiable": 0
+  },
+  "criteria": [
+    {
+      "criterion": "1  anti-circularity: no oracle read in engine/scenario code",
+      "detail": "textual+import+structural all pass",
+      "passed": true
+    },
+    {
+      "criterion": "2  all 27 x 3 = 81 combinations computed, none skipped",
+      "detail": "81/81 computed, 0 unclassifiable",
+      "passed": true
+    },
+    {
+      "criterion": "3  computed-vs-expected compared; every forbidden list evaluated",
+      "detail": "171 forbidden predicates evaluated, 0 judged failures",
+      "passed": true
+    },
+    {
+      "criterion": "4  executed/verified only with an external receipt reference",
+      "detail": "0 receipt-ownership violations across 81",
+      "passed": true
+    },
+    {
+      "criterion": "5  fold replays the multi-store basis with P2S-06 ordering",
+      "detail": "81 combinations, 81 order-invariant",
+      "passed": true
+    },
+    {
+      "criterion": "6  candidate-specific divergences produced, not assumed away",
+      "detail": "81 divergences computed",
+      "passed": true
+    },
+    {
+      "criterion": "7  E2E-1 executed as a real two-normalizer computation",
+      "detail": "M1/M2 risk differ=True, authority invariant=True, seeded leak detected=True",
+      "passed": true
+    },
+    {
+      "criterion": "8  every seeded defect flips its target from pass to fail",
+      "detail": "8/8 defects effective",
+      "passed": true
+    },
+    {
+      "criterion": "9  shuffle-invariance across >=3 seeded permutations",
+      "detail": "6 permutations per combination, 0 violations",
+      "passed": true
+    },
+    {
+      "criterion": "10 P2S-05 five traces present and separately reported",
+      "detail": "5/5 traces pass",
+      "passed": true
+    },
+    {
+      "criterion": "11 P2S-07 negative and positive tests present and reported",
+      "detail": "2/2 tests pass",
+      "passed": true
+    }
+  ],
+  "defects_summary": {
+    "all_effective": true,
+    "baseline_passes": 81,
+    "defects_effective": 8,
+    "defects_seeded": 8
+  },
+  "p2s05_summary": {
+    "failed": 0,
+    "passed": 5,
+    "traces": 5
+  },
+  "p2s07_summary": {
+    "failed": 0,
+    "passed": 2,
+    "tests": 2
+  },
+  "shuffle_summary": {
+    "combinations": 81,
+    "invariant": 81,
+    "permutations_per_combination": 6,
+    "seeds": [
+      20260730,
+      11,
+      4242,
+      987654321,
+      31337
+    ],
+    "violations": 0
+  }
+}

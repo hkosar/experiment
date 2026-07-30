@@ -1,0 +1,197 @@
+{
+  "defects": [
+    {
+      "defect": "authority-raise",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "A2/S1",
+        "A2/S2",
+        "A2/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "changes authority — a model proposal raises the ceiling above the model-free base"
+    },
+    {
+      "defect": "dropped-receipt",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3"
+      ],
+      "flipped_count": 6,
+      "witnesses": "drops a receipt — an action's external ExecutionReceipt never arrives"
+    },
+    {
+      "defect": "causal-reorder",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S1/S1",
+        "S1/S2",
+        "S1/S3",
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "S3/S1",
+        "S3/S2",
+        "S3/S3",
+        "S4/S1",
+        "S4/S2",
+        "S4/S3",
+        "S5/S1",
+        "S5/S2",
+        "S5/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "S7/S1",
+        "S7/S2",
+        "S7/S3",
+        "S8/S1",
+        "S8/S2",
+        "S8/S3",
+        "S9/S1",
+        "S9/S2",
+        "S9/S3",
+        "S10/S1",
+        "S10/S2",
+        "S10/S3",
+        "A1/S1",
+        "A1/S2",
+        "A1/S3",
+        "A2/S1",
+        "A2/S2",
+        "A2/S3",
+        "A3/S1",
+        "A3/S2",
+        "A3/S3",
+        "A4/S1",
+        "A4/S2",
+        "A4/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
+        "A6/S1",
+        "A6/S2",
+        "A6/S3",
+        "A7/S1",
+        "A7/S2",
+        "A7/S3",
+        "A8/S1",
+        "A8/S2",
+        "A8/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3",
+        "A10/S1",
+        "A10/S2",
+        "A10/S3",
+        "A11/S1",
+        "A11/S2",
+        "A11/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3",
+        "A13/S1",
+        "A13/S2",
+        "A13/S3",
+        "A14/S1",
+        "A14/S2",
+        "A14/S3",
+        "A15/S1",
+        "A15/S2",
+        "A15/S3",
+        "A16/S1",
+        "A16/S2",
+        "A16/S3",
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 81,
+      "witnesses": "reorders a causal event — the fold stops enforcing caused_by topology"
+    },
+    {
+      "defect": "forbidden-outcome-admission",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S1/S1",
+        "S1/S2",
+        "S1/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "admits a forbidden outcome — state written on a read-only path"
+    },
+    {
+      "defect": "stale-projection",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S1/S3"
+      ],
+      "flipped_count": 1,
+      "witnesses": "produces a stale projection — S3 projections are not rebuilt after events"
+    },
+    {
+      "defect": "engine-authored-receipt",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3"
+      ],
+      "flipped_count": 6,
+      "witnesses": "breaks external-receipt ownership — the engine authors its own evidence"
+    },
+    {
+      "defect": "skip-eligibility-check",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "S7/S1",
+        "S7/S2",
+        "S7/S3",
+        "A2/S1",
+        "A2/S2",
+        "A2/S3",
+        "A11/S1",
+        "A11/S2",
+        "A11/S3",
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 12,
+      "witnesses": "P2S-07 — proposals emitted from untrusted content with no eligibility policy"
+    },
+    {
+      "defect": "normalizer-authority-leak",
+      "effective": true,
+      "errors": [],
+      "flipped": [
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "E2E-1 — a substituted normalizer raises the maximum authorized action"
+    }
+  ],
+  "summary": {
+    "all_effective": true,
+    "baseline_passes": 81,
+    "defects_effective": 8,
+    "defects_seeded": 8
+  }
+}
