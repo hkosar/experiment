@@ -74,18 +74,32 @@ CEILING_ORDER = {
     CEILING_CONSEQUENTIAL: 5,
 }
 
-# Attention bands (Manual canonical dimension; D-B6 §2.3 hands inputs to B7)
-ATT_NONE = "none"
+# Attention bands (Manual canonical dimension; D-B6 §2.3 hands inputs to B7).
+#
+# EXACTLY the four D-B7 §2.1 bands, per the `27_` change-request ruling:
+#
+#   Critical (interrupt now) · Needs-Owner (queue admission, next natural session)
+#   · Briefing (scheduled digest) · Record-only (filed, findable)
+#
+# `ATT_NONE` IS D-B7's Record-only band. The identifier is kept as `none` rather than
+# renamed to `record-only` for one reason, stated so it can be overruled: a band
+# string `"record-only"` would be byte-identical to the CEILING_RECORD_ONLY ceiling
+# string, and band and ceiling are different fields that already appear side by side
+# in every output record. The count is four either way.
+#
+# A FIFTH BAND `hub` USED TO LIVE HERE AND IS GONE. D-B7's ATT-03 mapping line
+# (quoted in `27_`) defines "hub update" as **Record-only with a hub-visibility
+# flag** — a presentation flag on the Record-only band, never a band of its own.
+# `hub_visibility` is that flag; see `ComputedResult.hub_visibility`.
+ATT_NONE = "none"                 # D-B7 §2.1 Record-only
 ATT_BRIEFING = "briefing"
-ATT_HUB = "hub"
 ATT_NEEDS_OWNER = "needs-owner"
 ATT_CRITICAL = "critical"
 ATTENTION_ORDER = {
     ATT_NONE: 0,
     ATT_BRIEFING: 1,
-    ATT_HUB: 2,
-    ATT_NEEDS_OWNER: 3,
-    ATT_CRITICAL: 4,
+    ATT_NEEDS_OWNER: 2,
+    ATT_CRITICAL: 3,
 }
 
 
@@ -417,6 +431,9 @@ class BaseDisposition:
     quarantined: bool = False
     step_up_required: bool = False
     step_up_satisfied: bool = False
+    # D-B7 ATT-03 (quoted in `27_`): a "hub update" is the Record-only band PLUS a
+    # hub-visibility presentation flag. It is a flag, never a band.
+    hub_visibility: bool = False
 
 
 def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
@@ -463,7 +480,22 @@ def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
 
     if verif.startswith("sch envelope expired") or "expired" in verif:
         reasons.append("fail-closed:scheduled-control-envelope-expired (SCH-02)")
-        return BaseDisposition(T0, CEILING_NONE, ATT_NEEDS_OWNER, tuple(reasons))
+        # `27_` closure: the refusal is a background outcome that needs no owner
+        # decision — the standing rule refuses and reschedules on envelope refresh,
+        # with no owner in the loop (`instruction_authority: none (standing rules
+        # govern)`). D-B7 §2.1 defines Needs-Owner as "queue admission, next natural
+        # session"; nothing is queued for the owner here, so that band was wrong for
+        # the same reason it was wrong on S9. The outcome lands as a hub update:
+        # Record-only band + hub-visibility flag, per ATT-03.
+        #
+        # TRIGGER-SCOPE NOTE, stated rather than buried: ATT-03's enumerated trigger
+        # is "verified successful background completion", and a refused run is not a
+        # successful one. Fable's `27_` ruling adjudicates A14's expectation as
+        # Record-only + flag directly, so the mapping's SHAPE is applied here to an
+        # adjacent trigger. If ATT-03's trigger list is meant to be exhaustive, this
+        # is a change request, not a defect.
+        return BaseDisposition(T0, CEILING_NONE, ATT_NONE, tuple(reasons),
+                               hub_visibility=True)
 
     if verif.startswith("write-attempt-unauthorized"):
         reasons.append("fail-closed:unauthorized-evidence-store-write refused (LOG-02)")
@@ -471,7 +503,13 @@ def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
 
     if verif.startswith("sender-mismatch") or "spoof" in verif:
         reasons.append("verification-failed:sender-mismatch -> no authority, flag")
-        return BaseDisposition(T0, CEILING_RECORD_ONLY, ATT_HUB, tuple(reasons))
+        # `27_` closure: this branch used to emit the deleted `hub` band. A spoofed
+        # message inside a triage batch is classified and summarised with the rest —
+        # it is surfaced in the same scheduled digest, flagged, with no authority
+        # (the ceiling stays record-only). D-B7 §2.1 Briefing = "scheduled digest".
+        # ATT-03's hub-update mapping is NOT applied: a spoof detection is not a
+        # background completion, so no hub-visibility flag is claimed here.
+        return BaseDisposition(T0, CEILING_RECORD_ONLY, ATT_BRIEFING, tuple(reasons))
 
     # --- external-untrusted content ------------------------------------------
     if trust.startswith("external-untrusted"):

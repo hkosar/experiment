@@ -86,6 +86,9 @@ class ComputedResult:
     # governing rule collapses them. A8 expects "Critical / Briefing" — two inputs,
     # two bands — which the governing band alone cannot express.
     per_envelope_attention: List[str] = field(default_factory=list)
+    # D-B7 ATT-03 (per the `27_` ruling): "hub update" = Record-only band PLUS this
+    # presentation flag. A flag, never a band.
+    hub_visibility: bool = False
     extras: Dict[str, object] = field(default_factory=dict)
 
     def digest(self) -> str:
@@ -277,6 +280,8 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
         quarantined=any(b.quarantined for b in per_env),
         step_up_required=any(b.step_up_required for b in per_env),
         step_up_satisfied=all(b.step_up_satisfied for b in per_env if b.step_up_required),
+        # ATT-03: any input landing as a hub update makes the case hub-visible.
+        hub_visibility=any(b.hub_visibility for b in per_env),
     )
 
     # --- stage 2: policy composition (D-B8 P2G-10) ---
@@ -301,7 +306,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
     disp = core.BaseDisposition(
         tier=tier, ceiling=ceiling, attention=attention, reasons=tuple(all_reasons),
         quarantined=gov.quarantined, step_up_required=gov.step_up_required,
-        step_up_satisfied=gov.step_up_satisfied,
+        step_up_satisfied=gov.step_up_satisfied, hub_visibility=gov.hub_visibility,
     )
 
     # --- stage 4: model-proposal integration (lower/escalate only) ---
@@ -320,7 +325,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
             reasons=disp.reasons + ("owner step-up completed (IDN-02) -> "
                                     "consequential chain authorized",),
             quarantined=disp.quarantined, step_up_required=True,
-            step_up_satisfied=True,
+            step_up_satisfied=True, hub_visibility=disp.hub_visibility,
         )
 
     # --- IDN-03 / D-KR §1.2: a kill revokes action authority immediately ---
@@ -338,6 +343,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
             quarantined=disp.quarantined,
             step_up_required=disp.step_up_required,
             step_up_satisfied=disp.step_up_satisfied,
+            hub_visibility=disp.hub_visibility,
         )
 
     # --- P2S-07 proposal eligibility ---
@@ -684,7 +690,10 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
             payload={"consequence_summary_shown": True, "acknowledged": True,
                      "prompts": 1}, object_key="case")
 
-    if core.ATTENTION_ORDER[disp.attention] >= core.ATTENTION_ORDER[core.ATT_HUB]:
+    # `27_` closure: this threshold used to be the deleted `hub` band. D-B7 §2.1
+    # defines Needs-Owner as "queue admission, next natural session" — the queue
+    # threshold is now the band the document names for it, not a band-order index.
+    if core.ATTENTION_ORDER[disp.attention] >= core.ATTENTION_ORDER[core.ATT_NEEDS_OWNER]:
         add("QueueAdmissionEvent", "queue", caused_by=(decision_id,),
             payload={"item": stim.id}, object_key="queue")
 
@@ -759,6 +768,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
         eligible_proposal_classes=eligible, proposals_emitted=proposals_emitted,
         events=events, folded=folded, receipt_violations=receipt_problems,
         per_envelope_attention=[b.attention for b in per_env],
+        hub_visibility=disp.hub_visibility,
         storage_summary=storage_summary, state_written_on_read=state_written_on_read,
         outbound_authorized=outbound_authorized,
         executed_without_receipt=executed_without_receipt,

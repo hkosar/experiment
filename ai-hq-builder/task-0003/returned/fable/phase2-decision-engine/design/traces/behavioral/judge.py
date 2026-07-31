@@ -191,7 +191,12 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
                 % (sorted(set(att.bands)), computed))
     else:
         want = att.bands[0]
-        if att.conditional:
+        if att.hub_update:
+            # D-B7 ATT-03 (`27_` ruling): a hub update is the Record-only band PLUS
+            # the hub-visibility flag. Both parts, or it is not a hub update — which
+            # is why this is an equality and not the ceiling used for a bare "None".
+            ok = (result.attention == core.ATT_NONE and bool(result.hub_visibility))
+        elif att.conditional:
             # "Needs Owner if unresolved" — the band is required when the condition
             # holds and is a ceiling otherwise.
             pending = bool(result.uncertain_outcome) and not any(
@@ -210,12 +215,18 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
         j.check_results["expected_attention"] = ok
         if not ok:
             j.passed = False
-            j.failures.append(
-                "expected attention '%s' (%s %s%s); computed %s"
-                % (att.raw, "ceiling below" if att.ceiling_only else "band",
-                   core.ATT_NEEDS_OWNER if att.ceiling_only else want,
-                   ", conditional on %s" % att.conditional if att.conditional else "",
-                   result.attention))
+            if att.hub_update:
+                j.failures.append(
+                    "expected '%s' = hub update (band %s + hub-visibility flag, "
+                    "D-B7 ATT-03); computed band %s, hub_visibility=%s"
+                    % (att.raw, core.ATT_NONE, result.attention, result.hub_visibility))
+            else:
+                j.failures.append(
+                    "expected attention '%s' (%s %s%s); computed %s"
+                    % (att.raw, "ceiling below" if att.ceiling_only else "band",
+                       core.ATT_NEEDS_OWNER if att.ceiling_only else want,
+                       ", conditional on %s" % att.conditional if att.conditional else "",
+                       result.attention))
         # Surface qualifiers are compared only where the harness computes the
         # surface; the rest are carried and named, per ATTENTION_MAPPING_LIMITS.
         if att.surface:

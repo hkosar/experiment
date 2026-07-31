@@ -348,6 +348,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
@@ -358,7 +359,6 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -368,6 +368,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
@@ -378,7 +379,6 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -388,6 +388,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
@@ -398,7 +399,6 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -1323,6 +1323,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1332,7 +1333,6 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1342,6 +1342,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1351,7 +1352,6 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1361,6 +1361,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1370,7 +1371,6 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
-        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1553,13 +1553,10 @@
     }
   ],
   "summary": {
-    "attention_compared": 60,
+    "attention_compared": 66,
     "attention_unmapped": 15,
-    "attention_unresolved": 6,
-    "attention_unresolved_fixtures": [
-      "A14",
-      "S7"
-    ],
+    "attention_unresolved": 0,
+    "attention_unresolved_fixtures": [],
     "authority_mapping_mapped": 36,
     "authority_mapping_unmapped": 45,
     "combinations_computed": 81,

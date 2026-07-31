@@ -562,6 +562,15 @@ def _m_focus_displaced(result, spec, stim):
     recompute_focus_pointer(result)
 
 
+@mutation("hub-visibility-lost",
+          "a hub update lands as a plain Record-only item, losing its hub visibility")
+def _m_hub_visibility_lost(result, spec, stim):
+    # `27_` closure: D-B7 ATT-03 makes a hub update Record-only PLUS a
+    # hub-visibility flag. The band alone cannot witness the flag's leg of the
+    # comparison, so the flag gets its own defect.
+    result.hub_visibility = False
+
+
 @mutation("suppression-record-lost",
           "a non-qualifying quiet-hours item is held with no suppression record")
 def _m_suppression_lost(result, spec, stim):

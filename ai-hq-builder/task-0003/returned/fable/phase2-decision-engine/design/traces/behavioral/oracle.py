@@ -429,33 +429,28 @@ def forbidden_predicate(phrase: str) -> Callable[[dict], bool]:
 # Critical, which is the discrimination the fixtures are actually asserting.
 
 ATTENTION_MAPPING_LIMITS = (
-    "The engine carries a `hub` band that the D-B7 §2.1 vocabulary quoted in R4 does "
-    "not contain (Critical / Needs-Owner / Briefing / Record-only). Two fixtures turn "
-    "on it — S7 expects Briefing where the engine computes hub, A14 expects Hub where "
-    "the engine computes needs-owner — and neither can be resolved without the "
-    "document. Both are reported UNRESOLVED and raised as a change request; neither "
-    "is counted as compared and neither is silently passed.",
     "'None' / 'Record-only' / display-surface expectations are compared as a CEILING "
     "(the computed band must not reach Needs-Owner), not as an equality — see the "
-    "grounding note above. Equality is used for Critical, Needs-Owner, Briefing and "
-    "Hub.",
+    "grounding note above. Equality is used for Critical, Needs-Owner and Briefing.",
+    "'Hub' is not a band. Per D-B7 ATT-03 (quoted in the `27_` change-request "
+    "answer) a hub update is the Record-only band PLUS a hub-visibility flag, so a "
+    "'Hub' expectation is compared on BOTH: band == Record-only and the computed "
+    "hub-visibility flag set. The engine's former fifth `hub` band is deleted.",
+    "ATT-03's other enumerated mappings (safe automatic retry -> Briefing; first "
+    "overdue reminder -> Briefing; subsequent overdue steps per the B10 aging "
+    "ladder) are NOT implemented: no fixture exercises them, so per the `27_` "
+    "instruction they are declared rather than coded.",
     "Presentation-surface qualifiers are compared only where the harness already "
     "computes the surface (the read-path no-write check). Other qualifiers "
     "('one suggestion max', 'brief line only', 'source setup', 'owner-initiated') "
     "are carried and reported, not computed.",
 )
 
-# Fixtures whose expectation names a band the quoted §2.1 vocabulary cannot settle.
-# Listed by id so the count is explicit and cannot drift silently.
-ATTENTION_UNRESOLVED = {
-    "S7": "expects Briefing; the engine raises the batch to `hub` because one of six "
-          "inputs is a spoof. Two questions neither §2.1 nor the corpus settles: "
-          "whether `hub` is a sanctioned band, and whether one flagged input raises "
-          "the whole batch's band. CHANGE REQUEST.",
-    "A14": "expects Hub; the engine's SCH-02 expired path computes needs-owner. "
-           "`hub` is absent from the quoted §2.1 vocabulary, so which side is wrong "
-           "is not determinable from the Builder snapshot. CHANGE REQUEST.",
-}
+# `27_` closed the two entries that used to live here (S7, A14). Kept as an empty
+# declaration rather than deleted so the mechanism that freezes an unresolvable
+# expectation — reporting it, refusing to guess, and giving it no pass credit —
+# stays in the shipped code for the next expectation that needs it.
+ATTENTION_UNRESOLVED: Dict[str, str] = {}
 
 # Expectations compared as a ceiling rather than an equality (see grounding above).
 _NON_DEMANDING = (core.ATT_NONE,)
@@ -469,7 +464,6 @@ _BAND_WORDS: Tuple[Tuple[str, str], ...] = (
     ("critical", core.ATT_CRITICAL),
     ("briefing", core.ATT_BRIEFING),
     ("display", core.ATT_NONE),
-    ("hub", core.ATT_HUB),
     ("none", core.ATT_NONE),
 )
 
@@ -478,7 +472,8 @@ class AttentionExpectation:
     """One fixture's `expected.attention`, parsed into something computable."""
 
     def __init__(self, raw, mapped, bands=(), surface=None, conditional=None,
-                 relational=False, rationale="", unresolved=False):
+                 relational=False, rationale="", unresolved=False,
+                 hub_update=False):
         self.raw = raw
         self.mapped = mapped
         self.bands = tuple(bands)
@@ -487,19 +482,26 @@ class AttentionExpectation:
         self.relational = relational
         self.rationale = rationale
         self.unresolved = unresolved
+        self.hub_update = hub_update
 
     @property
     def ceiling_only(self) -> bool:
-        """True where the expectation states 'does not consume owner attention'."""
-        return (not self.relational and len(self.bands) == 1
-                and self.bands[0] in _NON_DEMANDING)
+        """True where the expectation states 'does not consume owner attention'.
+
+        A hub update is NOT a ceiling: ATT-03 pins it to Record-only exactly, and the
+        hub-visibility flag has to be present, so it is compared as an equality on
+        both parts.
+        """
+        return (not self.relational and not self.hub_update
+                and len(self.bands) == 1 and self.bands[0] in _NON_DEMANDING)
 
     def to_dict(self):
         return {"raw": self.raw, "mapped": self.mapped, "bands": list(self.bands),
                 "surface": self.surface, "conditional": self.conditional,
                 "relational": self.relational, "rationale": self.rationale,
-                "unresolved": self.unresolved,
+                "unresolved": self.unresolved, "hub_update": self.hub_update,
                 "comparison": ("relational" if self.relational
+                               else "hub-update (band + flag)" if self.hub_update
                                else "ceiling" if self.ceiling_only else "equality")}
 
 
@@ -544,6 +546,12 @@ def expected_attention(expected: dict, fixture_id: str = "") -> AttentionExpecta
         return AttentionExpectation(
             raw, True, relational=True,
             rationale="relational: the M2 path may not sit below the M1 path")
+
+    # D-B7 ATT-03, per the `27_` ruling: "Hub" names a hub UPDATE, not a band —
+    # Record-only plus a hub-visibility flag. Both parts are compared.
+    if re.search(r"\bhub\b", low):
+        return AttentionExpectation(raw, True, bands=(core.ATT_NONE,),
+                                    surface=_surface_of(raw), hub_update=True)
 
     # Multi-input: one band per input.
     if "/" in raw:

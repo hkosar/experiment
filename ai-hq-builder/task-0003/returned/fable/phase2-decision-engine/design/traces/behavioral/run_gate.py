@@ -68,10 +68,21 @@ NOT_SIMULATED = [
     "RW-27 attention comparison: 5 fixtures state an expectation that names no "
     "D-B7 §2.1 band (S10 'per class', A1 'security event', A6 'per outcome', "
     "A10 'RES alarm', A16 'per ATT-01 security assessment') — reported UNMAPPED, "
-    "never guessed. 2 more (S7, A14) turn on the engine's `hub` band, which the "
-    "quoted §2.1 vocabulary does not contain; both are UNRESOLVED change requests "
-    "and are not counted as compared. 'None'/'Record-only'/display expectations are "
-    "compared as a CEILING (must not reach Needs-Owner), not an equality.",
+    "never guessed. 'None'/'Record-only'/display expectations are compared as a "
+    "CEILING (must not reach Needs-Owner), not an equality; 'Hub' is compared as a "
+    "hub UPDATE (Record-only band + hub-visibility flag) per the `27_` ruling. The "
+    "two previously UNRESOLVED fixtures (S7, A14) are resolved and compared.",
+    "D-B7 ATT-03's other enumerated mappings are NOT implemented, per the `27_` "
+    "instruction not to code unexercised branches: safe automatic retry -> Briefing; "
+    "first overdue reminder -> Briefing; subsequent overdue steps per the B10 aging "
+    "ladder. No fixture exercises any of them.",
+    "The interrupt-policy citation is parsed by TWO functions — "
+    "`simulate.interrupt_policy_citation` (engine) and "
+    "`oracle.expected_interrupt_policy` (judge) — that are currently byte-identical "
+    "in body. Their independence is STRUCTURAL, not diverse: a change to one cannot "
+    "drag the other along, which is what makes the judge able to disagree with the "
+    "engine, but a shared parsing blind spot (a start_state phrasing neither regex "
+    "matches) would be invisible to both. Reviewer observation carried from `27_`.",
     "D-B7 §3 OD-1 RULE 2 is NOT modelled (RW-26b): 'ambiguous physical-danger/"
     "security signals fail TOWARD interrupting; all other ambiguity holds to the "
     "briefing.' The quiet-hours suppression path encodes rule 1 only (verified "
@@ -227,11 +238,14 @@ def main(argv: List[str]) -> int:
         ("15 expected.attention compared for every mapped fixture",
          base["summary"]["attention_compared"] > 0 and s["failures"] == 0,
          "%d/%d combinations compared, %d unmapped (expectation names no D-B7 §2.1 "
-         "band), %d UNRESOLVED and raised as change requests (%s)"
+         "band), %s"
          % (base["summary"]["attention_compared"], s["combinations_computed"],
             base["summary"]["attention_unmapped"],
-            base["summary"]["attention_unresolved"],
-            ", ".join(base["summary"]["attention_unresolved_fixtures"]) or "none")),
+            ("%d UNRESOLVED, returned as change requests (%s)"
+             % (base["summary"]["attention_unresolved"],
+                ", ".join(base["summary"]["attention_unresolved_fixtures"])))
+            if base["summary"]["attention_unresolved"]
+            else "0 unresolved — the `27_` hub ruling closed S7 and A14")),
     ]
 
     print("=" * 86)

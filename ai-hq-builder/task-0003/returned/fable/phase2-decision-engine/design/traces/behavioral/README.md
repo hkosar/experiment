@@ -103,7 +103,7 @@ freshness obligation that S1 and S2 do not.
 ## Evidence counts — read these honestly
 
 The R1 rework replaced a padded headline with a measured one. `run_defects.py`
-searches a **60-mutation candidate-defect catalogue** for the defects that make each
+searches a **62-mutation candidate-defect catalogue** for the defects that make each
 forbidden predicate return True, and reports the result per predicate:
 
 | Figure | Meaning |
@@ -206,22 +206,33 @@ add no mechanism, so it is listed rather than re-driven.
   nothing to look at and is not recorded as evidence). Reported per run.
 - The computed attention **band** IS compared against `expected.attention` as of
   R4 — the R3 version of this bullet said it never was, and that is no longer true.
-  Coverage, stated in full because the counts are not all-27: **20 of 27 fixtures
-  compared** (60 of 81 combinations); **5 unmapped** because the expectation names no
-  D-B7 §2.1 band at all (S10 "per class", A1 "security event", A6 "per outcome", A10
-  "RES alarm", A16 "per ATT-01 security assessment") — reported, never guessed; and
-  **2 UNRESOLVED and raised as change requests** (S7, A14), which turn on the
-  engine's `hub` band that the quoted §2.1 vocabulary does not contain.
+  Coverage: **22 of 27 fixtures compared** (66 of 81 combinations); **5 unmapped**
+  because the expectation names no D-B7 §2.1 band at all (S10 "per class", A1
+  "security event", A6 "per outcome", A10 "RES alarm", A16 "per ATT-01 security
+  assessment") — reported, never guessed.
+- The band vocabulary is **exactly the four D-B7 §2.1 bands**: Critical, Needs-Owner,
+  Briefing, Record-only (the engine's `none`). A fifth `hub` band used to live in the
+  engine; the `27_` change-request ruling deleted it. D-B7's ATT-03 line defines a
+  "hub update" as **Record-only plus a hub-visibility flag**, so `hub_visibility` is a
+  presentation flag and A14's `"Hub"` expectation is compared on both parts. ATT-03's
+  other mappings (safe automatic retry, overdue reminders) are declared, not coded —
+  no fixture exercises them.
 - Two comparison semantics, and the split is grounded rather than convenient.
   Expectations naming a demanding band (Critical, Needs-Owner) or a specific channel
-  (Briefing, Hub) are compared for **equality**. Expectations of "None",
-  "Record-only" or a pure display surface are compared as a **ceiling** — the
-  computed band must not reach Needs-Owner — because the corpus itself uses "None"
-  that way: A11 pairs `attention: "None"` with a `"monthly digest"` receipt and a
-  forbidden entry reading literally "owner attention consumed"; S5 pairs
-  `"None (brief line only)"` with a `"Desk brief line"` receipt. Reading those as
-  equality against Record-only would contradict the fixtures' own receipts. The
-  ceiling reading is weaker than equality and is labelled as such in the output.
+  (Briefing) are compared for **equality**; a "Hub" expectation is an equality on band
+  **and** flag. Expectations of "None", "Record-only" or a pure display surface are
+  compared as a **ceiling** — the computed band must not reach Needs-Owner — because
+  the corpus itself uses "None" that way: A11 pairs `attention: "None"` with a
+  `"monthly digest"` receipt and a forbidden entry reading literally "owner attention
+  consumed"; S5 pairs `"None (brief line only)"` with a `"Desk brief line"` receipt.
+  Reading those as equality against Record-only would contradict the fixtures' own
+  receipts. The ceiling reading is weaker than equality and is labelled as such in
+  every shipped record.
+- The interrupt-policy citation is parsed twice — once engine-side, once oracle-side —
+  by functions that are currently byte-identical in body. The independence is
+  **structural** (a change to one cannot drag the other along, which is what lets the
+  judge disagree with the engine), **not diverse**: a start_state phrasing neither
+  regex matches would be invisible to both.
 
 The quarantine rule is a Builder **operationalization**: D-B6 §2.2 scopes quarantine
 to "where the governing policy requires it", and this engine hard-codes the
@@ -246,7 +257,7 @@ non-zero.
 | `skip-eligibility-check` | P2S-07 — proposals from untrusted content with no eligibility policy |
 | `normalizer-authority-leak` | E2E-1 — a substituted normalizer raises the maximum authorized action |
 
-A second layer (`mutations.py`, 60 candidate defects) exists purely to prove
+A second layer (`mutations.py`, 62 candidate defects) exists purely to prove
 predicate reachability — see "Evidence counts" above. No catalogue entry is dead:
 the runner fails if any mutation witnesses no predicate and no judge check.
 

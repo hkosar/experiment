@@ -26,6 +26,14 @@ the fixture's input fields" claim was false, and these are why):
     fixture names (dropped item / double execution / correction weight) can be
     observed at all. The action CLASS is taken from the narrative; the fact that an
     action is attempted is Builder-added.
+  * S3 `placement_scope` / `proposed_action_class` (RW-27) — the same AUT-05 inputs
+    RW-05 required on S2 and A9, and the third instance of that omission. Added when
+    the new `expected.attention` comparison failed S3; justified from
+    `normalized_input` ("'usage costs?' during design session") and `start_state`
+    (a recorded foreground focus) — an interjected question captured alongside the
+    running work is an in-subtree filing. No oracle field was consulted. THIS ENTRY
+    WAS MISSING from the R4 return's enumeration while the enumeration claimed to be
+    exhaustive; corrected per the `27_` erratum list.
   * S6 / A12 `verification_arrives` (RW-24) — the fixtures' narratives end in a
     verified consequential effect ("full typed-record chain"). The flag makes the
     action carry its own XR -> VR -> RE chain; without it the verification stage of

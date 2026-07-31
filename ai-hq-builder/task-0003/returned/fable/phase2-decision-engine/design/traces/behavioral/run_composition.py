@@ -141,11 +141,15 @@ def pc7(defect):
     routing = core.PolicyObject("routing.r", 1, "routing", 10, tier_max=core.T2)
     autonomy = core.PolicyObject("autonomy.a", 1, "autonomy", 10,
                                  ceiling=core.CEILING_ACT_WITH_RECEIPT)
-    attention = core.PolicyObject("attention.x", 1, "attention", 10, attention_min="hub")
+    # `27_` closure: was `attention_min="hub"`, a band the D-B7 §2.1 vocabulary does
+    # not contain and which the ruling deleted. Any real band exercises the same
+    # conjunction mechanism.
+    attention = core.PolicyObject("attention.x", 1, "attention", 10,
+                                  attention_min=core.ATT_NEEDS_OWNER)
     pols = [routing, autonomy] if defect else [routing, autonomy, attention]
     c = core.compose_policies(pols, at_time=NOW, envelope=OWNER_ENV)
     return c, (c.tier_max == core.T2 and c.ceiling == core.CEILING_ACT_WITH_RECEIPT
-               and c.attention_min == "hub")
+               and c.attention_min == core.ATT_NEEDS_OWNER)
 
 
 def pc9(defect):

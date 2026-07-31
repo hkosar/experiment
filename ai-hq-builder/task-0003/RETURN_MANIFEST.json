@@ -1,61 +1,70 @@
 {
-  "acceptance": "16 criteria all pass (12 + 8b + 13 + 14 + new 15); 81/81 combinations, 0 regressions; 56/56 predicates defect-reachable; 15/15 judge checks shown flippable; 0 orphaned defect switches; 0 dead mutations; expected.attention compared for 20/27 fixtures (60/81 combinations); determinism byte-identical across 10/10 outputs",
+  "acceptance": "16 criteria all pass; 81/81 combinations, 0 judged failures; 56/56 predicates defect-reachable; 15/15 judge checks shown flippable; 0 orphaned defect switches; 0 dead mutations; expected.attention compared for 22/27 fixtures (66/81 combinations), 5 unmapped, 0 unresolved; determinism byte-identical across 10/10 outputs",
   "builder": "Claude Code session, model claude-opus-5 (standing substitution, trail entry 69)",
-  "builder_delivery_record_sha256": "e2f71923719684ed369ad32994770117d64204eec30d3852c9518f5f90b36ed6",
-  "errata": "The R3 Delivery Record claimed the `tampered` confession-token disjunct was deleted; only the token was. Corrected in R4 and recorded as §1 of the R4 record.",
+  "builder_delivery_record_sha256": "1235b2e20addeec5e082a15dcbc9a2c94d43962c9e041df29160dfc0c29bd137",
+  "disclosures_carried": [
+    "the two interrupt-policy parsers are byte-identical copies: independence is structural, not diverse — a shared parsing blind spot would be invisible to both",
+    "hub's former position in the attention order is moot; the only ordering-sensitive consumer was the queue-admission threshold, now grounded in §2.1's own definition of Needs-Owner"
+  ],
+  "errata_corrected": [
+    "R4 Delivery Record §3 said four fixtures (S1,S5,S8,A11) pass under ceiling semantics; S1 passes under plain equality and the ceiling is load-bearing only for S5/S8/A11. Same section conflated 7 fixtures with 7 combinations (it was 21).",
+    "README.md 60-mutation / 60 candidate defects -> 62",
+    "scenarios.py Builder-added-stimuli enumeration omitted S3's placement_scope/proposed_action_class while claiming exhaustiveness"
+  ],
   "file_count": 28,
   "files": {
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/README.md": "cbd4245c2bf6c6244ae579e383d91dc87aba238d91aef22c7c935266b267da76",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/README.md": "62e23d77675b392d6991ed4cfb00664d031fb651a85c4df9fc6251585bda6589",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/check_anticircularity.py": "9922813714762670e9b359caf9d3002b13c8e655b9ec13e147bcb6a118af0d15",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/engine_core.py": "594048eb5239002c044270b2d0375768c1c20e042d1d324cd28c422e9f82e8fa",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/engine_core.py": "e1cc1f282af9422c94c7b3645fac2d203c6a0c02a8682a4f62263edf4b9fa488",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/events.py": "f5532a2eb9abc7e8b199753ebc7a040b2d248572e2700fbaa7cafc37516738cf",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/fixture_io.py": "2dc740cf807b8e90a404e745a4aea51af8ec3109d50f518aa135b153280b88bf",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/fold.py": "c430e241b86818c0a6c4ea73236d6a31d2a0a9b1f76411295de1b5cb18889621",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/judge.py": "8b888904890ae9e1a40bbfd4308e8f49f4b181e0224c2846012181f6f6a6e2ae",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/mutations.py": "867300b9454d8881d945b43b7852b4fb0e9a117e561bdbfdf86438798add77ac",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/oracle.py": "3c2c449570b5ee6c5843a493e68b37acd202f9e64ef6b478df1dc1cd296207ee",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/anticircularity.json": "4229a4882a9e4fcb1766ae9a960a929b27566d1832f7630c30625cf1ba0523df",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/judge.py": "392f0c4a7d8f53ce32ecf23dd9c71f7a46c9f3f8a1aa7320a36714d169eb5453",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/mutations.py": "89e284a8b8d7b2979ef9f885236ffe92b9f9f63d704e6585b82d1743b7baf645",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/oracle.py": "90e69a25ec249fdd567d0fc0150bcdca8910971d0443fd1161b50d1567a7524e",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/anticircularity.json": "9b4b841616f873b5627111e843a51bc35c6081f602b17adfb697448181d999a5",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/out/composition_cases.json": "cdb64e500d06f64e52b5798a52b3bc3183a5b3a1cf83210c44ed68d35ab2e86b",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/divergences.json": "ab62b106d00c8bf393f2c9cc3a99e9bcdd2448f667924ac73e5f28f0565bd956",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/gate_report.json": "ed9846f23589cc8b8e89ca712477f8ecce1fcbf364bb7846a208f500d6a90469",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/judgements.json": "7a80f8fc8b94db4ed5f6ffc72a74efc0f2b67144d15fa5388778c6e1d050d15a",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/divergences.json": "18f7a830b970b3b28c23751dfd28963dbdb00554c708038488a7020f360e0d06",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/gate_report.json": "78ee0b6370976021dc1dcd68cc5b69c5b8b8bb5443600f1a8ef7fae3995a56cd",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/judgements.json": "1995444b74dc6df67ddea3c51294aaab28a3754a1d46f15b3e563aaffaca8bdf",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/out/p2s05_linearization.json": "c28c84844d8129aecfcdd81f52bf22229525f0d430d68456aeb6e99deade82e3",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/p2s06_shuffle_invariance.json": "c6b35ad3ebc6496ed6a349eaa8c7518421e5ccb722d4941462ca72a071f3ae7f",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/p2s06_shuffle_invariance.json": "514ef052f541e283f6f4a66138266859b8d80c52bd65faec629b247a0c9addc3",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/out/p2s07_eligibility.json": "cb6b47b35cd78c5ccfc040cc95e88a658c4eec7d81c4482c8e26b78a811592aa",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/results.json": "0604156f8c20b023e955aead95a337bdb2ee30e34013e6bfa74bff1bde1d7a45",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/seeded_defects.json": "dc3269038ced87cf9e96d785e202e667c1b6720536e3f75300c8a0c9a6bf270a",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/results.json": "b99951adf44e484229651c6c455ef6d947a7aa3563c15a47c60cf8d2567abdbd",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/out/seeded_defects.json": "ec3c88d4146a8341bded9034535833a892a46c8b54e9d35a23dc33186db0a107",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/run_all.py": "8c0d12471542ed941e1a8d65ab1b3cc84ef0ce9f37746147a4b53a1302b53141",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/run_composition.py": "f5c53b659394fa7222b93b40cbb370e48645f84f4efa15ee34d1e6ea07057c8a",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/run_composition.py": "ad17eff001f57df8a9aa579e6f35a3000b9fb6711322df4f51cab5f9981f926d",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/run_defects.py": "8f55de47d2597152fb8d6d302b12456a127de9b2c77f6e385d59738050950ed5",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/run_gate.py": "fe058a42da4c11b0a0cc3a030a1eb5e3ca2d6906173862f42a9fb94bbcbf21f6",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/run_gate.py": "952642893d6b5bb51f8f04c3c1d3d655fd04eccbcc1617c31f38d1eb89dd0a8e",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/run_p2s05.py": "116eef985c859047d01d46a28de4d0117c837c25526ef20966847c68bf007aef",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/run_p2s07.py": "585544a9696b4452796523602ee911e0838174bba21083630f03f9e1b96aeb5a",
     "returned/fable/phase2-decision-engine/design/traces/behavioral/run_shuffle.py": "c95c424201e1ea162d1f46f3c530a2aa2a1b93da7fe64898b539ca4199f170ec",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/scenarios.py": "1882639823e61c568c78e78430e6cb54b3faa09fe63e6bbb7bb3585696d7b5ee",
-    "returned/fable/phase2-decision-engine/design/traces/behavioral/simulate.py": "a70f53975a4c060a6116ae690ef9262436d52e1830f26a075d03619484c9f03c"
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/scenarios.py": "6f155874333e3f44f91bef7ec19fe99fc957b8dd7f9c1b4ab1a5c99e7ffdf61d",
+    "returned/fable/phase2-decision-engine/design/traces/behavioral/simulate.py": "4090ff3687602496c8146f5f9d991405b825ef2e02ef39def8e440f6c79218ee"
+  },
+  "hub_ruling_applied": {
+    "A14": "SCH-02 expired path -> Record-only + hub_visibility; compares as a hub update on both parts",
+    "S7": "spoof branch -> Briefing (ceiling unchanged at record-only); compares equal to its Briefing expectation",
+    "band_vocabulary": "exactly the four D-B7 §2.1 bands — Critical, Needs-Owner, Briefing, Record-only (engine identifier `none`)",
+    "collateral": "none — the other 75 combinations are byte-identical to the R4 return",
+    "combinations_changed": 6,
+    "fifth_band_hub": "DELETED from the band position",
+    "hub_update": "Record-only band + hub_visibility presentation flag, per ATT-03"
   },
   "input_snapshot_zip_sha256": "aeb5bcf9b109dc4ba33800b40dc0f973adf4bbdd7cb482135dd95c73fbda8cc6",
-  "instruction_authority": "22_ Task Packet + 23_ R1 + 24_ R2 + 25_ R3 + 26_ R4",
+  "instruction_authority": "22_ Task Packet + 23_ R1 + 24_ R2 + 25_ R3 + 26_ R4 + 27_ CR answer & errata",
   "note": "RETURN_MANIFEST.json is a Builder-authored packaging aid with NO gate authority.",
-  "open_change_requests": [
-    "The engine carries a `hub` attention band absent from the D-B7 §2.1 vocabulary quoted in R4. S7 (expects Briefing, computes hub) and A14 (expects Hub, computes needs-owner) cannot be resolved without the document; both are reported UNRESOLVED and are NOT counted as compared.",
-    "Carried forward: the D-B5 row-level granularity limit (blanket refusal under any degradation vs D-B5's per-failure-row safe modes)."
+  "open_items": [
+    "ATT-03 trigger scope: its enumerated trigger is 'verified successful background completion' and A14 is a REFUSED run; the `27_` ruling adjudicates A14 directly, so the mapping's shape is applied to an adjacent trigger and flagged at the code site. One line from Fable settles it; A14 passes either way.",
+    "carried forward: the D-B5 row-level granularity limit"
   ],
   "parent_topic": "TOPIC-0002",
-  "reported_limits_not_defects": [
-    "expected.attention: 5 fixtures name no D-B7 §2.1 band (S10, A1, A6, A10, A16) — reported UNMAPPED, never guessed",
-    "'None'/'Record-only'/display expectations are compared as a CEILING (must not reach Needs-Owner), not an equality; grounded in the fixtures' own receipts and labelled as such in every shipped record",
-    "witness-channel check is a TRIPWIRE over known channels and write forms, not a proof — RW-25's dead disjunct sat inside the stated blind spot (a payload key is not a tripwire channel)",
-    "3 pass-rule checks are never selected by any fixture; 1 is selected but vacuous",
-    "D-B7 §3 OD-1 rule 2 is deliberately NOT implemented — no fixture exercises it, so the code would be untestable",
-    "the D-B5 degradation rule has no discriminating fixture-driven coverage; the harness self-test is the only place it is shown load-bearing"
-  ],
   "responds_to": {
-    "findings_dispositioned": "RW-25..RW-27 (all concurred, none contested)",
-    "rework_packet": "26_TASK0003_Rework_Packet_R4_P2S01_Simulator.md"
+    "document": "27_TASK0003_CR_Answer_Hub_Band.md",
+    "items": "hub-band ruling applied; S7 and A14 compared; three errata; two disclosures"
   },
-  "return": "TASK-0003 Builder return — rework cycle R4 (P2S-01 behavioral simulator)",
-  "rework_cycle": "R4",
-  "status": "reworked (R4); independent re-verification pending — no design-gate passage claimed",
+  "return": "TASK-0003 Builder return — closure micro-return C1 (P2S-01 behavioral simulator)",
+  "rework_cycle": "C1 (closure)",
+  "status": "closure return delivered; independent re-verification pending — no design-gate passage claimed",
   "task": "TASK-0003"
 }
