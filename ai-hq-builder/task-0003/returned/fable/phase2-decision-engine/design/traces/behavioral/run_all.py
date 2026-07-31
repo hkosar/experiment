@@ -17,6 +17,7 @@ import os
 import sys
 from typing import Dict, List
 
+import oracle
 import scenarios as scen
 from events import SHAPES
 from fixture_io import load_oracle, load_stimuli
@@ -69,6 +70,8 @@ def run(fixtures_path: str, out_dir: str, defects: Defects | None = None) -> Dic
             results.append({
                 "fixture": stim.id,
                 "shape": shape,
+                "authority_mapping": oracle.authority_mapping_coverage(
+                    oracle_cases[stim.id].expected),
                 "tier": res.tier,
                 "ceiling": res.ceiling,
                 "attention": res.attention,
@@ -107,6 +110,10 @@ def run(fixtures_path: str, out_dir: str, defects: Defects | None = None) -> Dic
         "forbidden_predicates_evaluated": sum(
             int(j.get("forbidden_evaluated") or 0) for j in judgements),
         "divergences": len(divergence_report),
+        "authority_mapping_mapped": sum(
+            1 for r in results if r.get("authority_mapping") == "mapped"),
+        "authority_mapping_unmapped": sum(
+            1 for r in results if r.get("authority_mapping") == "unmapped"),
     }
 
     os.makedirs(out_dir, exist_ok=True)
@@ -146,6 +153,9 @@ def main(argv: List[str]) -> int:
     print("  unclassifiable          : %d" % s["unclassifiable"])
     print("  forbidden predicates run: %d" % s["forbidden_predicates_evaluated"])
     print("  divergences computed    : %d" % s["divergences"])
+    print("  expected.authority      : %d mapped / %d unmapped (of %d combinations)"
+          % (s["authority_mapping_mapped"], s["authority_mapping_unmapped"],
+             s["combinations_computed"]))
 
     if s["failures"]:
         print("\nFAILING COMBINATIONS:")

@@ -1,5 +1,38 @@
 {
+  "falsifier": [
+    {
+      "clean_passed": true,
+      "defect_passed": false,
+      "discriminates": true,
+      "trace": "1-policy-before-lease"
+    },
+    {
+      "clean_passed": true,
+      "defect_passed": false,
+      "discriminates": true,
+      "trace": "2-lease-before-policy"
+    },
+    {
+      "clean_passed": true,
+      "defect_passed": false,
+      "discriminates": true,
+      "trace": "3-policy-after-provider-acceptance"
+    },
+    {
+      "clean_passed": true,
+      "defect_passed": false,
+      "discriminates": true,
+      "trace": "4-lease-expiry"
+    },
+    {
+      "clean_passed": true,
+      "defect_passed": false,
+      "discriminates": true,
+      "trace": "5-uncertain-provider-response"
+    }
+  ],
   "summary": {
+    "discriminating": 5,
     "failed": 0,
     "passed": 5,
     "traces": 5
@@ -25,26 +58,35 @@
       "in_flight_recorded": true,
       "passed": true,
       "prevention_claimed": false,
+      "receipt": {
+        "epoch": 1,
+        "externally_owned": true,
+        "receipt_id": "rcpt-lease-2"
+      },
       "reconciliation_notes_epoch": true,
       "sequence": [
         "LeaseAcquire:lease-2@E1",
-        "PolicyVersionEvent:stricter-filing@E2"
+        "PolicyVersionEvent:stricter-filing@E2",
+        "ProviderSubmit:lease-2@E1",
+        "ProviderAccepted:lease-2"
       ],
       "trace": "2-lease-before-policy"
     },
     {
       "expectation": "executed action is a historical fact + receipt; policy governs future only",
       "history_rewritten": false,
-      "kill_path_is_urgent_cancellation": true,
       "passed": true,
       "policy_governs_future_only": true,
+      "provider_accepted": true,
       "receipt": {
+        "epoch": 1,
         "externally_owned": true,
-        "provider_accepted": true,
-        "receipt_id": "rcpt-3"
+        "receipt_id": "rcpt-lease-3"
       },
       "sequence": [
         "LeaseAcquire:lease-3@E1",
+        "ProviderSubmit:lease-3@E1",
+        "ProviderAccepted:lease-3",
         "PolicyVersionEvent:stricter-filing@E2"
       ],
       "trace": "3-policy-after-provider-acceptance"
@@ -68,7 +110,6 @@
       "trace": "4-lease-expiry"
     },
     {
-      "auto_retry_attempted": false,
       "engine_marked_executed": false,
       "expectation": "halt, Needs Review, reconcile before any retry (ACT-01)",
       "halted": true,
@@ -78,8 +119,13 @@
         "receipt": null
       },
       "passed": true,
+      "retry_allowed_after_reconcile": true,
+      "retry_allowed_before_reconcile": false,
       "sequence": [
-        "LeaseAcquire:lease-5@E1"
+        "LeaseAcquire:lease-5@E1",
+        "ProviderSubmit:lease-5@E1",
+        "ProviderUncertain:lease-5",
+        "Reconcile:lease-5"
       ],
       "trace": "5-uncertain-provider-response"
     }

@@ -113,15 +113,21 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
         acts = [e for e in result.events if e.event_type == "ActionRequest"]
         executed = list(result.folded.executed_actions) if result.folded else []
         if exp_auth in ("none", "read-only"):
-            # Assert no action authority was exercised and no outbound was authorized.
-            ok = not acts and not executed and not result.outbound_authorized
+            # Authority EXERCISED means an action actually executed, or an
+            # un-halted action request was authorized. Pre-existing in-flight work
+            # that the scenario's own event halts is not authority exercised — it is
+            # the premise the halt acts on (A15's active T2 batch).
+            halted = {str(e.payload.get("halted_action")) for e in result.events
+                      if e.event_type == "RefusalEvent" and e.payload.get("halted_action")}
+            live_acts = [e for e in acts if e.event_id not in halted]
+            ok = not live_acts and not executed and not result.outbound_authorized
             j.check_results["expected_authority_exercised"] = ok
             if not ok:
                 j.passed = False
                 j.failures.append(
-                    "expected '%s' authority but computed %d ActionRequest(s), %d executed, "
-                    "outbound_authorized=%s"
-                    % (exp_auth, len(acts), len(executed), result.outbound_authorized))
+                    "expected '%s' authority but computed %d live ActionRequest(s), "
+                    "%d executed, outbound_authorized=%s"
+                    % (exp_auth, len(live_acts), len(executed), result.outbound_authorized))
         elif exp_auth == "suspended":
             # Authority is asserted to be reduced: the computed ceiling must sit
             # strictly below act-with-receipt, and nothing consequential may execute.
@@ -193,12 +199,16 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
             j.passed = False
             j.failures.append("pass-rule check failed: %s" % check)
 
-    # required_evidence — the computed basis must carry evidence of the named kinds.
+    # required_evidence — the computed basis must carry evidence of the NAMED kinds
+    # (RW-10: `len(events) > 0` was materially weaker than the requirement).
     if oc.required_evidence:
-        have_events = len(result.events) > 0
-        j.check_results["required_evidence_basis"] = have_events
-        if not have_events:
+        present, missing = oracle.match_required_evidence(oc.required_evidence, result)
+        j.check_results["required_evidence_kinds"] = not missing
+        j.notes.append("required_evidence matched %d/%d named kinds"
+                       % (len(present), len(oc.required_evidence)))
+        if missing:
             j.passed = False
-            j.failures.append("no computed evidence basis for required_evidence")
+            j.failures.append("required evidence kind(s) absent from the computed basis: %s"
+                              % ", ".join(missing))
 
     return j

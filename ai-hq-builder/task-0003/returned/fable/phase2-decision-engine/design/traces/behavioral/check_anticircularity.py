@@ -30,7 +30,11 @@ from typing import Dict, List
 HERE = os.path.dirname(os.path.abspath(__file__))
 
 # Modules that compute candidate behavior. These may never touch oracle data.
-ENGINE_MODULES = ("engine_core.py", "events.py", "fold.py", "scenarios.py", "simulate.py")
+# `mutations.py` is included: it perturbs computed results and must be as
+# oracle-blind as the engine itself, or a mutation could be tuned to a
+# fixture's expected answer.
+ENGINE_MODULES = ("engine_core.py", "events.py", "fold.py", "scenarios.py",
+                  "simulate.py", "mutations.py")
 # Modules permitted to read oracle data.
 ORACLE_MODULES = ("oracle.py", "judge.py")
 # The boundary module: declares both views, hands out only Stimulus to the engine.

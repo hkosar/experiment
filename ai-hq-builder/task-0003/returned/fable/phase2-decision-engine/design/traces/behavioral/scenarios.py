@@ -7,6 +7,22 @@ Every entry is derived ONLY from the fixture's `normalized_input`, `start_state`
 
 This is the "structured stimulus" the Task Packet authorizes the Builder to author:
 a mechanical encoding of the narrative into parameters the engine can compute over.
+
+HONEST SOURCING NOTE (rework finding RW-05). The `derived` dict holds TWO different
+kinds of value, and the earlier version of this docstring wrongly implied all of them
+were D-B2 §2.3 computed fields. They are not:
+
+  * D-B2 §2.3 computed fields — exactly `domain`, `aging`, `blocking`. Only these are
+    "deterministic derived fields" in the design's sense.
+  * Builder-authored encodings of narrative facts — everything else (e.g.
+    `read_only_view`, `foreground_focus`, `prior_capture_exists`). These are honest
+    transcriptions of the fixture's prose, not computed anything, and a reviewer
+    should treat them as the hand-authored layer they are.
+
+`routine_filing` USED to be a hand-authored flag here that directly decided S2's
+T2-vs-T3 tier. It has been removed: the engine now computes routine-filing
+eligibility from the placement scope and action class per D-B6 AUT-05, so the tier
+discriminator is derived from stimulus facts rather than asserted.
 """
 
 from __future__ import annotations
@@ -39,6 +55,33 @@ class RequestedAction:
     receipt_arrives: bool = True
     receipt_kind: str = "receipt"     # receipt | verification
     external_receipt: bool = True     # False models an engine-authored receipt (defect)
+
+
+@dataclass(frozen=True)
+class AccomplishedAction:
+    """An external side effect that ALREADY FIRED before the scenario window.
+
+    This is not a request the engine may refuse — it is an accomplished fact the
+    engine must reconcile (RW-01). A7's input side states "external call fired;
+    death before receipt recorded", which is exactly this shape.
+    """
+
+    action_id: str
+    action_class: str
+    idempotency_key: bool = True
+    receipt_recorded: bool = False    # False => outcome uncertain (ACT-01 §2.3 rule 5)
+
+
+@dataclass(frozen=True)
+class InFlightAction:
+    """Work already authorized and executing when the scenario event lands.
+
+    A15's "kill during an active T2 batch" requires in-flight work for the kill to
+    halt and list; without it the halt assertions are vacuous (RW-06).
+    """
+
+    action_id: str
+    action_class: str = "filing-routing"
 
 
 @dataclass(frozen=True)
@@ -77,6 +120,16 @@ class ScenarioSpec:
     correction_requested: bool = False
     policy_conflict: bool = False
     two_normalizers: bool = False
+    # --- input-side facts restored per rework findings RW-01 / RW-05 / RW-06 ---
+    accomplished_actions: Tuple[AccomplishedAction, ...] = ()   # RW-01 (A7)
+    in_flight_actions: Tuple[InFlightAction, ...] = ()          # RW-06 (A15)
+    notification_preview: bool = False                          # RW-06 (A13)
+    od1_policy_pending: bool = False                            # RW-06 (A8)
+    policy_version_dispute: bool = False                        # RW-06 (A4)
+    hearsay_attribution: Optional[str] = None                   # RW-05 (S2)
+    owner_step_up_provided: bool = False    # RW-02: let the consequential chain run
+    placement_scope: Optional[str] = None   # in-subtree | cross-subtree  (D-B6 AUT-05)
+    proposed_action_class: Optional[str] = None                 # RW-05 (S2)
     notes: str = ""
 
 
@@ -91,20 +144,31 @@ FLOOR_RESTRICTED_RENDER = PolicyObject(
     priority=100, protection_floor=True, floor_class="security",
     render_class="masked-metadata+deep-link", attention_min="needs-owner",
 )
+# D-B8 P2G-10 rule 5: autonomy owns action authorization (`ceiling`); routing owns
+# the tier recommendation (`tier_max`). One policy object may not write both, so the
+# OD-2 starting-autonomy decision is expressed as a matched pair.
 AUTONOMY_FILING = PolicyObject(
     policy_id="autonomy.filing-routing", version=1, authority_domain="autonomy",
-    priority=50, ceiling=CEILING_ACT_WITH_RECEIPT, tier_max=T2,
+    priority=50, ceiling=CEILING_ACT_WITH_RECEIPT,
+)
+ROUTING_FILING_T2 = PolicyObject(
+    policy_id="routing.filing-routing", version=1, authority_domain="routing",
+    priority=50, tier_max=T2,
 )
 ROUTING_DEFAULT = PolicyObject(
     policy_id="routing.default", version=1, authority_domain="routing", priority=10,
 )
-# A4: two policy versions both claim effect, same domain + same output, equal priority.
-ROUTING_CONFLICT_A = PolicyObject(
-    policy_id="routing.conflict-a", version=1, authority_domain="routing", priority=50,
+# A4 (RW-06): the fixture says "two policy VERSIONS claim effect" — a stale-version
+# dispute over ONE policy identity, not two competing policies. Encoded as v1 and v2
+# of the same policy_id at equal priority so the forbidden "silent newest-wins"
+# outcome is constructible: picking v2 because it is newer is exactly the failure
+# mode, and the composite must instead fail closed (D-B8 §5 layer 4 / ALT-3).
+ROUTING_DISPUTED_V1 = PolicyObject(
+    policy_id="routing.filing", version=1, authority_domain="routing", priority=50,
     tier_max=T1,
 )
-ROUTING_CONFLICT_B = PolicyObject(
-    policy_id="routing.conflict-b", version=2, authority_domain="routing", priority=50,
+ROUTING_DISPUTED_V2 = PolicyObject(
+    policy_id="routing.filing", version=2, authority_domain="routing", priority=50,
     tier_max=T3,
 )
 
@@ -127,8 +191,14 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     # "one owner note containing three intents" / "no related open cases"
     "S2": ScenarioSpec(
         fixture_id="S2", intents=3,
-        derived={"routine_filing": True, "related_open_cases": 0},
-        policies=(ROUTING_DEFAULT, AUTONOMY_FILING),
+        # RW-05: no hand-authored `routine_filing`. The engine computes routine-filing
+        # eligibility from placement scope + action class per D-B6 AUT-05.
+        derived={"related_open_cases": 0},
+        placement_scope="in-subtree", proposed_action_class="filing-routing",
+        # "quoting Cole's mention" — attributed hearsay carried on the input side, so
+        # the provenance-marks-hearsay behaviour is exercisable rather than vacuous.
+        hearsay_attribution="Cole (third-party mention, unverified)",
+        policies=(ROUTING_DEFAULT, AUTONOMY_FILING, ROUTING_FILING_T2),
         actions=(
             RequestedAction("act-S2-1", "filing-routing"),
             RequestedAction("act-S2-2", "filing-routing"),
@@ -165,9 +235,16 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     "S6": ScenarioSpec(
         fixture_id="S6",
         derived={"harness_evidence_present": True},
+        # RW-02: "owner taps Approve" is the step-up being completed. Without it the
+        # action was refused and the whole consequential lifecycle — the thing this
+        # fixture exists to exercise — never ran.
+        owner_step_up_provided=True,
         policies=(ROUTING_DEFAULT,),
-        actions=(RequestedAction("act-S6-deploy", "deploy", receipt_kind="verification"),),
-        notes="T4 consequential; step-up pending in envelope until satisfied",
+        actions=(
+            RequestedAction("act-S6-deploy", "deploy", receipt_kind="receipt"),
+            RequestedAction("act-S6-verify", "deploy", receipt_kind="verification"),
+        ),
+        notes="T4 consequential: approve -> execute -> external receipt -> verification",
     ),
 
     # "6 inbound emails incl. 1 spoof" / read-only stage active
@@ -232,15 +309,20 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
 
     # "routing needed; two policy versions claim effect" / policy conflict present
     "A4": ScenarioSpec(
-        fixture_id="A4", policy_conflict=True,
-        policies=(ROUTING_CONFLICT_A, ROUTING_CONFLICT_B),
-        notes="equal-priority same-domain same-output contradiction -> fail closed",
+        fixture_id="A4", policy_conflict=True, policy_version_dispute=True,
+        policies=(ROUTING_DISPUTED_V1, ROUTING_DISPUTED_V2),
+        notes="two VERSIONS of one policy claim effect; newest-wins is the "
+              "disallowed outcome, fail-closed T3 is required",
     ),
 
     # "same source webhook delivered twice" / source provides native event ID
     "A5": ScenarioSpec(
         fixture_id="A5", duplicate_delivery=True, native_event_id=True,
-        policies=(ROUTING_DEFAULT,),
+        policies=(ROUTING_DEFAULT, AUTONOMY_FILING, ROUTING_FILING_T2),
+        placement_scope="in-subtree", proposed_action_class="filing-routing",
+        # RW-02: the hazard is a duplicate delivery causing a SECOND execution or a
+        # second owner card. Both need an action to exist in the first place.
+        actions=(RequestedAction("act-A5-file", "filing-routing"),),
         notes="both appends succeed; dedup post-intake; no double-case, no drop",
     ),
 
@@ -256,13 +338,23 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
         fixture_id="A7", worker_died=True, side_effect_before_death=True,
         idempotency_key=True,
         policies=(ROUTING_DEFAULT,),
-        actions=(RequestedAction("act-A7-external", "outbound", receipt_arrives=False),),
+        # RW-01: "external call fired; death before receipt recorded" is an
+        # ACCOMPLISHED FACT, not a request the engine may refuse. Encoding it as a
+        # RequestedAction let the engine refuse it, so the ACT-01 halt / Needs-Review
+        # / reconcile-before-retry path never executed while the case reported pass.
+        accomplished_actions=(
+            AccomplishedAction("act-A7-external", "outbound",
+                               idempotency_key=True, receipt_recorded=False),
+        ),
         notes="ACT-01 uncertain outcome: halt, Needs Review, reconcile before retry",
     ),
 
     # "simultaneous: watchdog-confirmed system death; large non-urgent email"
     "A8": ScenarioSpec(
         fixture_id="A8", quiet_hours=True,
+        # RW-06: start_state "quiet hours active; OD-1 policy PENDING" — the interrupt
+        # policy is not yet approved, so critical interruption cannot rest on it.
+        od1_policy_pending=True,
         policies=(FLOOR_UNTRUSTED, ROUTING_DEFAULT),
         notes="critical reserved for the watchdog-confirmed death; email is not critical",
     ),
@@ -270,8 +362,9 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     # "T2 filed to wrong topic; owner taps [Move it]"
     "A9": ScenarioSpec(
         fixture_id="A9", correction_requested=True,
-        derived={"routine_filing": True},
-        policies=(ROUTING_DEFAULT, AUTONOMY_FILING),
+        derived={},
+        placement_scope="in-subtree", proposed_action_class="filing-routing",
+        policies=(ROUTING_DEFAULT, AUTONOMY_FILING, ROUTING_FILING_T2),
         actions=(RequestedAction("act-A9-file", "filing-routing"),),
         notes="COR-01 correction preserves the original; weak evidence only",
     ),
@@ -279,6 +372,11 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     # "canonical DB or evidence store unavailable"
     "A10": ScenarioSpec(
         fixture_id="A10", degraded_stores=("canonical", "evidence"),
+        # RW-10/RW-02: the degraded ladder is capture-only -> read-only -> REFUSE
+        # consequential. Without an attempted consequential action there is no
+        # refusal record and the "acting without evidence store" hazard is vacuous.
+        actions=(RequestedAction("act-A10-consequential", "payment",
+                                 receipt_arrives=False),),
         policies=(ROUTING_DEFAULT,),
         notes="degraded stores -> capture preserved, authority reduced, no silent success",
     ),
@@ -296,14 +394,25 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
         fixture_id="A12",
         # sensitivity_class=financial-restricted, data_class=payment-affecting
         # => the DAT-01/02 render floor applies alongside the consequential chain.
+        # RW-02: the fixture is the FULL lifecycle, so the step-up completes and the
+        # execute -> receipt -> verify chain runs; previously the action was refused
+        # and every lifecycle predicate on this fixture was vacuous.
+        owner_step_up_provided=True, notification_preview=True,
         policies=(FLOOR_RESTRICTED_RENDER, ROUTING_DEFAULT),
-        actions=(RequestedAction("act-A12-pay", "payment", receipt_kind="verification"),),
-        notes="full consequential lifecycle; step-up required before any external effect",
+        actions=(
+            RequestedAction("act-A12-pay", "payment", receipt_kind="receipt"),
+            RequestedAction("act-A12-verify", "payment", receipt_kind="verification"),
+        ),
+        notes="full consequential lifecycle; step-up gates the external effect",
     ),
 
     # "T3 card involves restricted-class content (customer PII); notification preview"
     "A13": ScenarioSpec(
         fixture_id="A13",
+        # RW-06: "phone notification preview generated" — a second, stricter
+        # enforcement point (D-B2 P2G-13 §6). Without it the notify surface was
+        # unexercisable and the leak predicate vacuous.
+        notification_preview=True,
         policies=(FLOOR_RESTRICTED_RENDER, ROUTING_DEFAULT),
         notes="DAT-02: masked metadata + deep link; preview stricter than in-channel",
     ),
@@ -318,6 +427,12 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     # "owner triggers IDN-03 kill during an active T2 batch"
     "A15": ScenarioSpec(
         fixture_id="A15", kill_triggered=True,
+        # RW-06: "kill during an ACTIVE T2 BATCH" — without in-flight work, "zero
+        # actions execute after kill" and "in-flight T2 halted" are vacuously true.
+        in_flight_actions=(
+            InFlightAction("act-A15-batch-1"), InFlightAction("act-A15-batch-2"),
+            InFlightAction("act-A15-batch-3"),
+        ),
         policies=(ROUTING_DEFAULT,),
         notes="kill outranks everything; emergency read-only remains",
     ),

@@ -6,13 +6,15 @@
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S1",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -23,13 +25,15 @@
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S1",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -40,13 +44,15 @@
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S1",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -55,13 +61,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -70,13 +78,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -85,13 +95,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -101,13 +113,15 @@
         "causal_order": true,
         "pass_rule:receipt_required": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S3",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -117,13 +131,15 @@
         "causal_order": true,
         "pass_rule:receipt_required": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S3",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -133,13 +149,15 @@
         "causal_order": true,
         "pass_rule:receipt_required": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S3",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -148,13 +166,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S4",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -163,13 +183,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S4",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -178,13 +200,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S4",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -193,13 +217,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S5",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -208,13 +234,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S5",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -223,13 +251,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S5",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -239,13 +269,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S6",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -255,13 +287,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S6",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -271,13 +305,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S6",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -288,13 +324,15 @@
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -305,13 +343,15 @@
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -322,13 +362,15 @@
         "expected_authority_exercised": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -338,13 +380,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -354,13 +398,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -370,13 +416,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -385,13 +433,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -400,13 +450,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -415,13 +467,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -430,13 +484,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -445,13 +501,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -460,13 +518,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "S10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -477,13 +537,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A1",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -494,13 +556,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A1",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -511,13 +575,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A1",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -527,13 +593,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -543,13 +611,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -559,13 +629,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A2",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -576,13 +648,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A3",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -593,13 +667,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A3",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -610,13 +686,15 @@
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A3",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -626,13 +704,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A4",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -642,13 +722,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A4",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -658,13 +740,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A4",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -674,13 +758,15 @@
         "causal_order": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A5",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -690,13 +776,15 @@
         "causal_order": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A5",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -706,13 +794,15 @@
         "causal_order": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A5",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -722,13 +812,15 @@
         "causal_order": true,
         "pass_rule:conflict_recorded": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A6",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -738,13 +830,15 @@
         "causal_order": true,
         "pass_rule:conflict_recorded": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A6",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -754,13 +848,15 @@
         "causal_order": true,
         "pass_rule:conflict_recorded": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A6",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -769,13 +865,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -784,13 +882,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -799,13 +899,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A7",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -814,13 +916,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -829,13 +933,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -844,13 +950,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A8",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -859,13 +967,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -874,13 +984,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -889,13 +1001,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A9",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -905,13 +1019,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -921,13 +1037,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -937,13 +1055,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A10",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -953,13 +1073,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A11",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -969,13 +1091,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A11",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -985,13 +1109,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A11",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1002,13 +1128,15 @@
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A12",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1019,13 +1147,15 @@
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A12",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1036,13 +1166,15 @@
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A12",
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1051,13 +1183,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A13",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1066,13 +1200,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A13",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1081,13 +1217,15 @@
       "checks": {
         "causal_order": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A13",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1097,13 +1235,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A14",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1113,13 +1253,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A14",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1129,13 +1271,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A14",
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1145,13 +1289,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A15",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1161,13 +1307,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A15",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1177,13 +1325,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A15",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1193,13 +1343,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A16",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1209,13 +1361,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A16",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1225,13 +1379,15 @@
         "causal_order": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "A16",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
@@ -1241,13 +1397,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "E2E-1",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S1",
       "unclassifiable": null
@@ -1257,13 +1415,15 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "E2E-1",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S2",
       "unclassifiable": null
@@ -1273,19 +1433,23 @@
         "causal_order": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
-        "required_evidence_basis": true
+        "required_evidence_kinds": true
       },
       "failures": [],
       "fixture": "E2E-1",
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
-      "notes": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
       "passed": true,
       "shape": "S3",
       "unclassifiable": null
     }
   ],
   "summary": {
+    "authority_mapping_mapped": 36,
+    "authority_mapping_unmapped": 45,
     "combinations_computed": 81,
     "combinations_expected": 81,
     "divergences": 81,

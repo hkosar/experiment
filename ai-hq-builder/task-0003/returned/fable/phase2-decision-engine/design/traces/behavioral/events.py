@@ -29,6 +29,11 @@ PHASE_FACTS = 2
 PHASE_DERIVATIONS = 3
 
 STORE_PRIORITY: Dict[str, int] = {
+    # D-B9 P2G-11 row 9: the control-service journal is an EXTERNAL store, mirrored
+    # into the event log on reconnect. It is ordered ahead of the engine's own
+    # control plane because kill efficacy never depends on the engine log
+    # (D-KR §1.4) — this extends the declared list rather than reordering it.
+    "control-journal": -1,
     "policy": 0,
     "identity": 1,
     "schedule": 2,
@@ -53,8 +58,10 @@ EVENT_STORE_PHASE: Dict[str, Tuple[str, int]] = {
     "EvidenceIngestionEvent": ("evidence", PHASE_FACTS),
     "RecordedModelOutput": ("model-output", PHASE_FACTS),
     # phase 3 — derivations (canonical)
-    "NormalizationRecord": ("canonical", PHASE_DERIVATIONS),
-    "RecommendationRecord": ("canonical", PHASE_DERIVATIONS),
+    # D-B9 P2S-06: recorded model outputs are phase-2 facts (RecordedModelOutput
+    # family), never regenerated and never phase-3 derivations.
+    "NormalizationRecord": ("model-output", PHASE_FACTS),
+    "RecommendationRecord": ("model-output", PHASE_FACTS),
     "PolicyEvaluationRecord": ("canonical", PHASE_DERIVATIONS),
     "DecisionEvent": ("canonical", PHASE_DERIVATIONS),
     "OverrideEvent": ("canonical", PHASE_DERIVATIONS),
@@ -77,7 +84,8 @@ EVENT_STORE_PHASE: Dict[str, Tuple[str, int]] = {
     "QueueAdmissionEvent": ("canonical", PHASE_DERIVATIONS),
     "CostEvidenceRecord": ("canonical", PHASE_DERIVATIONS),
     "EconomicReviewEvent": ("canonical", PHASE_DERIVATIONS),
-    "KillCommandEvent": ("policy", PHASE_CONTROL),
+    "KillCommandEvent": ("control-journal", PHASE_CONTROL),
+    "KillReceiptEvent": ("control-journal", PHASE_CONTROL),
 }
 
 # D-B9 P2G-11: the evidence store is ingestion-only, never engine-authored.
@@ -109,15 +117,21 @@ class Event:
     def sort_key(self) -> Tuple[int, int, str, str, int]:
         """D-B9 P2S-06 total deterministic tie-break.
 
-        fold phase -> store priority -> partition/object key (lexicographic) -> store sequence.
+        fold phase -> store priority -> partition/object key (lexicographic) -> sequence.
         Every component is recorded data: no wall-clock, no arrival nondeterminism.
+
+        For intake events the declared ordering key is `(intake_partition, ingest_seq)`
+        (D-B9 P2S-06 table), so `ingest_seq` is the sequence component there; every
+        other family uses its store sequence.
         """
+        sequence = self.ingest_seq if (self.store == "intake" and self.ingest_seq is not None) \
+            else self.store_seq
         return (
             self.phase,
             STORE_PRIORITY[self.store],
             self.partition,
             self.object_key,
-            self.store_seq,
+            sequence,
         )
 
 

@@ -71,6 +71,7 @@ hits rather than false positives.
 | Module | Role | Side |
 | --- | --- | --- |
 | `fixture_io.py` | loads fixtures; enforces the input/oracle split | boundary |
+| `mutations.py` | candidate-defect catalogue that proves each predicate can fire | engine-side |
 | `engine_core.py` | envelope authority (D-B2 §3), policy composition (D-B8 P2G-10), tier function (D-B6 §2.2) | engine |
 | `events.py` | event taxonomy, store-ownership matrix, ordering keys/phases (D-B9), the three shapes | engine |
 | `fold.py` | deterministic causal-topological replay fold (D-B9 P2S-06) | engine |
@@ -95,6 +96,41 @@ in storage layout and projection mechanics, which is where the shapes actually d
 S3's read path depends on separately materialized projections and so carries a
 freshness obligation that S1 and S2 do not.
 
+## Evidence counts — read these honestly
+
+The R1 rework replaced a padded headline with a measured one. `run_defects.py`
+searches a **51-mutation candidate-defect catalogue** for a defect that makes each
+forbidden predicate return True, and reports the result per predicate:
+
+| Figure | Meaning |
+| --- | --- |
+| 171 predicate evaluations | evaluations performed across the 81 combinations |
+| 56 distinct predicates | the corpus's distinct `forbidden` phrases |
+| **56 defect-reachable** | each has a named witness defect that makes it fire |
+| **0 NOT-EVALUABLE** | none is counted as evidence without being able to discriminate |
+
+The first delivery reported "171 predicates evaluated" while only **5 of 56** could
+ever fire — roughly 90% of the figure was padding. If a predicate ever becomes
+unreachable again, `run_defects.py` reports it as `NOT-EVALUABLE` **with rationale**
+and excludes it from the counts. An honest smaller number beats a padded larger one.
+
+The same rule applies to the P2S-05 traces: three of five previously asserted literal
+constants and could not fail. Every trace verdict is now computed from the
+`PolicyPlane`/lease/receipt objects the trace manipulates, and each is proven to flip
+under a seeded defect in its own mechanism (`falsifier` block in
+`out/p2s05_linearization.json`).
+
+## Declared NOT-SIMULATED
+
+Listed so no coverage is implied that is not exercised (`not_simulated` in
+`out/gate_report.json`). Everything not listed is implemented and exercised:
+
+- D-B8 `conflict_behavior` — schema field carried, not used as a resolution input.
+- D-B8 `rollback_pointer` / PC-5 rollback-vs-history — no fixture generates a rollback.
+- D-B8 `schema_compat` gating — the corpus has one schema version (SV-1).
+- Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.
+- Live DP-001 ack-latency measurement — a build-gate obligation, not a design one.
+
 ## Seeded-defect falsifier suite
 
 `run_defects.py` seeds each defect, re-runs all 81 combinations, and requires each to
@@ -113,6 +149,9 @@ non-zero.
 | `skip-eligibility-check` | P2S-07 — proposals from untrusted content with no eligibility policy |
 | `normalizer-authority-leak` | E2E-1 — a substituted normalizer raises the maximum authorized action |
 
+A second layer (`mutations.py`, 51 candidate defects) exists purely to prove
+predicate reachability — see "Evidence counts" above.
+
 ## Outputs
 
 | File | Contents |
@@ -120,7 +159,7 @@ non-zero.
 | `out/results.json` | computed result per fixture x shape: tier, ceiling, attention, events, executed/verified, fold digest, reasons |
 | `out/judgements.json` | pass/fail per combination with every forbidden predicate evaluated |
 | `out/divergences.json` | candidate-specific divergences |
-| `out/seeded_defects.json` | falsifier proof — which combinations each defect flipped |
+| `out/seeded_defects.json` | falsifier proof + per-predicate reachability with named witnesses |
 | `out/p2s06_shuffle_invariance.json` | digests across seeded permutations |
 | `out/p2s05_linearization.json` | the five policy/lease traces |
 | `out/p2s07_eligibility.json` | negative and positive eligibility tests |
@@ -135,6 +174,11 @@ non-zero.
 - The scenario encodings translate each fixture's prose narrative into structured
   parameters. That translation is Builder-authored mechanical encoding, and it is the
   layer most worth reviewer scrutiny: a mis-encoded stimulus would produce a confidently
-  wrong computed result. Each entry quotes the fixture text it derives from.
+  wrong computed result. Each entry quotes the fixture text it derives from. The R1
+  rework corrected six of them (A7, S2, A4, A8, A13, A15) where dropped or reshaped
+  input-side facts had made the fixture's central hazard untestable.
+- `scenarios.py`'s `derived` dict mixes D-B2 §2.3 computed fields (`domain`, `aging`,
+  `blocking`) with Builder-authored encodings of narrative facts. Its module docstring
+  says which is which; do not read the whole dict as "derived" in the design's sense.
 - The engine models the design rules as specified in the hash-bound sources; it is not
   an implementation of the Decision Engine and makes no claim to be.

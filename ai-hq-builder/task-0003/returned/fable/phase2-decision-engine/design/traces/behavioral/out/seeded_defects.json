@@ -3,7 +3,6 @@
     {
       "defect": "authority-raise",
       "effective": true,
-      "errors": [],
       "flipped": [
         "A2/S1",
         "A2/S2",
@@ -15,22 +14,29 @@
     {
       "defect": "dropped-receipt",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S2/S1",
         "S2/S2",
         "S2/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
         "A9/S1",
         "A9/S2",
-        "A9/S3"
+        "A9/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3"
       ],
-      "flipped_count": 6,
-      "witnesses": "drops a receipt — an action's external ExecutionReceipt never arrives"
+      "flipped_count": 15,
+      "witnesses": "drops a receipt — the action still advances to executed with no evidence"
     },
     {
       "defect": "causal-reorder",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S1/S1",
         "S1/S2",
@@ -115,12 +121,11 @@
         "E2E-1/S3"
       ],
       "flipped_count": 81,
-      "witnesses": "reorders a causal event — the fold stops enforcing caused_by topology"
+      "witnesses": "reorders a causal event — delivery permuted and the topological sort disabled"
     },
     {
       "defect": "forbidden-outcome-admission",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S1/S1",
         "S1/S2",
@@ -132,32 +137,38 @@
     {
       "defect": "stale-projection",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S1/S3"
       ],
       "flipped_count": 1,
-      "witnesses": "produces a stale projection — S3 projections are not rebuilt after events"
+      "witnesses": "produces a stale projection — S3 projections are not rebuilt"
     },
     {
       "defect": "engine-authored-receipt",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S2/S1",
         "S2/S2",
         "S2/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
         "A9/S1",
         "A9/S2",
-        "A9/S3"
+        "A9/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3"
       ],
-      "flipped_count": 6,
+      "flipped_count": 15,
       "witnesses": "breaks external-receipt ownership — the engine authors its own evidence"
     },
     {
       "defect": "skip-eligibility-check",
       "effective": true,
-      "errors": [],
       "flipped": [
         "S7/S1",
         "S7/S2",
@@ -173,12 +184,11 @@
         "E2E-1/S3"
       ],
       "flipped_count": 12,
-      "witnesses": "P2S-07 — proposals emitted from untrusted content with no eligibility policy"
+      "witnesses": "P2S-07 — proposals from untrusted content with no eligibility policy"
     },
     {
       "defect": "normalizer-authority-leak",
       "effective": true,
-      "errors": [],
       "flipped": [
         "E2E-1/S1",
         "E2E-1/S2",
@@ -188,10 +198,466 @@
       "witnesses": "E2E-1 — a substituted normalizer raises the maximum authorized action"
     }
   ],
+  "not_evaluable": [],
+  "predicate_reachability": {
+    "acting without evidence store": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A10"
+      ],
+      "witness": "acting-while-degraded@A10/S1"
+    },
+    "any action on channel trust alone": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A1"
+      ],
+      "witness": "channel-trust-action@A1/S1"
+    },
+    "any authority/action effect from the embedded instruction": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A2"
+      ],
+      "witness": "authority-raise@A2/S1"
+    },
+    "any post-kill action execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A15"
+      ],
+      "witness": "post-kill-action@A15/S1"
+    },
+    "approval without step-up": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "step-up-never-completed@S6/S1"
+    },
+    "attention relaxed below policy floor by model output": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "E2E-1"
+      ],
+      "witness": "attention-relax@E2E-1/S1"
+    },
+    "auto-retry pre-reconciliation": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A7"
+      ],
+      "witness": "drop-reconciliation@A7/S1"
+    },
+    "capture loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A10"
+      ],
+      "witness": "capture-loss-on-degrade@A10/S1"
+    },
+    "case per newsletter": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A11"
+      ],
+      "witness": "extra-placement@A11/S1"
+    },
+    "classification question for unambiguous items (DP-001)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S2"
+      ],
+      "witness": "escalate-routine@S2/S1"
+    },
+    "completed child rendered as clutter": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S10"
+      ],
+      "witness": "clutter-completed-child@S10/S1"
+    },
+    "correction silently becoming policy": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A9"
+      ],
+      "witness": "correction-becomes-policy@A9/S1"
+    },
+    "default-to-trusted": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A3"
+      ],
+      "witness": "authority-raise@A3/S1"
+    },
+    "double execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A5"
+      ],
+      "witness": "double-execution@A5/S1"
+    },
+    "drafting/sending in read-only stage": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S7"
+      ],
+      "witness": "authority-raise@S7/S1"
+    },
+    "dropped item": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S2"
+      ],
+      "witness": "drop-placement@S2/S1"
+    },
+    "duplicate owner card": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A5"
+      ],
+      "witness": "duplicate-queue-card@A5/S1"
+    },
+    "email interrupting sleep": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A8"
+      ],
+      "witness": "wake-on-routine@A8/S1"
+    },
+    "engine marks executed": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A7"
+      ],
+      "witness": "engine-authored-receipt@A7/S1"
+    },
+    "engine self-marks executed/verified": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "engine-authored-receipt@A12/S1"
+    },
+    "engine-written evidence rendered": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "engine-authored-receipt@S6/S1"
+    },
+    "forced decision": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S3"
+      ],
+      "witness": "forced-decision@S3/S1"
+    },
+    "foreground context loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S3"
+      ],
+      "witness": "foreground-loss@S3/S1"
+    },
+    "guilt wall (all items surfaced)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S8"
+      ],
+      "witness": "drop-aging@S8/S1"
+    },
+    "hierarchy browse required": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S9"
+      ],
+      "witness": "recall-miss@S9/S1"
+    },
+    "history rewrite": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A9"
+      ],
+      "witness": "history-rewrite@A9/S1"
+    },
+    "kill requiring multi-step ceremony": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A15"
+      ],
+      "witness": "kill-ceremony@A15/S1"
+    },
+    "lost update": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A6"
+      ],
+      "witness": "drop-conflict-record@A6/S1"
+    },
+    "maximum authorized action increased by the M2 classification": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "E2E-1"
+      ],
+      "witness": "normalizer-authority-leak@E2E-1/S1"
+    },
+    "model picks a policy": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A4"
+      ],
+      "witness": "authority-raise@A4/S1"
+    },
+    "not-found for a this-week capture": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S9"
+      ],
+      "witness": "recall-miss@S9/S1"
+    },
+    "owner attention consumed": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A11"
+      ],
+      "witness": "owner-attention-on-routine@A11/S1"
+    },
+    "owner woken (ATT-01 not met)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "wake-on-routine@S5/S1"
+    },
+    "parent updated without events": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S10"
+      ],
+      "witness": "drop-foldback@S10/S1"
+    },
+    "placements differing between twins": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A2"
+      ],
+      "witness": "authority-raise@A2/S1"
+    },
+    "qualifying danger suppressed silently": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A8"
+      ],
+      "witness": "attention-relax@A8/S1"
+    },
+    "receipt overwrite": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "receipt-overwrite@A12/S1"
+    },
+    "repeat-confirm nagging": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "repeat-confirm@S4/S1"
+    },
+    "restricted content in Discord render or notification preview": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A13"
+      ],
+      "witness": "floor-overwrite@A13/S1"
+    },
+    "resume from transcript": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "drop-checkpoint@S5/S1"
+    },
+    "ritual running on stale rules/schema": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A14"
+      ],
+      "witness": "authority-raise@A14/S1"
+    },
+    "self-certified execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "engine-authored-receipt@S6/S1"
+    },
+    "silence without watchdog": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "watchdog-silent@S1/S1"
+    },
+    "silent deletion": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S8"
+      ],
+      "witness": "drop-aging@S8/S1"
+    },
+    "silent discard": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A3",
+        "S3"
+      ],
+      "witness": "capture-loss-on-degrade@S3/S1"
+    },
+    "silent lock": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "drop-decision@S4/S1"
+    },
+    "silent newest-wins (P2D-10: no tie-break canonized)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A4"
+      ],
+      "witness": "authority-raise@A4/S1"
+    },
+    "split-brain state": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A6"
+      ],
+      "witness": "drop-conflict-record@A6/S1"
+    },
+    "stale rollup shown as fresh": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "stale-projection@S1/S1"
+    },
+    "state loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "drop-checkpoint@S5/S1"
+    },
+    "state written on read": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "state-written-on-read@S1/S1"
+    },
+    "successful modification": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A16"
+      ],
+      "witness": "drop-refusal@A16/S1"
+    },
+    "suppressed tamper evidence": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A16"
+      ],
+      "witness": "drop-refusal@A16/S1"
+    },
+    "unlogged override": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "drop-decision@S4/S1"
+    },
+    "untrusted instructions gaining authority": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S7"
+      ],
+      "witness": "authority-raise@S7/S1"
+    },
+    "verification skipped": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "verification-skipped@A12/S1"
+    }
+  },
   "summary": {
     "all_effective": true,
     "baseline_passes": 81,
     "defects_effective": 8,
-    "defects_seeded": 8
+    "defects_seeded": 8,
+    "mutations_in_catalogue": 51,
+    "predicates_defect_reachable": 56,
+    "predicates_not_evaluable": 0,
+    "predicates_total": 56
   }
 }

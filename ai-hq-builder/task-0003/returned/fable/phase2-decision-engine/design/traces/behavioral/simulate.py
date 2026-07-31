@@ -66,6 +66,11 @@ class ComputedResult:
     outbound_authorized: bool = False
     executed_without_receipt: bool = False
     fold_error: Optional[str] = None
+    uncertain_outcome: bool = False
+    halted_actions: List[str] = field(default_factory=list)
+    notify_render_class: Optional[str] = None
+    composition_refused: List[str] = field(default_factory=list)
+    composition_reasons: List[str] = field(default_factory=list)
     extras: Dict[str, object] = field(default_factory=dict)
 
     def digest(self) -> str:
@@ -137,12 +142,22 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
         "identity_session_state", "policy_version", "schema_version",
     )
 
+    # AUT-05 inputs travel with the derived facts so the tier discriminator is
+    # computed from stimulus rather than a hand flag (rework finding RW-05).
+    derived = dict(spec.derived)
+    if spec.placement_scope is not None:
+        derived["placement_scope"] = spec.placement_scope
+    if spec.proposed_action_class is not None:
+        derived["proposed_action_class"] = spec.proposed_action_class
+    if spec.hearsay_attribution is not None:
+        derived["hearsay_attribution"] = spec.hearsay_attribution
+
     # --- stage 1-3: per-envelope verification and model-free base disposition ---
     per_env: List[core.BaseDisposition] = []
     all_reasons: List[str] = []
     for idx, env in enumerate(stim.envelopes):
         env_check = core.verify_envelope(env, required_fields)
-        base = core.base_disposition(env, env_check, spec.derived)
+        base = core.base_disposition(env, env_check, derived)
         per_env.append(base)
         for r in base.reasons:
             all_reasons.append("env[%d] %s" % (idx, r))
@@ -187,6 +202,19 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
         disp, n = core.integrate_proposal(disp, prop, allow_raise=d.authority_raise)
         notes.extend("proposal[%d] %s" % (i, x) for x in n)
 
+    # RW-02 — the owner completing the step-up is an input-side fact where the
+    # fixture narrative says the owner approves. Without it the consequential
+    # lifecycle is refused and every predicate on that chain is vacuous.
+    if spec.owner_step_up_provided and disp.step_up_required:
+        disp = core.BaseDisposition(
+            tier=disp.tier, ceiling=core.CEILING_CONSEQUENTIAL,
+            attention=disp.attention,
+            reasons=disp.reasons + ("owner step-up completed (IDN-02) -> "
+                                    "consequential chain authorized",),
+            quarantined=disp.quarantined, step_up_required=True,
+            step_up_satisfied=True,
+        )
+
     # --- IDN-03 / D-KR §1.2: a kill revokes action authority immediately ---
     # The owner's authority to ISSUE the kill is not the authority available AFTER
     # it. Post-kill the system enters emergency read-only (D-KR §1.3): write and
@@ -215,6 +243,8 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
         for cls in ("filing", "placement", "summary"):
             if cls in eligible:
                 proposals_emitted.append(cls)
+
+    uncertain_outcome = False
 
     # --- event construction (D-B9 §2 taxonomy) ---
     events: List[Event] = []
@@ -303,12 +333,68 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
                          "content_hash": hashlib.sha256(aid.encode()).hexdigest()[:16]},
                 external=not d.engine_authored_receipt,
                 object_key="evidence")
+            if act.receipt_kind == "verification":
+                # ACT-01: the consequential chain reconciles post-state once the
+                # external verification lands (S6/A12 require the reconciliation
+                # record as part of the full typed-record chain).
+                add("ReconciliationEvent", "recon-" + act.action_id, caused_by=(aid,),
+                    payload={"reason": "post-state reconciled against external "
+                                       "verification record"}, object_key="case")
         else:
             # ACT-01: uncertain outcome halts automatic retry and raises Needs Review.
             add("ReconciliationEvent", "recon-" + act.action_id, caused_by=(aid,),
                 payload={"reason": "no receipt recorded; reconcile before retry",
                          "outbox_residue": aid}, object_key="case")
             executed_without_receipt = True
+            uncertain_outcome = True
+
+    # RW-01 — accomplished external side effects. These already fired; the engine
+    # cannot refuse them. With no receipt recorded the outcome is UNCERTAIN, so
+    # ACT-01 / D-B4 §2.3 rule 5 requires: halt, raise Needs Review, reconcile before
+    # any retry — and the engine must NOT mark the action executed on its own say-so.
+    for acc in spec.accomplished_actions:
+        aid = add("ActionRequest", "accomplished-" + acc.action_id,
+                  caused_by=(decision_id,),
+                  payload={"action_class": acc.action_class, "aik": acc.action_id,
+                           "already_fired": True,
+                           "idempotency_key": acc.idempotency_key},
+                  object_key="case")
+        if acc.receipt_recorded:
+            add("EvidenceIngestionEvent", "receipt-" + acc.action_id, caused_by=(aid,),
+                payload={"answers_action": aid, "evidence_kind": "receipt"},
+                external=True, object_key="evidence")
+        else:
+            uncertain_outcome = True
+            add("ReconciliationEvent", "recon-" + acc.action_id, caused_by=(aid,),
+                payload={"reason": "side effect fired; no receipt at recovery — "
+                                   "halt and reconcile before retry (ACT-01)",
+                         "outbox_residue": aid, "halted": True,
+                         "auto_retry_blocked": True}, object_key="case")
+            add("AttentionChangeEvent", "needs-review-" + acc.action_id,
+                caused_by=(aid,),
+                payload={"object": stim.id, "band": core.ATT_NEEDS_OWNER,
+                         "reason": "uncertain external outcome"}, object_key="case")
+
+    # RW-06 — in-flight work halted by a kill (A15's "active T2 batch").
+    for inflight in spec.in_flight_actions:
+        iid = add("ActionRequest", "inflight-" + inflight.action_id,
+                  caused_by=(decision_id,),
+                  payload={"action_class": inflight.action_class,
+                           "aik": inflight.action_id, "in_flight": True},
+                  object_key="case")
+        if spec.kill_triggered:
+            add("RefusalEvent", "halt-" + inflight.action_id, caused_by=(iid,),
+                payload={"reason": "IDN-03 kill: in-flight action halted",
+                         "halted_action": iid}, object_key="case")
+
+    # RW-06 — A13's notification-preview surface: a second, stricter enforcement
+    # point than in-channel render (D-B2 P2G-13 §6).
+    if spec.notification_preview:
+        add("AttentionChangeEvent", "notify-preview", caused_by=(decision_id,),
+            payload={"object": stim.id, "band": disp.attention,
+                     "surface": "notification-preview",
+                     "render_class": comp.render_class or "unset"},
+            object_key="notify")
 
     if spec.concurrent_conflict:
         add("ConflictRecord", "conflict", caused_by=(decision_id,),
@@ -443,7 +529,17 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
         storage_summary=storage_summary, state_written_on_read=state_written_on_read,
         outbound_authorized=outbound_authorized,
         executed_without_receipt=executed_without_receipt,
-        fold_error=fold_error, extras=extras,
+        fold_error=fold_error,
+        uncertain_outcome=uncertain_outcome,
+        halted_actions=[e.event_id for e in events
+                        if e.event_type == "RefusalEvent" and e.payload.get("halted_action")],
+        notify_render_class=next(
+            (str(e.payload.get("render_class")) for e in events
+             if e.event_type == "AttentionChangeEvent"
+             and e.payload.get("surface") == "notification-preview"), None),
+        composition_refused=list(comp.refused),
+        composition_reasons=list(comp.reasons),
+        extras=extras,
     )
 
 

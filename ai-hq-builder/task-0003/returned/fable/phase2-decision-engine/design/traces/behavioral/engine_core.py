@@ -180,6 +180,7 @@ class PolicyObject:
     render_class: Optional[str] = None
     queue_admit: Optional[bool] = None
     conflict_behavior: str = "insist"
+    effective_window: Optional[Tuple[int, int]] = None   # D-B8 §2 / PC-4
 
 
 @dataclass(frozen=True)
@@ -189,78 +190,193 @@ class Composition:
     attention_min: str
     render_class: Optional[str]
     applied: Tuple[str, ...]
+    refused: Tuple[str, ...]
     failed_closed: bool
     reasons: Tuple[str, ...]
 
 
-def compose_policies(policies: Sequence[PolicyObject]) -> Composition:
-    """D-B8 P2G-10 constraint composition — resolution is per governed output.
+# D-B8 P2G-10 rule 5 — each governed output has exactly ONE owning authority
+# domain. `protection` is the only cross-domain writer, and restrict-only.
+OUTPUT_OWNER: Dict[str, str] = {
+    "ceiling": "autonomy",       # autonomy owns action authorization
+    "tier_max": "routing",       # routing owns tier recommendation
+    "attention_min": "attention",  # attention owns bands
+    "render_class": "data",      # data owns render/lifecycle
+    "queue_admit": "attention",
+}
 
-    1 floors intersect (most restrictive per output, non-overridable)
-    2 independent constraints conjoin
-    3 ceilings combine by minimum
-    4 priority resolves only same-domain same-output contradictions
-    5 cross-domain contradiction excluded by output ownership
-    6 equal-priority same-domain same-output contradiction fails closed
+# Render classes ordered by increasing restrictiveness, so floors intersect by max.
+RENDER_ORDER: Dict[str, int] = {
+    "full-content": 0,
+    "summary": 1,
+    "masked-metadata+deep-link": 2,
+    "suppressed": 3,
+}
+
+
+def _restrictive(output: str, a, b):
+    """Return the more restrictive of two values for a governed output."""
+    if a is None:
+        return b
+    if b is None:
+        return a
+    if output == "ceiling":
+        return a if CEILING_ORDER[a] < CEILING_ORDER[b] else b
+    if output == "tier_max":
+        return a if TIER_ORDER[a] < TIER_ORDER[b] else b
+    if output == "attention_min":
+        return a if ATTENTION_ORDER[a] > ATTENTION_ORDER[b] else b
+    if output == "render_class":
+        return a if RENDER_ORDER.get(a, 0) > RENDER_ORDER.get(b, 0) else b
+    return a
+
+
+def compose_policies(policies: Sequence[PolicyObject],
+                     at_time: Optional[int] = None) -> Composition:
+    """D-B8 §5 layered composite + P2G-10 constraint composition.
+
+    Layer 0 (PC-4)  effective-window filtering, before any ordering runs
+    Layer 1         floors intersect — most restrictive per output, non-overridable
+    Layer 2 (ALT-4) a valid exception displaces exactly its named target version;
+                    floors are never legal targets (PC-3), and an exception against a
+                    policy with `exception_authority='none'` is rejected (PC-6)
+    Layer 3 (rule 4) priority resolves same-domain same-output contradictions only
+    Layer 4 (ALT-3) unresolved residue fails closed
+
+    Rule 5 is enforced structurally: a non-protection policy that tries to write an
+    output owned by another domain is REFUSED, not applied. This is the PC-10 check
+    whose absence let a floor's render class be overwritten (rework finding RW-04).
     """
-    ceiling = CEILING_CONSEQUENTIAL
-    tier_max: Optional[str] = None
-    attention_min = ATT_NONE
-    render_class: Optional[str] = None
     applied: List[str] = []
+    refused: List[str] = []
     reasons: List[str] = []
     failed_closed = False
 
-    # Rule 4/6: detect same-domain, same-output, equal-priority contradictions among
-    # non-floor policies before composing.
-    by_output: Dict[Tuple[str, str], List[PolicyObject]] = {}
+    # ---- layer 0: effective-window filter (PC-4) --------------------------
+    active: List[PolicyObject] = []
     for p in policies:
-        if p.protection_floor:
-            continue
-        if p.ceiling is not None:
-            by_output.setdefault((p.authority_domain, "ceiling"), []).append(p)
-        if p.tier_max is not None:
-            by_output.setdefault((p.authority_domain, "tier_max"), []).append(p)
+        if p.effective_window is not None and at_time is not None:
+            start, end = p.effective_window
+            if not (start <= at_time <= end):
+                refused.append("%s.v%d:outside-effective-window" % (p.policy_id, p.version))
+                continue
+        active.append(p)
 
-    for (domain, output), group in sorted(by_output.items()):
-        if len(group) < 2:
+    # ---- layer 2: exception displacement (ALT-4, PC-3/PC-6) ---------------
+    by_key = {(p.policy_id, p.version): p for p in active}
+    displaced: set = set()
+    for p in active:
+        if p.supersession_target is None:
             continue
+        target = by_key.get(p.supersession_target)
+        if target is None:
+            refused.append("%s.v%d:supersession-target-absent" % (p.policy_id, p.version))
+            continue
+        if target.protection_floor:
+            # PC-3: a floor is not a legal supersession target (schema-level).
+            refused.append("%s.v%d:illegal-exception-against-floor" % (p.policy_id, p.version))
+            reasons.append("exception refused: floors are not legal supersession targets")
+            continue
+        if target.exception_authority == "none":
+            # PC-6: rejected at authoring time — no legal supersession path.
+            refused.append("%s.v%d:target-permits-no-exception" % (p.policy_id, p.version))
+            reasons.append("exception refused: target exception_authority=none")
+            continue
+        displaced.add(p.supersession_target)
+
+    effective = [p for p in active if (p.policy_id, p.version) not in displaced]
+
+    # ---- rule 5: output ownership -----------------------------------------
+    floors: Dict[str, object] = {}
+    domain_claims: Dict[Tuple[str, str], List[PolicyObject]] = {}
+
+    for p in effective:
+        applied.append("%s.v%d" % (p.policy_id, p.version))
+        for output in OUTPUT_OWNER:
+            value = getattr(p, output, None)
+            if value is None:
+                continue
+            if p.protection_floor:
+                # Protection is the only cross-domain writer, restrict-only.
+                floors[output] = _restrictive(output, floors.get(output), value)
+                continue
+            if p.authority_domain != OUTPUT_OWNER[output]:
+                # A non-protection policy cannot write another domain's output.
+                refused.append("%s.v%d:%s-not-owned-by-%s"
+                               % (p.policy_id, p.version, output, p.authority_domain))
+                reasons.append(
+                    "structural refusal: %s (domain %s) cannot write %s — owned by %s "
+                    "(D-B8 P2G-10 rule 5 / PC-10)"
+                    % (p.policy_id, p.authority_domain, output, OUTPUT_OWNER[output]))
+                continue
+            domain_claims.setdefault((p.authority_domain, output), []).append(p)
+
+    # ---- layer 3: priority resolves same-domain same-output contradictions --
+    resolved: Dict[str, object] = {}
+    for (domain, output), group in sorted(domain_claims.items()):
         top = max(pp.priority for pp in group)
         contenders = [pp for pp in group if pp.priority == top]
         values = {getattr(pp, output) for pp in contenders}
         if len(contenders) > 1 and len(values) > 1:
+            # layer 4 residue: equal-priority same-output contradiction fails closed
             failed_closed = True
             reasons.append(
                 "equal-priority-contradiction:%s:%s:%s"
-                % (domain, output, ",".join(sorted(pp.policy_id for pp in contenders)))
-            )
+                % (domain, output, ",".join(sorted(pp.policy_id for pp in contenders))))
+            continue
+        winner = getattr(contenders[0], output)
+        resolved[output] = _restrictive(output, resolved.get(output), winner)
 
-    for p in sorted(policies, key=lambda x: (not x.protection_floor, x.authority_domain, -x.priority, x.policy_id)):
-        applied.append("%s.v%d" % (p.policy_id, p.version))
-        if p.ceiling is not None:
-            if CEILING_ORDER[p.ceiling] < CEILING_ORDER[ceiling]:
-                ceiling = p.ceiling            # rule 3: minimum wins, no priority needed
-        if p.tier_max is not None:
-            if tier_max is None or TIER_ORDER[p.tier_max] < TIER_ORDER[tier_max]:
-                tier_max = p.tier_max
-        if p.attention_min is not None:
-            if ATTENTION_ORDER[p.attention_min] > ATTENTION_ORDER[attention_min]:
-                attention_min = p.attention_min   # rule 1: most restrictive
-        if p.render_class is not None:
-            render_class = p.render_class
+    # ---- layer 1: floors intersect and are non-overridable -----------------
+    final: Dict[str, object] = {}
+    for output in OUTPUT_OWNER:
+        value = resolved.get(output)
+        floor_value = floors.get(output)
+        if floor_value is not None:
+            # The floor stands; a domain value may only make it MORE restrictive.
+            value = _restrictive(output, floor_value, value) if value is not None else floor_value
+        final[output] = value
 
+    ceiling = final.get("ceiling") or CEILING_CONSEQUENTIAL
     if failed_closed:
         ceiling = CEILING_NONE
 
     return Composition(
         ceiling=ceiling,
-        tier_max=tier_max,
-        attention_min=attention_min,
-        render_class=render_class,
+        tier_max=final.get("tier_max"),
+        attention_min=final.get("attention_min") or ATT_NONE,
+        render_class=final.get("render_class"),
         applied=tuple(applied),
+        refused=tuple(refused),
         failed_closed=failed_closed,
         reasons=tuple(reasons),
     )
+
+
+# D-B6 AUT-05 — the routine-filing disposition rule.
+#
+# "a proposal whose placement scope is entirely within one existing topic's subtree
+#  and whose action class is T1/T2-internal auto-creates the child record; any
+#  proposal crossing topic subtrees, touching a policy/protection surface, or
+#  carrying a consequential action class escalates to T3."
+#
+# This replaces the hand-authored `routine_filing` flag the rework flagged (RW-05):
+# the discriminator is now COMPUTED from stimulus facts, not asserted.
+T1_T2_INTERNAL_CLASSES: Tuple[str, ...] = ("filing-routing", "file", "route",
+                                           "placement", "internal-note")
+
+
+def routine_filing_eligible(derived: Dict[str, object]) -> bool:
+    """True when AUT-05's in-subtree + internal-action-class conditions both hold."""
+    scope = _norm(str(derived.get("placement_scope") or ""))
+    action_class = _norm(str(derived.get("proposed_action_class") or ""))
+    if scope != "in-subtree":
+        return False                       # crosses subtrees (or unknown) -> T3
+    if action_class not in T1_T2_INTERNAL_CLASSES:
+        return False                       # consequential / non-internal class -> T3
+    if bool(derived.get("touches_protection_surface")):
+        return False
+    return True
 
 
 # --------------------------------------------------------------------------
@@ -301,11 +417,25 @@ def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
                                quarantined=False)
 
     if env_check.unknown_controls:
+        # DE-R4 fail-closed always applies. Quarantine does NOT (D-B6 §2.2 stage 1:
+        # "quarantined only where the governing policy requires it ... Not a blanket
+        # quarantine (P2A-06)" — rework finding RW-10). The discriminator is whether
+        # the source can be classified at all: an unknown `trust_class` means the
+        # source itself is unclassifiable, which is A3's quarantine + one-time T3
+        # classification ask. Other unknown controls fail closed to owner judgment
+        # without quarantining the input.
         reasons.append("fail-closed:unknown-mandatory-controls:%s"
                        % ",".join(env_check.unknown_controls))
-        reasons.append("route:T0-quarantine + one-time T3 source-classification ask")
-        return BaseDisposition(T0, CEILING_NONE, ATT_NEEDS_OWNER, tuple(reasons),
-                               quarantined=True)
+        source_unclassifiable = "trust_class" in env_check.unknown_controls
+        if source_unclassifiable:
+            reasons.append("source unclassifiable -> T0 quarantine + one-time T3 "
+                           "source-classification ask (A3 route)")
+            return BaseDisposition(T0, CEILING_NONE, ATT_NEEDS_OWNER, tuple(reasons),
+                                   quarantined=True)
+        reasons.append("source classifiable -> no-action fail-closed to T3 owner "
+                       "judgment; not quarantined (P2A-06)")
+        return BaseDisposition(T3, CEILING_NONE, ATT_NEEDS_OWNER, tuple(reasons),
+                               quarantined=False)
 
     if verif.startswith("sch envelope expired") or "expired" in verif:
         reasons.append("fail-closed:scheduled-control-envelope-expired (SCH-02)")
@@ -379,12 +509,21 @@ def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
         return BaseDisposition(T1, CEILING_INTERNAL_WRITE, ATT_BRIEFING, tuple(reasons))
 
     if trust.startswith("connected-system"):
+        # A signature-verified connected system is eligible for the OD-2
+        # filing/routing autonomy class exactly like any other verified source:
+        # D-B6 §3 scopes `autonomy.filing-routing` by ACTION CLASS, not by origin.
+        # Routine in-subtree filing therefore reaches T2 act-with-receipt (AUT-05),
+        # which is what makes A5's duplicate-delivery hazard observable at all.
+        if routine_filing_eligible(derived):
+            reasons.append("signature-verified connected system, routine in-subtree "
+                           "filing -> T2 act-with-receipt (AUT-05, OD-2 scope)")
+            return BaseDisposition(T2, CEILING_ACT_WITH_RECEIPT, ATT_NONE, tuple(reasons))
         reasons.append("signature-verified connected system -> deterministic rule path")
         return BaseDisposition(T1, CEILING_INTERNAL_WRITE, ATT_NONE, tuple(reasons))
 
     if trust.startswith("trusted-internal") and instr == "owner":
         reasons.append("owner-authored, identity-bound -> owner authority available")
-        base_tier = T2 if bool(derived.get("routine_filing")) else T3
+        base_tier = T2 if routine_filing_eligible(derived) else T3
         ceiling = CEILING_ACT_WITH_RECEIPT if base_tier == T2 else CEILING_INTERNAL_WRITE
         attention = ATT_NONE if base_tier == T2 else ATT_NEEDS_OWNER
         return BaseDisposition(base_tier, ceiling, attention, tuple(reasons))
