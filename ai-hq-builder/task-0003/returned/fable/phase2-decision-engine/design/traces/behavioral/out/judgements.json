@@ -60,6 +60,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -77,6 +78,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -94,6 +96,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -915,6 +918,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -932,6 +936,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -949,6 +954,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -1182,6 +1188,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -1199,6 +1206,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -1216,6 +1224,7 @@
     {
       "checks": {
         "causal_order": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },

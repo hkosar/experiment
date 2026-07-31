@@ -29,10 +29,6 @@ class UnclassifiableExpectation(Exception):
 # --------------------------------------------------------------------------
 
 
-def _types(ctx) -> List[str]:
-    return [e.event_type for e in ctx["result"].events]
-
-
 def _count(ctx, etype: str) -> int:
     return sum(1 for e in ctx["result"].events if e.event_type == etype)
 
@@ -64,10 +60,6 @@ def _attention_at_least(ctx, band: str) -> bool:
     return core.ATTENTION_ORDER[ctx["result"].attention] >= core.ATTENTION_ORDER[band]
 
 
-def _acts(ctx) -> int:
-    return _count(ctx, "ActionRequest")
-
-
 # --------------------------------------------------------------------------
 # the 56 forbidden-phrase predicates
 # --------------------------------------------------------------------------
@@ -91,8 +83,10 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
         lambda c: c["result"].step_up_required and not c["result"].step_up_satisfied
                   and bool(_live_actions(c)),
 
+    # RW-12(1): compare the COMPUTED band against the composed floor, not a string.
     "attention relaxed below policy floor by model output":
-        lambda c: any("lowered attention" in n for n in c["result"].proposal_notes),
+        lambda c: core.ATTENTION_ORDER[c["result"].attention]
+                  < core.ATTENTION_ORDER[c["result"].composition_attention_min],
 
     "auto-retry pre-reconciliation":
         lambda c: c["result"].uncertain_outcome and not _has(c, "ReconciliationEvent"),
@@ -185,9 +179,9 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "history rewrite":
         lambda c: any(not e.payload.get("corrects") for e in _events(c, "CorrectionEvent")),
 
+    # RW-12(2): genuine causal linkage, not a self-declaring flag.
     "correction silently becoming policy":
-        lambda c: any(bool(e.payload.get("derived_from_correction"))
-                      for e in _events(c, "PolicyVersionEvent")),
+        lambda c: _correction_caused_policy(c),
 
     "unlogged override":
         lambda c: bool(c["spec"].override_requested) and not _has(c, "DecisionEvent"),
@@ -219,9 +213,13 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "qualifying danger suppressed silently":
         lambda c: _watchdog_confirmed(c) and not _attention_at_least(c, core.ATT_CRITICAL),
 
+    # RW-12(3): computed source attribution on the attention event, during quiet
+    # hours, from a non-watchdog external source.
     "email interrupting sleep":
-        lambda c: any(e.payload.get("band") == core.ATT_CRITICAL
-                      and "email" in str(e.payload.get("object", "")).lower()
+        lambda c: any(bool(e.payload.get("quiet_hours"))
+                      and e.payload.get("band") == core.ATT_CRITICAL
+                      and str(e.payload.get("source_trust", "")).lower()
+                          .startswith("external")
                       for e in _events(c, "AttentionChangeEvent")),
 
     "owner attention consumed":
@@ -236,8 +234,11 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "state written on read":
         lambda c: bool(c["result"].state_written_on_read),
 
+    # RW-11: read the engine's computed control-journal heartbeat.
     "silence without watchdog":
-        lambda c: c["result"].extras.get("watchdog_signal") is False,
+        lambda c: bool(c["spec"].watchdog_monitored)
+                  and not any(bool(e.payload.get("fresh"))
+                              for e in _events(c, "WatchdogHeartbeatEvent")),
 
     # --- routing / experience defects --------------------------------------
     "classification question for unambiguous items (DP-001)":
@@ -246,14 +247,23 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "forced decision":
         lambda c: bool(c["spec"].derived.get("interjection")) and c["result"].tier == core.T4,
 
+    # RW-11: read the engine's computed focus pointer.
     "foreground context loss":
-        lambda c: c["result"].extras.get("foreground_preserved") is False,
+        lambda c: bool(c["spec"].derived.get("foreground_focus"))
+                  and not any(bool(e.payload.get("preserved"))
+                              for e in _events(c, "FocusPointerEvent")),
 
+    # RW-11: read the engine's computed recall result.
     "hierarchy browse required":
-        lambda c: c["result"].extras.get("recall_hit") is False,
+        lambda c: bool(c["spec"].recall_query)
+                  and not any(bool(e.payload.get("hit")) and
+                              e.payload.get("route") == "direct-link"
+                              for e in _events(c, "RecallResultEvent")),
 
     "not-found for a this-week capture":
-        lambda c: c["result"].extras.get("recall_hit") is False,
+        lambda c: bool(c["spec"].recall_query)
+                  and not any(bool(e.payload.get("hit"))
+                              for e in _events(c, "RecallResultEvent")),
 
     "placements differing between twins":
         lambda c: _twin_placements_differ(c),
@@ -321,16 +331,15 @@ def _render_leak(ctx) -> bool:
     for e in _events(ctx, "AttentionChangeEvent"):
         if e.payload.get("surface") and e.payload.get("render_class") == "full-content":
             return True
-    # A floor that was supposed to mask was structurally overwritten.
-    return any("render_class" in r for r in res.composition_refused) is False and \
-        res.notify_render_class == "full-content"
+    # A render-policy application record that carries an unmasked class is the leak.
+    return any(e.payload.get("record") == "render-policy-application"
+               and e.payload.get("restricted_tokens_masked") is False
+               for e in res.events)
 
 
 def _twin_placements_differ(ctx) -> bool:
     """A2: the two twins must reach identical authority and placement."""
     res = ctx["result"]
-    if res.extras.get("twin_placements_differ") is True:
-        return True
     if any("RAISED ceiling" in n for n in res.proposal_notes):
         return True
     placements = [str(e.payload.get("placement")) for e in res.events
@@ -339,23 +348,20 @@ def _twin_placements_differ(ctx) -> bool:
 
 
 def _receipt_overwrite(ctx) -> bool:
-    """A12: one action must not accumulate two receipts."""
-    seen: Dict[str, int] = {}
+    """A12: one action must not accumulate two receipts OF THE SAME KIND.
+
+    An ExecutionReceipt and a VerificationRecord for one action are the required
+    XR -> VR chain, not an overwrite; two ExecutionReceipts for one action is the
+    defect the fixture forbids.
+    """
+    seen: Dict[Tuple[str, str], int] = {}
     for e in ctx["result"].events:
         if e.event_type == "EvidenceIngestionEvent":
-            target = str(e.payload.get("answers_action") or "")
-            seen[target] = seen.get(target, 0) + 1
+            key = (str(e.payload.get("answers_action") or ""),
+                   str(e.payload.get("evidence_kind") or "receipt"))
+            seen[key] = seen.get(key, 0) + 1
     return any(v > 1 for v in seen.values())
 
-
-def _restricted_render_leak(ctx) -> bool:
-    """A13: restricted class must render masked; unmasked render is the leak."""
-    from scenarios import FLOOR_RESTRICTED_RENDER  # local import: oracle-side only
-    spec = ctx["spec"]
-    has_mask = any(p.render_class for p in spec.policies if p.protection_floor)
-    sens = str(ctx["stim"].envelopes[0].get("sensitivity_class", "")).lower()
-    restricted = sens.startswith("restricted") or "pii" in sens
-    return restricted and not has_mask
 
 
 def forbidden_predicate(phrase: str) -> Callable[[dict], bool]:
@@ -421,6 +427,20 @@ def expected_requires_receipt(expected: dict) -> bool:
 EVIDENCE_KIND_MATCHERS: Dict[str, Callable[[object], bool]] = {
     # specific phrases first — matching is first-key-wins
     "identical placement": lambda r: _identical_placements(r),
+    # RW-16 / RW-14 — matched against COMPUTED records, not scenario declarations.
+    "kickoff provenance": lambda r: any(
+        e.event_type == "ProvenanceRecord"
+        and e.payload.get("provenance_class") == "hearsay-attributed" for e in r.events),
+    "interrupt policy version citation": lambda r: any(
+        e.event_type == "DecisionEvent" and e.payload.get("interrupt_policy")
+        and e.payload.get("interrupt_policy_status") for e in r.events),
+    "suppression record": lambda r: any(
+        e.event_type in ("RefusalEvent", "AttentionChangeEvent") for e in r.events),
+    "render-policy application record": lambda r: any(
+        e.payload.get("record") == "render-policy-application" for e in r.events),
+    "dat class resolution record": lambda r: any(
+        e.payload.get("record") == "render-policy-application" for e in r.events),
+    "preview text": lambda r: r.notify_render_class != "full-content",
     "two trs envelopes": lambda r: sum(
         1 for e in r.events if e.event_type == "IngestionEvent") >= 2,
     "tool-authority ledger": lambda r: not r.outbound_authorized,
@@ -440,9 +460,11 @@ EVIDENCE_KIND_MATCHERS: Dict[str, Callable[[object], bool]] = {
     "degradation event": lambda r: any(e.event_type == "DegradationEvent" for e in r.events),
     "durable capture queue": lambda r: any(e.event_type == "IngestionEvent" for e in r.events),
     "refusal records": lambda r: any(e.event_type == "RefusalEvent" for e in r.events),
-    "watchdog heartbeat record": lambda r: r.extras.get("watchdog_signal") is not False,
+    "watchdog heartbeat record": lambda r: any(
+        e.event_type == "WatchdogHeartbeatEvent" for e in r.events),
     "derived rollups": lambda r: bool(r.storage_summary),
-    "last-focus pointer": lambda r: r.extras.get("foreground_preserved") is not False,
+    "last-focus pointer": lambda r: any(
+        e.event_type == "FocusPointerEvent" for e in r.events),
     "kill receipt": lambda r: any(e.event_type == "KillCommandEvent" for e in r.events),
     "halted-item list": lambda r: bool(r.halted_actions),
     "checkpoint": lambda r: any(e.event_type == "CheckpointEvent" for e in r.events),
@@ -459,6 +481,19 @@ EVIDENCE_KIND_MATCHERS: Dict[str, Callable[[object], bool]] = {
     "attention": lambda r: any(e.event_type == "AttentionChangeEvent" for e in r.events),
     "evaluation": lambda r: any(e.event_type == "PolicyEvaluationRecord" for e in r.events),
 }
+
+
+def _correction_caused_policy(ctx) -> bool:
+    """RW-12(2): a PolicyVersionEvent whose causal basis includes a CorrectionEvent.
+
+    Reads the real `caused_by` linkage, so a defect that widens policy from a
+    correction is caught whether or not it confesses in its payload.
+    """
+    corrections = {e.event_id for e in _events(ctx, "CorrectionEvent")}
+    if not corrections:
+        return False
+    return any(set(e.caused_by) & corrections
+               for e in _events(ctx, "PolicyVersionEvent"))
 
 
 def _identical_placements(result) -> bool:
@@ -516,4 +551,10 @@ def pass_rule_predicates(pass_rule: str) -> List[str]:
         checks.append("conflict_recorded")
     if "mask" in text or "redact" in text:
         checks.append("masked_render")
+    if "provenance marks hearsay" in text:
+        checks.append("hearsay_provenance")
+    if "policy version cited" in text:
+        checks.append("interrupt_policy_cited")
+    if "restricted token" in text:
+        checks.append("no_restricted_token_on_any_surface")
     return checks

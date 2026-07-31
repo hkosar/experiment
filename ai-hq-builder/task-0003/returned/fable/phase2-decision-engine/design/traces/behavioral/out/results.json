@@ -11,18 +11,20 @@
         "summary",
         "outbound"
       ],
-      "event_count": 5,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S1",
-      "fold_digest": "c4b3aa3d9495a0ae3532555e98b6ddfa22d56aa5323f35c65213860c15103320",
+      "fold_digest": "a0ca7be03f93951a6e7fb90fde4f4f27251afc851c81712c37f58f9f6a2f8c62",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -41,7 +43,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 5,
+        "record_count": 7,
         "shape": "S1"
       },
       "tier": "T0",
@@ -58,18 +60,20 @@
         "summary",
         "outbound"
       ],
-      "event_count": 5,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S1",
-      "fold_digest": "c9ff40460d0a370fea5babd5b734829739079071437fd2d60e2e3ee0c648305a",
+      "fold_digest": "b5a4ae9c9a8eeb271a9303a900a83c608d10734955997f76adf5d2a577fc694f",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -81,18 +85,20 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 5,
+        "bucket_count": 7,
         "buckets": [
           "case:S1/AttentionChangeEvent",
           "case:S1/DecisionEvent",
+          "case:S1/FocusPointerEvent",
           "case:S1/IngestionEvent",
           "case:S1/PolicyEvaluationRecord",
-          "case:S1/PolicyVersionEvent"
+          "case:S1/PolicyVersionEvent",
+          "case:S1/WatchdogHeartbeatEvent"
         ],
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 5,
+        "record_count": 7,
         "shape": "S2"
       },
       "tier": "T0",
@@ -109,18 +115,20 @@
         "summary",
         "outbound"
       ],
-      "event_count": 5,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S1",
-      "fold_digest": "6add2dc4c3fa1722ca76636b3d6a2a7e04db72c8e024c3c71bf5907559e3a831",
+      "fold_digest": "a0953b5fd6a2802cb46138fd5ce25de3c1f03fe0e75b3054f092b7823e0b336e",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -132,16 +140,17 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 3,
+        "bucket_count": 4,
         "buckets": [
           "store:canonical",
+          "store:control-journal",
           "store:intake",
           "store:policy"
         ],
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 5,
+        "record_count": 7,
         "shape": "S3"
       },
       "tier": "T0",
@@ -162,7 +171,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 14,
+      "event_count": 15,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -171,7 +180,8 @@
         "IngestionEvent",
         "PlacementEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
       ],
       "executed": [
         "S2/S1/action-act-S2-1",
@@ -180,7 +190,7 @@
       ],
       "extras": {},
       "fixture": "S2",
-      "fold_digest": "fe22c16fe4d9d29c2de2855a65714c90915041b8f87844f7fd31c4a73dd7ae4d",
+      "fold_digest": "ceed9850a6dbbafe135280e3e57b17ddbbd10b43d74982a47c8bad348705b4a0",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -199,7 +209,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 14,
+        "record_count": 15,
         "shape": "S1"
       },
       "tier": "T2",
@@ -220,7 +230,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 14,
+      "event_count": 15,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -229,7 +239,8 @@
         "IngestionEvent",
         "PlacementEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
       ],
       "executed": [
         "S2/S2/action-act-S2-1",
@@ -238,7 +249,7 @@
       ],
       "extras": {},
       "fixture": "S2",
-      "fold_digest": "c37c02a7c6eec8c90bbc09ca82d84e9dd49843f96bcf4b7ccb7d5cecb2bb4661",
+      "fold_digest": "61fa07e23cd5974570387c005aee92e151992a34d947ba2e9d109cc93ff273cd",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -250,7 +261,7 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 8,
+        "bucket_count": 9,
         "buckets": [
           "case:S2/ActionRequest",
           "case:S2/AttentionChangeEvent",
@@ -259,12 +270,13 @@
           "case:S2/IngestionEvent",
           "case:S2/PlacementEvent",
           "case:S2/PolicyEvaluationRecord",
-          "case:S2/PolicyVersionEvent"
+          "case:S2/PolicyVersionEvent",
+          "case:S2/ProvenanceRecord"
         ],
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 14,
+        "record_count": 15,
         "shape": "S2"
       },
       "tier": "T2",
@@ -285,7 +297,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 14,
+      "event_count": 15,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -294,7 +306,8 @@
         "IngestionEvent",
         "PlacementEvent",
         "PolicyEvaluationRecord",
-        "PolicyVersionEvent"
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
       ],
       "executed": [
         "S2/S3/action-act-S2-1",
@@ -303,7 +316,7 @@
       ],
       "extras": {},
       "fixture": "S2",
-      "fold_digest": "0e64785b5241a43b9acfad2f00bc5f37ffea086b6085cf36b87503357f150b39",
+      "fold_digest": "1b8f01af4ec45441c6c530c11c4a7a484a12b1c5a20ca4f53c1ddd8e38041d58",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -325,7 +338,7 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 14,
+        "record_count": 15,
         "shape": "S3"
       },
       "tier": "T2",
@@ -342,10 +355,11 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
@@ -354,7 +368,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S3",
-      "fold_digest": "21b3f46f2ccdace17b695add2ecfc31cb0317d5be3eba4bcaca76c6a7fc131a2",
+      "fold_digest": "6c525d116cc1613b342ebec229448321cf814a1bbd4820ef12a28da25728ebac",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -373,7 +387,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S1"
       },
       "tier": "T3",
@@ -390,10 +404,11 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
@@ -402,7 +417,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S3",
-      "fold_digest": "18800a800edc4b1c48791d22691d941875800ab0d4fc5ec869b737de6b062895",
+      "fold_digest": "76cf0b4c1eacddde43e5818c6809b10c9a88baf9055561c4d79ad66e9f0a1bf3",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -414,10 +429,11 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 6,
+        "bucket_count": 7,
         "buckets": [
           "case:S3/AttentionChangeEvent",
           "case:S3/DecisionEvent",
+          "case:S3/FocusPointerEvent",
           "case:S3/IngestionEvent",
           "case:S3/PolicyEvaluationRecord",
           "case:S3/PolicyVersionEvent",
@@ -426,7 +442,7 @@
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S2"
       },
       "tier": "T3",
@@ -443,10 +459,11 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
@@ -455,7 +472,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S3",
-      "fold_digest": "621e688204a9c73fbc7b62801aca08cb42c9f0d0e6c900c70e081cc6e1c97e0e",
+      "fold_digest": "c337d6780394fd121b2de374a5a5a6d4117e54de87365223c046c82f57d76256",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -476,7 +493,7 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S3"
       },
       "tier": "T3",
@@ -493,11 +510,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "OverrideEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -505,7 +523,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S4",
-      "fold_digest": "61e49d21dc4ef8e36caece9eefc927b18e388c04c1f6cf5dc72a46a4aa3e260f",
+      "fold_digest": "c4f05d2e9211e2b33176593fb2f0ced9b6a446e07d259735e62cc90288bd9916",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -524,7 +542,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S1"
       },
       "tier": "T3",
@@ -541,11 +559,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "OverrideEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -553,7 +572,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S4",
-      "fold_digest": "08c71e3e43a7d9279213250c689fd0999612d88734a32861ebb79248cda7df8d",
+      "fold_digest": "d9894561cbbe6cb66d635bf530e3f328651081505028c43263c2a1f3799edbf3",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -565,11 +584,12 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 6,
+        "bucket_count": 7,
         "buckets": [
           "case:S4/AttentionChangeEvent",
           "case:S4/DecisionEvent",
           "case:S4/IngestionEvent",
+          "case:S4/OverrideEvent",
           "case:S4/PolicyEvaluationRecord",
           "case:S4/PolicyVersionEvent",
           "case:S4/QueueAdmissionEvent"
@@ -577,7 +597,7 @@
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S2"
       },
       "tier": "T3",
@@ -594,11 +614,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 7,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "OverrideEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -606,7 +627,7 @@
       "executed": [],
       "extras": {},
       "fixture": "S4",
-      "fold_digest": "2fc80625f9ddcb3c0435b27ce781346c435fa9b994cbbbf6a579cea5ee9a5f37",
+      "fold_digest": "e6952a566de48a464bbe509a91978722d68f0dd72296ee07642bc27db1ce5d07",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -627,7 +648,7 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 7,
         "shape": "S3"
       },
       "tier": "T3",
@@ -786,8 +807,7 @@
     },
     {
       "action_requests": [
-        "S6/S1/action-act-S6-deploy",
-        "S6/S1/action-act-S6-verify"
+        "S6/S1/action-act-S6-deploy"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -798,7 +818,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 11,
+      "event_count": 10,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -815,7 +835,7 @@
       ],
       "extras": {},
       "fixture": "S6",
-      "fold_digest": "d8e7fc9b86afea9f581c1657b5fc97f4336eca96daf2ddec7d3559c21f1cb113",
+      "fold_digest": "8529242942cb45ebf805b308608febd6835e7d5e26181b9793c24bda215c4c32",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -835,18 +855,17 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 11,
+        "record_count": 10,
         "shape": "S1"
       },
       "tier": "T4",
       "verified": [
-        "S6/S1/action-act-S6-verify"
+        "S6/S1/action-act-S6-deploy"
       ]
     },
     {
       "action_requests": [
-        "S6/S2/action-act-S6-deploy",
-        "S6/S2/action-act-S6-verify"
+        "S6/S2/action-act-S6-deploy"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -857,7 +876,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 11,
+      "event_count": 10,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -874,7 +893,7 @@
       ],
       "extras": {},
       "fixture": "S6",
-      "fold_digest": "770bb32051f987c551c0e3a70d9c31fbb7a3864c0b06845d983089f9b8acef80",
+      "fold_digest": "2cf63f9553b1704d1f826b7010a486f88b8a26b41c811ce9d11fe5768eafb165",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -902,18 +921,17 @@
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 11,
+        "record_count": 10,
         "shape": "S2"
       },
       "tier": "T4",
       "verified": [
-        "S6/S2/action-act-S6-verify"
+        "S6/S2/action-act-S6-deploy"
       ]
     },
     {
       "action_requests": [
-        "S6/S3/action-act-S6-deploy",
-        "S6/S3/action-act-S6-verify"
+        "S6/S3/action-act-S6-deploy"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -924,7 +942,7 @@
         "summary",
         "outbound"
       ],
-      "event_count": 11,
+      "event_count": 10,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
@@ -941,7 +959,7 @@
       ],
       "extras": {},
       "fixture": "S6",
-      "fold_digest": "09fa2b46f775c45a5283c6f2ce0bfaae4a0f6a52fb85841623b583df9c61733f",
+      "fold_digest": "7844fe33ccb31e22f149c03b365e3fa9cd5d727b021a8b8fad6fdd48a499ec7b",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -964,12 +982,12 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 11,
+        "record_count": 10,
         "shape": "S3"
       },
       "tier": "T4",
       "verified": [
-        "S6/S3/action-act-S6-verify"
+        "S6/S3/action-act-S6-deploy"
       ]
     },
     {
@@ -1285,19 +1303,21 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
-        "QueueAdmissionEvent"
+        "QueueAdmissionEvent",
+        "RecallResultEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S9",
-      "fold_digest": "a49cf6f1834754ab3dd82125f82d371b6d19e4416ac8dcee528d788bd3f8d38b",
+      "fold_digest": "45c27159ac3c7eded802aae5f9475ba577d08046c84ac655d6603bad19e9524f",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -1316,7 +1336,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 8,
         "shape": "S1"
       },
       "tier": "T3",
@@ -1333,19 +1353,21 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
-        "QueueAdmissionEvent"
+        "QueueAdmissionEvent",
+        "RecallResultEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S9",
-      "fold_digest": "9b822ba79ea0740f66bb00dff163b0faf80113a4869d818843dbdf1c28f6c8de",
+      "fold_digest": "bfd57020a73cfb6e70f26d5e23f198051d9441568dee53f89271ea1acdae2890",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -1357,19 +1379,21 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 6,
+        "bucket_count": 8,
         "buckets": [
           "case:S9/AttentionChangeEvent",
           "case:S9/DecisionEvent",
+          "case:S9/FocusPointerEvent",
           "case:S9/IngestionEvent",
           "case:S9/PolicyEvaluationRecord",
           "case:S9/PolicyVersionEvent",
-          "case:S9/QueueAdmissionEvent"
+          "case:S9/QueueAdmissionEvent",
+          "case:S9/RecallResultEvent"
         ],
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 8,
         "shape": "S2"
       },
       "tier": "T3",
@@ -1386,19 +1410,21 @@
         "summary",
         "outbound"
       ],
-      "event_count": 6,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
+        "FocusPointerEvent",
         "IngestionEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
-        "QueueAdmissionEvent"
+        "QueueAdmissionEvent",
+        "RecallResultEvent"
       ],
       "executed": [],
       "extras": {},
       "fixture": "S9",
-      "fold_digest": "f00aa698ec49cbb90a792d1fa928fde8d68ac2052295d16a1a9810e8fd494026",
+      "fold_digest": "77702a0b8cc57924e200409e34bf26525a024e9d18d961e9a1094daaf8b95e71",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -1419,7 +1445,7 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 6,
+        "record_count": 8,
         "shape": "S3"
       },
       "tier": "T3",
@@ -3029,7 +3055,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A10",
-      "fold_digest": "bfb89da019e30b5abd9b75f79ee8cceea4396ca0d6c1f5767450a8880733faf7",
+      "fold_digest": "cb20d359498374a4353550e6da205204c9fb100ea67153486cb8d4b81498edf9",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3078,7 +3104,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A10",
-      "fold_digest": "bb5b9438ee4265fa559a0d316eecba8e5bdc04a87e4020aa6e28a0324ebb4310",
+      "fold_digest": "f98f58bd4d5e40fa3183969260b89062073f64b23b2e212b5c93106d34f1c9b1",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3133,7 +3159,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A10",
-      "fold_digest": "5abecdbbd4ba984c834170eb74c3a79aba68d6b9bdb5175925567acffa90221f",
+      "fold_digest": "b734ecd5274645ff3f51b2950eb01a91ee810140ab031c15fcd069a2e78c9a71",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3306,8 +3332,7 @@
     },
     {
       "action_requests": [
-        "A12/S1/action-act-A12-pay",
-        "A12/S1/action-act-A12-verify"
+        "A12/S1/action-act-A12-pay"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -3318,13 +3343,14 @@
         "summary",
         "outbound"
       ],
-      "event_count": 12,
+      "event_count": 11,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
         "DecisionEvent",
         "EvidenceIngestionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent",
@@ -3335,7 +3361,7 @@
       ],
       "extras": {},
       "fixture": "A12",
-      "fold_digest": "8acdb1552adb2b8da5e5c1d5deb7e77440254bf2cfa7b512b68f79ca7c97d9df",
+      "fold_digest": "f8678ed87d72366c2c5767dcc12b7e27a7770936b770528d29b4f8da051cf22f",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3356,18 +3382,17 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 12,
+        "record_count": 11,
         "shape": "S1"
       },
       "tier": "T4",
       "verified": [
-        "A12/S1/action-act-A12-verify"
+        "A12/S1/action-act-A12-pay"
       ]
     },
     {
       "action_requests": [
-        "A12/S2/action-act-A12-pay",
-        "A12/S2/action-act-A12-verify"
+        "A12/S2/action-act-A12-pay"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -3378,13 +3403,14 @@
         "summary",
         "outbound"
       ],
-      "event_count": 12,
+      "event_count": 11,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
         "DecisionEvent",
         "EvidenceIngestionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent",
@@ -3395,7 +3421,7 @@
       ],
       "extras": {},
       "fixture": "A12",
-      "fold_digest": "a85347d38538d1d58fda15809a10e6e3c661ffd4d47a4b27ccca819c0bc8decc",
+      "fold_digest": "4d716730c2e28ad25d86c0b1ade1a28ebf7bcd8c13ef1319664f540cce821786",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3409,13 +3435,14 @@
       "step_up_required": true,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 9,
+        "bucket_count": 10,
         "buckets": [
           "case:A12/ActionRequest",
           "case:A12/AttentionChangeEvent",
           "case:A12/DecisionEvent",
           "case:A12/EvidenceIngestionEvent",
           "case:A12/IngestionEvent",
+          "case:A12/PlacementEvent",
           "case:A12/PolicyEvaluationRecord",
           "case:A12/PolicyVersionEvent",
           "case:A12/QueueAdmissionEvent",
@@ -3424,18 +3451,17 @@
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 12,
+        "record_count": 11,
         "shape": "S2"
       },
       "tier": "T4",
       "verified": [
-        "A12/S2/action-act-A12-verify"
+        "A12/S2/action-act-A12-pay"
       ]
     },
     {
       "action_requests": [
-        "A12/S3/action-act-A12-pay",
-        "A12/S3/action-act-A12-verify"
+        "A12/S3/action-act-A12-pay"
       ],
       "attention": "needs-owner",
       "authority_mapping": "mapped",
@@ -3446,13 +3472,14 @@
         "summary",
         "outbound"
       ],
-      "event_count": 12,
+      "event_count": 11,
       "event_types": [
         "ActionRequest",
         "AttentionChangeEvent",
         "DecisionEvent",
         "EvidenceIngestionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent",
@@ -3463,7 +3490,7 @@
       ],
       "extras": {},
       "fixture": "A12",
-      "fold_digest": "fb7541377d6facf4fe27a65ddf4fc22e72717270b16a07367e2e25948b3bf7b6",
+      "fold_digest": "3debcb67afdedf558b3a4898db05c9ed8669c22f99a7a557bd3afea884d9bc1e",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3487,12 +3514,12 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 12,
+        "record_count": 11,
         "shape": "S3"
       },
       "tier": "T4",
       "verified": [
-        "A12/S3/action-act-A12-verify"
+        "A12/S3/action-act-A12-pay"
       ]
     },
     {
@@ -3506,11 +3533,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 7,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -3518,7 +3546,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A13",
-      "fold_digest": "9633a23d7a726bd8aa54ab52ecf5372fec030394bfc54a0812bacb7410b8e1e4",
+      "fold_digest": "a5ae2577f334ec434c6e9c269a1da24199446df1b6ce6b06f76eb83293f6a942",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3537,7 +3565,7 @@
         "layout": "aggregate root: append-only children under one root per case",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 7,
+        "record_count": 8,
         "shape": "S1"
       },
       "tier": "T3",
@@ -3554,11 +3582,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 7,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -3566,7 +3595,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A13",
-      "fold_digest": "9b44aee650462a0a039ce4536e1f589fbe2b9fcc665d812bb2eb09684de88ef8",
+      "fold_digest": "99dea60a4b347bd3ea65c61291d9293254239b252c443ec3d04fcd175ab59799",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3578,11 +3607,12 @@
       "step_up_required": false,
       "step_up_satisfied": true,
       "storage": {
-        "bucket_count": 6,
+        "bucket_count": 7,
         "buckets": [
           "case:A13/AttentionChangeEvent",
           "case:A13/DecisionEvent",
           "case:A13/IngestionEvent",
+          "case:A13/PlacementEvent",
           "case:A13/PolicyEvaluationRecord",
           "case:A13/PolicyVersionEvent",
           "case:A13/QueueAdmissionEvent"
@@ -3590,7 +3620,7 @@
         "layout": "Decision Case linking separately-owned typed records",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 7,
+        "record_count": 8,
         "shape": "S2"
       },
       "tier": "T3",
@@ -3607,11 +3637,12 @@
         "summary",
         "outbound"
       ],
-      "event_count": 7,
+      "event_count": 8,
       "event_types": [
         "AttentionChangeEvent",
         "DecisionEvent",
         "IngestionEvent",
+        "PlacementEvent",
         "PolicyEvaluationRecord",
         "PolicyVersionEvent",
         "QueueAdmissionEvent"
@@ -3619,7 +3650,7 @@
       "executed": [],
       "extras": {},
       "fixture": "A13",
-      "fold_digest": "67b3698edd058fa715304c48f9faa752c3b58548def85f913db564c6461df74e",
+      "fold_digest": "7f01edf4897a4796c1fded32a29e6901ec66a9f69f4b37d8746b15402359c844",
       "proposal_notes": [],
       "proposals_emitted": [],
       "quarantined": false,
@@ -3640,7 +3671,7 @@
         "layout": "independent records/events + separately materialized projections",
         "projection_materialized": true,
         "projection_stale": false,
-        "record_count": 7,
+        "record_count": 8,
         "shape": "S3"
       },
       "tier": "T3",

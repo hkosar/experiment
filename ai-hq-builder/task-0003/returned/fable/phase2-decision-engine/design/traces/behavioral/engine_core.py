@@ -12,12 +12,21 @@ Rules encoded here come from the hash-bound design sources only:
 
 This module NEVER imports fixture oracle data. Its only fixture-derived input is a
 `Stimulus` (input-side fields only) plus scenario-declared structured parameters.
+
+OPERATIONALIZATION DISCLOSURE (rework finding RW-17). D-B6 §2.2 stage 1 scopes
+quarantine to "where the governing policy requires it". This engine hard-codes the
+test — an unclassifiable source (`trust_class` itself unknown) quarantines; other
+unknown mandatory controls fail closed to T3 without quarantine — rather than
+expressing it as a governing PolicyObject evaluated at composition time. The
+direction matches the document (it is not a blanket quarantine, per P2A-06), but
+the mechanism is a Builder operationalization, not the policy-driven form D-B6
+describes. Stated so no policy-plane coverage is implied.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Callable, Dict, List, Optional, Sequence, Tuple
 
 # --------------------------------------------------------------------------
 # D-B2 §3 — mandatory authority-bearing controls (DE-R4 fail-closed enumeration)
@@ -181,6 +190,10 @@ class PolicyObject:
     queue_admit: Optional[bool] = None
     conflict_behavior: str = "insist"
     effective_window: Optional[Tuple[int, int]] = None   # D-B8 §2 / PC-4
+    scope: Optional[Tuple[str, ...]] = None             # D-B8 §2 scope (partition/classes)
+    # D-B8 §2: deterministic predicate over §2.1 control fields + derived fields ONLY,
+    # never over model-proposed fields.
+    applicability_predicate: Optional[Callable[[Dict[str, str]], bool]] = None
 
 
 @dataclass(frozen=True)
@@ -232,7 +245,8 @@ def _restrictive(output: str, a, b):
 
 
 def compose_policies(policies: Sequence[PolicyObject],
-                     at_time: Optional[int] = None) -> Composition:
+                     at_time: Optional[int] = None,
+                     envelope: Optional[Dict[str, str]] = None) -> Composition:
     """D-B8 §5 layered composite + P2G-10 constraint composition.
 
     Layer 0 (PC-4)  effective-window filtering, before any ordering runs
@@ -259,6 +273,16 @@ def compose_policies(policies: Sequence[PolicyObject],
             start, end = p.effective_window
             if not (start <= at_time <= end):
                 refused.append("%s.v%d:outside-effective-window" % (p.policy_id, p.version))
+                continue
+        if p.scope is not None and envelope is not None:
+            partition = str(envelope.get("domain", "business"))
+            if partition not in p.scope:
+                refused.append("%s.v%d:out-of-scope" % (p.policy_id, p.version))
+                continue
+        if p.applicability_predicate is not None and envelope is not None:
+            if not p.applicability_predicate(envelope):
+                refused.append("%s.v%d:applicability-predicate-false"
+                               % (p.policy_id, p.version))
                 continue
         active.append(p)
 

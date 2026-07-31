@@ -61,6 +61,11 @@ class PolicyPlane:
             return {"acquired": False,
                     "reason": "lease rejected against revoked/stale epoch E%d "
                               "(current E%d)" % (want, self.epoch)}
+        # NOTE (RW-17): D-B4 §2.3 defines `revoked_by_policy_event` for PENDING
+        # authorizations. Here it is reused as the in-flight MARKER on an already
+        # held lease: it records that a stricter policy landed mid-flight so
+        # reconciliation can note the epoch, and it deliberately does NOT retract
+        # the lease (rule 3 declines to claim that prevention).
         self.leases[lease_id] = {"epoch": want, "state": "held", "elapsed": 0,
                                  "revoked_by_policy_event": False}
         return {"acquired": True, "epoch": want}

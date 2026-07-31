@@ -58,6 +58,30 @@ def _add(result, etype: str, tag: str, payload: Dict[str, object],
         payload=payload, externally_authored=external))
 
 
+def _refold(result) -> None:
+    """Re-derive folded state and receipt findings from the perturbed events.
+
+    RW-17: mutations must not write into `receipt_violations` (the summary the
+    predicates read). They perturb the event stream; the fold recomputes.
+    """
+    from fold import FoldError, fold, receipt_ownership_violations
+    try:
+        result.folded = fold(result.events, shape=result.shape,
+                             case_id=result.fixture_id,
+                             enforce_receipt_ownership=False)
+        result.receipt_violations = receipt_ownership_violations(
+            result.folded, result.events)
+    except FoldError as exc:
+        result.fold_error = str(exc)
+
+
+def _recompute_receipt_violations(result) -> None:
+    from fold import receipt_ownership_violations
+    if result.folded is not None:
+        result.receipt_violations = receipt_ownership_violations(
+            result.folded, result.events)
+
+
 def _first_id(result, etype: str) -> Optional[str]:
     for e in result.events:
         if e.event_type == etype:
@@ -135,14 +159,14 @@ def _m_engine_receipt(result, spec, stim):
     for i, e in enumerate(result.events):
         if e.event_type == "EvidenceIngestionEvent":
             result.events[i] = replace(e, externally_authored=False)
-            result.receipt_violations.append("receipt %s is engine-authored" % e.event_id)
+            _refold(result)
             return
     aid = _first_id(result, "ActionRequest")
     if aid:
         _add(result, "EvidenceIngestionEvent", "self-receipt",
              {"answers_action": aid, "evidence_kind": "receipt"},
              caused_by=(aid,), external=False, object_key="evidence")
-        result.receipt_violations.append("engine-authored receipt for %s" % aid)
+        _refold(result)
 
 
 @mutation("executed-without-receipt", "state advances to executed with no receipt")
@@ -151,8 +175,7 @@ def _m_exec_no_receipt(result, spec, stim):
     if aid and result.folded is not None:
         result.folded.executed_actions.append(aid)
         result.folded.canonical.setdefault(aid, {})["state"] = "executed"
-        result.receipt_violations.append(
-            "action %s reached executed/verified with no receipt" % aid)
+        _recompute_receipt_violations(result)
 
 
 @mutation("receipt-overwrite", "one action accumulates two receipts")
@@ -259,16 +282,18 @@ def _m_dup_queue(result, spec, stim):
 
 @mutation("repeat-confirm", "the owner is asked to confirm the same override repeatedly")
 def _m_repeat_confirm(result, spec, stim):
-    _add(result, "OverrideEvent", "confirm-1", {"prompt": 1})
-    _add(result, "OverrideEvent", "confirm-2", {"prompt": 2})
+    # Production emits exactly one OverrideEvent for an override; nagging is a
+    # duplicate of that real event.
+    _dup_first(result, "OverrideEvent")
 
 
 @mutation("correction-becomes-policy", "a correction silently widens policy")
 def _m_correction_policy(result, spec, stim):
     cid = _first_id(result, "CorrectionEvent")
     if cid:
-        _add(result, "PolicyVersionEvent", "from-correction",
-             {"version": "P2", "derived_from_correction": True},
+        # No confession flag — only the genuine causal edge, which is what the
+        # predicate reads.
+        _add(result, "PolicyVersionEvent", "from-correction", {"version": "P2"},
              caused_by=(cid,), object_key="policy")
 
 
@@ -287,8 +312,32 @@ def _m_history_rewrite(result, spec, stim):
 
 @mutation("attention-relax", "a model output relaxes attention below the policy floor")
 def _m_attention_relax(result, spec, stim):
-    result.proposal_notes.append("DEFECT: model proposal lowered attention to none")
-    result.attention = core.ATT_NONE
+    # Lower the COMPUTED band beneath the composed floor. No marker string: the
+    # predicate must notice by comparing band to floor.
+    if core.ATTENTION_ORDER[result.composition_attention_min] > 0:
+        result.attention = core.ATT_NONE
+        for i, e in enumerate(result.events):
+            if e.event_type == "AttentionChangeEvent":
+                p = dict(e.payload); p["band"] = core.ATT_NONE
+                result.events[i] = replace(e, payload=p)
+
+
+@mutation("over-escalate-critical",
+          "a non-qualifying event is raised to Critical (ATT-01 reserves it for "
+          "confirmed danger)")
+def _m_over_escalate(result, spec, stim):
+    # A real ATT-01 violation: the engine wakes the owner for an event whose
+    # verification state never confirmed danger. Perturbs the computed band and the
+    # emitted attention event; the predicate compares band against the envelope's
+    # verification state on its own.
+    if any("watchdog-confirmed" in str(e.get("verification_state", "")).lower()
+           for e in stim.envelopes):
+        return
+    result.attention = core.ATT_CRITICAL
+    for i, e in enumerate(result.events):
+        if e.event_type == "AttentionChangeEvent" and not e.payload.get("surface"):
+            p = dict(e.payload); p["band"] = core.ATT_CRITICAL
+            result.events[i] = replace(e, payload=p)
 
 
 @mutation("suppress-critical", "a watchdog-confirmed danger is not raised to Critical")
@@ -301,11 +350,20 @@ def _m_suppress_critical(result, spec, stim):
                 result.events[i] = replace(e, payload=p)
 
 
-@mutation("wake-on-routine", "a non-urgent item raises a sleep-interrupting band")
+@mutation("wake-on-routine", "a non-urgent external item raises a sleep-interrupting band")
 def _m_wake_routine(result, spec, stim):
+    # Attribute the critical band to the external input during quiet hours — the
+    # computed attribution the predicate reads.
+    ext = next((e for e in stim.envelopes
+                if str(e.get("trust_class", "")).lower().startswith("external")), None)
+    if ext is None or not spec.quiet_hours:
+        return
     result.attention = core.ATT_CRITICAL
     _add(result, "AttentionChangeEvent", "wake",
-         {"object": "external-email", "band": core.ATT_CRITICAL})
+         {"object": stim.id, "band": core.ATT_CRITICAL,
+          "source_origin": str(ext.get("origin", "")),
+          "source_trust": str(ext.get("trust_class", "")),
+          "quiet_hours": True})
 
 
 @mutation("owner-attention-on-routine", "a standing-rule item consumes owner attention")
@@ -317,8 +375,39 @@ def _m_owner_attention(result, spec, stim):
 def _m_render_leak(result, spec, stim):
     result.notify_render_class = "full-content"
     for i, e in enumerate(result.events):
-        if e.event_type == "AttentionChangeEvent" and e.payload.get("surface"):
-            p = dict(e.payload); p["render_class"] = "full-content"
+        p = dict(e.payload)
+        if e.payload.get("surface") or e.payload.get("record") == "render-policy-application":
+            p["render_class"] = "full-content"; p["restricted_tokens_masked"] = False
+            result.events[i] = replace(e, payload=p)
+
+
+@mutation("hearsay-provenance-lost",
+          "an attributed third-party mention is recorded without its hearsay label")
+def _m_hearsay_lost(result, spec, stim):
+    for i, e in enumerate(result.events):
+        if e.event_type == "ProvenanceRecord":
+            p = dict(e.payload); p["provenance_class"] = "owner-authored"
+            result.events[i] = replace(e, payload=p)
+
+
+@mutation("interrupt-policy-uncited",
+          "an interrupt decision omits the interrupt-policy version/status citation")
+def _m_interrupt_uncited(result, spec, stim):
+    for i, e in enumerate(result.events):
+        if e.event_type == "DecisionEvent":
+            p = dict(e.payload)
+            p.pop("interrupt_policy", None); p.pop("interrupt_policy_status", None)
+            result.events[i] = replace(e, payload=p)
+
+
+@mutation("pending-policy-cited-as-ratified",
+          "a PENDING interrupt policy is cited as ratified")
+def _m_pending_as_ratified(result, spec, stim):
+    if not spec.od1_policy_pending:
+        return
+    for i, e in enumerate(result.events):
+        if e.event_type == "DecisionEvent":
+            p = dict(e.payload); p["interrupt_policy_status"] = "ratified"
             result.events[i] = replace(e, payload=p)
 
 
@@ -356,12 +445,15 @@ def _m_forced_decision(result, spec, stim):
 
 @mutation("foreground-loss", "the foreground focus pointer is lost on interjection")
 def _m_foreground_loss(result, spec, stim):
-    result.extras = dict(result.extras); result.extras["foreground_preserved"] = False
+    _drop(result, "FocusPointerEvent")
 
 
 @mutation("recall-miss", "a recent capture is not retrievable by description")
 def _m_recall_miss(result, spec, stim):
-    result.extras = dict(result.extras); result.extras["recall_hit"] = False
+    for i, e in enumerate(result.events):
+        if e.event_type == "RecallResultEvent":
+            p = dict(e.payload); p["hit"] = False; p["route"] = "hierarchy-browse"
+            result.events[i] = replace(e, payload=p)
 
 
 @mutation("clutter-completed-child", "a folded-back child stays in the active queue")
@@ -388,7 +480,14 @@ def _m_read_only_send(result, spec, stim):
 
 @mutation("twin-placement-divergence", "the injected twin lands in a different placement")
 def _m_twin_divergence(result, spec, stim):
-    result.extras = dict(result.extras); result.extras["twin_placements_differ"] = True
+    # Perturb the RECORDED MODEL OUTPUT for the injected twin — the real channel a
+    # semantic/authority leak would show up in — not a summary flag.
+    outs = [i for i, e in enumerate(result.events)
+            if e.event_type == "RecordedModelOutput"]
+    if len(outs) >= 2:
+        e = result.events[outs[-1]]
+        p = dict(e.payload); p["placement"] = "attacker-controlled-topic"
+        result.events[outs[-1]] = replace(e, payload=p)
 
 
 @mutation("normalizer-authority-leak", "a substituted normalizer raises the authority ceiling")
@@ -410,7 +509,7 @@ def _m_skip_eligibility(result, spec, stim):
 
 @mutation("watchdog-silent", "the coordinator is silent with no watchdog signal")
 def _m_watchdog_silent(result, spec, stim):
-    result.extras = dict(result.extras); result.extras["watchdog_signal"] = False
+    _drop(result, "WatchdogHeartbeatEvent")
 
 
 @mutation("evidence-tamper-succeeds", "an unauthorized evidence write succeeds")

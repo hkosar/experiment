@@ -26,6 +26,7 @@ python3 run_defects.py              # seeded-defect falsifier proof
 python3 run_shuffle.py              # P2S-06 shuffle invariance
 python3 run_p2s05.py                # P2S-05 five linearization traces
 python3 run_p2s07.py                # P2S-07 negative + positive eligibility tests
+python3 run_composition.py          # D-B8 PC-1..PC-12 through the real compose_policies
 ```
 
 All runners default to `--fixtures ../../../03F_Replay_Fixtures.json` (the frozen
@@ -109,10 +110,18 @@ forbidden predicate return True, and reports the result per predicate:
 | **56 defect-reachable** | each has a named witness defect that makes it fire |
 | **0 NOT-EVALUABLE** | none is counted as evidence without being able to discriminate |
 
-The first delivery reported "171 predicates evaluated" while only **5 of 56** could
-ever fire — roughly 90% of the figure was padding. If a predicate ever becomes
-unreachable again, `run_defects.py` reports it as `NOT-EVALUABLE` **with rationale**
-and excludes it from the counts. An honest smaller number beats a padded larger one.
+R0 reported "171 predicates evaluated" while only **5 of 56** could ever fire. R1
+raised that to 56/56 — but **four of those witnesses were artifacts**: the mutation
+wrote a `result.extras` key whose only reader was its paired predicate, and four more
+detected mutation-authored tokens rather than computed state. R2 rebuilt every one of
+those channels: the engine now genuinely computes watchdog liveness, the focus
+pointer, recall results, provenance labelling and interrupt-policy citation, and the
+mutations perturb those computed records.
+
+**Witness-channel integrity is now checked structurally**, not asserted:
+`run_defects.py` parses `mutations.py` and fails if any mutation assigns into
+`result.extras[...]` or appends to `receipt_violations` — the two artifact channels
+the reviews found. Section C of its output reports the result.
 
 The same rule applies to the P2S-05 traces: three of five previously asserted literal
 constants and could not fail. Every trace verdict is now computed from the
@@ -122,14 +131,38 @@ under a seeded defect in its own mechanism (`falsifier` block in
 
 ## Declared NOT-SIMULATED
 
-Listed so no coverage is implied that is not exercised (`not_simulated` in
-`out/gate_report.json`). Everything not listed is implemented and exercised:
+The R1 version of this section carried a **false completeness sentence** ("everything
+not listed is implemented and exercised") while several D-B8 layers were implemented
+but dead. That sentence is gone. The authoritative lists are `not_simulated` and
+`exercised_by_composition_suite` in `out/gate_report.json`; together they cover the
+D-B8 layers.
+
+**Exercised through the real mechanism** (`run_composition.py`, each with a
+composition-path defect that flips it): PC-1, PC-2, PC-3, PC-4, PC-6, PC-7, PC-9,
+PC-10, PC-11, D-B8 §2 `scope`, D-B8 §2 `applicability_predicate`.
+
+**Not exercised** — no coverage implied:
 
 - D-B8 `conflict_behavior` — schema field carried, not used as a resolution input.
-- D-B8 `rollback_pointer` / PC-5 rollback-vs-history — no fixture generates a rollback.
+- D-B8 `rollback_pointer` / PC-5 rollback-vs-history — nothing generates a rollback.
 - D-B8 `schema_compat` gating — the corpus has one schema version (SV-1).
+- D-B8 PC-6 is enforced at **composition** time; D-B8 grades **authoring**-time
+  rejection as the required protection. The simulator models no authoring surface,
+  so the protection is demonstrated one stage later than the design specifies.
+- D-B8 PC-8 (two policies constraining different fields of one action) — composition
+  is per governed output, not per action field.
 - Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.
 - Live DP-001 ack-latency measurement — a build-gate obligation, not a design one.
+- 13 of 39 registered D-B9 event types are never emitted by any scenario — the
+  taxonomy is declared, not exercised, for those.
+- D-B5 degraded-operation authority and the D-B7 §3 interrupt-policy citation rule
+  are encoded from the rule text **quoted in Rework Packet R2**; neither document is
+  in the Builder snapshot.
+
+The quarantine rule is a Builder **operationalization**: D-B6 §2.2 scopes quarantine
+to "where the governing policy requires it", and this engine hard-codes the
+unclassifiable-source test instead of expressing it as a governing PolicyObject. The
+direction matches the document; the mechanism is not the policy-driven form.
 
 ## Seeded-defect falsifier suite
 

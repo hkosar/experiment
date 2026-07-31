@@ -1,9 +1,28 @@
 """Scenario driver — each fixture's INPUT-SIDE stimulus as structured data.
 
-Every entry is derived ONLY from the fixture's `normalized_input`, `start_state`,
-`policy` and `envelope` fields (quoted in each comment). No `expected`, `actual`,
-`verdict`, `pass_rule`, `forbidden`, `required_evidence`, `allowed_alternatives`,
-`trace_S2`, `delta_S1` or `delta_S3` value is read, referenced, or transcribed here.
+Every entry is derived from the fixture's `normalized_input`, `start_state`, `policy`
+and `envelope` fields (quoted in each comment), PLUS a small, explicitly enumerated
+set of Builder-added minimal stimuli listed below. No `expected`, `actual`, `verdict`,
+`pass_rule`, `forbidden`, `required_evidence`, `allowed_alternatives`, `trace_S2`,
+`delta_S1` or `delta_S3` value is read, referenced, or transcribed here.
+
+BUILDER-ADDED MINIMAL STIMULI (rework finding RW-17 — the earlier "derived ONLY from
+the fixture's input fields" claim was false, and these are why):
+
+  * A10 `actions` — a single consequential probe. A10's narrative ends in "refuse
+    consequential"; without an attempted consequential action there is no refusal
+    record and the degraded-authority hazard cannot be observed.
+  * A5 `placement_scope` / `proposed_action_class` — AUT-05 scope facts. A5's
+    duplicate-delivery hazard (double execution, duplicate owner card) needs an
+    action to exist, which needs a routine-filing authority path.
+  * S6 / A12 `owner_step_up_provided` — the fixtures' narratives are an owner
+    approval and a full consequential lifecycle respectively; without the step-up
+    completing, the action is refused and every lifecycle check is vacuous.
+  * S2 / A9 `placement_scope` / `proposed_action_class` — AUT-05 inputs replacing
+    the removed hand-authored `routine_filing` flag (RW-05).
+
+A12's `notification_preview` was REMOVED in R2 (RW-14): nothing in A12's input side
+mentions a notification surface; that belongs to A13.
 
 This is the "structured stimulus" the Task Packet authorizes the Builder to author:
 a mechanical encoding of the narrative into parameters the engine can compute over.
@@ -55,6 +74,10 @@ class RequestedAction:
     receipt_arrives: bool = True
     receipt_kind: str = "receipt"     # receipt | verification
     external_receipt: bool = True     # False models an engine-authored receipt (defect)
+    # RW-17: a consequential action carries its OWN execution receipt AND its own
+    # verification record, so the XR -> VR -> RE chain is checked per action rather
+    # than across sibling actions.
+    verification_arrives: bool = False
 
 
 @dataclass(frozen=True)
@@ -89,7 +112,9 @@ class ScenarioSpec:
     """Structured input-side stimulus for one fixture."""
 
     fixture_id: str
-    # derived facts computed from recorded links/timestamps (D-B2 §2.3)
+    # MIXED CONTENT — see the module docstring's honest-sourcing note. Only `domain`,
+    # `aging` and `blocking` are D-B2 §2.3 computed fields; every other key here is a
+    # Builder-authored transcription of the fixture's prose (RW-17).
     derived: Dict[str, object] = field(default_factory=dict)
     policies: Tuple[PolicyObject, ...] = ()
     eligibility: Tuple[EligibilityPolicy, ...] = ()
@@ -127,6 +152,7 @@ class ScenarioSpec:
     od1_policy_pending: bool = False                            # RW-06 (A8)
     policy_version_dispute: bool = False                        # RW-06 (A4)
     hearsay_attribution: Optional[str] = None                   # RW-05 (S2)
+    watchdog_monitored: bool = False        # RW-11: S1 "watchdog heartbeat fresh"
     owner_step_up_provided: bool = False    # RW-02: let the consequential chain run
     placement_scope: Optional[str] = None   # in-subtree | cross-subtree  (D-B6 AUT-05)
     proposed_action_class: Optional[str] = None                 # RW-05 (S2)
@@ -184,6 +210,7 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     "S1": ScenarioSpec(
         fixture_id="S1",
         derived={"read_only_view": True, "watchdog_fresh": True},
+        watchdog_monitored=True,
         policies=(ROUTING_DEFAULT,),
         notes="read path over derived views; no write authority exercised",
     ),
@@ -240,10 +267,8 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
         # fixture exists to exercise — never ran.
         owner_step_up_provided=True,
         policies=(ROUTING_DEFAULT,),
-        actions=(
-            RequestedAction("act-S6-deploy", "deploy", receipt_kind="receipt"),
-            RequestedAction("act-S6-verify", "deploy", receipt_kind="verification"),
-        ),
+        actions=(RequestedAction("act-S6-deploy", "deploy", receipt_kind="receipt",
+                                 verification_arrives=True),),
         notes="T4 consequential: approve -> execute -> external receipt -> verification",
     ),
 
@@ -397,12 +422,12 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
         # RW-02: the fixture is the FULL lifecycle, so the step-up completes and the
         # execute -> receipt -> verify chain runs; previously the action was refused
         # and every lifecycle predicate on this fixture was vacuous.
-        owner_step_up_provided=True, notification_preview=True,
+        # RW-14: `notification_preview` REMOVED — nothing in A12's input side mentions
+        # a notification surface; that belongs to A13.
+        owner_step_up_provided=True,
         policies=(FLOOR_RESTRICTED_RENDER, ROUTING_DEFAULT),
-        actions=(
-            RequestedAction("act-A12-pay", "payment", receipt_kind="receipt"),
-            RequestedAction("act-A12-verify", "payment", receipt_kind="verification"),
-        ),
+        actions=(RequestedAction("act-A12-pay", "payment", receipt_kind="receipt",
+                                 verification_arrives=True),),
         notes="full consequential lifecycle; step-up gates the external effect",
     ),
 

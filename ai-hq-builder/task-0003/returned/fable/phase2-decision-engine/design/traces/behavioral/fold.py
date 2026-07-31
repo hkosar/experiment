@@ -216,18 +216,31 @@ def fold(events: Sequence[Event], shape: str, case_id: str,
 
 
 def receipt_ownership_violations(state: FoldedState, events: Sequence[Event]) -> List[str]:
-    """Requirement 6: executed/verified state only where an external receipt exists."""
+    """Requirement 6: executed/verified state only where an external receipt exists.
+
+    EVERY evidence event answering an action is checked, not just the last one
+    recorded. `receipts_by_action` keeps a single reference per action, so an
+    engine-authored execution receipt would otherwise be masked by a later
+    legitimate VerificationRecord for the same action — a masking gap the
+    per-predicate reachability search surfaced.
+    """
     problems: List[str] = []
+    evidence_by_action: Dict[str, List[Event]] = {}
+    for e in events:
+        if e.event_type == "EvidenceIngestionEvent":
+            target = str(e.payload.get("answers_action") or "")
+            if target:
+                evidence_by_action.setdefault(target, []).append(e)
+
     for action_id in set(state.executed_actions) | set(state.verified_actions):
-        receipt = state.receipts_by_action.get(action_id)
-        if not receipt:
+        evidence = evidence_by_action.get(action_id, [])
+        if not evidence and not state.receipts_by_action.get(action_id):
             problems.append("action %s reached executed/verified with no receipt" % action_id)
             continue
-        ev = next((e for e in events if e.event_id == receipt), None)
-        if ev is None:
-            problems.append("receipt %s referenced but absent from the basis" % receipt)
-        elif not ev.externally_authored:
-            problems.append("receipt %s is engine-authored" % receipt)
+        for ev in evidence:
+            if not ev.externally_authored:
+                problems.append("receipt %s is engine-authored" % ev.event_id)
+
     for cid, rec in state.canonical.items():
         if rec.get("state") in ("executed", "verified") and cid not in state.receipts_by_action:
             problems.append("record %s shows %s without a receipt" % (cid, rec.get("state")))

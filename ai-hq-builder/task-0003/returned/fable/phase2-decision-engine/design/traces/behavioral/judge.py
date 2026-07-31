@@ -191,7 +191,29 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
             ok = (not spec.concurrent_conflict) or any(
                 e.event_type == "ConflictRecord" for e in result.events)
         elif check == "masked_render":
-            ok = any(p.render_class for p in spec.policies if p.protection_floor)
+            # RW-14: read the COMPUTED render application, not the scenario's own
+            # declaration. An engine that ignored the mask now fails here.
+            applied = [e for e in result.events
+                       if e.payload.get("record") == "render-policy-application"]
+            ok = (bool(applied)
+                  and all(str(e.payload.get("render_class")) != "full-content"
+                          for e in applied)
+                  and result.notify_render_class != "full-content")
+        elif check == "hearsay_provenance":
+            ok = any(e.event_type == "ProvenanceRecord"
+                     and e.payload.get("provenance_class") == "hearsay-attributed"
+                     and not e.payload.get("verified")
+                     for e in result.events)
+        elif check == "interrupt_policy_cited":
+            decisions = [e for e in result.events if e.event_type == "DecisionEvent"]
+            ok = bool(decisions) and all(
+                e.payload.get("interrupt_policy")
+                and e.payload.get("interrupt_policy_status") in ("pending", "ratified")
+                for e in decisions)
+        elif check == "no_restricted_token_on_any_surface":
+            ok = result.notify_render_class != "full-content" and all(
+                str(e.payload.get("render_class", "")) != "full-content"
+                for e in result.events)
         else:
             ok = True
         j.check_results["pass_rule:" + check] = ok

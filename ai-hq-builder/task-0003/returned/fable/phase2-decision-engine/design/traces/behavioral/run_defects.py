@@ -57,9 +57,38 @@ CATALOGUE = [
      "E2E-1 — a substituted normalizer raises the maximum authorized action"),
 ]
 
-# Predicates that no candidate defect can reach because the situation they describe
-# is outside what this simulator models. Reported honestly, excluded from counts.
-NOT_EVALUABLE_RATIONALE: Dict[str, str] = {}
+def witness_channel_integrity() -> Dict[str, object]:
+    """Prove no mutation writes an artifact channel (R2 return requirement 3).
+
+    RW-11 found predicates "reachable" only through `result.extras` keys whose sole
+    writer was a mutation and sole reader its paired predicate. RW-17 found receipt
+    mutations writing straight into `receipt_violations`, the summary the predicates
+    read. Both are structural patterns, so both are checked structurally: a mutation
+    may perturb events and computed state, never these two channels.
+    """
+    import ast
+    here = os.path.dirname(os.path.abspath(__file__))
+    src = open(os.path.join(here, "mutations.py"), "r", encoding="utf-8").read()
+    tree = ast.parse(src)
+    violations: List[Dict[str, object]] = []
+
+    for node in ast.walk(tree):
+        # result.extras["k"] = ... — the RW-11 artifact channel
+        if isinstance(node, ast.Assign):
+            for tgt in node.targets:
+                if (isinstance(tgt, ast.Subscript)
+                        and isinstance(tgt.value, ast.Attribute)
+                        and tgt.value.attr == "extras"):
+                    violations.append({"line": node.lineno,
+                                       "channel": "result.extras[...] assignment"})
+        # result.receipt_violations.append(...) — the RW-17 summary channel
+        if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+            if node.func.attr == "append" and isinstance(node.func.value, ast.Attribute):
+                if node.func.value.attr == "receipt_violations":
+                    violations.append({"line": node.lineno,
+                                       "channel": "receipt_violations.append(...)"})
+    return {"check": "witness-channel-integrity",
+            "passed": not violations, "violations": violations}
 
 
 def _ctx(res, stim, spec, oc):
@@ -154,6 +183,7 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
 
     # ---- layer B: per-predicate reachability ----
     reach = prove_reachability(stimuli, oracle_cases)
+    channel = witness_channel_integrity()
     reachable = [p for p, r in reach.items() if r["defect_reachable"]]
     not_evaluable = [p for p, r in reach.items() if not r["defect_reachable"]]
 
@@ -167,7 +197,9 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
             "predicates_defect_reachable": len(reachable),
             "predicates_not_evaluable": len(not_evaluable),
             "mutations_in_catalogue": len(mutations.mutation_names()),
+            "witness_channel_integrity": channel["passed"],
         },
+        "witness_channel_integrity": channel,
         "defects": report,
         "predicate_reachability": reach,
         "not_evaluable": sorted(not_evaluable),
@@ -209,9 +241,17 @@ def main(argv: List[str]) -> int:
     for p in payload["not_evaluable"]:
         print("      NOT-EVALUABLE: %s" % p)
 
-    ok = bool(s["all_effective"])
     print()
-    print("FALSIFIER PROOF %s" % ("PASS" if ok else "FAIL — a named defect went undetected"))
+    print("C. WITNESS-CHANNEL INTEGRITY (R2 requirement 3)")
+    ci = payload["witness_channel_integrity"]
+    print("   no mutation writes an artifact channel : %s"
+          % ("PASS" if ci["passed"] else "FAIL"))
+    for v in ci["violations"][:10]:
+        print("      VIOLATION mutations.py:%s %s" % (v["line"], v["channel"]))
+
+    ok = bool(s["all_effective"]) and bool(ci["passed"])
+    print()
+    print("FALSIFIER PROOF %s" % ("PASS" if ok else "FAIL"))
     return 0 if ok else 1
 
 

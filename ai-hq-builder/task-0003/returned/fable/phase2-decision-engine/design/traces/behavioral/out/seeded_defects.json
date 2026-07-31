@@ -454,7 +454,7 @@
       "fixtures": [
         "A11"
       ],
-      "witness": "owner-attention-on-routine@A11/S1"
+      "witness": "over-escalate-critical@A11/S1"
     },
     "owner woken (ATT-01 not met)": {
       "defect_reachable": true,
@@ -462,7 +462,7 @@
       "fixtures": [
         "S5"
       ],
-      "witness": "wake-on-routine@S5/S1"
+      "witness": "over-escalate-critical@S5/S1"
     },
     "parent updated without events": {
       "defect_reachable": true,
@@ -655,9 +655,15 @@
     "baseline_passes": 81,
     "defects_effective": 8,
     "defects_seeded": 8,
-    "mutations_in_catalogue": 51,
+    "mutations_in_catalogue": 55,
     "predicates_defect_reachable": 56,
     "predicates_not_evaluable": 0,
-    "predicates_total": 56
+    "predicates_total": 56,
+    "witness_channel_integrity": true
+  },
+  "witness_channel_integrity": {
+    "check": "witness-channel-integrity",
+    "passed": true,
+    "violations": []
   }
 }

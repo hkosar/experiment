@@ -29,10 +29,9 @@ PHASE_FACTS = 2
 PHASE_DERIVATIONS = 3
 
 STORE_PRIORITY: Dict[str, int] = {
-    # D-B9 P2G-11 row 9: the control-service journal is an EXTERNAL store, mirrored
-    # into the event log on reconnect. It is ordered ahead of the engine's own
-    # control plane because kill efficacy never depends on the engine log
-    # (D-KR §1.4) — this extends the declared list rather than reordering it.
+    # D-B9 P2S-06 store-priority list (as amended to declare `control-journal`
+    # first, ahead of policy; recorded at D-SM row 13). Ownership of kill-plane
+    # commands by the external control-service journal is D-B9 P2G-11 row 9.
     "control-journal": -1,
     "policy": 0,
     "identity": 1,
@@ -82,8 +81,14 @@ EVENT_STORE_PHASE: Dict[str, Tuple[str, int]] = {
     "RecoveryEvent": ("canonical", PHASE_DERIVATIONS),
     "CheckpointEvent": ("canonical", PHASE_DERIVATIONS),
     "QueueAdmissionEvent": ("canonical", PHASE_DERIVATIONS),
+    # RW-11 — mechanisms the engine now genuinely computes, so real defects (not
+    # mutation-written flags) can perturb them.
+    "FocusPointerEvent": ("canonical", PHASE_DERIVATIONS),
+    "RecallResultEvent": ("canonical", PHASE_DERIVATIONS),
+    "ProvenanceRecord": ("canonical", PHASE_DERIVATIONS),
     "CostEvidenceRecord": ("canonical", PHASE_DERIVATIONS),
     "EconomicReviewEvent": ("canonical", PHASE_DERIVATIONS),
+    "WatchdogHeartbeatEvent": ("control-journal", PHASE_CONTROL),
     "KillCommandEvent": ("control-journal", PHASE_CONTROL),
     "KillReceiptEvent": ("control-journal", PHASE_CONTROL),
 }

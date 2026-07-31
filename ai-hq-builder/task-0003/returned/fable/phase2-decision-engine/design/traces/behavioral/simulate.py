@@ -26,6 +26,13 @@ from fixture_io import Stimulus
 from fold import FoldError, fold, receipt_ownership_violations
 
 
+# Action classes treated as consequential for the D-B5 degradation rule (RW-15).
+CONSEQUENTIAL_CLASSES = ("payment", "deploy", "outbound")
+
+# Fixed logical evaluation instant — deterministic, never a wall-clock read.
+EVAL_INSTANT = 1000
+
+
 @dataclass
 class Defects:
     """Seeded-defect switches. All False on production runs (P2S-01 falsifier)."""
@@ -39,6 +46,8 @@ class Defects:
     skip_eligibility_check: bool = False
     lease_before_policy: bool = False
     normalizer_authority_leak: bool = False
+    ignore_degradation: bool = False      # RW-15 counterfactual
+    render_leak: bool = False             # RW-14 counterfactual
 
     def any_active(self) -> bool:
         return any(getattr(self, f) for f in self.__dataclass_fields__)
@@ -71,6 +80,7 @@ class ComputedResult:
     notify_render_class: Optional[str] = None
     composition_refused: List[str] = field(default_factory=list)
     composition_reasons: List[str] = field(default_factory=list)
+    composition_attention_min: str = "none"   # RW-12(1): the computed floor
     extras: Dict[str, object] = field(default_factory=dict)
 
     def digest(self) -> str:
@@ -176,7 +186,11 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
     )
 
     # --- stage 2: policy composition (D-B8 P2G-10) ---
-    comp = core.compose_policies(spec.policies)
+    # RW-13: the evaluation instant and envelope are supplied, so PC-4 window
+    # filtering, D-B8 §2 scope and applicability predicates are live paths rather
+    # than dead schema. EVAL_INSTANT is a fixed logical clock (no wall-clock).
+    comp = core.compose_policies(spec.policies, at_time=EVAL_INSTANT,
+                                 envelope=stim.envelopes[0])
     ceiling = gov.ceiling
     if core.CEILING_ORDER[comp.ceiling] < core.CEILING_ORDER[ceiling]:
         ceiling = comp.ceiling
@@ -298,16 +312,44 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
     decision_id = add("DecisionEvent", "decision", caused_by=(eval_id,),
                       payload={"disposition": disp.tier, "ceiling": disp.ceiling,
                                "basis_policy_version": "P1",
+                               # RW-16: an interrupt policy that is PENDING is citable
+                               # as pending, never as ratified (D-B7 §3, per packet).
+                               "interrupt_policy": "OD-1",
+                               "interrupt_policy_status":
+                                   "pending" if spec.od1_policy_pending else "ratified",
                                "falsifier_status": "identified"
                                if disp.tier in (core.T3, core.T4) else "none_identified"},
                       object_key="case")
 
+    # RW-12(3) — the engine records WHICH input origin drove the band, so
+    # "email interrupting sleep" is detectable from computed state.
+    driving = max(range(len(per_env)),
+                  key=lambda i: core.ATTENTION_ORDER[per_env[i].attention])
     add("AttentionChangeEvent", "attn", caused_by=(decision_id,),
-        payload={"object": stim.id, "band": disp.attention}, object_key="case")
+        payload={"object": stim.id, "band": disp.attention,
+                 "source_origin": str(stim.envelopes[driving].get("origin", "")),
+                 "source_trust": str(stim.envelopes[driving].get("trust_class", "")),
+                 "quiet_hours": bool(spec.quiet_hours)}, object_key="case")
 
     # Requirement 6 — actions and externally owned receipts.
     executed_without_receipt = False
     for act in spec.actions:
+        # RW-15: degradation refuses consequential classes independently of the
+        # envelope ceiling, and cites the degradation as the reason.
+        degraded_refusal = (bool(spec.degraded_stores)
+                            and act.action_class in CONSEQUENTIAL_CLASSES
+                            and not d.ignore_degradation)
+        if degraded_refusal:
+            add("RefusalEvent", "refuse-degraded-" + act.action_id,
+                caused_by=(decision_id,),
+                payload={"action_class": act.action_class,
+                         "reason": "consequential action refused while stores are "
+                                   "degraded: %s (D-B5 degraded-operation rule)"
+                                   % ",".join(spec.degraded_stores),
+                         "refused_due_to_degradation": True,
+                         "degraded_stores": ",".join(spec.degraded_stores)},
+                object_key="case")
+            continue
         # An action may only be emitted if the computed ceiling permits it.
         permitted = core.CEILING_ORDER[disp.ceiling] >= core.CEILING_ORDER[
             core.CEILING_ACT_WITH_RECEIPT]
@@ -333,6 +375,17 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
                          "content_hash": hashlib.sha256(aid.encode()).hexdigest()[:16]},
                 external=not d.engine_authored_receipt,
                 object_key="evidence")
+            if act.verification_arrives:
+                vid = add("EvidenceIngestionEvent", "verify-" + act.action_id,
+                          caused_by=(aid,),
+                          payload={"answers_action": aid,
+                                   "evidence_kind": "verification"},
+                          external=True, object_key="evidence")
+                add("ReconciliationEvent", "recon-" + act.action_id,
+                    caused_by=(aid, vid),
+                    payload={"reason": "post-state reconciled against this action's "
+                                       "own external verification record"},
+                    object_key="case")
             if act.receipt_kind == "verification":
                 # ACT-01: the consequential chain reconciles post-state once the
                 # external verification lands (S6/A12 require the reconciliation
@@ -347,6 +400,12 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
                          "outbox_residue": aid}, object_key="case")
             executed_without_receipt = True
             uncertain_outcome = True
+
+    # RW-15 — D-B5 degraded-operation rule (quoted in Rework Packet R2): consequential
+    # actions are REFUSED during the relevant degradations, regardless of envelope
+    # authority, and every such refusal is recorded (DegradationEvent + RefusalEvent).
+    # Previously A10's refusal came from its envelope ceiling and the degradation
+    # played no role — the hazard was guarded by accident.
 
     # RW-01 — accomplished external side effects. These already fired; the engine
     # cannot refuse them. With no receipt recorded the outcome is UNCERTAIN, so
@@ -452,6 +511,57 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
             add("PlacementEvent", "placement", n=i + 1, caused_by=(decision_id,),
                 payload={"intent_index": i + 1}, object_key="case")
 
+    # RW-14 — the applied render class is a COMPUTED record, so "DAT masking
+    # verified" can be checked against engine output instead of the scenario's
+    # own declaration.
+    if comp.render_class is not None and not d.render_leak:
+        add("PlacementEvent", "render-policy", caused_by=(decision_id,),
+            payload={"record": "render-policy-application",
+                     "render_class": comp.render_class,
+                     "data_class": str(stim.envelopes[0].get("data_class", "")),
+                     "restricted_tokens_masked": True}, object_key="render")
+
+    # RW-11 — watchdog liveness (D-KR §3 / RES-02). S1's start_state records a fresh
+    # heartbeat; the engine emits the corresponding control-journal signal, so a real
+    # defect (a missing heartbeat) is what the predicate detects, not a flag.
+    if spec.watchdog_monitored:
+        add("WatchdogHeartbeatEvent", "watchdog", caused_by=(pol_ev,),
+            payload={"fresh": True, "monitor": "control-service"},
+            object_key="control")
+
+    # RW-11 — focus pointer. S3's start_state names the foreground focus; preserving
+    # it across an interjection is a computed projection, not an asserted flag.
+    focus = spec.derived.get("foreground_focus")
+    if focus or spec.derived.get("read_only_view"):
+        # A reconnect/read view renders the last-focus pointer as part of the Desk
+        # projection; an interjection must preserve the named foreground focus.
+        add("FocusPointerEvent", "focus", caused_by=(decision_id,),
+            payload={"foreground": str(focus) if focus else "last-focus",
+                     "preserved": True}, object_key="case")
+
+    # RW-11 — recall by description. S9's start_state records that the S2 capture
+    # exists; the engine computes a hit against that recorded prior capture.
+    if spec.recall_query:
+        add("RecallResultEvent", "recall", caused_by=(decision_id,),
+            payload={"hit": bool(spec.derived.get("prior_capture_exists")),
+                     "route": "direct-link"}, object_key="case")
+
+    # RW-16 — S2's attributed third-party mention becomes a provenance-labeled
+    # hearsay record on the computed output (D-B2 P2G-13 §2/§3 per-claim provenance).
+    if spec.hearsay_attribution:
+        add("ProvenanceRecord", "hearsay", caused_by=(decision_id,),
+            payload={"claim_type": "topic-candidate",
+                     "attributed_to": str(spec.hearsay_attribution),
+                     "provenance_class": "hearsay-attributed",
+                     "verified": False}, object_key="case")
+
+    # RW-12(4) — S4's override is a recorded event, emitted once. Repeat-confirm
+    # nagging is then a genuine defect (more than one) rather than an absent path.
+    if spec.override_requested:
+        add("OverrideEvent", "override", caused_by=(decision_id,),
+            payload={"consequence_summary_shown": True, "acknowledged": True,
+                     "prompts": 1}, object_key="case")
+
     if core.ATTENTION_ORDER[disp.attention] >= core.ATTENTION_ORDER[core.ATT_HUB]:
         add("QueueAdmissionEvent", "queue", caused_by=(decision_id,),
             payload={"item": stim.id}, object_key="queue")
@@ -539,6 +649,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
              and e.payload.get("surface") == "notification-preview"), None),
         composition_refused=list(comp.refused),
         composition_reasons=list(comp.reasons),
+        composition_attention_min=comp.attention_min,
         extras=extras,
     )
 
