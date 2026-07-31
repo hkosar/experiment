@@ -174,8 +174,19 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
             ok = not result.state_written_on_read
         elif check == "receipt_required":
             f = result.folded
-            ok = (not f) or all(a in f.receipts_by_action
-                                for a in (f.executed_actions + f.verified_actions))
+            settled = (list(f.executed_actions) + list(f.verified_actions)) if f else []
+            if not settled:
+                # RW-21: nothing to check. Recording True here counts a check that
+                # cannot discriminate as evidence — the defect this suite exists to
+                # exclude. On this corpus the prose decomposition selects
+                # `receipt_required` for S3 ("focus pointer unchanged after receipt"),
+                # where "receipt" is the owner-facing capture receipt, not an external
+                # action receipt, and S3 emits no action at all.
+                j.notes.append(
+                    "pass-rule check receipt_required is vacuous on this case "
+                    "(no executed or verified action) — not counted as evidence")
+                continue
+            ok = all(a in f.receipts_by_action for a in settled)
         elif check == "external_receipt_ownership":
             ok = not result.receipt_violations
         elif check == "step_up_enforced":
@@ -205,11 +216,27 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
                      and not e.payload.get("verified")
                      for e in result.events)
         elif check == "interrupt_policy_cited":
+            # RW-20: presence is not the rule. D-B7 §3 (as quoted in `24_`) permits a
+            # PENDING policy to be cited AS pending and forbids citing it as ratified.
+            # The expected status is derived here, independently, from the fixture's
+            # own start_state text — so an engine that upgrades a pending policy to
+            # ratified contradicts its own stimulus and fails.
             decisions = [e for e in result.events if e.event_type == "DecisionEvent"]
-            ok = bool(decisions) and all(
-                e.payload.get("interrupt_policy")
-                and e.payload.get("interrupt_policy_status") in ("pending", "ratified")
-                for e in decisions)
+            start = (stim.start_state or "").lower()
+            ok = bool(decisions)
+            for e in decisions:
+                pid = str(e.payload.get("interrupt_policy") or "")
+                status = str(e.payload.get("interrupt_policy_status") or "")
+                if not pid or status not in ("pending", "ratified"):
+                    ok = False
+                    break
+                pending_in_stimulus = ("%s policy pending" % pid.lower()) in start
+                if pending_in_stimulus != (status == "pending"):
+                    ok = False
+                    j.notes.append(
+                        "interrupt policy %s cited as %s; stimulus records it as %s"
+                        % (pid, status, "PENDING" if pending_in_stimulus else "ratified"))
+                    break
         elif check == "no_restricted_token_on_any_surface":
             ok = result.notify_render_class != "full-content" and all(
                 str(e.payload.get("render_class", "")) != "full-content"

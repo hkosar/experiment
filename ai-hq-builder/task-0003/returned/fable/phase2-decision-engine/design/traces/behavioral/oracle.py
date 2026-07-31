@@ -183,8 +183,16 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "correction silently becoming policy":
         lambda c: _correction_caused_policy(c),
 
+    # RW-24: an override is "logged" only if the OverrideEvent itself survives with
+    # its consequence summary and acknowledgment. Keying on DecisionEvent alone let a
+    # silently dropped OverrideEvent pass — its only other readers were the >1
+    # nagging count and a matcher-less evidence fallback.
     "unlogged override":
-        lambda c: bool(c["spec"].override_requested) and not _has(c, "DecisionEvent"),
+        lambda c: bool(c["spec"].override_requested)
+                  and (not _has(c, "DecisionEvent")
+                       or not any(bool(e.payload.get("consequence_summary_shown"))
+                                  and bool(e.payload.get("acknowledged"))
+                                  for e in _events(c, "OverrideEvent"))),
 
     "silent lock":
         lambda c: bool(c["spec"].override_requested) and not _has(c, "DecisionEvent"),
@@ -434,8 +442,14 @@ EVIDENCE_KIND_MATCHERS: Dict[str, Callable[[object], bool]] = {
     "interrupt policy version citation": lambda r: any(
         e.event_type == "DecisionEvent" and e.payload.get("interrupt_policy")
         and e.payload.get("interrupt_policy_status") for e in r.events),
+    # RW-24: was vacuously satisfiable — every run emits an AttentionChangeEvent.
+    # Now it requires the COMPUTED suppression record, which names the held input
+    # and when it surfaces.
     "suppression record": lambda r: any(
-        e.event_type in ("RefusalEvent", "AttentionChangeEvent") for e in r.events),
+        e.payload.get("record") == "suppression"
+        and e.payload.get("suppressed_until")
+        and e.payload.get("suppressed_source_id")
+        for e in r.events),
     "render-policy application record": lambda r: any(
         e.payload.get("record") == "render-policy-application" for e in r.events),
     "dat class resolution record": lambda r: any(
@@ -529,6 +543,25 @@ def match_required_evidence(required: List[str], result) -> Tuple[List[str], Lis
 def authority_mapping_coverage(expected: dict) -> str:
     """Report whether this fixture's `expected.authority` is mapped (RW-10)."""
     return "mapped" if expected_exercised_authority(expected) is not None else "unmapped"
+
+
+# The COMPLETE pass-rule check vocabulary this harness can decompose into. Declared
+# explicitly (rework finding RW-21) so a runner can report which checks the corpus
+# never selects at all: a check no fixture selects is not evidence, and the R2 counts
+# did not distinguish "passed" from "never asked".
+PASS_RULE_CHECKS: Tuple[str, ...] = (
+    "no_write_on_read",
+    "receipt_required",
+    "external_receipt_ownership",
+    "step_up_enforced",
+    "fail_closed",
+    "dedup",
+    "conflict_recorded",
+    "masked_render",
+    "hearsay_provenance",
+    "interrupt_policy_cited",
+    "no_restricted_token_on_any_surface",
+)
 
 
 def pass_rule_predicates(pass_rule: str) -> List[str]:

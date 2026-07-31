@@ -410,7 +410,7 @@
       "shape": "S3"
     },
     {
-      "digest": "4f3e634b305f5a9fd6d73c851c6eff58fc7af61a0280e736a8da7ff24542c923",
+      "digest": "e22d3851f59d7a5c26801053220d4e93cb05dcd6ab97ee13821a12cb680d0c8c",
       "distinct_digests": 1,
       "fixture": "A8",
       "invariant": true,
@@ -418,7 +418,7 @@
       "shape": "S1"
     },
     {
-      "digest": "73f61d97415a8474dffd342a1956ad9c39b92f3a06e7ef68937a6fba54aa8b1e",
+      "digest": "3e8ef9ba2f450fbd0ed094bb647f1c34571156a06cac8533a245d7f0f9f4c787",
       "distinct_digests": 1,
       "fixture": "A8",
       "invariant": true,
@@ -426,7 +426,7 @@
       "shape": "S2"
     },
     {
-      "digest": "884055c24b768f9c3be018eb88cc5e84657ec7f725edf34d7d4bf581b1b50708",
+      "digest": "8dee4072b3f00a19211fbbde2a42882e2a212de6e41556eb6c2608a481818e3c",
       "distinct_digests": 1,
       "fixture": "A8",
       "invariant": true,

@@ -20,6 +20,21 @@ the fixture's input fields" claim was false, and these are why):
     completing, the action is refused and every lifecycle check is vacuous.
   * S2 / A9 `placement_scope` / `proposed_action_class` — AUT-05 inputs replacing
     the removed hand-authored `routine_filing` flag (RW-05).
+  * S2 / A5 / A9 `actions` (rework finding RW-24 — these were Builder-added and the
+    enumeration above named only A10's). S2's three intents, A5's duplicated
+    delivery and A9's re-file each need an action to exist before the hazard the
+    fixture names (dropped item / double execution / correction weight) can be
+    observed at all. The action CLASS is taken from the narrative; the fact that an
+    action is attempted is Builder-added.
+  * S6 / A12 `verification_arrives` (RW-24) — the fixtures' narratives end in a
+    verified consequential effect ("full typed-record chain"). The flag makes the
+    action carry its own XR -> VR -> RE chain; without it the verification stage of
+    the lifecycle is never reached. A12's input-side support for this is thinner
+    than S6's and is carried as a disclosed limit rather than a claim.
+
+The set above is exhaustive as far as I can determine, and that is precisely the
+claim I cannot verify from inside (falsifier row 3): an omission here is invisible
+to the author who made it. Two successive reviews each found entries missing.
 
 A12's `notification_preview` was REMOVED in R2 (RW-14): nothing in A12's input side
 mentions a notification surface; that belongs to A13.
@@ -47,12 +62,10 @@ discriminator is derived from stimulus facts rather than asserted.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, Optional, Tuple
 
 from engine_core import (
     CEILING_ACT_WITH_RECEIPT,
-    CEILING_INTERNAL_WRITE,
-    CEILING_NONE,
     CEILING_RECORD_ONLY,
     EligibilityPolicy,
     ModelProposal,
@@ -149,7 +162,6 @@ class ScenarioSpec:
     accomplished_actions: Tuple[AccomplishedAction, ...] = ()   # RW-01 (A7)
     in_flight_actions: Tuple[InFlightAction, ...] = ()          # RW-06 (A15)
     notification_preview: bool = False                          # RW-06 (A13)
-    od1_policy_pending: bool = False                            # RW-06 (A8)
     policy_version_dispute: bool = False                        # RW-06 (A4)
     hearsay_attribution: Optional[str] = None                   # RW-05 (S2)
     watchdog_monitored: bool = False        # RW-11: S1 "watchdog heartbeat fresh"
@@ -377,9 +389,12 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     # "simultaneous: watchdog-confirmed system death; large non-urgent email"
     "A8": ScenarioSpec(
         fixture_id="A8", quiet_hours=True,
-        # RW-06: start_state "quiet hours active; OD-1 policy PENDING" — the interrupt
-        # policy is not yet approved, so critical interruption cannot rest on it.
-        od1_policy_pending=True,
+        # RW-06 / RW-20: start_state "quiet hours active; OD-1 policy PENDING" — the
+        # interrupt policy is not yet approved, so critical interruption cannot rest
+        # on it. The policy id and its PENDING status are no longer transcribed into
+        # a flag here: `simulate.interrupt_policy_citation` reads them out of the
+        # fixture's own start_state, so the citation the engine emits is derived from
+        # the stimulus text rather than from this encoding.
         policies=(FLOOR_UNTRUSTED, ROUTING_DEFAULT),
         notes="critical reserved for the watchdog-confirmed death; email is not critical",
     ),

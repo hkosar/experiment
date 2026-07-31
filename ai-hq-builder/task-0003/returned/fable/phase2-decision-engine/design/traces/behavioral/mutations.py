@@ -16,7 +16,6 @@ engine's *output*, exactly as a real defect would manifest.
 
 from __future__ import annotations
 
-import copy
 from dataclasses import replace
 from typing import Callable, Dict, List, Optional, Tuple
 
@@ -119,10 +118,18 @@ def _m_default_trusted(result, spec, stim):
 
 @mutation("step-up-bypass", "a step-up-gated action proceeds without the step-up")
 def _m_step_up_bypass(result, spec, stim):
-    if result.step_up_required and not result.step_up_satisfied:
-        _add(result, "ActionRequest", "stepup-bypass",
-             {"action_class": "payment", "aik": "mut-stepup"})
-        result.ceiling = core.CEILING_CONSEQUENTIAL
+    # This mutation was DEAD on this corpus: its guard required a case where the
+    # step-up is demanded and NOT satisfied, and the only two step-up fixtures
+    # (S6, A12) complete it. Found by the complete-witness reachability search —
+    # the same "guarded by accident" shape RW-15 and RW-19 diagnosed. The defect it
+    # is supposed to express is proceeding WITHOUT the step-up, so it now drops the
+    # satisfaction and emits the gated action anyway.
+    if not result.step_up_required:
+        return
+    result.step_up_satisfied = False
+    _add(result, "ActionRequest", "stepup-bypass",
+         {"action_class": "payment", "aik": "mut-stepup"})
+    result.ceiling = core.CEILING_CONSEQUENTIAL
 
 
 @mutation("step-up-never-completed",
@@ -403,10 +410,13 @@ def _m_interrupt_uncited(result, spec, stim):
 @mutation("pending-policy-cited-as-ratified",
           "a PENDING interrupt policy is cited as ratified")
 def _m_pending_as_ratified(result, spec, stim):
-    if not spec.od1_policy_pending:
-        return
+    # RW-20: keyed on the COMPUTED citation, not on a scenario flag. Where the
+    # engine derived "pending" from the stimulus, the defect upgrades it to
+    # ratified; the judge compares the citation against the fixture's own
+    # start_state and fails the contradiction.
     for i, e in enumerate(result.events):
-        if e.event_type == "DecisionEvent":
+        if (e.event_type == "DecisionEvent"
+                and e.payload.get("interrupt_policy_status") == "pending"):
             p = dict(e.payload); p["interrupt_policy_status"] = "ratified"
             result.events[i] = replace(e, payload=p)
 
@@ -492,11 +502,12 @@ def _m_twin_divergence(result, spec, stim):
 
 @mutation("normalizer-authority-leak", "a substituted normalizer raises the authority ceiling")
 def _m_normalizer_leak(result, spec, stim):
-    if "normalizers" in result.extras:
-        ex = copy.deepcopy(result.extras)
-        ex["normalizers"]["M2"]["ceiling"] = core.CEILING_OUTBOUND
-        ex["authority_invariant"] = False
-        result.extras = ex
+    # RW-22: perturb the RECORDED M2 ceiling and let the production writer re-derive
+    # `authority_invariant`. The earlier version set that flag directly — the exact
+    # key its own predicate reads — which is an answer-key write inside the integrity
+    # check's blind spot.
+    from simulate import set_normalizer_ceiling
+    set_normalizer_ceiling(result, "M2", core.CEILING_OUTBOUND)
 
 
 @mutation("skip-eligibility-check", "proposals emitted from untrusted content with no policy")
@@ -512,11 +523,69 @@ def _m_watchdog_silent(result, spec, stim):
     _drop(result, "WatchdogHeartbeatEvent")
 
 
+@mutation("watchdog-heartbeat-stale",
+          "the control-journal heartbeat is present but no longer fresh")
+def _m_watchdog_stale(result, spec, stim):
+    # RW-24: the heartbeat's freshness is now derived from the recorded liveness
+    # fact rather than hard-coded True, so a stale signal is a distinct defect from
+    # an absent one and both must be detectable.
+    for i, e in enumerate(result.events):
+        if e.event_type == "WatchdogHeartbeatEvent":
+            p = dict(e.payload); p["fresh"] = False
+            result.events[i] = replace(e, payload=p)
+
+
+@mutation("focus-displaced-by-escalation",
+          "an interjection is raised to the interrupting band and seizes the foreground")
+def _m_focus_displaced(result, spec, stim):
+    # RW-24: perturb the BAND, then re-derive the pointer through the production
+    # writer. The mutation never writes `preserved` — it changes the input the
+    # derivation reads, which is what a real escalation defect would do.
+    from simulate import recompute_focus_pointer
+    if not spec.derived.get("foreground_focus"):
+        return
+    result.attention = core.ATT_CRITICAL
+    recompute_focus_pointer(result)
+
+
+@mutation("suppression-record-lost",
+          "a non-qualifying quiet-hours item is held with no suppression record")
+def _m_suppression_lost(result, spec, stim):
+    # RW-24: the "suppression record" evidence matcher used to accept any
+    # AttentionChangeEvent, so every run satisfied it. Now that it requires the
+    # computed record, dropping that record has to be detectable — this is the
+    # witness that shows the repaired matcher discriminates.
+    result.events = [e for e in result.events
+                     if e.payload.get("record") != "suppression"]
+
+
+@mutation("drop-override", "an override lands with no OverrideEvent recorded")
+def _m_drop_override(result, spec, stim):
+    # RW-24: S4's OverrideEvent could be dropped undetected — its only readers were
+    # the >1 nagging count and a matcher-less evidence fallback.
+    _drop(result, "OverrideEvent")
+
+
+@mutation("receipt-reference-dangling",
+          "state cites a receipt that is absent from the folded basis")
+def _m_dangling_receipt(result, spec, stim):
+    if result.folded is None or not result.folded.receipts_by_action:
+        return
+    action_id = sorted(result.folded.receipts_by_action)[0]
+    result.folded.receipts_by_action[action_id] = "%s/%s/receipt-not-in-basis" % (
+        result.fixture_id, result.shape)
+    _recompute_receipt_violations(result)
+
+
 @mutation("evidence-tamper-succeeds", "an unauthorized evidence write succeeds")
 def _m_tamper(result, spec, stim):
+    # RW-22: the `"tampered": True` confession token is GONE. What a real successful
+    # tamper looks like is exactly this — the refusal that should have been recorded
+    # is missing, and an engine-authored record lands in the append-only evidence
+    # store. The predicate detects the absent refusal on its own terms.
     _drop(result, "RefusalEvent")
-    _add(result, "EvidenceIngestionEvent", "tampered",
-         {"answers_action": "", "evidence_kind": "receipt", "tampered": True},
+    _add(result, "EvidenceIngestionEvent", "unauthorized-write",
+         {"answers_action": "", "evidence_kind": "receipt"},
          external=False, object_key="evidence")
 
 

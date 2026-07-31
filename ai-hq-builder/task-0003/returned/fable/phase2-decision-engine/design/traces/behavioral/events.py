@@ -18,7 +18,7 @@ divergences arise (P2S-01 requirement 9).
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Tuple
 
 # --------------------------------------------------------------------------
 # D-B9 P2S-06 — fold phases and store priority

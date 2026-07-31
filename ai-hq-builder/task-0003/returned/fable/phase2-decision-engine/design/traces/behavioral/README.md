@@ -26,11 +26,14 @@ python3 run_defects.py              # seeded-defect falsifier proof
 python3 run_shuffle.py              # P2S-06 shuffle invariance
 python3 run_p2s05.py                # P2S-05 five linearization traces
 python3 run_p2s07.py                # P2S-07 negative + positive eligibility tests
-python3 run_composition.py          # D-B8 PC-1..PC-12 through the real compose_policies
+python3 run_composition.py          # D-B8 composition cases through the real compose_policies
 ```
 
-All runners default to `--fixtures ../../../03F_Replay_Fixtures.json` (the frozen
-corpus at its packet-relative path) and `--out out`. Outputs land in `out/`.
+Fixture-driven runners default to `--fixtures ../../../03F_Replay_Fixtures.json`
+(the frozen corpus at its packet-relative path); every runner defaults to
+`--out out`. `run_p2s05.py`, `run_p2s07.py` and `run_composition.py` drive synthetic
+inputs and take `--out` only — passing `--fixtures` to them is an argument error,
+not a silent no-op. Outputs land in `out/`; `run_gate.py` writes all ten.
 
 ### Deterministic reproduction
 
@@ -100,7 +103,7 @@ freshness obligation that S1 and S2 do not.
 ## Evidence counts — read these honestly
 
 The R1 rework replaced a padded headline with a measured one. `run_defects.py`
-searches a **51-mutation candidate-defect catalogue** for a defect that makes each
+searches a **60-mutation candidate-defect catalogue** for the defects that make each
 forbidden predicate return True, and reports the result per predicate:
 
 | Figure | Meaning |
@@ -118,10 +121,35 @@ those channels: the engine now genuinely computes watchdog liveness, the focus
 pointer, recall results, provenance labelling and interrupt-policy citation, and the
 mutations perturb those computed records.
 
-**Witness-channel integrity is now checked structurally**, not asserted:
-`run_defects.py` parses `mutations.py` and fails if any mutation assigns into
-`result.extras[...]` or appends to `receipt_violations` — the two artifact channels
-the reviews found. Section C of its output reports the result.
+**Witness channels have a regression tripwire — not a proof.** `run_defects.py`
+parses `mutations.py` and reports any mutation that writes an artifact channel
+(`result.extras`, `result.receipt_violations`) by any of seven known forms
+(subscript assignment, augmented assignment, wholesale reassignment, `update()`,
+`append`/`extend`, `setattr`, alias binding). Section C reports it. R2's README said
+"checked structurally, not asserted", which claimed more than the check delivers: it
+enumerates KNOWN channels and KNOWN forms, and a novel channel — a summary field
+added tomorrow and read only by its own predicate — passes it untouched. The general
+property is not decidable by this check and is not claimed. Read a clean result as
+"no known-shape regression". The one exemption, an assignment whose value is a call
+to a declared production derivation writer, is named in the code.
+
+**Every judge check is now shown flippable (section D).** R2 proved the 56 forbidden
+predicates could fire but never ran the judge over a mutated result, so the judge's
+own checks — `masked_render`, `hearsay_provenance`, `interrupt_policy_cited` and the
+rest — were asserted falsifiable rather than demonstrated. Section D runs the real
+judge over every seeded defect and every mutation and lists, per check, EVERY witness
+that flips it. It also names the checks no fixture pass rule ever selects, and the
+one that is selected but vacuous. Both witness searches record complete sets rather
+than stopping at the first hit, because stopping early let a blunt witness mask a
+targeted one.
+
+**Section E is a harness self-test, not a fixture.** No corpus case pairs degraded
+stores with an envelope that would otherwise authorize a consequential action, so
+the D-B5 degradation rule was load-bearing nowhere: deleting it left A10's verdict
+unchanged. Section E drives a synthetic stimulus through the real action-emission
+path — clean refuses citing degradation, `ignore_degradation` seeded and the action
+emits. That is the only place the rule is shown discriminating, and no fixture-driven
+coverage of it is claimed.
 
 The same rule applies to the P2S-05 traces: three of five previously asserted literal
 constants and could not fail. Every trace verdict is now computed from the
@@ -139,7 +167,15 @@ D-B8 layers.
 
 **Exercised through the real mechanism** (`run_composition.py`, each with a
 composition-path defect that flips it): PC-1, PC-2, PC-3, PC-4, PC-6, PC-7, PC-9,
-PC-10, PC-11, D-B8 §2 `scope`, D-B8 §2 `applicability_predicate`.
+PC-10, PC-11, D-B8 §2 `scope`, D-B8 §2 `applicability_predicate`. PC-3 substitutes
+the DAT render floor for the table's untrusted-quarantine floor and PC-7 substitutes
+the `attention` domain as its third domain; both are mechanism-equivalent and each
+case says so.
+
+**Accounted elsewhere:** PC-12 is mechanically PC-2's shape (an equal-priority
+contradiction failing closed) and is exercised fixture-side through A4's
+policy-version dispute. It appeared in neither list before; duplicating `pc2` would
+add no mechanism, so it is listed rather than re-driven.
 
 **Not exercised** — no coverage implied:
 
@@ -158,6 +194,21 @@ PC-10, PC-11, D-B8 §2 `scope`, D-B8 §2 `applicability_predicate`.
 - D-B5 degraded-operation authority and the D-B7 §3 interrupt-policy citation rule
   are encoded from the rule text **quoted in Rework Packet R2**; neither document is
   in the Builder snapshot.
+- D-B5's degradation rule has **no discriminating fixture-driven coverage**: A10's
+  refusal is over-determined by its `internal-write` envelope, so the rule is shown
+  load-bearing only by the harness self-test (`run_defects.py` section E).
+- D-B8 §2 `scope`, `applicability_predicate` and `effective_window` execute **only**
+  in the synthetic composition suite. No fixture supplies a policy that is out of
+  scope, predicate-excluded, or outside its window.
+- Pass-rule checks `external_receipt_ownership`, `fail_closed` and `step_up_enforced`
+  are implemented but **no fixture pass rule ever selects them**; `receipt_required`
+  is selected only by S3, where it is vacuous (S3 emits no action, so the check has
+  nothing to look at and is not recorded as evidence). Reported per run.
+- The computed attention **band** is never compared against `expected.attention`.
+  The judge maps `expected.authority`, quarantine and receipt ownership; bands are
+  constrained only where a forbidden predicate reads them. Surfaced while deriving
+  focus displacement from the band; disclosed rather than fixed, since adding the
+  comparison is a scope change, not a rework item.
 
 The quarantine rule is a Builder **operationalization**: D-B6 §2.2 scopes quarantine
 to "where the governing policy requires it", and this engine hard-codes the
@@ -182,8 +233,9 @@ non-zero.
 | `skip-eligibility-check` | P2S-07 — proposals from untrusted content with no eligibility policy |
 | `normalizer-authority-leak` | E2E-1 — a substituted normalizer raises the maximum authorized action |
 
-A second layer (`mutations.py`, 51 candidate defects) exists purely to prove
-predicate reachability — see "Evidence counts" above.
+A second layer (`mutations.py`, 60 candidate defects) exists purely to prove
+predicate reachability — see "Evidence counts" above. No catalogue entry is dead:
+the runner fails if any mutation witnesses no predicate and no judge check.
 
 ## Outputs
 

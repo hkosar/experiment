@@ -18,9 +18,9 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Dict, Iterable, List, Optional, Sequence, Tuple
+from typing import Dict, List, Optional, Sequence
 
-from events import Event, EXTERNALLY_OWNED_EVENTS, ShapeStorage
+from events import Event, ShapeStorage
 
 
 class FoldError(Exception):
@@ -244,6 +244,17 @@ def receipt_ownership_violations(state: FoldedState, events: Sequence[Event]) ->
     for cid, rec in state.canonical.items():
         if rec.get("state") in ("executed", "verified") and cid not in state.receipts_by_action:
             problems.append("record %s shows %s without a receipt" % (cid, rec.get("state")))
+
+    # RW-24 — restored: a receipt REFERENCED by folded state but absent from the
+    # basis is unevidenced state just as surely as a missing reference is. The R1
+    # version of this function carried this branch; the R2 per-evidence rewrite
+    # dropped it, so a dangling reference passed.
+    present_ids = {e.event_id for e in events}
+    for action_id, receipt_id in sorted(state.receipts_by_action.items()):
+        if receipt_id not in present_ids:
+            problems.append(
+                "action %s cites receipt %s, which is absent from the folded basis"
+                % (action_id, receipt_id))
     return problems
 
 

@@ -15,13 +15,15 @@ Nothing in this module — or anything it imports besides `fixture_io.load_stimu
 
 from __future__ import annotations
 
+import copy
 import hashlib
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence, Tuple
+import re
+from dataclasses import dataclass, field, replace
+from typing import Dict, List, Optional, Tuple
 
 import engine_core as core
 import scenarios as scen
-from events import Event, ShapeStorage, SHAPES, shape_divergences
+from events import Event, SHAPES, shape_divergences
 from fixture_io import Stimulus
 from fold import FoldError, fold, receipt_ownership_violations
 
@@ -44,10 +46,9 @@ class Defects:
     stale_projection: bool = False
     engine_authored_receipt: bool = False
     skip_eligibility_check: bool = False
-    lease_before_policy: bool = False
     normalizer_authority_leak: bool = False
-    ignore_degradation: bool = False      # RW-15 counterfactual
-    render_leak: bool = False             # RW-14 counterfactual
+    ignore_degradation: bool = False      # RW-15 counterfactual, wired by RW-19
+    render_leak: bool = False             # RW-14 counterfactual, wired by RW-21
 
     def any_active(self) -> bool:
         return any(getattr(self, f) for f in self.__dataclass_fields__)
@@ -85,6 +86,88 @@ class ComputedResult:
 
     def digest(self) -> str:
         return self.folded.digest() if self.folded is not None else "-"
+
+
+# --------------------------------------------------------------------------
+# Derivation writers (RW-20 / RW-22 / RW-24)
+#
+# Every function below is the SINGLE production writer for a derived field. The
+# defect catalogue calls these same writers after perturbing an *input* to the
+# derivation, so a seeded defect can never author a derived answer directly — the
+# failure this suite exists to exclude. See `run_defects.witness_channel_integrity`.
+# --------------------------------------------------------------------------
+
+# RW-20 — the interrupt-policy citation is a stimulus fact, not a constant. A8's
+# `start_state` reads "quiet hours active; OD-1 policy PENDING"; the engine reads
+# that text and cites what it finds, at the status it finds. A stimulus naming no
+# interrupt policy produces NO citation, which is what makes the citation's
+# presence discriminating rather than universal.
+_INTERRUPT_POLICY_RE = re.compile(
+    r"\b([A-Z]{2,5}-\d{1,3})\s+policy\s+(pending|ratified|approved)\b", re.IGNORECASE)
+
+
+def interrupt_policy_citation(start_state: str) -> Optional[Tuple[str, str]]:
+    """(policy_id, status) named by the stimulus, or None if none is named."""
+    m = _INTERRUPT_POLICY_RE.search(start_state or "")
+    if not m:
+        return None
+    return m.group(1).upper(), ("pending" if m.group(2).lower() == "pending"
+                                else "ratified")
+
+
+def focus_preserved(attention: str) -> bool:
+    """RW-24 — focus preservation is COMPUTED from the disposition, not asserted.
+
+    The named foreground focus is displaced exactly when the computed band is the
+    INTERRUPTING one. `needs-owner` routes an item to the owner's queue; only
+    `critical` seizes the surface the owner is currently working on (ATT-01 reserves
+    that band for confirmed danger), and seizing the surface is what loses the
+    pointer. D-B6 §2.3 hands the computed band to the B7 Desk projection; this is
+    that projection's rule.
+
+    The earlier version asserted `preserved: True` whenever a focus existed, so no
+    engine behavior could disturb it.
+    """
+    return core.ATTENTION_ORDER[attention] < core.ATTENTION_ORDER[core.ATT_CRITICAL]
+
+
+def recompute_focus_pointer(result: "ComputedResult") -> None:
+    """Re-derive the emitted focus pointer from the (possibly perturbed) band."""
+    for i, e in enumerate(result.events):
+        if e.event_type == "FocusPointerEvent":
+            p = dict(e.payload)
+            p["preserved"] = focus_preserved(result.attention)
+            result.events[i] = replace(e, payload=p)
+
+
+def recompute_normalizer_invariants(extras: Dict[str, object]) -> None:
+    """RW-22 — the E2E-1 invariant flags are DERIVED from the recorded results.
+
+    `authority_invariant` and `risk_suggestions_differ` are functions of the
+    per-normalizer records. Production and the defect catalogue both call this, so
+    the `normalizer-authority-leak` mutation perturbs M2's recorded ceiling and the
+    flag follows; it can no longer write `authority_invariant=False` — the key its
+    own predicate reads.
+    """
+    r = extras.get("normalizers")
+    if not isinstance(r, dict) or "M1" not in r or "M2" not in r:
+        return
+    extras["authority_invariant"] = (
+        r["M1"]["ceiling"] == r["M2"]["ceiling"] and r["M1"]["tier"] == r["M2"]["tier"])
+    extras["risk_suggestions_differ"] = (
+        r["M1"]["risk_suggestion"] != r["M2"]["risk_suggestion"])
+
+
+def set_normalizer_ceiling(result: "ComputedResult", model_name: str,
+                           ceiling: str) -> None:
+    """Perturb one recorded normalizer's authorized ceiling; re-derive the flags."""
+    ex = copy.deepcopy(result.extras)
+    norms = ex.get("normalizers")
+    if not isinstance(norms, dict) or model_name not in norms:
+        return
+    norms[model_name]["ceiling"] = ceiling
+    recompute_normalizer_invariants(ex)
+    result.extras = ex
 
 
 # --------------------------------------------------------------------------
@@ -141,10 +224,17 @@ def _eid(fixture_id: str, shape: str, tag: str, n: int = 0) -> str:
     return "%s/%s/%s%s" % (fixture_id, shape, tag, ("#%d" % n) if n else "")
 
 
-def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> ComputedResult:
-    """Compute one fixture x shape combination end to end."""
+def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
+             spec: Optional[scen.ScenarioSpec] = None) -> ComputedResult:
+    """Compute one fixture x shape combination end to end.
+
+    `spec` is supplied ONLY by harness self-tests (RW-19), which drive a synthetic
+    stimulus through this same production path rather than through the corpus. Every
+    fixture-driven run leaves it None and the scenario registry resolves it.
+    """
     d = defects or Defects()
-    spec = scen.get(stim.id)           # KeyError => unclassifiable => run FAILS
+    if spec is None:
+        spec = scen.get(stim.id)       # KeyError => unclassifiable => run FAILS
 
     required_fields = (
         "origin", "source_id", "source_type", "trust_class", "instruction_authority",
@@ -309,17 +399,21 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
                   payload={"policy_version": "P1", "applied": ",".join(comp.applied)},
                   object_key="case")
 
+    decision_payload: Dict[str, object] = {
+        "disposition": disp.tier, "ceiling": disp.ceiling,
+        "basis_policy_version": "P1",
+        "falsifier_status": "identified"
+        if disp.tier in (core.T3, core.T4) else "none_identified"}
+    # RW-16 / RW-20: an interrupt policy that the stimulus records as PENDING is
+    # citable as pending, never as ratified (D-B7 §3, per packet). Both the policy
+    # id and its status come from the stimulus, so the citation is conditioned on
+    # the input rather than stamped on every decision of every fixture.
+    _cite = interrupt_policy_citation(stim.start_state)
+    if _cite is not None:
+        decision_payload["interrupt_policy"] = _cite[0]
+        decision_payload["interrupt_policy_status"] = _cite[1]
     decision_id = add("DecisionEvent", "decision", caused_by=(eval_id,),
-                      payload={"disposition": disp.tier, "ceiling": disp.ceiling,
-                               "basis_policy_version": "P1",
-                               # RW-16: an interrupt policy that is PENDING is citable
-                               # as pending, never as ratified (D-B7 §3, per packet).
-                               "interrupt_policy": "OD-1",
-                               "interrupt_policy_status":
-                                   "pending" if spec.od1_policy_pending else "ratified",
-                               "falsifier_status": "identified"
-                               if disp.tier in (core.T3, core.T4) else "none_identified"},
-                      object_key="case")
+                      payload=decision_payload, object_key="case")
 
     # RW-12(3) — the engine records WHICH input origin drove the band, so
     # "email interrupting sleep" is detectable from computed state.
@@ -330,6 +424,25 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
                  "source_origin": str(stim.envelopes[driving].get("origin", "")),
                  "source_trust": str(stim.envelopes[driving].get("trust_class", "")),
                  "quiet_hours": bool(spec.quiet_hours)}, object_key="case")
+
+    # RW-24 — the suppression record is COMPUTED. During quiet hours every input
+    # whose OWN band sits below the interrupting threshold is held to the morning
+    # briefing, and the record names which input was held. The previous matcher
+    # accepted any AttentionChangeEvent, which every run emits, so "suppression
+    # record present" was satisfied vacuously.
+    if spec.quiet_hours:
+        for idx, b in enumerate(per_env):
+            if core.ATTENTION_ORDER[b.attention] >= core.ATTENTION_ORDER[core.ATT_CRITICAL]:
+                continue
+            add("AttentionChangeEvent", "suppress", n=idx + 1, caused_by=(decision_id,),
+                payload={"object": "%s/suppressed/%d" % (stim.id, idx),
+                         "band": b.attention,
+                         "record": "suppression",
+                         "suppressed_source_id":
+                             str(stim.envelopes[idx].get("source_id", "")),
+                         "suppressed_until": "morning-briefing",
+                         "source_trust": str(stim.envelopes[idx].get("trust_class", "")),
+                         "quiet_hours": True}, object_key="attention")
 
     # Requirement 6 — actions and externally owned receipts.
     executed_without_receipt = False
@@ -525,8 +638,11 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
     # heartbeat; the engine emits the corresponding control-journal signal, so a real
     # defect (a missing heartbeat) is what the predicate detects, not a flag.
     if spec.watchdog_monitored:
+        # RW-24: freshness is read from the recorded liveness fact, not hard-coded.
+        # A stimulus recording a stale heartbeat now produces a stale signal.
         add("WatchdogHeartbeatEvent", "watchdog", caused_by=(pol_ev,),
-            payload={"fresh": True, "monitor": "control-service"},
+            payload={"fresh": bool(spec.derived.get("watchdog_fresh")),
+                     "monitor": "control-service"},
             object_key="control")
 
     # RW-11 — focus pointer. S3's start_state names the foreground focus; preserving
@@ -534,10 +650,12 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
     focus = spec.derived.get("foreground_focus")
     if focus or spec.derived.get("read_only_view"):
         # A reconnect/read view renders the last-focus pointer as part of the Desk
-        # projection; an interjection must preserve the named foreground focus.
+        # projection. RW-24: whether the interjection preserves the named foreground
+        # is DERIVED from the computed band (see `focus_preserved`), so an engine
+        # that escalates the interjection loses the pointer and the predicate sees it.
         add("FocusPointerEvent", "focus", caused_by=(decision_id,),
             payload={"foreground": str(focus) if focus else "last-focus",
-                     "preserved": True}, object_key="case")
+                     "preserved": focus_preserved(disp.attention)}, object_key="case")
 
     # RW-11 — recall by description. S9's start_state records that the S2 capture
     # exists; the engine computes a hit against that recorded prior capture.
@@ -586,13 +704,9 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None) -> C
             results[name] = {"risk_suggestion": prop.risk_suggestion,
                              "ceiling": b2.ceiling, "tier": b2.tier}
         extras["normalizers"] = results
-        extras["authority_invariant"] = (
-            results["M1"]["ceiling"] == results["M2"]["ceiling"]
-            and results["M1"]["tier"] == results["M2"]["tier"]
-        )
-        extras["risk_suggestions_differ"] = (
-            results["M1"]["risk_suggestion"] != results["M2"]["risk_suggestion"]
-        )
+        # RW-22: derived through the single production writer, which the defect
+        # catalogue also calls after perturbing a recorded ceiling.
+        recompute_normalizer_invariants(extras)
 
     # --- fold the multi-store basis (requirement 7) ---
     fold_error = None

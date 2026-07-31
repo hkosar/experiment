@@ -20,12 +20,13 @@ Usage:  python3 check_anticircularity.py
 
 from __future__ import annotations
 
+import argparse
 import ast
 import json
 import os
 import re
 import sys
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 
@@ -138,7 +139,15 @@ def check_structural() -> Dict[str, object]:
     }
 
 
-def main() -> int:
+def main(argv: Optional[List[str]] = None) -> int:
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--fixtures", default=None,
+                    help="accepted for runner-uniformity; this check reads code, "
+                         "not fixtures")
+    ap.add_argument("--out", default=None,
+                    help="output directory (default: ./out next to this file)")
+    args = ap.parse_args(argv if argv is not None else sys.argv[1:])
+
     results = [check_textual(), check_imports(), check_structural()]
     print("Anti-circularity check — engine/scenario code vs fixture oracle fields")
     print("  engine/scenario modules : %s" % ", ".join(ENGINE_MODULES))
@@ -166,7 +175,10 @@ def main() -> int:
     ok = all(r["passed"] for r in results)
     print("\nANTI-CIRCULARITY %s" % ("PASS — the engine has no path to any expected result"
                                      if ok else "FAIL"))
-    out_dir = os.path.join(HERE, "out")
+    # RW-24 hygiene: `--out` used to be accepted and ignored, so a `run_gate.py
+    # --out DIR` run produced nine of the ten declared outputs and the determinism
+    # comparison silently skipped this one.
+    out_dir = args.out or os.path.join(HERE, "out")
     os.makedirs(out_dir, exist_ok=True)
     with open(os.path.join(out_dir, "anticircularity.json"), "w",
               encoding="utf-8", newline="\n") as fh:

@@ -1,4 +1,7 @@
 {
+  "accounted_elsewhere": [
+    "PC-12 — mechanically PC-2's shape; exercised fixture-side via A4's policy-version dispute, not duplicated in the composition suite."
+  ],
   "all_passed": true,
   "anticircularity_passed": true,
   "base_summary": {
@@ -58,12 +61,12 @@
     },
     {
       "criterion": "8  every seeded defect flips its target from pass to fail",
-      "detail": "8/8 named defect classes effective",
+      "detail": "9/9 named defect classes effective",
       "passed": true
     },
     {
       "criterion": "8b every forbidden predicate is provably able to fire",
-      "detail": "56/56 defect-reachable via a 55-mutation catalogue",
+      "detail": "56/56 defect-reachable via a 60-mutation catalogue",
       "passed": true
     },
     {
@@ -85,26 +88,50 @@
       "criterion": "12 D-B8 composition layers exercised through the real mechanism",
       "detail": "11/11 cases pass, 11/11 flip under a composition-path defect",
       "passed": true
+    },
+    {
+      "criterion": "13 judge checks flippable; no orphaned switch, no dead mutation",
+      "detail": "13/13 judge checks have a named witness; 3 never selected by any pass rule, 1 selected but vacuous; orphaned switches: none; mutations witnessing nothing: none",
+      "passed": true
+    },
+    {
+      "criterion": "14 D-B5 degradation rule shown load-bearing (harness self-test)",
+      "detail": "clean refuses citing degradation under an envelope that would otherwise authorize; seeded ignore_degradation emits the action",
+      "passed": true
     }
   ],
   "defects_summary": {
     "all_effective": true,
     "baseline_passes": 81,
-    "defects_effective": 8,
-    "defects_seeded": 8,
-    "mutations_in_catalogue": 55,
+    "defects_effective": 9,
+    "defects_seeded": 9,
+    "degradation_self_test_discriminates": true,
+    "judge_checks_falsifiable": 13,
+    "judge_checks_not_falsifiable": 0,
+    "judge_checks_total": 13,
+    "mutations_in_catalogue": 60,
+    "mutations_witnessing_nothing": [],
+    "orphaned_defect_switches": [],
+    "pass_rule_checks_never_selected": [
+      "external_receipt_ownership",
+      "fail_closed",
+      "step_up_enforced"
+    ],
+    "pass_rule_checks_selected_but_vacuous": [
+      "receipt_required"
+    ],
     "predicates_defect_reachable": 56,
     "predicates_not_evaluable": 0,
     "predicates_total": 56,
-    "witness_channel_integrity": true
+    "witness_channel_tripwire": true
   },
   "exercised_by_composition_suite": [
     "PC-1 priority within domain/output",
     "PC-2 equal-priority fail-closed",
-    "PC-3 exception vs floor",
+    "PC-3 exception vs floor (DAT render floor substituted for the table's untrusted-quarantine floor — same mechanism, different governed output)",
     "PC-4 effective-window filtering",
     "PC-6 exception vs exception_authority=none",
-    "PC-7 cross-domain conjunction",
+    "PC-7 cross-domain conjunction (attention substituted as the third domain)",
     "PC-9 floor intersection",
     "PC-10 output ownership refusal",
     "PC-11 exception replaces only its target",
@@ -117,6 +144,10 @@
     "D-B8 `schema_compat` gating — a single schema version (SV-1) exists in the corpus.",
     "D-B8 PC-6 is enforced at COMPOSITION time; D-B8 grades authoring-time rejection as the required protection. The simulator models no authoring surface, so the protection is demonstrated one stage later than the design specifies.",
     "D-B8 PC-8 (two policies constraining different fields of ONE action) — the simulator composes per governed output, not per action field.",
+    "D-B5 degraded-operation authority has NO discriminating fixture-driven coverage (RW-19): no corpus case pairs degraded stores with an envelope that would otherwise authorize a consequential action, so A10's refusal is over-determined by its internal-write envelope. The rule is shown discriminating only by the harness self-test in run_defects.py layer E.",
+    "D-B8 §2 `scope`, `applicability_predicate` and `effective_window` execute ONLY in the synthetic composition suite (RW-23). No fixture supplies a policy that is out of scope, predicate-excluded, or outside its window.",
+    "Pass-rule checks `external_receipt_ownership`, `fail_closed` and `step_up_enforced` are implemented but NO fixture pass rule ever selects them; `receipt_required` is selected only by S3, where it is vacuous (S3 emits no action). Reported per run in seeded_defects.json (RW-21).",
+    "The computed attention BAND is never compared against `expected.attention`: the judge maps `expected.authority`, quarantine and receipt ownership, not the band. Bands are therefore constrained only where a forbidden predicate reads them. Found while deriving focus displacement from the band (RW-24); disclosed rather than fixed, because adding the comparison is a scope change.",
     "Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.",
     "Live latency measurement for the DP-001 ack bound (D-B4 §2.1) — a build-gate obligation, not a design-simulator one.",
     "13 of 39 registered D-B9 event types are never emitted by any scenario (CostEvidenceRecord, EconomicReviewEvent, IdentityEvent, KillReceiptEvent, LearningEvent, LeaseEvent, NormalizationRecord, ObservationEvent, ReclassificationEvent, RecommendationRecord, RecoveryEvent, RegistryEvent, ScheduleEvent) — the taxonomy is declared, not exercised, for these.",

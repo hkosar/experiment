@@ -12,7 +12,7 @@ import argparse
 import json
 import os
 import sys
-from typing import Dict, List
+from typing import List
 
 import check_anticircularity
 import run_all
@@ -41,6 +41,23 @@ NOT_SIMULATED = [
     "protection is demonstrated one stage later than the design specifies.",
     "D-B8 PC-8 (two policies constraining different fields of ONE action) — the "
     "simulator composes per governed output, not per action field.",
+    "D-B5 degraded-operation authority has NO discriminating fixture-driven "
+    "coverage (RW-19): no corpus case pairs degraded stores with an envelope that "
+    "would otherwise authorize a consequential action, so A10's refusal is "
+    "over-determined by its internal-write envelope. The rule is shown "
+    "discriminating only by the harness self-test in run_defects.py layer E.",
+    "D-B8 §2 `scope`, `applicability_predicate` and `effective_window` execute ONLY "
+    "in the synthetic composition suite (RW-23). No fixture supplies a policy that "
+    "is out of scope, predicate-excluded, or outside its window.",
+    "Pass-rule checks `external_receipt_ownership`, `fail_closed` and "
+    "`step_up_enforced` are implemented but NO fixture pass rule ever selects them; "
+    "`receipt_required` is selected only by S3, where it is vacuous (S3 emits no "
+    "action). Reported per run in seeded_defects.json (RW-21).",
+    "The computed attention BAND is never compared against `expected.attention`: "
+    "the judge maps `expected.authority`, quarantine and receipt ownership, not the "
+    "band. Bands are therefore constrained only where a forbidden predicate reads "
+    "them. Found while deriving focus displacement from the band (RW-24); disclosed "
+    "rather than fixed, because adding the comparison is a scope change.",
     "Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.",
     "Live latency measurement for the DP-001 ack bound (D-B4 §2.1) — a build-gate "
     "obligation, not a design-simulator one.",
@@ -58,11 +75,23 @@ NOT_SIMULATED = [
 # the two lists together are exhaustive over the D-B8 layers.
 EXERCISED_BY_COMPOSITION_SUITE = [
     "PC-1 priority within domain/output", "PC-2 equal-priority fail-closed",
-    "PC-3 exception vs floor", "PC-4 effective-window filtering",
-    "PC-6 exception vs exception_authority=none", "PC-7 cross-domain conjunction",
+    "PC-3 exception vs floor (DAT render floor substituted for the table's "
+    "untrusted-quarantine floor — same mechanism, different governed output)",
+    "PC-4 effective-window filtering",
+    "PC-6 exception vs exception_authority=none",
+    "PC-7 cross-domain conjunction (attention substituted as the third domain)",
     "PC-9 floor intersection", "PC-10 output ownership refusal",
     "PC-11 exception replaces only its target",
     "D-B8 §2 scope", "D-B8 §2 applicability_predicate",
+]
+
+# RW-23 — PC-12 belonged to neither list. It is mechanically PC-2's shape (an
+# equal-priority contradiction failing closed) and is exercised FIXTURE-SIDE through
+# A4's policy-version dispute, so it is accounted here rather than duplicated as a
+# synthetic case or left unmentioned.
+ACCOUNTED_ELSEWHERE = [
+    "PC-12 — mechanically PC-2's shape; exercised fixture-side via A4's "
+    "policy-version dispute, not duplicated in the composition suite.",
 ]
 
 
@@ -82,6 +111,16 @@ def main(argv: List[str]) -> int:
             check_anticircularity.check_imports(),
             check_anticircularity.check_structural()]
     anti_ok = all(a["passed"] for a in anti)
+    # RW-24 hygiene: this output belongs to the run's `--out` like every other. It
+    # used to be written only by the standalone runner, into a fixed directory, so
+    # `run_gate.py --out DIR` produced nine of the ten declared outputs and the
+    # determinism comparison never covered it.
+    os.makedirs(args.out, exist_ok=True)
+    with open(os.path.join(args.out, "anticircularity.json"), "w",
+              encoding="utf-8", newline="\n") as fh:
+        json.dump({"passed": anti_ok, "checks": anti}, fh, indent=2,
+                  sort_keys=True, ensure_ascii=False)
+        fh.write("\n")
 
     s = base["summary"]
     e2e = next((r for r in base["results"] if r["fixture"] == "E2E-1"), {})
@@ -150,6 +189,28 @@ def main(argv: List[str]) -> int:
          "%d/%d cases pass, %d/%d flip under a composition-path defect"
          % (comp["summary"]["passed"], comp["summary"]["cases"],
             comp["summary"]["discriminating"], comp["summary"]["cases"])),
+        # RW-21 — the judge's own checks are evidence only if they can fail, and a
+        # declared defect switch that no runner seeds is a claim with nothing behind
+        # it. Both are gated now, not merely reported.
+        ("13 judge checks flippable; no orphaned switch, no dead mutation",
+         defects["summary"]["judge_checks_not_falsifiable"] == 0
+         and not defects["summary"]["orphaned_defect_switches"]
+         and not defects["summary"]["mutations_witnessing_nothing"],
+         "%d/%d judge checks have a named witness; %d never selected by any pass "
+         "rule, %d selected but vacuous; orphaned switches: %s; mutations "
+         "witnessing nothing: %s"
+         % (defects["summary"]["judge_checks_falsifiable"],
+            defects["summary"]["judge_checks_total"],
+            len(defects["summary"]["pass_rule_checks_never_selected"]),
+            len(defects["summary"]["pass_rule_checks_selected_but_vacuous"]),
+            ", ".join(defects["summary"]["orphaned_defect_switches"]) or "none",
+            ", ".join(defects["summary"]["mutations_witnessing_nothing"]) or "none")),
+        # RW-19 — the D-B5 rule has no discriminating fixture; the self-test is the
+        # only place it is shown load-bearing, so the gate depends on it.
+        ("14 D-B5 degradation rule shown load-bearing (harness self-test)",
+         bool(defects["summary"]["degradation_self_test_discriminates"]),
+         "clean refuses citing degradation under an envelope that would otherwise "
+         "authorize; seeded ignore_degradation emits the action"),
     ]
 
     print("=" * 86)
@@ -165,6 +226,10 @@ def main(argv: List[str]) -> int:
     print()
     print("EXERCISED through the real mechanism (run_composition.py)")
     print("  %s" % "; ".join(EXERCISED_BY_COMPOSITION_SUITE))
+    print()
+    print("ACCOUNTED ELSEWHERE (RW-23 — neither driven here nor unlisted)")
+    for line in ACCOUNTED_ELSEWHERE:
+        print("  - %s" % line)
     print()
     print("DECLARED NOT-SIMULATED (RW-09/RW-13 — these are NOT exercised)")
     for line in NOT_SIMULATED:
@@ -183,6 +248,7 @@ def main(argv: List[str]) -> int:
         "anticircularity_passed": anti_ok,
         "not_simulated": NOT_SIMULATED,
         "exercised_by_composition_suite": EXERCISED_BY_COMPOSITION_SUITE,
+        "accounted_elsewhere": ACCOUNTED_ELSEWHERE,
         "composition_summary": comp["summary"],
         "predicates_not_evaluable": sorted(not_evaluable),
     }

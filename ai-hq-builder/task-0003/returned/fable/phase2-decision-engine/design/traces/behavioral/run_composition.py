@@ -1,4 +1,4 @@
-"""D-B8 composition cases PC-1..PC-12, driven through the REAL `compose_policies`.
+"""D-B8 composition cases, driven through the REAL `compose_policies`.
 
 Rework finding RW-13: several D-B8 layers were implemented but never exercised —
 PC-4 window filtering, PC-3/PC-6 exception rejection, the rule-5/PC-10 refusal
@@ -9,6 +9,37 @@ because it bypassed `compose_policies` entirely.
 Every case here calls `engine_core.compose_policies` directly — the same function
 the simulator uses — and each carries a seeded defect variant that must flip it.
 A case whose defect variant still passes is asserting a constant, not measuring.
+
+EXACT ACCOUNTING OF THE PC TABLE (rework finding RW-23 — the header used to read
+"PC-1..PC-12", which this suite has never held):
+
+  Driven here (9)  PC-1, PC-2, PC-3, PC-4, PC-6, PC-7, PC-9, PC-10, PC-11
+  Plus (2)         D-B8 §2 `scope`, D-B8 §2 `applicability_predicate`
+  PC-5             NOT SIMULATED — nothing generates a rollback (see run_gate.py).
+  PC-8             NOT SIMULATED — composition is per governed output, not per
+                   action field (see run_gate.py).
+  PC-12            NOT driven here, and NOT unaccounted: it is mechanically PC-2's
+                   shape (an equal-priority contradiction failing closed), and it is
+                   exercised fixture-side through A4's policy-version dispute. It
+                   would add a duplicate of `pc2` and no new mechanism, so it is
+                   listed rather than duplicated.
+
+TWO DELIBERATE SUBSTITUTIONS, so the mapping to D-B8's table is exact about where
+this suite differs from the document's own example rows:
+
+  PC-3  The table's row uses the untrusted-content quarantine floor; this case uses
+        the DAT render floor instead. The mechanism under test — an exception whose
+        `supersession_target` names a protection floor is refused — is identical;
+        only the floor's governed output differs (render class rather than ceiling).
+  PC-7  The table's row names a third domain this simulator does not model; the case
+        substitutes the `attention` domain as the third independent constraint. What
+        is tested is the same: constraints from different domains all land, and
+        losing one loses its output.
+
+SCOPE OF THIS SUITE'S COVERAGE, stated plainly: `scope`, `applicability_predicate`
+and `effective_window` execute ONLY here. No fixture-driven path in the corpus
+supplies a policy that is out of scope, predicate-excluded, or outside its window,
+so those three layers have no coverage outside this synthetic suite.
 
 Usage:  python3 run_composition.py [--out DIR]
 """
@@ -70,7 +101,11 @@ def pc2(defect):
 
 
 def pc3(defect):
-    """An exception may not target a protection floor."""
+    """An exception may not target a protection floor.
+
+    SUBSTITUTION (RW-23): the DAT render floor stands in for the table's
+    untrusted-quarantine floor. Same mechanism, different governed output.
+    """
     exc = core.PolicyObject("exc.floor", 1, "routing", 90,
                             supersession_target=None if defect else ("floor.dat-render", 1))
     c = core.compose_policies([FLOOR_RENDER, exc], at_time=NOW, envelope=OWNER_ENV)
@@ -98,7 +133,11 @@ def pc6(defect):
 
 
 def pc7(defect):
-    """Independent constraints from different domains all land."""
+    """Independent constraints from different domains all land.
+
+    SUBSTITUTION (RW-23): `attention` stands in as the third domain, since the
+    table's third domain is not modelled here. Same conjunction mechanism.
+    """
     routing = core.PolicyObject("routing.r", 1, "routing", 10, tier_max=core.T2)
     autonomy = core.PolicyObject("autonomy.a", 1, "autonomy", 10,
                                  ceiling=core.CEILING_ACT_WITH_RECEIPT)
