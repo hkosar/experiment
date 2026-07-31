@@ -547,6 +547,19 @@ def base_disposition(envelope: Dict[str, str], env_check: EnvelopeCheck,
 
     if trust.startswith("trusted-internal") and instr == "owner":
         reasons.append("owner-authored, identity-bound -> owner authority available")
+        # RW-27: an owner input that only READS answers itself; nothing is queued for
+        # a later session, so the Needs-Owner band does not apply. D-B7 §2.1 (quoted
+        # in R4) defines Needs-Owner as "queue admission, next natural session" —
+        # assigning it to an answered retrieval contradicts the band's own
+        # definition. This mirrors the derived-views read path above; the difference
+        # is only that a recall query arrives on the owner channel rather than
+        # carrying `data_class: derived-views`. Found by the attention comparison:
+        # the engine had no read path for an owner query at all.
+        if derived.get("read_only_view"):
+            reasons.append("owner read/retrieval path -> record-only, no owner "
+                           "attention queued (D-B7 §2.1 Needs-Owner is queue "
+                           "admission; a read queues nothing)")
+            return BaseDisposition(T1, CEILING_RECORD_ONLY, ATT_NONE, tuple(reasons))
         base_tier = T2 if routine_filing_eligible(derived) else T3
         ceiling = CEILING_ACT_WITH_RECEIPT if base_tier == T2 else CEILING_INTERNAL_WRITE
         attention = ATT_NONE if base_tier == T2 else ATT_NEEDS_OWNER

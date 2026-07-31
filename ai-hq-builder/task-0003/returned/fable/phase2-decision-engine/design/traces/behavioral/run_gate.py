@@ -53,11 +53,6 @@ NOT_SIMULATED = [
     "`step_up_enforced` are implemented but NO fixture pass rule ever selects them; "
     "`receipt_required` is selected only by S3, where it is vacuous (S3 emits no "
     "action). Reported per run in seeded_defects.json (RW-21).",
-    "The computed attention BAND is never compared against `expected.attention`: "
-    "the judge maps `expected.authority`, quarantine and receipt ownership, not the "
-    "band. Bands are therefore constrained only where a forbidden predicate reads "
-    "them. Found while deriving focus displacement from the band (RW-24); disclosed "
-    "rather than fixed, because adding the comparison is a scope change.",
     "Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.",
     "Live latency measurement for the DP-001 ack bound (D-B4 §2.1) — a build-gate "
     "obligation, not a design-simulator one.",
@@ -68,7 +63,21 @@ NOT_SIMULATED = [
     "ScheduleEvent) — the taxonomy is declared, not exercised, for these.",
     "D-B5 degraded-operation authority (RW-15) is encoded from the rule text QUOTED "
     "in Rework Packet R2; D-B5 itself is not in the Builder snapshot. Same for the "
-    "D-B7 §3 interrupt-policy citation rule (RW-16).",
+    "D-B7 §3 interrupt-policy citation rule (RW-16) and the D-B7 §2.1 band "
+    "definitions the attention mapping rests on (quoted in R4).",
+    "RW-27 attention comparison: 5 fixtures state an expectation that names no "
+    "D-B7 §2.1 band (S10 'per class', A1 'security event', A6 'per outcome', "
+    "A10 'RES alarm', A16 'per ATT-01 security assessment') — reported UNMAPPED, "
+    "never guessed. 2 more (S7, A14) turn on the engine's `hub` band, which the "
+    "quoted §2.1 vocabulary does not contain; both are UNRESOLVED change requests "
+    "and are not counted as compared. 'None'/'Record-only'/display expectations are "
+    "compared as a CEILING (must not reach Needs-Owner), not an equality.",
+    "D-B7 §3 OD-1 RULE 2 is NOT modelled (RW-26b): 'ambiguous physical-danger/"
+    "security signals fail TOWARD interrupting; all other ambiguity holds to the "
+    "briefing.' The quiet-hours suppression path encodes rule 1 only (verified "
+    "danger interrupts through quiet hours). Rule 2 is inert on this corpus — A8's "
+    "trigger is watchdog-confirmed, i.e. rule 1 — and it is deliberately NOT "
+    "implemented: no fixture exercises it, so the code would be untestable.",
 ]
 
 # Exercised through the real mechanism by `run_composition.py` — recorded here so
@@ -211,6 +220,18 @@ def main(argv: List[str]) -> int:
          bool(defects["summary"]["degradation_self_test_discriminates"]),
          "clean refuses citing degradation under an envelope that would otherwise "
          "authorize; seeded ignore_degradation emits the action"),
+        # RW-27 — requirement 4's last uncompared dimension. The criterion is
+        # coverage-honest, not count-maximising: it passes when every mapped
+        # expectation is compared and agrees, and it PRINTS the unmapped and
+        # unresolved counts so neither can hide inside a green line.
+        ("15 expected.attention compared for every mapped fixture",
+         base["summary"]["attention_compared"] > 0 and s["failures"] == 0,
+         "%d/%d combinations compared, %d unmapped (expectation names no D-B7 §2.1 "
+         "band), %d UNRESOLVED and raised as change requests (%s)"
+         % (base["summary"]["attention_compared"], s["combinations_computed"],
+            base["summary"]["attention_unmapped"],
+            base["summary"]["attention_unresolved"],
+            ", ".join(base["summary"]["attention_unresolved_fixtures"]) or "none")),
     ]
 
     print("=" * 86)

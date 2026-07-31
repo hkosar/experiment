@@ -204,11 +204,24 @@ add no mechanism, so it is listed rather than re-driven.
   are implemented but **no fixture pass rule ever selects them**; `receipt_required`
   is selected only by S3, where it is vacuous (S3 emits no action, so the check has
   nothing to look at and is not recorded as evidence). Reported per run.
-- The computed attention **band** is never compared against `expected.attention`.
-  The judge maps `expected.authority`, quarantine and receipt ownership; bands are
-  constrained only where a forbidden predicate reads them. Surfaced while deriving
-  focus displacement from the band; disclosed rather than fixed, since adding the
-  comparison is a scope change, not a rework item.
+- The computed attention **band** IS compared against `expected.attention` as of
+  R4 — the R3 version of this bullet said it never was, and that is no longer true.
+  Coverage, stated in full because the counts are not all-27: **20 of 27 fixtures
+  compared** (60 of 81 combinations); **5 unmapped** because the expectation names no
+  D-B7 §2.1 band at all (S10 "per class", A1 "security event", A6 "per outcome", A10
+  "RES alarm", A16 "per ATT-01 security assessment") — reported, never guessed; and
+  **2 UNRESOLVED and raised as change requests** (S7, A14), which turn on the
+  engine's `hub` band that the quoted §2.1 vocabulary does not contain.
+- Two comparison semantics, and the split is grounded rather than convenient.
+  Expectations naming a demanding band (Critical, Needs-Owner) or a specific channel
+  (Briefing, Hub) are compared for **equality**. Expectations of "None",
+  "Record-only" or a pure display surface are compared as a **ceiling** — the
+  computed band must not reach Needs-Owner — because the corpus itself uses "None"
+  that way: A11 pairs `attention: "None"` with a `"monthly digest"` receipt and a
+  forbidden entry reading literally "owner attention consumed"; S5 pairs
+  `"None (brief line only)"` with a `"Desk brief line"` receipt. Reading those as
+  equality against Record-only would contradict the fixtures' own receipts. The
+  ceiling reading is weaker than equality and is labelled as such in the output.
 
 The quarantine rule is a Builder **operationalization**: D-B6 §2.2 scopes quarantine
 to "where the governing policy requires it", and this engine hard-codes the

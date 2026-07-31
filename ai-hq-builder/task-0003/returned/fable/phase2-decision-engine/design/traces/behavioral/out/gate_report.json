@@ -5,6 +5,13 @@
   "all_passed": true,
   "anticircularity_passed": true,
   "base_summary": {
+    "attention_compared": 60,
+    "attention_unmapped": 15,
+    "attention_unresolved": 6,
+    "attention_unresolved_fixtures": [
+      "A14",
+      "S7"
+    ],
     "authority_mapping_mapped": 36,
     "authority_mapping_unmapped": 45,
     "combinations_computed": 81,
@@ -66,7 +73,7 @@
     },
     {
       "criterion": "8b every forbidden predicate is provably able to fire",
-      "detail": "56/56 defect-reachable via a 60-mutation catalogue",
+      "detail": "56/56 defect-reachable via a 61-mutation catalogue",
       "passed": true
     },
     {
@@ -91,12 +98,17 @@
     },
     {
       "criterion": "13 judge checks flippable; no orphaned switch, no dead mutation",
-      "detail": "13/13 judge checks have a named witness; 3 never selected by any pass rule, 1 selected but vacuous; orphaned switches: none; mutations witnessing nothing: none",
+      "detail": "15/15 judge checks have a named witness; 3 never selected by any pass rule, 1 selected but vacuous; orphaned switches: none; mutations witnessing nothing: none",
       "passed": true
     },
     {
       "criterion": "14 D-B5 degradation rule shown load-bearing (harness self-test)",
       "detail": "clean refuses citing degradation under an envelope that would otherwise authorize; seeded ignore_degradation emits the action",
+      "passed": true
+    },
+    {
+      "criterion": "15 expected.attention compared for every mapped fixture",
+      "detail": "60/81 combinations compared, 15 unmapped (expectation names no D-B7 §2.1 band), 6 UNRESOLVED and raised as change requests (A14, S7)",
       "passed": true
     }
   ],
@@ -106,10 +118,10 @@
     "defects_effective": 9,
     "defects_seeded": 9,
     "degradation_self_test_discriminates": true,
-    "judge_checks_falsifiable": 13,
+    "judge_checks_falsifiable": 15,
     "judge_checks_not_falsifiable": 0,
-    "judge_checks_total": 13,
-    "mutations_in_catalogue": 60,
+    "judge_checks_total": 15,
+    "mutations_in_catalogue": 61,
     "mutations_witnessing_nothing": [],
     "orphaned_defect_switches": [],
     "pass_rule_checks_never_selected": [
@@ -147,11 +159,12 @@
     "D-B5 degraded-operation authority has NO discriminating fixture-driven coverage (RW-19): no corpus case pairs degraded stores with an envelope that would otherwise authorize a consequential action, so A10's refusal is over-determined by its internal-write envelope. The rule is shown discriminating only by the harness self-test in run_defects.py layer E.",
     "D-B8 §2 `scope`, `applicability_predicate` and `effective_window` execute ONLY in the synthetic composition suite (RW-23). No fixture supplies a policy that is out of scope, predicate-excluded, or outside its window.",
     "Pass-rule checks `external_receipt_ownership`, `fail_closed` and `step_up_enforced` are implemented but NO fixture pass rule ever selects them; `receipt_required` is selected only by S3, where it is vacuous (S3 emits no action). Reported per run in seeded_defects.json (RW-21).",
-    "The computed attention BAND is never compared against `expected.attention`: the judge maps `expected.authority`, quarantine and receipt ownership, not the band. Bands are therefore constrained only where a forbidden predicate reads them. Found while deriving focus displacement from the band (RW-24); disclosed rather than fixed, because adding the comparison is a scope change.",
     "Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.",
     "Live latency measurement for the DP-001 ack bound (D-B4 §2.1) — a build-gate obligation, not a design-simulator one.",
     "13 of 39 registered D-B9 event types are never emitted by any scenario (CostEvidenceRecord, EconomicReviewEvent, IdentityEvent, KillReceiptEvent, LearningEvent, LeaseEvent, NormalizationRecord, ObservationEvent, ReclassificationEvent, RecommendationRecord, RecoveryEvent, RegistryEvent, ScheduleEvent) — the taxonomy is declared, not exercised, for these.",
-    "D-B5 degraded-operation authority (RW-15) is encoded from the rule text QUOTED in Rework Packet R2; D-B5 itself is not in the Builder snapshot. Same for the D-B7 §3 interrupt-policy citation rule (RW-16)."
+    "D-B5 degraded-operation authority (RW-15) is encoded from the rule text QUOTED in Rework Packet R2; D-B5 itself is not in the Builder snapshot. Same for the D-B7 §3 interrupt-policy citation rule (RW-16) and the D-B7 §2.1 band definitions the attention mapping rests on (quoted in R4).",
+    "RW-27 attention comparison: 5 fixtures state an expectation that names no D-B7 §2.1 band (S10 'per class', A1 'security event', A6 'per outcome', A10 'RES alarm', A16 'per ATT-01 security assessment') — reported UNMAPPED, never guessed. 2 more (S7, A14) turn on the engine's `hub` band, which the quoted §2.1 vocabulary does not contain; both are UNRESOLVED change requests and are not counted as compared. 'None'/'Record-only'/display expectations are compared as a CEILING (must not reach Needs-Owner), not an equality.",
+    "D-B7 §3 OD-1 RULE 2 is NOT modelled (RW-26b): 'ambiguous physical-danger/security signals fail TOWARD interrupting; all other ambiguity holds to the briefing.' The quiet-hours suppression path encodes rule 1 only (verified danger interrupts through quiet hours). Rule 2 is inert on this corpus — A8's trigger is watchdog-confirmed, i.e. rule 1 — and it is deliberately NOT implemented: no fixture exercises it, so the code would be untestable."
   ],
   "p2s05_summary": {
     "discriminating": 5,

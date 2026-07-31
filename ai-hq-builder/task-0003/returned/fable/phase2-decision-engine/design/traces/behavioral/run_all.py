@@ -72,6 +72,9 @@ def run(fixtures_path: str, out_dir: str, defects: Defects | None = None) -> Dic
                 "shape": shape,
                 "authority_mapping": oracle.authority_mapping_coverage(
                     oracle_cases[stim.id].expected),
+                # RW-27: the same honest-coverage shape for the attention dimension.
+                "attention_mapping": oracle.expected_attention(
+                    oracle_cases[stim.id].expected, stim.id).to_dict(),
                 "tier": res.tier,
                 "ceiling": res.ceiling,
                 "attention": res.attention,
@@ -114,6 +117,19 @@ def run(fixtures_path: str, out_dir: str, defects: Defects | None = None) -> Dic
             1 for r in results if r.get("authority_mapping") == "mapped"),
         "authority_mapping_unmapped": sum(
             1 for r in results if r.get("authority_mapping") == "unmapped"),
+        # RW-27 — compared / unmapped / unresolved, never conflated. "Unresolved"
+        # means the fixture and the engine name different bands and the rule that
+        # would settle it is in a document the Builder does not hold: those are
+        # change requests, and they are NOT counted as compared.
+        "attention_compared": sum(
+            1 for r in results if r["attention_mapping"]["mapped"]),
+        "attention_unmapped": sum(
+            1 for r in results
+            if not r["attention_mapping"]["mapped"]
+            and not r["attention_mapping"]["unresolved"]),
+        "attention_unresolved": sum(
+            1 for r in results if r["attention_mapping"]["unresolved"]),
+        "attention_unresolved_fixtures": sorted(oracle.ATTENTION_UNRESOLVED),
     }
 
     os.makedirs(out_dir, exist_ok=True)
@@ -156,6 +172,15 @@ def main(argv: List[str]) -> int:
     print("  expected.authority      : %d mapped / %d unmapped (of %d combinations)"
           % (s["authority_mapping_mapped"], s["authority_mapping_unmapped"],
              s["combinations_computed"]))
+    print("  expected.attention      : %d compared / %d unmapped / %d UNRESOLVED "
+          "(of %d combinations)"
+          % (s["attention_compared"], s["attention_unmapped"],
+             s["attention_unresolved"], s["combinations_computed"]))
+    if s["attention_unresolved_fixtures"]:
+        print("     UNRESOLVED — change request to Fable: %s"
+              % ", ".join(s["attention_unresolved_fixtures"]))
+        for fid in s["attention_unresolved_fixtures"]:
+            print("       %s: %s" % (fid, oracle.ATTENTION_UNRESOLVED[fid]))
 
     if s["failures"]:
         print("\nFAILING COMBINATIONS:")

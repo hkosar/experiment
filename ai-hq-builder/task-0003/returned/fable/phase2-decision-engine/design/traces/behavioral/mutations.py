@@ -407,6 +407,20 @@ def _m_interrupt_uncited(result, spec, stim):
             result.events[i] = replace(e, payload=p)
 
 
+@mutation("interrupt-policy-id-fabricated",
+          "a decision cites an interrupt policy the stimulus never records")
+def _m_interrupt_id_fabricated(result, spec, stim):
+    # RW-26(a): the R3 citation check searched the stimulus using the ENGINE'S OWN
+    # id, so a wholly invented citation slipped through. This is that defect.
+    for i, e in enumerate(result.events):
+        if (e.event_type == "DecisionEvent"
+                and e.payload.get("interrupt_policy")):
+            p = dict(e.payload)
+            p["interrupt_policy"] = "ZZ-9"
+            p["interrupt_policy_status"] = "ratified"
+            result.events[i] = replace(e, payload=p)
+
+
 @mutation("pending-policy-cited-as-ratified",
           "a PENDING interrupt policy is cited as ratified")
 def _m_pending_as_ratified(result, spec, stim):

@@ -37,13 +37,13 @@
       "shape": "S3"
     },
     {
-      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
       "fixture": "S3",
       "kind": "storage-layout",
       "shape": "S1"
     },
     {
-      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
       "fixture": "S3",
       "kind": "storage-layout",
       "shape": "S3"
@@ -145,13 +145,13 @@
       "shape": "S3"
     },
     {
-      "detail": "S1 groups records into 1 bucket(s) vs S2's 8",
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
       "fixture": "S9",
       "kind": "storage-layout",
       "shape": "S1"
     },
     {
-      "detail": "S3 groups records into 3 bucket(s) vs S2's 8",
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
       "fixture": "S9",
       "kind": "storage-layout",
       "shape": "S3"

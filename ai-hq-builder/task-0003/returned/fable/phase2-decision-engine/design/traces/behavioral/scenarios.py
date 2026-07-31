@@ -250,6 +250,13 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
     "S3": ScenarioSpec(
         fixture_id="S3",
         derived={"foreground_focus": "Mobile layout", "interjection": True},
+        # RW-27: the AUT-05 inputs were missing here, exactly as RW-05 found them
+        # missing on S2 and A9. "'usage costs?' during design session" with a
+        # recorded foreground focus is a question captured alongside the running
+        # work — an in-subtree filing — and without those facts the engine had no
+        # routine-filing path and fell to T3 owner judgment. Derived from
+        # `normalized_input` + `start_state`; no oracle field was consulted.
+        placement_scope="in-subtree", proposed_action_class="filing-routing",
         policies=(ROUTING_DEFAULT,),
         notes="interjection routed without destroying foreground focus",
     ),

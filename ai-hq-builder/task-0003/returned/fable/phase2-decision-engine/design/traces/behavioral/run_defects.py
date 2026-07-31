@@ -612,9 +612,13 @@ def main(argv: List[str]) -> int:
     print("   discriminates : %s" % ("YES" if dg["discriminates"] else "*** NO ***"))
     print("   limitation: %s" % dg["corpus_limitation"])
 
+    # RW-26(c): the standalone runner used to omit the judge-check condition that
+    # run_gate.py criterion 13 enforces, so the two could disagree about whether the
+    # same run passed. They agree now.
     ok = (bool(s["all_effective"]) and bool(ci["passed"])
           and bool(dg["discriminates"]) and not s["orphaned_defect_switches"]
-          and not s["mutations_witnessing_nothing"])
+          and not s["mutations_witnessing_nothing"]
+          and s["judge_checks_not_falsifiable"] == 0)
     print()
     print("FALSIFIER PROOF %s" % ("PASS" if ok else "FAIL"))
     return 0 if ok else 1

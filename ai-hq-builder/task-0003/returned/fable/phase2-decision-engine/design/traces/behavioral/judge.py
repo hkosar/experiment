@@ -155,6 +155,82 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
                 j.passed = False
                 j.failures.append("expected step-up-gated authority; engine did not require it")
 
+    # RW-27 — requirement 4's last uncompared dimension. All 27 fixtures carry
+    # `expected.attention` and none was compared until now; the S3 focus work
+    # surfaced that. An unmapped expectation is REPORTED, never silently skipped and
+    # never counted as compared.
+    att = oracle.expected_attention(oc.expected, oc.id)
+    if not att.mapped:
+        j.notes.append("expected.attention %s (%r): %s"
+                       % ("UNRESOLVED — CHANGE REQUEST" if att.unresolved
+                          else "UNMAPPED", att.raw, att.rationale))
+    elif att.relational:
+        # E2E-1: "same or escalated, never relaxed by M2" — a constraint between the
+        # two recorded normalizer paths, not a band literal.
+        norms = result.extras.get("normalizers") or {}
+        m1 = str((norms.get("M1") or {}).get("attention") or "")
+        m2 = str((norms.get("M2") or {}).get("attention") or "")
+        ok = bool(m1 and m2) and (core.ATTENTION_ORDER[m2] >= core.ATTENTION_ORDER[m1])
+        j.check_results["expected_attention"] = ok
+        if not ok:
+            j.passed = False
+            j.failures.append(
+                "expected attention '%s': M2 path computed %s below M1's %s"
+                % (att.raw, m2 or "-", m1 or "-"))
+    elif len(att.bands) > 1:
+        # One band per input (A8's "Critical / Briefing"). Compared against the
+        # per-envelope bands, which is where a multi-input expectation lives; the
+        # governing band alone cannot express it.
+        computed = sorted(set(result.per_envelope_attention))
+        ok = computed == sorted(set(att.bands))
+        j.check_results["expected_attention"] = ok
+        if not ok:
+            j.passed = False
+            j.failures.append(
+                "expected per-input attention %s; computed %s"
+                % (sorted(set(att.bands)), computed))
+    else:
+        want = att.bands[0]
+        if att.conditional:
+            # "Needs Owner if unresolved" — the band is required when the condition
+            # holds and is a ceiling otherwise.
+            pending = bool(result.uncertain_outcome) and not any(
+                e.event_type == "ReconciliationEvent" for e in result.events)
+            ok = (result.attention == want if pending
+                  else core.ATTENTION_ORDER[result.attention]
+                  <= core.ATTENTION_ORDER[want])
+        elif att.ceiling_only:
+            # "None" / "Record-only" / a display surface assert that the item does
+            # NOT consume owner attention — see oracle's grounding note. Compared as
+            # a ceiling against the demanding bands, and reported as a ceiling.
+            ok = (core.ATTENTION_ORDER[result.attention]
+                  < core.ATTENTION_ORDER[core.ATT_NEEDS_OWNER])
+        else:
+            ok = result.attention == want
+        j.check_results["expected_attention"] = ok
+        if not ok:
+            j.passed = False
+            j.failures.append(
+                "expected attention '%s' (%s %s%s); computed %s"
+                % (att.raw, "ceiling below" if att.ceiling_only else "band",
+                   core.ATT_NEEDS_OWNER if att.ceiling_only else want,
+                   ", conditional on %s" % att.conditional if att.conditional else "",
+                   result.attention))
+        # Surface qualifiers are compared only where the harness computes the
+        # surface; the rest are carried and named, per ATTENTION_MAPPING_LIMITS.
+        if att.surface:
+            if "display" in att.surface.lower():
+                sok = not result.state_written_on_read
+                j.check_results["expected_attention_surface"] = sok
+                if not sok:
+                    j.passed = False
+                    j.failures.append(
+                        "expected display-only surface; state was written on the read path")
+            else:
+                j.notes.append(
+                    "expected.attention surface qualifier carried, not computed: %r"
+                    % att.surface)
+
     if oracle.expected_requires_quarantine(oc.expected):
         ok = result.quarantined or result.ceiling == core.CEILING_NONE
         j.check_results["expected_quarantine"] = ok
@@ -218,24 +294,35 @@ def judge(result: ComputedResult, oc: OracleCase, stim: Stimulus,
         elif check == "interrupt_policy_cited":
             # RW-20: presence is not the rule. D-B7 §3 (as quoted in `24_`) permits a
             # PENDING policy to be cited AS pending and forbids citing it as ratified.
-            # The expected status is derived here, independently, from the fixture's
-            # own start_state text — so an engine that upgrades a pending policy to
-            # ratified contradicts its own stimulus and fails.
+            #
+            # RW-26(a): BOTH legs are now anchored to the stimulus. The R3 version
+            # derived the expected status from the fixture text but built its search
+            # out of the engine-emitted policy id, so a wholly fabricated citation
+            # (`ZZ-9 / ratified`) passed: no fabricated id appears in the start_state,
+            # so the pending test was False, and "ratified" agreed with it. The
+            # expected id and status are now BOTH read from the fixture, and the
+            # emitted citation has to match both.
             decisions = [e for e in result.events if e.event_type == "DecisionEvent"]
-            start = (stim.start_state or "").lower()
+            expected_citation = oracle.expected_interrupt_policy(stim.start_state)
             ok = bool(decisions)
             for e in decisions:
                 pid = str(e.payload.get("interrupt_policy") or "")
                 status = str(e.payload.get("interrupt_policy_status") or "")
-                if not pid or status not in ("pending", "ratified"):
-                    ok = False
-                    break
-                pending_in_stimulus = ("%s policy pending" % pid.lower()) in start
-                if pending_in_stimulus != (status == "pending"):
+                if expected_citation is None:
+                    # The stimulus names no interrupt policy; citing one is invention.
+                    if pid or status:
+                        ok = False
+                        j.notes.append(
+                            "interrupt policy %s/%s cited but the stimulus names none"
+                            % (pid or "-", status or "-"))
+                        break
+                    continue
+                if (pid, status) != expected_citation:
                     ok = False
                     j.notes.append(
-                        "interrupt policy %s cited as %s; stimulus records it as %s"
-                        % (pid, status, "PENDING" if pending_in_stimulus else "ratified"))
+                        "interrupt policy cited as %s/%s; the stimulus records %s/%s"
+                        % (pid or "-", status or "-",
+                           expected_citation[0], expected_citation[1]))
                     break
         elif check == "no_restricted_token_on_any_surface":
             ok = result.notify_render_class != "full-content" and all(

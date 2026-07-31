@@ -15,6 +15,7 @@ computed result, i.e. True == violation == fixture fails.
 
 from __future__ import annotations
 
+import re
 from typing import Callable, Dict, List, Optional, Tuple
 
 import engine_core as core
@@ -118,9 +119,14 @@ FORBIDDEN_PREDICATES: Dict[str, Callable[[dict], bool]] = {
     "self-certified execution":
         lambda c: _engine_authored_receipts(c) > 0 or bool(c["result"].receipt_violations),
 
+    # RW-25: the `tampered` confession-token disjunct is DELETED. R2 dropped the
+    # token from the mutation; the R3 Delivery Record claimed the disjunct went with
+    # it, and it did not — it survived as dead code, a latent confession channel the
+    # tripwire cannot see (payload keys are not one of its channels). What remains is
+    # the computed witness: the refusal that should have recorded the rejected write
+    # is absent.
     "successful modification":
-        lambda c: any(bool(e.payload.get("tampered")) for e in _events(c, "EvidenceIngestionEvent"))
-                  or (bool(c["spec"].evidence_write_attempt) and not _has(c, "RefusalEvent")),
+        lambda c: bool(c["spec"].evidence_write_attempt) and not _has(c, "RefusalEvent"),
 
     "suppressed tamper evidence":
         lambda c: bool(c["spec"].evidence_write_attempt) and not _has(c, "RefusalEvent"),
@@ -381,6 +387,190 @@ def forbidden_predicate(phrase: str) -> Callable[[dict], bool]:
 
 
 # --------------------------------------------------------------------------
+# RW-27 — expected.attention mapping (requirement 4's last uncompared dimension)
+# --------------------------------------------------------------------------
+#
+# D-B7 §2.1 band vocabulary, QUOTED in Rework Packet R4 because the document is not
+# in the Builder snapshot:
+#
+#   Critical (interrupt now) · Needs-Owner (queue admission, next natural session)
+#   · Briefing (scheduled digest) · Record-only (filed, findable)
+#
+# The engine's `none` IS D-B7's Record-only: filed and findable, nothing surfaced for
+# attention. Two mapping limits are stated rather than papered over:
+#
+#   * The engine carries a `hub` band that the quoted §2.1 vocabulary does not
+#     contain. Where a fixture says "Hub" the comparison uses the engine band of
+#     that name; where §2.1 alone would decide, this mapping cannot see the
+#     document. Reported in ATTENTION_MAPPING_LIMITS.
+#   * A fixture whose `expected.attention` DEFERS to another rule rather than naming
+#     a band ("per class", "per outcome", "per ATT-01 security assessment") is
+#     reported UNMAPPED, never guessed. Same honest-coverage shape as the
+#     `expected.authority` mapping: an unmapped value is not counted as compared.
+
+# TWO COMPARISON SEMANTICS, and the distinction is grounded, not convenient:
+#
+#   EQUALITY — an expectation naming a band that DEMANDS the owner (Critical,
+#     Needs-Owner) or names a specific delivery channel (Briefing, Hub) is compared
+#     for equality. Getting these wrong in either direction is a real defect.
+#   CEILING — an expectation of "None", "Record-only" or a pure display/render
+#     surface states that the item does NOT consume owner attention. §2.1 puts
+#     Critical and Needs-Owner on the demanding side and Briefing/Record-only on the
+#     non-demanding side, and the corpus uses the same split in its own words: A11's
+#     forbidden list literally reads "owner attention consumed", while its expected
+#     receipt is a "monthly digest" — a briefing artifact under a "None" attention.
+#     S5 is the same shape ("None (brief line only)", receipt "Desk brief line").
+#     Reading those as an equality against Record-only would contradict the fixtures'
+#     own receipts. They are therefore compared as: the computed band must not reach
+#     Needs-Owner.
+#
+# The ceiling reading is weaker than an equality and is stated as such rather than
+# quietly presented as a full comparison. It still fails everything at Needs-Owner or
+# Critical, which is the discrimination the fixtures are actually asserting.
+
+ATTENTION_MAPPING_LIMITS = (
+    "The engine carries a `hub` band that the D-B7 §2.1 vocabulary quoted in R4 does "
+    "not contain (Critical / Needs-Owner / Briefing / Record-only). Two fixtures turn "
+    "on it — S7 expects Briefing where the engine computes hub, A14 expects Hub where "
+    "the engine computes needs-owner — and neither can be resolved without the "
+    "document. Both are reported UNRESOLVED and raised as a change request; neither "
+    "is counted as compared and neither is silently passed.",
+    "'None' / 'Record-only' / display-surface expectations are compared as a CEILING "
+    "(the computed band must not reach Needs-Owner), not as an equality — see the "
+    "grounding note above. Equality is used for Critical, Needs-Owner, Briefing and "
+    "Hub.",
+    "Presentation-surface qualifiers are compared only where the harness already "
+    "computes the surface (the read-path no-write check). Other qualifiers "
+    "('one suggestion max', 'brief line only', 'source setup', 'owner-initiated') "
+    "are carried and reported, not computed.",
+)
+
+# Fixtures whose expectation names a band the quoted §2.1 vocabulary cannot settle.
+# Listed by id so the count is explicit and cannot drift silently.
+ATTENTION_UNRESOLVED = {
+    "S7": "expects Briefing; the engine raises the batch to `hub` because one of six "
+          "inputs is a spoof. Two questions neither §2.1 nor the corpus settles: "
+          "whether `hub` is a sanctioned band, and whether one flagged input raises "
+          "the whole batch's band. CHANGE REQUEST.",
+    "A14": "expects Hub; the engine's SCH-02 expired path computes needs-owner. "
+           "`hub` is absent from the quoted §2.1 vocabulary, so which side is wrong "
+           "is not determinable from the Builder snapshot. CHANGE REQUEST.",
+}
+
+# Expectations compared as a ceiling rather than an equality (see grounding above).
+_NON_DEMANDING = (core.ATT_NONE,)
+
+# Longest first — "needs owner" must win over "none", "display-only" over "display".
+_BAND_WORDS: Tuple[Tuple[str, str], ...] = (
+    ("needs-owner", core.ATT_NEEDS_OWNER),
+    ("needs owner", core.ATT_NEEDS_OWNER),
+    ("record-only", core.ATT_NONE),
+    ("display-only", core.ATT_NONE),
+    ("critical", core.ATT_CRITICAL),
+    ("briefing", core.ATT_BRIEFING),
+    ("display", core.ATT_NONE),
+    ("hub", core.ATT_HUB),
+    ("none", core.ATT_NONE),
+)
+
+
+class AttentionExpectation:
+    """One fixture's `expected.attention`, parsed into something computable."""
+
+    def __init__(self, raw, mapped, bands=(), surface=None, conditional=None,
+                 relational=False, rationale="", unresolved=False):
+        self.raw = raw
+        self.mapped = mapped
+        self.bands = tuple(bands)
+        self.surface = surface
+        self.conditional = conditional
+        self.relational = relational
+        self.rationale = rationale
+        self.unresolved = unresolved
+
+    @property
+    def ceiling_only(self) -> bool:
+        """True where the expectation states 'does not consume owner attention'."""
+        return (not self.relational and len(self.bands) == 1
+                and self.bands[0] in _NON_DEMANDING)
+
+    def to_dict(self):
+        return {"raw": self.raw, "mapped": self.mapped, "bands": list(self.bands),
+                "surface": self.surface, "conditional": self.conditional,
+                "relational": self.relational, "rationale": self.rationale,
+                "unresolved": self.unresolved,
+                "comparison": ("relational" if self.relational
+                               else "ceiling" if self.ceiling_only else "equality")}
+
+
+def _band_in(text: str) -> Optional[str]:
+    for word, band in _BAND_WORDS:
+        if word in text:
+            return band
+    return None
+
+
+def _surface_of(raw: str) -> Optional[str]:
+    """The presentation qualifier a fixture states alongside its band, if any."""
+    m = re.search(r"\(([^)]*)\)", raw)
+    if m:
+        return m.group(1).strip()
+    if "+" in raw:
+        return raw.split("+", 1)[1].strip()
+    if raw.strip().lower() == "display-only":
+        return "display-only"
+    return None
+
+
+def expected_attention(expected: dict, fixture_id: str = "") -> AttentionExpectation:
+    """Parse `expected.attention` into a computable expectation, or say why not."""
+    if fixture_id in ATTENTION_UNRESOLVED:
+        return AttentionExpectation(
+            str((expected or {}).get("attention") or "").strip(), False,
+            unresolved=True, rationale=ATTENTION_UNRESOLVED[fixture_id])
+    raw = str((expected or {}).get("attention") or "").strip()
+    low = raw.lower()
+    if not raw:
+        return AttentionExpectation(raw, False, rationale="fixture states no attention")
+
+    # Deferred to another rule rather than naming a band.
+    if low.startswith("per "):
+        return AttentionExpectation(
+            raw, False,
+            rationale="defers to another rule ('%s') instead of naming a band" % raw)
+
+    # Relational (E2E-1): a constraint between the two normalizer paths.
+    if "relaxed" in low or "escalated" in low:
+        return AttentionExpectation(
+            raw, True, relational=True,
+            rationale="relational: the M2 path may not sit below the M1 path")
+
+    # Multi-input: one band per input.
+    if "/" in raw:
+        parts = [p.strip() for p in raw.split("/")]
+        bands = [_band_in(p.lower()) for p in parts]
+        if all(b is not None for b in bands):
+            return AttentionExpectation(raw, True, bands=bands)
+        return AttentionExpectation(
+            raw, False, rationale="multi-input expectation with an unnamed band")
+
+    band = _band_in(low)
+    if band is None:
+        return AttentionExpectation(
+            raw, False,
+            rationale="names no band in the D-B7 §2.1 vocabulary ('%s')" % raw)
+
+    # Conditional ("Needs Owner if unresolved"): the band applies only when the
+    # named condition holds; otherwise it is a ceiling, not an equality.
+    if re.search(r"\bif\b", low):
+        return AttentionExpectation(raw, True, bands=(band,),
+                                    surface=_surface_of(raw),
+                                    conditional=low.split(" if ", 1)[1].strip())
+
+    return AttentionExpectation(raw, True, bands=(band,), surface=_surface_of(raw))
+
+
+# --------------------------------------------------------------------------
 # expected-route / authority / receipt predicates
 # --------------------------------------------------------------------------
 
@@ -543,6 +733,25 @@ def match_required_evidence(required: List[str], result) -> Tuple[List[str], Lis
 def authority_mapping_coverage(expected: dict) -> str:
     """Report whether this fixture's `expected.authority` is mapped (RW-10)."""
     return "mapped" if expected_exercised_authority(expected) is not None else "unmapped"
+
+
+# RW-26(a) — the ORACLE-side reading of the interrupt-policy citation the fixture
+# records. Deliberately parsed here rather than borrowing `simulate`'s parser: the
+# judge must be able to disagree with the engine, which it cannot do if both sides
+# call the same function. A8's `start_state` reads "quiet hours active; OD-1 policy
+# PENDING". A stimulus naming no interrupt policy returns None, and citing one then
+# is invention.
+_EXPECTED_INTERRUPT_RE = re.compile(
+    r"\b([A-Z]{2,5}-\d{1,3})\s+policy\s+(pending|ratified|approved)\b", re.IGNORECASE)
+
+
+def expected_interrupt_policy(start_state: str) -> Optional[Tuple[str, str]]:
+    """(policy_id, status) the stimulus records, or None if it names none."""
+    m = _EXPECTED_INTERRUPT_RE.search(start_state or "")
+    if not m:
+        return None
+    return m.group(1).upper(), ("pending" if m.group(2).lower() == "pending"
+                                else "ratified")
 
 
 # The COMPLETE pass-rule check vocabulary this harness can decompose into. Declared

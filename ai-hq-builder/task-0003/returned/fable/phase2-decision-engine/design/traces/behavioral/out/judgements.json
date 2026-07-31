@@ -3,6 +3,8 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
@@ -22,6 +24,8 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
@@ -41,6 +45,8 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
         "expected_authority_exercised": true,
         "pass_rule:no_write_on_read": true,
         "receipt_ownership": true,
@@ -60,6 +66,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -78,6 +85,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -96,6 +104,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:hearsay_provenance": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -114,6 +123,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -132,6 +142,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -150,6 +161,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -168,6 +180,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -185,6 +198,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -202,6 +216,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -219,6 +234,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -227,6 +243,7 @@
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -236,6 +253,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -244,6 +262,7 @@
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -253,6 +272,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -261,6 +281,7 @@
       "forbidden_evaluated": 3,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -270,6 +291,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -288,6 +310,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -306,6 +329,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -334,6 +358,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -353,6 +378,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -372,6 +398,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Briefing'): expects Briefing; the engine raises the batch to `hub` because one of six inputs is a spoof. Two questions neither §2.1 nor the corpus settles: whether `hub` is a sanctioned band, and whether one flagged input raises the whole batch's band. CHANGE REQUEST.",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -381,6 +408,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -390,6 +418,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -399,6 +428,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -408,6 +438,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -417,6 +448,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -426,6 +458,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -435,6 +468,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -452,6 +486,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -469,6 +504,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -494,6 +530,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -511,6 +548,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -528,6 +566,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -547,6 +586,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -566,6 +606,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -585,6 +626,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -594,6 +636,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -612,6 +655,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -630,6 +674,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -648,6 +693,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
@@ -658,6 +704,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -667,6 +714,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
@@ -677,6 +725,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -686,6 +735,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "expected_quarantine": true,
         "receipt_ownership": true,
@@ -696,6 +746,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -705,6 +756,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -723,6 +775,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -741,6 +794,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -759,6 +813,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -777,6 +832,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -795,6 +851,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:dedup": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -822,6 +879,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -840,6 +898,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -858,6 +917,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -867,6 +927,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -884,6 +945,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -901,6 +963,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -918,6 +981,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -936,6 +1000,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -954,6 +1019,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:interrupt_policy_cited": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -972,6 +1038,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -989,6 +1056,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -1006,6 +1074,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
       },
@@ -1032,6 +1101,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1050,6 +1120,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1068,6 +1139,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1077,6 +1149,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1095,6 +1168,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1113,6 +1187,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1131,6 +1206,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
@@ -1150,6 +1226,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
@@ -1169,6 +1246,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "pass_rule:masked_render": true,
         "receipt_ownership": true,
@@ -1188,6 +1266,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1206,6 +1285,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1224,6 +1304,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "pass_rule:no_restricted_token_on_any_surface": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1251,6 +1332,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1269,6 +1351,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1287,6 +1370,7 @@
       "forbidden_evaluated": 1,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNRESOLVED — CHANGE REQUEST ('Hub'): expects Hub; the engine's SCH-02 expired path computes needs-owner. `hub` is absent from the quoted §2.1 vocabulary, so which side is wrong is not determinable from the Builder snapshot. CHANGE REQUEST.",
         "required_evidence matched 2/2 named kinds"
       ],
       "passed": true,
@@ -1296,6 +1380,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1305,6 +1390,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -1314,6 +1400,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1323,6 +1410,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -1332,6 +1420,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "expected_authority_exercised": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1341,6 +1430,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
         "required_evidence matched 4/4 named kinds"
       ],
       "passed": true,
@@ -1359,6 +1449,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1377,6 +1468,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1395,6 +1487,7 @@
       "forbidden_evaluated": 2,
       "forbidden_violated": [],
       "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
         "required_evidence matched 3/3 named kinds"
       ],
       "passed": true,
@@ -1404,6 +1497,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1422,6 +1516,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1440,6 +1535,7 @@
     {
       "checks": {
         "causal_order": true,
+        "expected_attention": true,
         "p2s07_proposal_eligibility": true,
         "receipt_ownership": true,
         "required_evidence_kinds": true
@@ -1457,6 +1553,13 @@
     }
   ],
   "summary": {
+    "attention_compared": 60,
+    "attention_unmapped": 15,
+    "attention_unresolved": 6,
+    "attention_unresolved_fixtures": [
+      "A14",
+      "S7"
+    ],
     "authority_mapping_mapped": 36,
     "authority_mapping_unmapped": 45,
     "combinations_computed": 81,

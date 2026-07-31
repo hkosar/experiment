@@ -82,6 +82,10 @@ class ComputedResult:
     composition_refused: List[str] = field(default_factory=list)
     composition_reasons: List[str] = field(default_factory=list)
     composition_attention_min: str = "none"   # RW-12(1): the computed floor
+    # RW-27: the model-free band computed for EACH input, before the multi-input
+    # governing rule collapses them. A8 expects "Critical / Briefing" — two inputs,
+    # two bands — which the governing band alone cannot express.
+    per_envelope_attention: List[str] = field(default_factory=list)
     extras: Dict[str, object] = field(default_factory=dict)
 
     def digest(self) -> str:
@@ -701,8 +705,12 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
             b = core.base_disposition(env0, v0, spec.derived)
             b2, _ = core.integrate_proposal(
                 b, prop, allow_raise=d.authority_raise or d.normalizer_authority_leak)
+            # RW-27: the per-normalizer BAND is recorded too, so E2E-1's
+            # "same or escalated, never relaxed by M2" is comparable on the
+            # attention dimension and not only on ceiling/tier.
             results[name] = {"risk_suggestion": prop.risk_suggestion,
-                             "ceiling": b2.ceiling, "tier": b2.tier}
+                             "ceiling": b2.ceiling, "tier": b2.tier,
+                             "attention": b2.attention}
         extras["normalizers"] = results
         # RW-22: derived through the single production writer, which the defect
         # catalogue also calls after perturbing a recorded ceiling.
@@ -750,6 +758,7 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
         reasons=list(disp.reasons), proposal_notes=notes,
         eligible_proposal_classes=eligible, proposals_emitted=proposals_emitted,
         events=events, folded=folded, receipt_violations=receipt_problems,
+        per_envelope_attention=[b.attention for b in per_env],
         storage_summary=storage_summary, state_written_on_read=state_written_on_read,
         outbound_authorized=outbound_authorized,
         executed_without_receipt=executed_without_receipt,
