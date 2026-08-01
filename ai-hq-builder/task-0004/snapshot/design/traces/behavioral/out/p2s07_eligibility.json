@@ -1,0 +1,33 @@
+{
+  "summary": {
+    "failed": 0,
+    "passed": 2,
+    "tests": 2
+  },
+  "tests": [
+    {
+      "claims_retain_provenance": true,
+      "computed_ceiling": "record-only",
+      "eligible_classes": [],
+      "expectation": "zero proposals of ANY class, including filing and placement",
+      "extracted_claims": 2,
+      "passed": true,
+      "proposals_emitted": [],
+      "test": "negative — no eligibility policy"
+    },
+    {
+      "computed_ceiling": "record-only",
+      "eligible_classes": [
+        "filing"
+      ],
+      "expectation": "filing permitted; outbound still blocked by the verified-origin floor",
+      "outbound_blocked": true,
+      "passed": true,
+      "policy": "eligibility.filing-only.v1 permits filing",
+      "proposals_emitted": [
+        "filing"
+      ],
+      "test": "positive — approved filing-only eligibility policy"
+    }
+  ]
+}

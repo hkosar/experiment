@@ -1,0 +1,30 @@
+{
+  "checks": [
+    {
+      "check": "A-textual",
+      "code_hits": [],
+      "doc_mentions": 20,
+      "passed": true
+    },
+    {
+      "check": "B-imports",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "check": "C-structural",
+      "field_set_as_declared": true,
+      "oracle_fields_leaked": [],
+      "passed": true,
+      "stimulus_fields": [
+        "id",
+        "title",
+        "normalized_input",
+        "start_state",
+        "policy",
+        "envelopes"
+      ]
+    }
+  ],
+  "passed": true
+}

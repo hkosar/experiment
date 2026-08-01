@@ -1,0 +1,129 @@
+{
+  "cases": [
+    {
+      "case": "PC-1",
+      "clean_reasons": [],
+      "clean_refused": [],
+      "defect_passed": false,
+      "description": "higher priority wins within one domain/output",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-2",
+      "clean_reasons": [
+        "equal-priority-contradiction:routing:tier_max:routing.a,routing.b"
+      ],
+      "clean_refused": [],
+      "defect_passed": false,
+      "description": "equal-priority contradiction fails closed",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-3",
+      "clean_reasons": [
+        "exception refused: floors are not legal supersession targets"
+      ],
+      "clean_refused": [
+        "exc.floor.v1:illegal-exception-against-floor"
+      ],
+      "defect_passed": false,
+      "description": "exception against a protection floor is refused",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-4",
+      "clean_reasons": [],
+      "clean_refused": [
+        "routing.expired.v1:outside-effective-window"
+      ],
+      "defect_passed": false,
+      "description": "expired policy is inert (window filter)",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-6",
+      "clean_reasons": [
+        "exception refused: target exception_authority=none"
+      ],
+      "clean_refused": [
+        "exc.base.v1:target-permits-no-exception"
+      ],
+      "defect_passed": false,
+      "description": "exception against exception_authority=none is refused",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-7",
+      "clean_reasons": [],
+      "clean_refused": [],
+      "defect_passed": false,
+      "description": "independent cross-domain constraints all land",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-9",
+      "clean_reasons": [],
+      "clean_refused": [],
+      "defect_passed": false,
+      "description": "two floors on one output intersect to most restrictive",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-10",
+      "clean_reasons": [
+        "structural refusal: autonomy.widen (domain autonomy) cannot write render_class — owned by data (D-B8 P2G-10 rule 5 / PC-10)"
+      ],
+      "clean_refused": [
+        "autonomy.widen.v1:render_class-not-owned-by-autonomy"
+      ],
+      "defect_passed": false,
+      "description": "non-protection policy cannot write another domain's output",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PC-11",
+      "clean_reasons": [],
+      "clean_refused": [],
+      "defect_passed": false,
+      "description": "exception replaces only its named target",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "SCOPE",
+      "clean_reasons": [],
+      "clean_refused": [
+        "routing.personal.v1:out-of-scope"
+      ],
+      "defect_passed": false,
+      "description": "D-B8 §2 scope excludes out-of-partition policies",
+      "discriminates": true,
+      "passed": true
+    },
+    {
+      "case": "PRED",
+      "clean_reasons": [],
+      "clean_refused": [
+        "routing.external-only.v1:applicability-predicate-false"
+      ],
+      "defect_passed": false,
+      "description": "D-B8 §2 applicability predicate over control fields",
+      "discriminates": true,
+      "passed": true
+    }
+  ],
+  "summary": {
+    "cases": 11,
+    "discriminating": 11,
+    "failed": 0,
+    "passed": 11
+  }
+}

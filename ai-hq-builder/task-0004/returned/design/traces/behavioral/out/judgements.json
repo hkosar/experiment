@@ -1,0 +1,2291 @@
+{
+  "judgements": [
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_write_on_read": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S1",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_write_on_read": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S1",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_attention_surface": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_write_on_read": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S1",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:hearsay_provenance": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:hearsay_provenance": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:hearsay_provenance": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 5/5 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:receipt_required": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S3",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:receipt_required": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S3",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:receipt_required": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S3",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S4",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S4",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S4",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S5",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S5",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S5",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'brief line only'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S6",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S6",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S6",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 7/7 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'one suggestion max'",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "S10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per class'): defers to another rule ('per class') instead of naming a band",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A1",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A1",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A1",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('security event'): names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A2",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A3",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A3",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_quarantine": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A3",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'source setup'",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A4",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A4",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A4",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_route": true,
+        "pass_rule:dedup": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A5",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_route": true,
+        "pass_rule:dedup": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A5",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_route": true,
+        "pass_rule:dedup": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A5",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:conflict_recorded": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A6",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:conflict_recorded": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A6",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:conflict_recorded": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A6",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "expected.attention UNMAPPED ('per outcome'): defers to another rule ('per outcome') instead of naming a band",
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A7",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "pass_rule:interrupt_policy_cited": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "unmappable"
+      },
+      "failures": [],
+      "fixture": "A8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.route UNMAPPED ('watchdog death -> Critical interrupt IF within owner-ratified ATT-01 operating policy; email -> Briefing'): route names neither a tier nor a computed mechanism",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "pass_rule:interrupt_policy_cited": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "unmappable"
+      },
+      "failures": [],
+      "fixture": "A8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.route UNMAPPED ('watchdog death -> Critical interrupt IF within owner-ratified ATT-01 operating policy; email -> Briefing'): route names neither a tier nor a computed mechanism",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "pass_rule:interrupt_policy_cited": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "unmappable"
+      },
+      "failures": [],
+      "fixture": "A8",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.route UNMAPPED ('watchdog death -> Critical interrupt IF within owner-ratified ATT-01 operating policy; email -> Briefing'): route names neither a tier nor a computed mechanism",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A9",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A10",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('RES alarm'): names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A11",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A11",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A11",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 1/1 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:masked_render": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A12",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:masked_render": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A12",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:masked_render": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A12",
+      "forbidden_evaluated": 3,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 9/9 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A13",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A13",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "pass_rule:no_restricted_token_on_any_surface": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "not-applicable",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A13",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.authority NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A14",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A14",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A14",
+      "forbidden_evaluated": 1,
+      "forbidden_violated": [],
+      "notes": [
+        "required_evidence matched 2/2 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A15",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A15",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A15",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention surface qualifier carried, not computed: 'owner-initiated'",
+        "required_evidence matched 4/4 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A16",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A16",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_authority": true,
+        "expected_receipt": true,
+        "expected_route": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "unmappable",
+        "authority": "mapped",
+        "receipt": "mapped",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "A16",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.attention UNMAPPED ('per ATT-01 security assessment'): defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "E2E-1",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S1",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "E2E-1",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S2",
+      "unclassifiable": null
+    },
+    {
+      "checks": {
+        "causal_order": true,
+        "expected_attention": true,
+        "expected_authority": true,
+        "expected_route": true,
+        "p2s07_proposal_eligibility": true,
+        "receipt_ownership": true,
+        "required_evidence_kinds": true
+      },
+      "dimensions": {
+        "attention": "mapped",
+        "authority": "mapped",
+        "receipt": "not-applicable",
+        "route": "mapped"
+      },
+      "failures": [],
+      "fixture": "E2E-1",
+      "forbidden_evaluated": 2,
+      "forbidden_violated": [],
+      "notes": [
+        "expected.receipt NOT_APPLICABLE ('—'): -",
+        "required_evidence matched 3/3 named kinds"
+      ],
+      "passed": true,
+      "shape": "S3",
+      "unclassifiable": null
+    }
+  ],
+  "summary": {
+    "attention_compared": 66,
+    "attention_unmapped": 15,
+    "attention_unresolved": 0,
+    "attention_unresolved_fixtures": [],
+    "combinations_computed": 81,
+    "combinations_expected": 81,
+    "dimension_coverage": {
+      "attention": {
+        "compared": 66,
+        "not_applicable": 0,
+        "unmappable": 15
+      },
+      "authority": {
+        "compared": 72,
+        "not_applicable": 9,
+        "unmappable": 0
+      },
+      "receipt": {
+        "compared": 75,
+        "not_applicable": 6,
+        "unmappable": 0
+      },
+      "route": {
+        "compared": 78,
+        "not_applicable": 0,
+        "unmappable": 3
+      }
+    },
+    "dimension_floor_fixtures": {
+      "attention": 22,
+      "authority": 24,
+      "receipt": 25,
+      "route": 26
+    },
+    "divergences": 81,
+    "failures": 0,
+    "fixtures": 27,
+    "forbidden_predicates_evaluated": 171,
+    "passes": 81,
+    "shapes": 3,
+    "unclassifiable": 0
+  }
+}

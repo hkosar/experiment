@@ -1,0 +1,193 @@
+{
+  "accounted_elsewhere": [
+    "PC-12 — mechanically PC-2's shape; exercised fixture-side via A4's policy-version dispute, not duplicated in the composition suite."
+  ],
+  "all_passed": true,
+  "anticircularity_passed": true,
+  "base_summary": {
+    "attention_compared": 66,
+    "attention_unmapped": 15,
+    "attention_unresolved": 0,
+    "attention_unresolved_fixtures": [],
+    "authority_mapping_mapped": 36,
+    "authority_mapping_unmapped": 45,
+    "combinations_computed": 81,
+    "combinations_expected": 81,
+    "divergences": 81,
+    "failures": 0,
+    "fixtures": 27,
+    "forbidden_predicates_evaluated": 171,
+    "passes": 81,
+    "shapes": 3,
+    "unclassifiable": 0
+  },
+  "composition_summary": {
+    "cases": 11,
+    "discriminating": 11,
+    "failed": 0,
+    "passed": 11
+  },
+  "criteria": [
+    {
+      "criterion": "1  anti-circularity: no oracle read in engine/scenario code",
+      "detail": "textual+import+structural all pass",
+      "passed": true
+    },
+    {
+      "criterion": "2  all 27 x 3 = 81 combinations computed, none skipped",
+      "detail": "81/81 computed, 0 unclassifiable",
+      "passed": true
+    },
+    {
+      "criterion": "3  computed-vs-expected compared; every forbidden list evaluated",
+      "detail": "171 predicate evaluations over 56 distinct predicates, 56 defect-reachable, 0 NOT-EVALUABLE (excluded from counts), 0 judged failures",
+      "passed": true
+    },
+    {
+      "criterion": "4  executed/verified only with an external receipt reference",
+      "detail": "0 receipt-ownership violations across 81",
+      "passed": true
+    },
+    {
+      "criterion": "5  fold replays the multi-store basis with P2S-06 ordering",
+      "detail": "81 combinations, 81 order-invariant",
+      "passed": true
+    },
+    {
+      "criterion": "6  candidate-specific divergences produced, not assumed away",
+      "detail": "81 divergences computed",
+      "passed": true
+    },
+    {
+      "criterion": "7  E2E-1 executed as a real two-normalizer computation",
+      "detail": "M1/M2 risk differ=True, authority invariant=True, seeded leak detected=True",
+      "passed": true
+    },
+    {
+      "criterion": "8  every seeded defect flips its target from pass to fail",
+      "detail": "9/9 named defect classes effective",
+      "passed": true
+    },
+    {
+      "criterion": "8b every forbidden predicate is provably able to fire",
+      "detail": "56/56 defect-reachable via a 62-mutation catalogue",
+      "passed": true
+    },
+    {
+      "criterion": "9  shuffle-invariance across >=3 seeded permutations",
+      "detail": "6 permutations per combination, 0 violations",
+      "passed": true
+    },
+    {
+      "criterion": "10 P2S-05 five traces present, computed, and discriminating",
+      "detail": "5/5 pass, 5/5 flip under a seeded defect (no literal verdicts)",
+      "passed": true
+    },
+    {
+      "criterion": "11 P2S-07 negative and positive tests present and reported",
+      "detail": "2/2 tests pass",
+      "passed": true
+    },
+    {
+      "criterion": "12 D-B8 composition layers exercised through the real mechanism",
+      "detail": "11/11 cases pass, 11/11 flip under a composition-path defect",
+      "passed": true
+    },
+    {
+      "criterion": "13 judge checks flippable; no orphaned switch, no dead mutation",
+      "detail": "15/15 judge checks have a named witness; 3 never selected by any pass rule, 1 selected but vacuous; orphaned switches: none; mutations witnessing nothing: none",
+      "passed": true
+    },
+    {
+      "criterion": "14 D-B5 degradation rule shown load-bearing (harness self-test)",
+      "detail": "clean refuses citing degradation under an envelope that would otherwise authorize; seeded ignore_degradation emits the action",
+      "passed": true
+    },
+    {
+      "criterion": "15 expected.attention compared for every mapped fixture",
+      "detail": "66/81 combinations compared, 15 unmapped (expectation names no D-B7 §2.1 band), 0 unresolved — the `27_` hub ruling closed S7 and A14",
+      "passed": true
+    }
+  ],
+  "defects_summary": {
+    "all_effective": true,
+    "baseline_passes": 81,
+    "defects_effective": 9,
+    "defects_seeded": 9,
+    "degradation_self_test_discriminates": true,
+    "judge_checks_falsifiable": 15,
+    "judge_checks_not_falsifiable": 0,
+    "judge_checks_total": 15,
+    "mutations_in_catalogue": 62,
+    "mutations_witnessing_nothing": [],
+    "orphaned_defect_switches": [],
+    "pass_rule_checks_never_selected": [
+      "external_receipt_ownership",
+      "fail_closed",
+      "step_up_enforced"
+    ],
+    "pass_rule_checks_selected_but_vacuous": [
+      "receipt_required"
+    ],
+    "predicates_defect_reachable": 56,
+    "predicates_not_evaluable": 0,
+    "predicates_total": 56,
+    "witness_channel_tripwire": true
+  },
+  "exercised_by_composition_suite": [
+    "PC-1 priority within domain/output",
+    "PC-2 equal-priority fail-closed",
+    "PC-3 exception vs floor (DAT render floor substituted for the table's untrusted-quarantine floor — same mechanism, different governed output)",
+    "PC-4 effective-window filtering",
+    "PC-6 exception vs exception_authority=none",
+    "PC-7 cross-domain conjunction (attention substituted as the third domain)",
+    "PC-9 floor intersection",
+    "PC-10 output ownership refusal",
+    "PC-11 exception replaces only its target",
+    "D-B8 §2 scope",
+    "D-B8 §2 applicability_predicate"
+  ],
+  "not_simulated": [
+    "D-B8 `conflict_behavior` (defer/insist/fail-closed) — schema field carried but not used as a resolution input; residue always fails closed per layer 4.",
+    "D-B8 `rollback_pointer` / PC-5 rollback-vs-history semantics — no rollback event is generated by any fixture or composition case.",
+    "D-B8 `schema_compat` gating — a single schema version (SV-1) exists in the corpus.",
+    "D-B8 PC-6 is enforced at COMPOSITION time; D-B8 grades authoring-time rejection as the required protection. The simulator models no authoring surface, so the protection is demonstrated one stage later than the design specifies.",
+    "D-B8 PC-8 (two policies constraining different fields of ONE action) — the simulator composes per governed output, not per action field.",
+    "D-B5 degraded-operation authority has NO discriminating fixture-driven coverage (RW-19): no corpus case pairs degraded stores with an envelope that would otherwise authorize a consequential action, so A10's refusal is over-determined by its internal-write envelope. The rule is shown discriminating only by the harness self-test in run_defects.py layer E.",
+    "D-B8 §2 `scope`, `applicability_predicate` and `effective_window` execute ONLY in the synthetic composition suite (RW-23). No fixture supplies a policy that is out of scope, predicate-excluded, or outside its window.",
+    "Pass-rule checks `external_receipt_ownership`, `fail_closed` and `step_up_enforced` are implemented but NO fixture pass rule ever selects them; `receipt_required` is selected only by S3, where it is vacuous (S3 emits no action). Reported per run in seeded_defects.json (RW-21).",
+    "Calibration-plane versioning (D-B9 §6) — carried in the basis, never varied.",
+    "Live latency measurement for the DP-001 ack bound (D-B4 §2.1) — a build-gate obligation, not a design-simulator one.",
+    "13 of 39 registered D-B9 event types are never emitted by any scenario (CostEvidenceRecord, EconomicReviewEvent, IdentityEvent, KillReceiptEvent, LearningEvent, LeaseEvent, NormalizationRecord, ObservationEvent, ReclassificationEvent, RecommendationRecord, RecoveryEvent, RegistryEvent, ScheduleEvent) — the taxonomy is declared, not exercised, for these.",
+    "D-B5 degraded-operation authority (RW-15) is encoded from the rule text QUOTED in Rework Packet R2; D-B5 itself is not in the Builder snapshot. Same for the D-B7 §3 interrupt-policy citation rule (RW-16) and the D-B7 §2.1 band definitions the attention mapping rests on (quoted in R4).",
+    "RW-27 attention comparison: 5 fixtures state an expectation that names no D-B7 §2.1 band (S10 'per class', A1 'security event', A6 'per outcome', A10 'RES alarm', A16 'per ATT-01 security assessment') — reported UNMAPPED, never guessed. 'None'/'Record-only'/display expectations are compared as a CEILING (must not reach Needs-Owner), not an equality; 'Hub' is compared as a hub UPDATE (Record-only band + hub-visibility flag) per the `27_` ruling. The two previously UNRESOLVED fixtures (S7, A14) are resolved and compared.",
+    "D-B7 ATT-03's other enumerated mappings are NOT implemented, per the `27_` instruction not to code unexercised branches: safe automatic retry -> Briefing; first overdue reminder -> Briefing; subsequent overdue steps per the B10 aging ladder. No fixture exercises any of them.",
+    "The interrupt-policy citation is parsed by TWO functions — `simulate.interrupt_policy_citation` (engine) and `oracle.expected_interrupt_policy` (judge) — that are currently byte-identical in body. Their independence is STRUCTURAL, not diverse: a change to one cannot drag the other along, which is what makes the judge able to disagree with the engine, but a shared parsing blind spot (a start_state phrasing neither regex matches) would be invisible to both. Reviewer observation carried from `27_`.",
+    "D-B7 §3 OD-1 RULE 2 is NOT modelled (RW-26b): 'ambiguous physical-danger/security signals fail TOWARD interrupting; all other ambiguity holds to the briefing.' The quiet-hours suppression path encodes rule 1 only (verified danger interrupts through quiet hours). Rule 2 is inert on this corpus — A8's trigger is watchdog-confirmed, i.e. rule 1 — and it is deliberately NOT implemented: no fixture exercises it, so the code would be untestable."
+  ],
+  "p2s05_summary": {
+    "discriminating": 5,
+    "failed": 0,
+    "passed": 5,
+    "traces": 5
+  },
+  "p2s07_summary": {
+    "failed": 0,
+    "passed": 2,
+    "tests": 2
+  },
+  "predicates_not_evaluable": [],
+  "shuffle_summary": {
+    "combinations": 81,
+    "invariant": 81,
+    "permutations_per_combination": 6,
+    "seeds": [
+      20260730,
+      11,
+      4242,
+      987654321,
+      31337
+    ],
+    "violations": 0
+  }
+}

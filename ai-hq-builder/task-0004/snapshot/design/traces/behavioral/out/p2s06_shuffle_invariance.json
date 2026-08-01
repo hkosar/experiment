@@ -1,0 +1,666 @@
+{
+  "mismatches": [],
+  "rows": [
+    {
+      "digest": "a0ca7be03f93951a6e7fb90fde4f4f27251afc851c81712c37f58f9f6a2f8c62",
+      "distinct_digests": 1,
+      "fixture": "S1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "b5a4ae9c9a8eeb271a9303a900a83c608d10734955997f76adf5d2a577fc694f",
+      "distinct_digests": 1,
+      "fixture": "S1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "a0953b5fd6a2802cb46138fd5ce25de3c1f03fe0e75b3054f092b7823e0b336e",
+      "distinct_digests": 1,
+      "fixture": "S1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "ceed9850a6dbbafe135280e3e57b17ddbbd10b43d74982a47c8bad348705b4a0",
+      "distinct_digests": 1,
+      "fixture": "S2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "61fa07e23cd5974570387c005aee92e151992a34d947ba2e9d109cc93ff273cd",
+      "distinct_digests": 1,
+      "fixture": "S2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "1b8f01af4ec45441c6c530c11c4a7a484a12b1c5a20ca4f53c1ddd8e38041d58",
+      "distinct_digests": 1,
+      "fixture": "S2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "c583cd8a94edb2ede985960b0ab6a5ad0e93a2226927d44f176baed533e41c3c",
+      "distinct_digests": 1,
+      "fixture": "S3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "616a78d8f87c5e284aef8412dbafcefe3ac43ceb4194869fb0208e57c5fb9856",
+      "distinct_digests": 1,
+      "fixture": "S3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "d5027096c4f27075af2cf8bcbaf2c311d633039d51e111a03d190c4f4fc4c117",
+      "distinct_digests": 1,
+      "fixture": "S3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "c4f05d2e9211e2b33176593fb2f0ced9b6a446e07d259735e62cc90288bd9916",
+      "distinct_digests": 1,
+      "fixture": "S4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "d9894561cbbe6cb66d635bf530e3f328651081505028c43263c2a1f3799edbf3",
+      "distinct_digests": 1,
+      "fixture": "S4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "e6952a566de48a464bbe509a91978722d68f0dd72296ee07642bc27db1ce5d07",
+      "distinct_digests": 1,
+      "fixture": "S4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "2b9d05637c8565a426448a6f1a23ad6035dca8825fbe172b87b82865481b5ccf",
+      "distinct_digests": 1,
+      "fixture": "S5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "ca9c48ad39b1747a172bdcafe6f1399bcf0a47a6610fff983ac306ee071be25d",
+      "distinct_digests": 1,
+      "fixture": "S5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "ab697a51f8aefc388897a3538a64ff840a824fdeea1ed7c80d62e638992c7278",
+      "distinct_digests": 1,
+      "fixture": "S5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "8529242942cb45ebf805b308608febd6835e7d5e26181b9793c24bda215c4c32",
+      "distinct_digests": 1,
+      "fixture": "S6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "2cf63f9553b1704d1f826b7010a486f88b8a26b41c811ce9d11fe5768eafb165",
+      "distinct_digests": 1,
+      "fixture": "S6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "7844fe33ccb31e22f149c03b365e3fa9cd5d727b021a8b8fad6fdd48a499ec7b",
+      "distinct_digests": 1,
+      "fixture": "S6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "304f7c1507863e522a0d72a830607fb42b8d7057613b7bfe72bc885605e693fb",
+      "distinct_digests": 1,
+      "fixture": "S7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "ea4bb91755e03c598868f75f48742eb9bb721e2bdd2d1c2458c38741ea4684bc",
+      "distinct_digests": 1,
+      "fixture": "S7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "29e72859ead46a393b91c82ecca4f48afb6bd13d367193d83697a6df5b97f34e",
+      "distinct_digests": 1,
+      "fixture": "S7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "29f45ffb4f0b1122f498510c9abf636c60329b43fcd2771a445514464ff47a45",
+      "distinct_digests": 1,
+      "fixture": "S8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "65fb927c10d9639bf46b545018850b295ba77eb8d99a11cd7f19f2cfa566675e",
+      "distinct_digests": 1,
+      "fixture": "S8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "22c92ac588f4977f102d22b6f9c838aae16959d1a55d9737180d04bd0087ab6c",
+      "distinct_digests": 1,
+      "fixture": "S8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "bc50d552fdca5433592550465ee5956e9a6ea3119471af80b5cfdd4ff31d43bc",
+      "distinct_digests": 1,
+      "fixture": "S9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "f3fcbdc3bae58ea9724891d25ec211761c0857a442e6c8c1b0486452bd011b6d",
+      "distinct_digests": 1,
+      "fixture": "S9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "fc8cee3141711e8f1870cefec800e087c82e2fcc1c50db2f11572b2968f1bb02",
+      "distinct_digests": 1,
+      "fixture": "S9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "5f763bb39e77e6c0d693bd48df913e1854f2df3a085a46140b8e32bb0a849b31",
+      "distinct_digests": 1,
+      "fixture": "S10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "5516e085ef9df9a70693c305c14d7a2f8ff053596396dbc296fb3f700a482668",
+      "distinct_digests": 1,
+      "fixture": "S10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "1147fffee4a91ea279a822360f377e4e820197a1dfeff437085faf613d02cc43",
+      "distinct_digests": 1,
+      "fixture": "S10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "5950ca80755a19f98bca60af4ed1bb721d75f7b31a4dd7d4fc4e87822d7906fc",
+      "distinct_digests": 1,
+      "fixture": "A1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "1d17dbf3a9322a16e868bf07e4386971b836960c0f6c88947db4a7644c709466",
+      "distinct_digests": 1,
+      "fixture": "A1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "013ef4712c6192e4aac1bca1e24d66f43d5520c1cd0db7996982f3998eef619d",
+      "distinct_digests": 1,
+      "fixture": "A1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "908811947dbc41228c87440d193eb1e1cc76d38b542dae1c02040bf3dc4ee827",
+      "distinct_digests": 1,
+      "fixture": "A2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "611fe10b085fe35a68b77348d4fc8255aed5fdf50708951a502cce281711cbb7",
+      "distinct_digests": 1,
+      "fixture": "A2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "bb3c176464bf7ab6aea84f9da0e302242b52c55571d02bff3022092150c5f3ac",
+      "distinct_digests": 1,
+      "fixture": "A2",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "98f8d783f778ae88d60f0da63963ae6433660d9683d8427a9fdc88c99e1a264b",
+      "distinct_digests": 1,
+      "fixture": "A3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "e3bb4213a8505f317e5a916965141c02783f2b43aba0aa61e4a54d191cb54a2c",
+      "distinct_digests": 1,
+      "fixture": "A3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "d2fbeed0612ef546bf05e10f45638a8ac347ad9631451673db8ddce7c29ab5e7",
+      "distinct_digests": 1,
+      "fixture": "A3",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "5373bd4828da5c4dc3d2dd1e3e866f6b67caf9ac5391071eb9a412ba41f482e7",
+      "distinct_digests": 1,
+      "fixture": "A4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "44ed4fc28a34daee9092f2c5a5d1b0814c1cdbff9eea07cb341f1fec786e510b",
+      "distinct_digests": 1,
+      "fixture": "A4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "09071d880b334b8cdf33ee42006b4a2676be05ca5a7994c3335d54f505889ed4",
+      "distinct_digests": 1,
+      "fixture": "A4",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "89841aed3c450705ef9bff7d42345c6aaa995ef25b974eee3a738fff2e425750",
+      "distinct_digests": 1,
+      "fixture": "A5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "07cd8b3552d17f6ec13474eec3a2f8d15ca666d16acd99a65d67d5829f3e0ac5",
+      "distinct_digests": 1,
+      "fixture": "A5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "c0ed7e65e6faf513cd2c4173fdf467e90f8195849256672255d6eb69564023ae",
+      "distinct_digests": 1,
+      "fixture": "A5",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "b4e304dc4c044ca281909b6b643be79b0cd1a7f3ca3b6e49d09025d93a7535a1",
+      "distinct_digests": 1,
+      "fixture": "A6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "bf75642ec94cefaa4a499b5c7391f024ea006e64100dc51a6b1c6461f6a85c3b",
+      "distinct_digests": 1,
+      "fixture": "A6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "8df125a444558c1ece8b7ac90708281fef21e978d24b46551608a56f1273ac42",
+      "distinct_digests": 1,
+      "fixture": "A6",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "26b8e9d3029b63769904bdfba9775138c250fc527bd4318355b05599ff6619c6",
+      "distinct_digests": 1,
+      "fixture": "A7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "9a43c65851166a6e90e7212a62fc168cc97f310c77977fc354c84c655c208847",
+      "distinct_digests": 1,
+      "fixture": "A7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "dee2bcee69ba4650880580732d15914c45e636990f89c45918370b92a2de2428",
+      "distinct_digests": 1,
+      "fixture": "A7",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "e22d3851f59d7a5c26801053220d4e93cb05dcd6ab97ee13821a12cb680d0c8c",
+      "distinct_digests": 1,
+      "fixture": "A8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "3e8ef9ba2f450fbd0ed094bb647f1c34571156a06cac8533a245d7f0f9f4c787",
+      "distinct_digests": 1,
+      "fixture": "A8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "8dee4072b3f00a19211fbbde2a42882e2a212de6e41556eb6c2608a481818e3c",
+      "distinct_digests": 1,
+      "fixture": "A8",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "c21a9a61a0abdcf05eb2cf60ec63a2c5d5ce22dabaa497402dff495d45e337d2",
+      "distinct_digests": 1,
+      "fixture": "A9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "abc1af1c4f1323e39ae2911e757d9ae95a7aa299c1f0206564b599f20317b162",
+      "distinct_digests": 1,
+      "fixture": "A9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "0e81b87bee53d8eb026404d56ffeb88b285f3640e3393ce70f2ef7a867828e63",
+      "distinct_digests": 1,
+      "fixture": "A9",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "cb20d359498374a4353550e6da205204c9fb100ea67153486cb8d4b81498edf9",
+      "distinct_digests": 1,
+      "fixture": "A10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "f98f58bd4d5e40fa3183969260b89062073f64b23b2e212b5c93106d34f1c9b1",
+      "distinct_digests": 1,
+      "fixture": "A10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "b734ecd5274645ff3f51b2950eb01a91ee810140ab031c15fcd069a2e78c9a71",
+      "distinct_digests": 1,
+      "fixture": "A10",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "a6c51bf6e38c9e1b08c0a16d557ab4d8d1a6ce7742f982268a590a3bc0676e15",
+      "distinct_digests": 1,
+      "fixture": "A11",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "661c43cf70f8886073a8d1970923124463e130f3f79fc9f922f65f56f45f55b5",
+      "distinct_digests": 1,
+      "fixture": "A11",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "ee29c6c4297d457451d49e29b3e8411e4147a06553d255411c0ff55b28d15abe",
+      "distinct_digests": 1,
+      "fixture": "A11",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "f8678ed87d72366c2c5767dcc12b7e27a7770936b770528d29b4f8da051cf22f",
+      "distinct_digests": 1,
+      "fixture": "A12",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "4d716730c2e28ad25d86c0b1ade1a28ebf7bcd8c13ef1319664f540cce821786",
+      "distinct_digests": 1,
+      "fixture": "A12",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "3debcb67afdedf558b3a4898db05c9ed8669c22f99a7a557bd3afea884d9bc1e",
+      "distinct_digests": 1,
+      "fixture": "A12",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "a5ae2577f334ec434c6e9c269a1da24199446df1b6ce6b06f76eb83293f6a942",
+      "distinct_digests": 1,
+      "fixture": "A13",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "99dea60a4b347bd3ea65c61291d9293254239b252c443ec3d04fcd175ab59799",
+      "distinct_digests": 1,
+      "fixture": "A13",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "7f01edf4897a4796c1fded32a29e6901ec66a9f69f4b37d8746b15402359c844",
+      "distinct_digests": 1,
+      "fixture": "A13",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "92d041fc0b45d3c4f1625cf85f3aab6cdcac4a11e54eb1e9383f8fbc805e9a45",
+      "distinct_digests": 1,
+      "fixture": "A14",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "bd6094b841a1996aa13141fa37355bb4ed861d8626d936477aba36805335cf09",
+      "distinct_digests": 1,
+      "fixture": "A14",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "516476ddaabd42a2354861b967444ed5208c310697632366f725665a7a7e305c",
+      "distinct_digests": 1,
+      "fixture": "A14",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "9411aa8761ae465f70c9ca3f69dd0dc2e8d02d0e92cf77b1b7627a5e35537597",
+      "distinct_digests": 1,
+      "fixture": "A15",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "46c5719358393397b992ff6d4ab657f58ec4a06a91627ebc9d2ac71fd0d963bb",
+      "distinct_digests": 1,
+      "fixture": "A15",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "d5cbed0e8373a13ae3100ac655cfba62cf989c11b049e625d673514efe767648",
+      "distinct_digests": 1,
+      "fixture": "A15",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "2952b68af2f2b2a17d10d9763a8f8e7dbb7513fc31bafb068a85fb27c66b5ffd",
+      "distinct_digests": 1,
+      "fixture": "A16",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "e9d135c5798098e62d373e9da2bf0f3ecca762650dba568ba24fb8ca1d1e405e",
+      "distinct_digests": 1,
+      "fixture": "A16",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "b179a96fd26af0f10709e19dd72b1efff71bf43e927b884ae51d2c549ac7fe47",
+      "distinct_digests": 1,
+      "fixture": "A16",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    },
+    {
+      "digest": "dd3d00fe2fc2e5ed8392f2e3140d55f6d7d5937fd00b7cf2dc661a5af715cd4d",
+      "distinct_digests": 1,
+      "fixture": "E2E-1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S1"
+    },
+    {
+      "digest": "ad7234fded000328cc2f79fa32d6d01fc554889bb1501d691db7881e5b40ba42",
+      "distinct_digests": 1,
+      "fixture": "E2E-1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S2"
+    },
+    {
+      "digest": "f0a88a1a0d3cc09f097ac870b6f7c8e6052a6a14c2111c9d7deb62a6146969be",
+      "distinct_digests": 1,
+      "fixture": "E2E-1",
+      "invariant": true,
+      "permutations": 6,
+      "shape": "S3"
+    }
+  ],
+  "summary": {
+    "combinations": 81,
+    "invariant": 81,
+    "permutations_per_combination": 6,
+    "seeds": [
+      20260730,
+      11,
+      4242,
+      987654321,
+      31337
+    ],
+    "violations": 0
+  }
+}

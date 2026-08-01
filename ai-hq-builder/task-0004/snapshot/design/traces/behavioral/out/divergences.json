@@ -1,0 +1,493 @@
+{
+  "divergences": [
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "S1",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 7",
+      "fixture": "S1",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S1",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 9",
+      "fixture": "S2",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 9",
+      "fixture": "S2",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S2",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "S3",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "S3",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S3",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "S4",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "S4",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S4",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "S5",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "S5",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S5",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 9",
+      "fixture": "S6",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 9",
+      "fixture": "S6",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S6",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 5",
+      "fixture": "S7",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 5",
+      "fixture": "S7",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S7",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "S8",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "S8",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S8",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "S9",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "S9",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S9",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "S10",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "S10",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "S10",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A1",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "A1",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A1",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A2",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 6",
+      "fixture": "A2",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A2",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A3",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "A3",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A3",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A4",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "A4",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A4",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 8",
+      "fixture": "A5",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 8",
+      "fixture": "A5",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A5",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "A6",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "A6",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A6",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "A7",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "A7",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A7",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A8",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "A8",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A8",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 8",
+      "fixture": "A9",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 8",
+      "fixture": "A9",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A9",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "A10",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "A10",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A10",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 5",
+      "fixture": "A11",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 5",
+      "fixture": "A11",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A11",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 10",
+      "fixture": "A12",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 10",
+      "fixture": "A12",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A12",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "A13",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "A13",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A13",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "A14",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "A14",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A14",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 9",
+      "fixture": "A15",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 4 bucket(s) vs S2's 9",
+      "fixture": "A15",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A15",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 7",
+      "fixture": "A16",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 7",
+      "fixture": "A16",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "A16",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    },
+    {
+      "detail": "S1 groups records into 1 bucket(s) vs S2's 6",
+      "fixture": "E2E-1",
+      "kind": "storage-layout",
+      "shape": "S1"
+    },
+    {
+      "detail": "S3 groups records into 3 bucket(s) vs S2's 6",
+      "fixture": "E2E-1",
+      "kind": "storage-layout",
+      "shape": "S3"
+    },
+    {
+      "detail": "read path depends on separately materialized projections; freshness must be proven (stale=False)",
+      "fixture": "E2E-1",
+      "kind": "projection-dependency",
+      "shape": "S3"
+    }
+  ],
+  "summary": {
+    "count": 81
+  }
+}
