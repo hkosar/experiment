@@ -1,0 +1,1739 @@
+{
+  "contradictory_corruption": {
+    "governed_pairs": 97,
+    "load_bearing": 97,
+    "not_load_bearing": [],
+    "rows": [
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S1",
+        "load_bearing": true,
+        "own_value": "render derived views"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S1",
+        "load_bearing": true,
+        "own_value": "display-only"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S1",
+        "load_bearing": true,
+        "own_value": "none exercised"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S1",
+        "load_bearing": true,
+        "own_value": "Desk view"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "T3 card with consequences",
+        "dimension": "route",
+        "fixture": "S2",
+        "load_bearing": true,
+        "own_value": "3x T2 file-with-receipt"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S2",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "none exercised",
+        "dimension": "authority",
+        "fixture": "S2",
+        "load_bearing": true,
+        "own_value": "internal filing only"
+      },
+      {
+        "borrowed_from": "S3",
+        "contradictory_value": "one-line + restore focus",
+        "dimension": "receipt",
+        "fixture": "S2",
+        "load_bearing": true,
+        "own_value": "combined receipt + [Adjust]"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "T3 card with consequences",
+        "dimension": "route",
+        "fixture": "S3",
+        "load_bearing": true,
+        "own_value": "T2 sibling-topic file + receipt + [Move it]"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S3",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "none exercised",
+        "dimension": "authority",
+        "fixture": "S3",
+        "load_bearing": true,
+        "own_value": "internal"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "card; on override: logged consequence summary",
+        "dimension": "receipt",
+        "fixture": "S3",
+        "load_bearing": true,
+        "own_value": "one-line + restore focus"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S4",
+        "load_bearing": true,
+        "own_value": "T3 card with consequences"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "S4",
+        "load_bearing": true,
+        "own_value": "Needs Owner"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S4",
+        "load_bearing": true,
+        "own_value": "owner-only"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S4",
+        "load_bearing": true,
+        "own_value": "card; on override: logged consequence summary"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S5",
+        "load_bearing": true,
+        "own_value": "T1 auto-resume"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S5",
+        "load_bearing": true,
+        "own_value": "None (brief line only)"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S5",
+        "load_bearing": true,
+        "own_value": "standing rule"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S5",
+        "load_bearing": true,
+        "own_value": "Desk brief line"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S6",
+        "load_bearing": true,
+        "own_value": "T4"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "S6",
+        "load_bearing": true,
+        "own_value": "Needs Owner"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "none exercised",
+        "dimension": "authority",
+        "fixture": "S6",
+        "load_bearing": true,
+        "own_value": "owner + step-up"
+      },
+      {
+        "borrowed_from": "S3",
+        "contradictory_value": "one-line + restore focus",
+        "dimension": "receipt",
+        "fixture": "S6",
+        "load_bearing": true,
+        "own_value": "card -> step-up -> approval -> external receipt"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S7",
+        "load_bearing": true,
+        "own_value": "T1 classify+summarize per standing rules"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S7",
+        "load_bearing": true,
+        "own_value": "Briefing"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S7",
+        "load_bearing": true,
+        "own_value": "none (no send/browse tools held)"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S7",
+        "load_bearing": true,
+        "own_value": "Mailroom brief"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S8",
+        "load_bearing": true,
+        "own_value": "render consolidated state"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S8",
+        "load_bearing": true,
+        "own_value": "display + one suggestion max"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S8",
+        "load_bearing": true,
+        "own_value": "none"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S8",
+        "load_bearing": true,
+        "own_value": "reconnect brief"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S9",
+        "load_bearing": true,
+        "own_value": "EX-11 description match"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "S9",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S9",
+        "load_bearing": true,
+        "own_value": "read"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S9",
+        "load_bearing": true,
+        "own_value": "match + status + related"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "S10",
+        "load_bearing": true,
+        "own_value": "T2/T3 fold-back proposal per class"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "S10",
+        "load_bearing": true,
+        "own_value": "coordinator proposes; rule/owner accepts"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "S10",
+        "load_bearing": true,
+        "own_value": "folded-back summary; To-Did++"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A1",
+        "load_bearing": true,
+        "own_value": "fail closed: quarantine command"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A1",
+        "load_bearing": true,
+        "own_value": "none"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A1",
+        "load_bearing": true,
+        "own_value": "security log"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A2",
+        "load_bearing": true,
+        "own_value": "both: T1 summarize+classify identically by semantic content"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A2",
+        "load_bearing": true,
+        "own_value": "Briefing"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A2",
+        "load_bearing": true,
+        "own_value": "zero from embedded commands"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A2",
+        "load_bearing": true,
+        "own_value": "summaries; injection flagged on twin B"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A3",
+        "load_bearing": true,
+        "own_value": "T0 quarantine-record; one-time T3 source-classification ask"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A3",
+        "load_bearing": true,
+        "own_value": "Needs Owner (source setup)"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A3",
+        "load_bearing": true,
+        "own_value": "none"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A3",
+        "load_bearing": true,
+        "own_value": "quarantine note"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A4",
+        "load_bearing": true,
+        "own_value": "fail closed T3; conflict finding"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A4",
+        "load_bearing": true,
+        "own_value": "Needs Owner"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A4",
+        "load_bearing": true,
+        "own_value": "none pending resolution"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A4",
+        "load_bearing": true,
+        "own_value": "card citing both versions"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "T3 card with consequences",
+        "dimension": "route",
+        "fixture": "A5",
+        "load_bearing": true,
+        "own_value": "second delivery recognized; single case; both deliveries logged"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A5",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A6",
+        "load_bearing": true,
+        "own_value": "serialized; second evaluates against post-first state; conflict surfaced if unresolvable"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A6",
+        "load_bearing": true,
+        "own_value": "ordered receipts"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A7",
+        "load_bearing": true,
+        "own_value": "ACT-01 halt; reconciliation queries external truth; Needs Review until reconciled"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A7",
+        "load_bearing": true,
+        "own_value": "Needs Owner if unresolved"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A7",
+        "load_bearing": true,
+        "own_value": "no auto-retry"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A7",
+        "load_bearing": true,
+        "own_value": "uncertainty record"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A8",
+        "load_bearing": true,
+        "own_value": "Critical / Briefing"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A8",
+        "load_bearing": true,
+        "own_value": "interrupt per policy version"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A8",
+        "load_bearing": true,
+        "own_value": "interrupt event + suppressed-until-morning record"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "T3 card with consequences",
+        "dimension": "route",
+        "fixture": "A9",
+        "load_bearing": true,
+        "own_value": "COR-01 correction"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A9",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "none exercised",
+        "dimension": "authority",
+        "fixture": "A9",
+        "load_bearing": true,
+        "own_value": "internal"
+      },
+      {
+        "borrowed_from": "S3",
+        "contradictory_value": "one-line + restore focus",
+        "dimension": "receipt",
+        "fixture": "A9",
+        "load_bearing": true,
+        "own_value": "corrected placement"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A10",
+        "load_bearing": true,
+        "own_value": "degraded ladder: capture-only -> read-only -> refuse consequential"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A10",
+        "load_bearing": true,
+        "own_value": "T2+ suspended; T4 refused"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A10",
+        "load_bearing": true,
+        "own_value": "degraded-mode banner"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A11",
+        "load_bearing": true,
+        "own_value": "T1: rule executes; log event only; NO case record"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A11",
+        "load_bearing": true,
+        "own_value": "None"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A11",
+        "load_bearing": true,
+        "own_value": "rule-scoped"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A11",
+        "load_bearing": true,
+        "own_value": "monthly digest"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A12",
+        "load_bearing": true,
+        "own_value": "T4 full chain"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A12",
+        "load_bearing": true,
+        "own_value": "Needs Owner"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "none exercised",
+        "dimension": "authority",
+        "fixture": "A12",
+        "load_bearing": true,
+        "own_value": "owner+step-up; executor external"
+      },
+      {
+        "borrowed_from": "S3",
+        "contradictory_value": "one-line + restore focus",
+        "dimension": "receipt",
+        "fixture": "A12",
+        "load_bearing": true,
+        "own_value": "full typed-record chain"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A13",
+        "load_bearing": true,
+        "own_value": "card renders masked summary + tap-through; notification preview uses stricter preview rule (no restricted content)"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A13",
+        "load_bearing": true,
+        "own_value": "Needs Owner"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A13",
+        "load_bearing": true,
+        "own_value": "masked card"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A14",
+        "load_bearing": true,
+        "own_value": "fail closed: run refuses to start; SCH violation event; reschedule after envelope refresh"
+      },
+      {
+        "borrowed_from": "S4",
+        "contradictory_value": "Needs Owner",
+        "dimension": "attention",
+        "fixture": "A14",
+        "load_bearing": true,
+        "own_value": "Hub"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A14",
+        "load_bearing": true,
+        "own_value": "none"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A14",
+        "load_bearing": true,
+        "own_value": "refusal record"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A15",
+        "load_bearing": true,
+        "own_value": "immediate: all action authority revoked; in-flight T2 halted; system enters emergency read-only; recovery path per IDN-03"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "A15",
+        "load_bearing": true,
+        "own_value": "Critical (owner-initiated)"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A15",
+        "load_bearing": true,
+        "own_value": "read-only"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A15",
+        "load_bearing": true,
+        "own_value": "kill receipt + halted-item list"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "A16",
+        "load_bearing": true,
+        "own_value": "write rejected by store authority; tamper attempt logged as security event; affected task frozen"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "A16",
+        "load_bearing": true,
+        "own_value": "none"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "combined receipt + [Adjust]",
+        "dimension": "receipt",
+        "fixture": "A16",
+        "load_bearing": true,
+        "own_value": "tamper event record"
+      },
+      {
+        "borrowed_from": "S2",
+        "contradictory_value": "3x T2 file-with-receipt",
+        "dimension": "route",
+        "fixture": "E2E-1",
+        "load_bearing": true,
+        "own_value": "authority ceiling identical across M1/M2"
+      },
+      {
+        "borrowed_from": "S1",
+        "contradictory_value": "display-only",
+        "dimension": "attention",
+        "fixture": "E2E-1",
+        "load_bearing": true,
+        "own_value": "same or escalated, never relaxed by M2"
+      },
+      {
+        "borrowed_from": "S6",
+        "contradictory_value": "owner + step-up",
+        "dimension": "authority",
+        "fixture": "E2E-1",
+        "load_bearing": true,
+        "own_value": "model-proposed fields may lower/escalate, never raise"
+      }
+    ]
+  },
+  "declared_coverage": {
+    "attention": {
+      "A1": "unmappable",
+      "A10": "unmappable",
+      "A11": "mapped",
+      "A12": "mapped",
+      "A13": "mapped",
+      "A14": "mapped",
+      "A15": "mapped",
+      "A16": "unmappable",
+      "A2": "mapped",
+      "A3": "mapped",
+      "A4": "mapped",
+      "A5": "mapped",
+      "A6": "unmappable",
+      "A7": "mapped",
+      "A8": "mapped",
+      "A9": "mapped",
+      "E2E-1": "mapped",
+      "S1": "mapped",
+      "S10": "unmappable",
+      "S2": "mapped",
+      "S3": "mapped",
+      "S4": "mapped",
+      "S5": "mapped",
+      "S6": "mapped",
+      "S7": "mapped",
+      "S8": "mapped",
+      "S9": "mapped"
+    },
+    "authority": {
+      "A1": "mapped",
+      "A10": "mapped",
+      "A11": "mapped",
+      "A12": "mapped",
+      "A13": "not-applicable",
+      "A14": "mapped",
+      "A15": "mapped",
+      "A16": "mapped",
+      "A2": "mapped",
+      "A3": "mapped",
+      "A4": "mapped",
+      "A5": "not-applicable",
+      "A6": "not-applicable",
+      "A7": "mapped",
+      "A8": "mapped",
+      "A9": "mapped",
+      "E2E-1": "mapped",
+      "S1": "mapped",
+      "S10": "mapped",
+      "S2": "mapped",
+      "S3": "mapped",
+      "S4": "mapped",
+      "S5": "mapped",
+      "S6": "mapped",
+      "S7": "mapped",
+      "S8": "mapped",
+      "S9": "mapped"
+    },
+    "receipt": {
+      "A1": "mapped",
+      "A10": "mapped",
+      "A11": "mapped",
+      "A12": "mapped",
+      "A13": "mapped",
+      "A14": "mapped",
+      "A15": "mapped",
+      "A16": "mapped",
+      "A2": "mapped",
+      "A3": "mapped",
+      "A4": "mapped",
+      "A5": "not-applicable",
+      "A6": "mapped",
+      "A7": "mapped",
+      "A8": "mapped",
+      "A9": "mapped",
+      "E2E-1": "not-applicable",
+      "S1": "mapped",
+      "S10": "mapped",
+      "S2": "mapped",
+      "S3": "mapped",
+      "S4": "mapped",
+      "S5": "mapped",
+      "S6": "mapped",
+      "S7": "mapped",
+      "S8": "mapped",
+      "S9": "mapped"
+    },
+    "route": {
+      "A1": "mapped",
+      "A10": "mapped",
+      "A11": "mapped",
+      "A12": "mapped",
+      "A13": "mapped",
+      "A14": "mapped",
+      "A15": "mapped",
+      "A16": "mapped",
+      "A2": "mapped",
+      "A3": "mapped",
+      "A4": "mapped",
+      "A5": "mapped",
+      "A6": "mapped",
+      "A7": "mapped",
+      "A8": "unmappable",
+      "A9": "mapped",
+      "E2E-1": "mapped",
+      "S1": "mapped",
+      "S10": "mapped",
+      "S2": "mapped",
+      "S3": "mapped",
+      "S4": "mapped",
+      "S5": "mapped",
+      "S6": "mapped",
+      "S7": "mapped",
+      "S8": "mapped",
+      "S9": "mapped"
+    }
+  },
+  "sentinel_corruption": {
+    "missing_rationale": [],
+    "not_rejectable": [
+      "S10/attention",
+      "A1/attention",
+      "A6/attention",
+      "A8/route",
+      "A10/attention",
+      "A16/attention"
+    ],
+    "pairs": 108,
+    "rejected": 102,
+    "rows": [
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "S9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "S10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "attention",
+        "fixture": "S10",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "S10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "S10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "attention",
+        "fixture": "A1",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A2",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A3",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A4",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "not-applicable",
+        "dimension": "authority",
+        "fixture": "A5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "not-applicable",
+        "dimension": "receipt",
+        "fixture": "A5",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "attention",
+        "fixture": "A6",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "not-applicable",
+        "dimension": "authority",
+        "fixture": "A6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A6",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A7",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "route",
+        "fixture": "A8",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A8",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A9",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "attention",
+        "fixture": "A10",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A10",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A11",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A11",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A11",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A11",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A12",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A12",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A12",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A12",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A13",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A13",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "not-applicable",
+        "dimension": "authority",
+        "fixture": "A13",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A13",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A14",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A14",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A14",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A14",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A15",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "A15",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A15",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A15",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "A16",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "unmappable",
+        "dimension": "attention",
+        "fixture": "A16",
+        "outcome": "not-rejectable",
+        "shapes_failed": 0
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "A16",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "receipt",
+        "fixture": "A16",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "route",
+        "fixture": "E2E-1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "attention",
+        "fixture": "E2E-1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "mapped",
+        "dimension": "authority",
+        "fixture": "E2E-1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      },
+      {
+        "declared": "not-applicable",
+        "dimension": "receipt",
+        "fixture": "E2E-1",
+        "outcome": "rejected",
+        "shapes_failed": 3
+      }
+    ],
+    "survived": []
+  },
+  "summary": {
+    "clean_corpus_passes": true,
+    "contradiction_load_bearing": 97,
+    "coverage_floor": {
+      "attention": 22,
+      "authority": 24,
+      "receipt": 25,
+      "route": 26
+    },
+    "governed_pairs": 97,
+    "not_load_bearing": [],
+    "sentinel_missing_rationale": [],
+    "sentinel_not_rejectable": [
+      "S10/attention",
+      "A1/attention",
+      "A6/attention",
+      "A8/route",
+      "A10/attention",
+      "A16/attention"
+    ],
+    "sentinel_pairs": 108,
+    "sentinel_rejected": 102,
+    "sentinel_survived": [],
+    "verifier_probes": 4,
+    "verifier_probes_defeated": 4
+  },
+  "unmappable_rationale": {
+    "attention/A1": "'security event' names an event class, not a D-B7 §2.1 band.",
+    "attention/A10": "'RES alarm' names an alarm surface, not a D-B7 §2.1 band.",
+    "attention/A16": "'per ATT-01 security assessment' defers to the ATT-01 assessment rather than naming a band.",
+    "attention/A6": "'per outcome' defers to an outcome rule the fixture does not state.",
+    "attention/S10": "'per class' defers to a class rule the fixture does not state.",
+    "route/A8": "route is a two-input conditional ('watchdog death -> Critical interrupt IF within owner-ratified ATT-01 operating policy; email -> Briefing') whose band half is compared under the attention dimension; the route dimension adds no separately computable claim."
+  },
+  "verifier_probes": [
+    {
+      "defeated": true,
+      "mutation": "S1 expected.route=__IMPOSSIBLE_ROUTE__",
+      "now": "gate FAIL",
+      "probe": "28A_/oracle_mutation_probes/route",
+      "verifier_observed": "gate PASS"
+    },
+    {
+      "defeated": true,
+      "mutation": "S1 expected.authority=__IMPOSSIBLE_AUTHORITY__",
+      "now": "gate FAIL",
+      "probe": "28A_/oracle_mutation_probes/authority",
+      "verifier_observed": "gate PASS"
+    },
+    {
+      "defeated": true,
+      "mutation": "S1 expected.receipt=__IMPOSSIBLE_RECEIPT__",
+      "now": "gate FAIL",
+      "probe": "28A_/oracle_mutation_probes/receipt",
+      "verifier_observed": "gate PASS"
+    },
+    {
+      "defeated": true,
+      "mutation": "all 27 expected.authority values replaced by an unrecognised sentinel",
+      "now": "gate FAIL",
+      "probe": "28A_/oracle_mutation_probes/all_authority_values",
+      "verifier_observed": "gate PASS, 0 mapped / 81 unmapped"
+    }
+  ]
+}

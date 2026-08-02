@@ -86,6 +86,11 @@ OPEN_FINDINGS = "13F_Open_Findings.json"
 # A dependency cell may open with a controlling finding id, e.g.
 # "P2T-02: fold must fail closed on a missing causal basis".
 DEP_FINDING = re.compile(r"^\s*([A-Z][A-Z0-9]*-\d+)\s*:")
+# Closure finding L-7: a cell that plainly INTENDS a finding reference but is
+# mistyped ("P2T2:", "p2t-02:") silently became a non-reference, so the row stopped
+# being gated and nothing said so. This matches the intent; anything it catches that
+# DEP_FINDING does not is reported as malformed.
+DEP_LOOKS_LIKE_FINDING = re.compile(r"^\s*([A-Za-z][A-Za-z0-9-]{1,11})\s*:")
 
 
 def parse_declared_summary(text):
@@ -158,6 +163,15 @@ def finding_dependency_problems(dep_by_id, status_by_id, open_ids, note):
     problems = []
     referencing = {rid: DEP_FINDING.match(dep).group(1)
                    for rid, dep in dep_by_id.items() if DEP_FINDING.match(dep or "")}
+    for rid, dep in sorted(dep_by_id.items()):
+        if DEP_FINDING.match(dep or ""):
+            continue
+        m = DEP_LOOKS_LIKE_FINDING.match(dep or "")
+        token = m.group(1) if m else ""
+        if token and any(c.isdigit() for c in token) and any(c.isalpha() for c in token):
+            problems.append("13G %s: dependency %r looks like a finding reference but "
+                            "does not parse as one — it would silently stop gating "
+                            "this row" % (rid, token))
     if not referencing:
         return problems
     if open_ids is None:
@@ -200,14 +214,19 @@ def _self_test():
                   bool(finding_dependency_problems(deps, stat, None, "absent"))))
     cases.append(("no row names a finding, list unavailable", "PASS",
                   not finding_dependency_problems({"ACT-01": "—"}, stat, None, "absent")))
+    for bad in ("P2T2: fold must fail closed", "p2t-02: fold must fail closed"):
+        cases.append(("malformed finding token %r is reported" % bad.split(":")[0], "FAIL",
+                      bool(finding_dependency_problems({"APP-04": bad}, stat, set(), "t"))))
+    cases.append(("ordinary prose dependency is not mistaken for a finding", "PASS",
+                  not finding_dependency_problems(
+                      {"APP-04": "Build gate: live drill at activation"}, stat, set(), "t")))
 
     print("13V_ self-test (P2T-05 extensions)")
     ok_all = True
-    for name, expect, got_fail_or_pass in cases:
-        got = "FAIL" if (expect == "FAIL") == bool(got_fail_or_pass) else "?"
-        ok = bool(got_fail_or_pass)
+    for name, expect, ok in cases:
+        ok = bool(ok)
         ok_all = ok_all and ok
-        print("  %-52s expect %-4s %s" % (name, expect, "ok" if ok else "*** WRONG ***"))
+        print("  %-56s expect %-4s %s" % (name, expect, "ok" if ok else "*** WRONG ***"))
     print("SELF-TEST %s" % ("PASS" if ok_all else "FAIL"))
     return 0 if ok_all else 1
 

@@ -135,9 +135,15 @@ def main(argv: List[str]) -> int:
     omut = run_oracle_mutations.run(args.fixtures, args.out)
     basis = run_basis.run(args.fixtures, args.out)
     sched = run_p2s04.run(args.out)
+    # The stimulus-enumeration registry guard (closure finding M-1) belongs in the
+    # gate, not only in the standalone runner: it was added to
+    # `check_anticircularity.main()` first and this list was not updated, so the
+    # guard ran when invoked directly and not when the gate ran. Caught by the
+    # record-vs-file re-check, which is what that re-check is for.
     anti = [check_anticircularity.check_textual(),
             check_anticircularity.check_imports(),
-            check_anticircularity.check_structural()]
+            check_anticircularity.check_structural(),
+            check_anticircularity.check_stimulus_enumeration()]
     anti_ok = all(a["passed"] for a in anti)
     # RW-24 hygiene: this output belongs to the run's `--out` like every other. It
     # used to be written only by the standalone runner, into a fixed directory, so
@@ -162,8 +168,11 @@ def main(argv: List[str]) -> int:
     p2s05_discriminating = p2s05["summary"].get("discriminating", 0)
 
     criteria = [
-        ("1  anti-circularity: no oracle read in engine/scenario code",
-         anti_ok, "textual+import+structural all pass"),
+        ("1  anti-circularity + Builder-added-stimulus registry",
+         anti_ok,
+         "textual+import+structural pass; stimulus enumeration %d pair(s) in use, "
+         "%d unenumerated"
+         % (len(anti[3]["pairs_in_use"]), len(anti[3]["unenumerated"]))),
         ("2  all 27 x 3 = 81 combinations computed, none skipped",
          s["combinations_computed"] == 81 and s["unclassifiable"] == 0,
          "%d/81 computed, %d unclassifiable" % (s["combinations_computed"],

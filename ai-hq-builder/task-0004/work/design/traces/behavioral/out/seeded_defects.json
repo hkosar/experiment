@@ -1,0 +1,2283 @@
+{
+  "defects": [
+    {
+      "defect": "authority-raise",
+      "effective": true,
+      "flipped": [
+        "A2/S1",
+        "A2/S2",
+        "A2/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "changes authority — a model proposal raises the ceiling above the model-free base"
+    },
+    {
+      "defect": "dropped-receipt",
+      "effective": true,
+      "flipped": [
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "S3/S1",
+        "S3/S2",
+        "S3/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3"
+      ],
+      "flipped_count": 18,
+      "witnesses": "drops a receipt — the action still advances to executed with no evidence"
+    },
+    {
+      "defect": "causal-reorder",
+      "effective": true,
+      "flipped": [
+        "S1/S1",
+        "S1/S2",
+        "S1/S3",
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "S3/S1",
+        "S3/S2",
+        "S3/S3",
+        "S4/S1",
+        "S4/S2",
+        "S4/S3",
+        "S5/S1",
+        "S5/S2",
+        "S5/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "S7/S1",
+        "S7/S2",
+        "S7/S3",
+        "S8/S1",
+        "S8/S2",
+        "S8/S3",
+        "S9/S1",
+        "S9/S2",
+        "S9/S3",
+        "S10/S1",
+        "S10/S2",
+        "S10/S3",
+        "A1/S1",
+        "A1/S2",
+        "A1/S3",
+        "A2/S1",
+        "A2/S2",
+        "A2/S3",
+        "A3/S1",
+        "A3/S2",
+        "A3/S3",
+        "A4/S1",
+        "A4/S2",
+        "A4/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
+        "A6/S1",
+        "A6/S2",
+        "A6/S3",
+        "A7/S1",
+        "A7/S2",
+        "A7/S3",
+        "A8/S1",
+        "A8/S2",
+        "A8/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3",
+        "A10/S1",
+        "A10/S2",
+        "A10/S3",
+        "A11/S1",
+        "A11/S2",
+        "A11/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3",
+        "A13/S1",
+        "A13/S2",
+        "A13/S3",
+        "A14/S1",
+        "A14/S2",
+        "A14/S3",
+        "A15/S1",
+        "A15/S2",
+        "A15/S3",
+        "A16/S1",
+        "A16/S2",
+        "A16/S3",
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 81,
+      "witnesses": "reorders a causal event — delivery permuted and the topological sort disabled"
+    },
+    {
+      "defect": "forbidden-outcome-admission",
+      "effective": true,
+      "flipped": [
+        "S1/S1",
+        "S1/S2",
+        "S1/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "admits a forbidden outcome — state written on a read-only path"
+    },
+    {
+      "defect": "stale-projection",
+      "effective": true,
+      "flipped": [
+        "S1/S3"
+      ],
+      "flipped_count": 1,
+      "witnesses": "produces a stale projection — S3 projections are not rebuilt"
+    },
+    {
+      "defect": "engine-authored-receipt",
+      "effective": true,
+      "flipped": [
+        "S2/S1",
+        "S2/S2",
+        "S2/S3",
+        "S3/S1",
+        "S3/S2",
+        "S3/S3",
+        "S6/S1",
+        "S6/S2",
+        "S6/S3",
+        "A5/S1",
+        "A5/S2",
+        "A5/S3",
+        "A9/S1",
+        "A9/S2",
+        "A9/S3",
+        "A12/S1",
+        "A12/S2",
+        "A12/S3"
+      ],
+      "flipped_count": 18,
+      "witnesses": "breaks external-receipt ownership — the engine authors its own evidence"
+    },
+    {
+      "defect": "skip-eligibility-check",
+      "effective": true,
+      "flipped": [
+        "S7/S1",
+        "S7/S2",
+        "S7/S3",
+        "A2/S1",
+        "A2/S2",
+        "A2/S3",
+        "A11/S1",
+        "A11/S2",
+        "A11/S3",
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 12,
+      "witnesses": "P2S-07 — proposals from untrusted content with no eligibility policy"
+    },
+    {
+      "defect": "normalizer-authority-leak",
+      "effective": true,
+      "flipped": [
+        "E2E-1/S1",
+        "E2E-1/S2",
+        "E2E-1/S3"
+      ],
+      "flipped_count": 3,
+      "witnesses": "E2E-1 — a substituted normalizer raises the maximum authorized action"
+    },
+    {
+      "defect": "render-policy-ignored",
+      "effective": true,
+      "flipped": [
+        "A12/S1",
+        "A12/S2",
+        "A12/S3",
+        "A13/S1",
+        "A13/S2",
+        "A13/S3"
+      ],
+      "flipped_count": 6,
+      "witnesses": "D-B8 render floor ignored — no render-policy application record is produced"
+    }
+  ],
+  "degradation_rule_self_test": {
+    "action_class": "payment",
+    "clean": {
+      "action_emitted": false,
+      "ceiling": "consequential-external",
+      "envelope_would_authorize": true,
+      "refused_citing_degradation": true
+    },
+    "corpus_limitation": "No fixture pairs degraded stores with an envelope that would otherwise authorize a consequential action; A10's refusal is over-determined by its internal-write envelope. The D-B5 degradation rule is exercised discriminatingly only here.",
+    "discriminates": true,
+    "ignore_degradation_seeded": {
+      "action_emitted": true,
+      "ceiling": "consequential-external",
+      "envelope_would_authorize": true,
+      "refused_citing_degradation": false
+    },
+    "kind": "HARNESS SELF-TEST (synthetic stimulus, not a corpus fixture)",
+    "test": "d-b5-degradation-rule"
+  },
+  "judge_check_falsifiability": {
+    "causal_order": {
+      "falsifiable": true,
+      "true_in_baseline": 81,
+      "witness": "causal_reorder@A1/S1",
+      "witness_count": 81,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "causal_reorder@A1/S1",
+        "causal_reorder@A1/S2",
+        "causal_reorder@A1/S3",
+        "causal_reorder@A10/S1",
+        "causal_reorder@A10/S2",
+        "causal_reorder@A10/S3",
+        "causal_reorder@A11/S1",
+        "causal_reorder@A11/S2",
+        "causal_reorder@A11/S3",
+        "causal_reorder@A12/S1",
+        "causal_reorder@A12/S2",
+        "causal_reorder@A12/S3",
+        "causal_reorder@A13/S1",
+        "causal_reorder@A13/S2",
+        "causal_reorder@A13/S3",
+        "causal_reorder@A14/S1",
+        "causal_reorder@A14/S2",
+        "causal_reorder@A14/S3",
+        "causal_reorder@A15/S1",
+        "causal_reorder@A15/S2",
+        "causal_reorder@A15/S3",
+        "causal_reorder@A16/S1",
+        "causal_reorder@A16/S2",
+        "causal_reorder@A16/S3",
+        "causal_reorder@A2/S1",
+        "causal_reorder@A2/S2",
+        "causal_reorder@A2/S3",
+        "causal_reorder@A3/S1",
+        "causal_reorder@A3/S2",
+        "causal_reorder@A3/S3",
+        "causal_reorder@A4/S1",
+        "causal_reorder@A4/S2",
+        "causal_reorder@A4/S3",
+        "causal_reorder@A5/S1",
+        "causal_reorder@A5/S2",
+        "causal_reorder@A5/S3",
+        "causal_reorder@A6/S1",
+        "causal_reorder@A6/S2",
+        "causal_reorder@A6/S3",
+        "causal_reorder@A7/S1",
+        "causal_reorder@A7/S2",
+        "causal_reorder@A7/S3",
+        "causal_reorder@A8/S1",
+        "causal_reorder@A8/S2",
+        "causal_reorder@A8/S3",
+        "causal_reorder@A9/S1",
+        "causal_reorder@A9/S2",
+        "causal_reorder@A9/S3",
+        "causal_reorder@E2E-1/S1",
+        "causal_reorder@E2E-1/S2",
+        "causal_reorder@E2E-1/S3",
+        "causal_reorder@S1/S1",
+        "causal_reorder@S1/S2",
+        "causal_reorder@S1/S3",
+        "causal_reorder@S10/S1",
+        "causal_reorder@S10/S2",
+        "causal_reorder@S10/S3",
+        "causal_reorder@S2/S1",
+        "causal_reorder@S2/S2",
+        "causal_reorder@S2/S3",
+        "causal_reorder@S3/S1",
+        "causal_reorder@S3/S2",
+        "causal_reorder@S3/S3",
+        "causal_reorder@S4/S1",
+        "causal_reorder@S4/S2",
+        "causal_reorder@S4/S3",
+        "causal_reorder@S5/S1",
+        "causal_reorder@S5/S2",
+        "causal_reorder@S5/S3",
+        "causal_reorder@S6/S1",
+        "causal_reorder@S6/S2",
+        "causal_reorder@S6/S3",
+        "causal_reorder@S7/S1",
+        "causal_reorder@S7/S2",
+        "causal_reorder@S7/S3",
+        "causal_reorder@S8/S1",
+        "causal_reorder@S8/S2",
+        "causal_reorder@S8/S3",
+        "causal_reorder@S9/S1",
+        "causal_reorder@S9/S2",
+        "causal_reorder@S9/S3"
+      ]
+    },
+    "expected_attention": {
+      "falsifiable": true,
+      "true_in_baseline": 66,
+      "witness": "attention-relax@A12/S1",
+      "witness_count": 120,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "attention-relax@A12/S1",
+        "attention-relax@A12/S2",
+        "attention-relax@A12/S3",
+        "attention-relax@A13/S1",
+        "attention-relax@A13/S2",
+        "attention-relax@A13/S3",
+        "attention-relax@A2/S1",
+        "attention-relax@A2/S2",
+        "attention-relax@A2/S3",
+        "attention-relax@S7/S1",
+        "attention-relax@S7/S2",
+        "attention-relax@S7/S3",
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3",
+        "focus-displaced-by-escalation@S3/S1",
+        "focus-displaced-by-escalation@S3/S2",
+        "focus-displaced-by-escalation@S3/S3",
+        "hub-visibility-lost@A14/S1",
+        "hub-visibility-lost@A14/S2",
+        "hub-visibility-lost@A14/S3",
+        "over-escalate-critical@A11/S1",
+        "over-escalate-critical@A11/S2",
+        "over-escalate-critical@A11/S3",
+        "over-escalate-critical@A12/S1",
+        "over-escalate-critical@A12/S2",
+        "over-escalate-critical@A12/S3",
+        "over-escalate-critical@A13/S1",
+        "over-escalate-critical@A13/S2",
+        "over-escalate-critical@A13/S3",
+        "over-escalate-critical@A14/S1",
+        "over-escalate-critical@A14/S2",
+        "over-escalate-critical@A14/S3",
+        "over-escalate-critical@A2/S1",
+        "over-escalate-critical@A2/S2",
+        "over-escalate-critical@A2/S3",
+        "over-escalate-critical@A3/S1",
+        "over-escalate-critical@A3/S2",
+        "over-escalate-critical@A3/S3",
+        "over-escalate-critical@A4/S1",
+        "over-escalate-critical@A4/S2",
+        "over-escalate-critical@A4/S3",
+        "over-escalate-critical@A5/S1",
+        "over-escalate-critical@A5/S2",
+        "over-escalate-critical@A5/S3",
+        "over-escalate-critical@A7/S1",
+        "over-escalate-critical@A7/S2",
+        "over-escalate-critical@A7/S3",
+        "over-escalate-critical@A9/S1",
+        "over-escalate-critical@A9/S2",
+        "over-escalate-critical@A9/S3",
+        "over-escalate-critical@S1/S1",
+        "over-escalate-critical@S1/S2",
+        "over-escalate-critical@S1/S3",
+        "over-escalate-critical@S2/S1",
+        "over-escalate-critical@S2/S2",
+        "over-escalate-critical@S2/S3",
+        "over-escalate-critical@S3/S1",
+        "over-escalate-critical@S3/S2",
+        "over-escalate-critical@S3/S3",
+        "over-escalate-critical@S4/S1",
+        "over-escalate-critical@S4/S2",
+        "over-escalate-critical@S4/S3",
+        "over-escalate-critical@S5/S1",
+        "over-escalate-critical@S5/S2",
+        "over-escalate-critical@S5/S3",
+        "over-escalate-critical@S6/S1",
+        "over-escalate-critical@S6/S2",
+        "over-escalate-critical@S6/S3",
+        "over-escalate-critical@S7/S1",
+        "over-escalate-critical@S7/S2",
+        "over-escalate-critical@S7/S3",
+        "over-escalate-critical@S8/S1",
+        "over-escalate-critical@S8/S2",
+        "over-escalate-critical@S8/S3",
+        "over-escalate-critical@S9/S1",
+        "over-escalate-critical@S9/S2",
+        "over-escalate-critical@S9/S3",
+        "owner-attention-on-routine@A11/S1",
+        "owner-attention-on-routine@A11/S2",
+        "owner-attention-on-routine@A11/S3",
+        "owner-attention-on-routine@A14/S1",
+        "owner-attention-on-routine@A14/S2",
+        "owner-attention-on-routine@A14/S3",
+        "owner-attention-on-routine@A15/S1",
+        "owner-attention-on-routine@A15/S2",
+        "owner-attention-on-routine@A15/S3",
+        "owner-attention-on-routine@A2/S1",
+        "owner-attention-on-routine@A2/S2",
+        "owner-attention-on-routine@A2/S3",
+        "owner-attention-on-routine@A5/S1",
+        "owner-attention-on-routine@A5/S2",
+        "owner-attention-on-routine@A5/S3",
+        "owner-attention-on-routine@A9/S1",
+        "owner-attention-on-routine@A9/S2",
+        "owner-attention-on-routine@A9/S3",
+        "owner-attention-on-routine@S1/S1",
+        "owner-attention-on-routine@S1/S2",
+        "owner-attention-on-routine@S1/S3",
+        "owner-attention-on-routine@S2/S1",
+        "owner-attention-on-routine@S2/S2",
+        "owner-attention-on-routine@S2/S3",
+        "owner-attention-on-routine@S3/S1",
+        "owner-attention-on-routine@S3/S2",
+        "owner-attention-on-routine@S3/S3",
+        "owner-attention-on-routine@S5/S1",
+        "owner-attention-on-routine@S5/S2",
+        "owner-attention-on-routine@S5/S3",
+        "owner-attention-on-routine@S7/S1",
+        "owner-attention-on-routine@S7/S2",
+        "owner-attention-on-routine@S7/S3",
+        "owner-attention-on-routine@S8/S1",
+        "owner-attention-on-routine@S8/S2",
+        "owner-attention-on-routine@S8/S3",
+        "owner-attention-on-routine@S9/S1",
+        "owner-attention-on-routine@S9/S2",
+        "owner-attention-on-routine@S9/S3",
+        "suppress-critical@A15/S1",
+        "suppress-critical@A15/S2",
+        "suppress-critical@A15/S3"
+      ]
+    },
+    "expected_attention_surface": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "admit_forbidden@S1/S1",
+      "witness_count": 6,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "admit_forbidden@S1/S1",
+        "admit_forbidden@S1/S2",
+        "admit_forbidden@S1/S3",
+        "state-written-on-read@S1/S1",
+        "state-written-on-read@S1/S2",
+        "state-written-on-read@S1/S3"
+      ]
+    },
+    "expected_authority": {
+      "falsifiable": true,
+      "true_in_baseline": 72,
+      "witness": "authority_raise@A2/S1",
+      "witness_count": 240,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "acting-while-degraded@A10/S1",
+        "acting-while-degraded@A10/S2",
+        "acting-while-degraded@A10/S3",
+        "authority-raise@A1/S1",
+        "authority-raise@A1/S2",
+        "authority-raise@A1/S3",
+        "authority-raise@A10/S1",
+        "authority-raise@A10/S2",
+        "authority-raise@A10/S3",
+        "authority-raise@A11/S1",
+        "authority-raise@A11/S2",
+        "authority-raise@A11/S3",
+        "authority-raise@A14/S1",
+        "authority-raise@A14/S2",
+        "authority-raise@A14/S3",
+        "authority-raise@A15/S1",
+        "authority-raise@A15/S2",
+        "authority-raise@A15/S3",
+        "authority-raise@A16/S1",
+        "authority-raise@A16/S2",
+        "authority-raise@A16/S3",
+        "authority-raise@A2/S1",
+        "authority-raise@A2/S2",
+        "authority-raise@A2/S3",
+        "authority-raise@A3/S1",
+        "authority-raise@A3/S2",
+        "authority-raise@A3/S3",
+        "authority-raise@A4/S1",
+        "authority-raise@A4/S2",
+        "authority-raise@A4/S3",
+        "authority-raise@A9/S1",
+        "authority-raise@A9/S2",
+        "authority-raise@A9/S3",
+        "authority-raise@S1/S1",
+        "authority-raise@S1/S2",
+        "authority-raise@S1/S3",
+        "authority-raise@S10/S1",
+        "authority-raise@S10/S2",
+        "authority-raise@S10/S3",
+        "authority-raise@S2/S1",
+        "authority-raise@S2/S2",
+        "authority-raise@S2/S3",
+        "authority-raise@S3/S1",
+        "authority-raise@S3/S2",
+        "authority-raise@S3/S3",
+        "authority-raise@S4/S1",
+        "authority-raise@S4/S2",
+        "authority-raise@S4/S3",
+        "authority-raise@S5/S1",
+        "authority-raise@S5/S2",
+        "authority-raise@S5/S3",
+        "authority-raise@S7/S1",
+        "authority-raise@S7/S2",
+        "authority-raise@S7/S3",
+        "authority-raise@S8/S1",
+        "authority-raise@S8/S2",
+        "authority-raise@S8/S3",
+        "authority-raise@S9/S1",
+        "authority-raise@S9/S2",
+        "authority-raise@S9/S3",
+        "authority_raise@A2/S1",
+        "authority_raise@A2/S2",
+        "authority_raise@A2/S3",
+        "double-execution@A15/S1",
+        "double-execution@A15/S2",
+        "double-execution@A15/S3",
+        "drafting-in-read-only@A1/S1",
+        "drafting-in-read-only@A1/S2",
+        "drafting-in-read-only@A1/S3",
+        "drafting-in-read-only@A10/S1",
+        "drafting-in-read-only@A10/S2",
+        "drafting-in-read-only@A10/S3",
+        "drafting-in-read-only@A11/S1",
+        "drafting-in-read-only@A11/S2",
+        "drafting-in-read-only@A11/S3",
+        "drafting-in-read-only@A14/S1",
+        "drafting-in-read-only@A14/S2",
+        "drafting-in-read-only@A14/S3",
+        "drafting-in-read-only@A15/S1",
+        "drafting-in-read-only@A15/S2",
+        "drafting-in-read-only@A15/S3",
+        "drafting-in-read-only@A16/S1",
+        "drafting-in-read-only@A16/S2",
+        "drafting-in-read-only@A16/S3",
+        "drafting-in-read-only@A2/S1",
+        "drafting-in-read-only@A2/S2",
+        "drafting-in-read-only@A2/S3",
+        "drafting-in-read-only@A3/S1",
+        "drafting-in-read-only@A3/S2",
+        "drafting-in-read-only@A3/S3",
+        "drafting-in-read-only@A4/S1",
+        "drafting-in-read-only@A4/S2",
+        "drafting-in-read-only@A4/S3",
+        "drafting-in-read-only@A9/S1",
+        "drafting-in-read-only@A9/S2",
+        "drafting-in-read-only@A9/S3",
+        "drafting-in-read-only@S1/S1",
+        "drafting-in-read-only@S1/S2",
+        "drafting-in-read-only@S1/S3",
+        "drafting-in-read-only@S10/S1",
+        "drafting-in-read-only@S10/S2",
+        "drafting-in-read-only@S10/S3",
+        "drafting-in-read-only@S2/S1",
+        "drafting-in-read-only@S2/S2",
+        "drafting-in-read-only@S2/S3",
+        "drafting-in-read-only@S3/S1",
+        "drafting-in-read-only@S3/S2",
+        "drafting-in-read-only@S3/S3",
+        "drafting-in-read-only@S4/S1",
+        "drafting-in-read-only@S4/S2",
+        "drafting-in-read-only@S4/S3",
+        "drafting-in-read-only@S5/S1",
+        "drafting-in-read-only@S5/S2",
+        "drafting-in-read-only@S5/S3",
+        "drafting-in-read-only@S7/S1",
+        "drafting-in-read-only@S7/S2",
+        "drafting-in-read-only@S7/S3",
+        "drafting-in-read-only@S8/S1",
+        "drafting-in-read-only@S8/S2",
+        "drafting-in-read-only@S8/S3",
+        "drafting-in-read-only@S9/S1",
+        "drafting-in-read-only@S9/S2",
+        "drafting-in-read-only@S9/S3",
+        "drop-decision@A11/S1",
+        "drop-decision@A11/S2",
+        "drop-decision@A11/S3",
+        "drop-decision@A8/S1",
+        "drop-decision@A8/S2",
+        "drop-decision@A8/S3",
+        "drop-decision@S5/S1",
+        "drop-decision@S5/S2",
+        "drop-decision@S5/S3",
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3",
+        "drop-refusal@A2/S1",
+        "drop-refusal@A2/S2",
+        "drop-refusal@A2/S3",
+        "engine-authored-receipt@A12/S1",
+        "engine-authored-receipt@A12/S2",
+        "engine-authored-receipt@A12/S3",
+        "engine-authored-receipt@A15/S1",
+        "engine-authored-receipt@A15/S2",
+        "engine-authored-receipt@A15/S3",
+        "engine_authored_receipt@A12/S1",
+        "engine_authored_receipt@A12/S2",
+        "engine_authored_receipt@A12/S3",
+        "evidence-tamper-succeeds@A12/S1",
+        "evidence-tamper-succeeds@A12/S2",
+        "evidence-tamper-succeeds@A12/S3",
+        "evidence-tamper-succeeds@A2/S1",
+        "evidence-tamper-succeeds@A2/S2",
+        "evidence-tamper-succeeds@A2/S3",
+        "executed-without-receipt@A15/S1",
+        "executed-without-receipt@A15/S2",
+        "executed-without-receipt@A15/S3",
+        "interrupt-policy-uncited@A8/S1",
+        "interrupt-policy-uncited@A8/S2",
+        "interrupt-policy-uncited@A8/S3",
+        "normalizer-authority-leak@E2E-1/S1",
+        "normalizer-authority-leak@E2E-1/S2",
+        "normalizer-authority-leak@E2E-1/S3",
+        "normalizer_authority_leak@E2E-1/S1",
+        "normalizer_authority_leak@E2E-1/S2",
+        "normalizer_authority_leak@E2E-1/S3",
+        "step-up-bypass@A12/S1",
+        "step-up-bypass@A12/S2",
+        "step-up-bypass@A12/S3",
+        "step-up-bypass@A15/S1",
+        "step-up-bypass@A15/S2",
+        "step-up-bypass@A15/S3",
+        "step-up-bypass@S6/S1",
+        "step-up-bypass@S6/S2",
+        "step-up-bypass@S6/S3",
+        "step-up-never-completed@A12/S1",
+        "step-up-never-completed@A12/S2",
+        "step-up-never-completed@A12/S3",
+        "step-up-never-completed@S6/S1",
+        "step-up-never-completed@S6/S2",
+        "step-up-never-completed@S6/S3",
+        "untrusted-outbound@A1/S1",
+        "untrusted-outbound@A1/S2",
+        "untrusted-outbound@A1/S3",
+        "untrusted-outbound@A10/S1",
+        "untrusted-outbound@A10/S2",
+        "untrusted-outbound@A10/S3",
+        "untrusted-outbound@A11/S1",
+        "untrusted-outbound@A11/S2",
+        "untrusted-outbound@A11/S3",
+        "untrusted-outbound@A14/S1",
+        "untrusted-outbound@A14/S2",
+        "untrusted-outbound@A14/S3",
+        "untrusted-outbound@A15/S1",
+        "untrusted-outbound@A15/S2",
+        "untrusted-outbound@A15/S3",
+        "untrusted-outbound@A16/S1",
+        "untrusted-outbound@A16/S2",
+        "untrusted-outbound@A16/S3",
+        "untrusted-outbound@A2/S1",
+        "untrusted-outbound@A2/S2",
+        "untrusted-outbound@A2/S3",
+        "untrusted-outbound@A3/S1",
+        "untrusted-outbound@A3/S2",
+        "untrusted-outbound@A3/S3",
+        "untrusted-outbound@A4/S1",
+        "untrusted-outbound@A4/S2",
+        "untrusted-outbound@A4/S3",
+        "untrusted-outbound@A9/S1",
+        "untrusted-outbound@A9/S2",
+        "untrusted-outbound@A9/S3",
+        "untrusted-outbound@S1/S1",
+        "untrusted-outbound@S1/S2",
+        "untrusted-outbound@S1/S3",
+        "untrusted-outbound@S10/S1",
+        "untrusted-outbound@S10/S2",
+        "untrusted-outbound@S10/S3",
+        "untrusted-outbound@S2/S1",
+        "untrusted-outbound@S2/S2",
+        "untrusted-outbound@S2/S3",
+        "untrusted-outbound@S3/S1",
+        "untrusted-outbound@S3/S2",
+        "untrusted-outbound@S3/S3",
+        "untrusted-outbound@S4/S1",
+        "untrusted-outbound@S4/S2",
+        "untrusted-outbound@S4/S3",
+        "untrusted-outbound@S5/S1",
+        "untrusted-outbound@S5/S2",
+        "untrusted-outbound@S5/S3",
+        "untrusted-outbound@S7/S1",
+        "untrusted-outbound@S7/S2",
+        "untrusted-outbound@S7/S3",
+        "untrusted-outbound@S8/S1",
+        "untrusted-outbound@S8/S2",
+        "untrusted-outbound@S8/S3",
+        "untrusted-outbound@S9/S1",
+        "untrusted-outbound@S9/S2",
+        "untrusted-outbound@S9/S3",
+        "verification-skipped@A15/S1",
+        "verification-skipped@A15/S2",
+        "verification-skipped@A15/S3"
+      ]
+    },
+    "expected_quarantine": {
+      "falsifiable": true,
+      "true_in_baseline": 6,
+      "witness": "authority-raise@A1/S1",
+      "witness_count": 6,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "authority-raise@A1/S1",
+        "authority-raise@A1/S2",
+        "authority-raise@A1/S3",
+        "untrusted-outbound@A1/S1",
+        "untrusted-outbound@A1/S2",
+        "untrusted-outbound@A1/S3"
+      ]
+    },
+    "expected_receipt": {
+      "falsifiable": true,
+      "true_in_baseline": 75,
+      "witness": "drop_receipt@A12/S1",
+      "witness_count": 84,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3",
+        "drop-decision@A4/S1",
+        "drop-decision@A4/S2",
+        "drop-decision@A4/S3",
+        "drop-decision@A8/S1",
+        "drop-decision@A8/S2",
+        "drop-decision@A8/S3",
+        "drop-foldback@S10/S1",
+        "drop-foldback@S10/S2",
+        "drop-foldback@S10/S3",
+        "drop-override@S4/S1",
+        "drop-override@S4/S2",
+        "drop-override@S4/S3",
+        "drop-placement@A13/S1",
+        "drop-placement@A13/S2",
+        "drop-placement@A13/S3",
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3",
+        "drop-refusal@A1/S1",
+        "drop-refusal@A1/S2",
+        "drop-refusal@A1/S3",
+        "drop-refusal@A14/S1",
+        "drop-refusal@A14/S2",
+        "drop-refusal@A14/S3",
+        "drop-refusal@A16/S1",
+        "drop-refusal@A16/S2",
+        "drop-refusal@A16/S3",
+        "drop-refusal@A2/S1",
+        "drop-refusal@A2/S2",
+        "drop-refusal@A2/S3",
+        "drop_receipt@A12/S1",
+        "drop_receipt@A12/S2",
+        "drop_receipt@A12/S3",
+        "drop_receipt@S2/S1",
+        "drop_receipt@S2/S2",
+        "drop_receipt@S2/S3",
+        "drop_receipt@S6/S1",
+        "drop_receipt@S6/S2",
+        "drop_receipt@S6/S3",
+        "engine_authored_receipt@S2/S1",
+        "engine_authored_receipt@S2/S2",
+        "engine_authored_receipt@S2/S3",
+        "evidence-tamper-succeeds@A1/S1",
+        "evidence-tamper-succeeds@A1/S2",
+        "evidence-tamper-succeeds@A1/S3",
+        "evidence-tamper-succeeds@A14/S1",
+        "evidence-tamper-succeeds@A14/S2",
+        "evidence-tamper-succeeds@A14/S3",
+        "evidence-tamper-succeeds@A16/S1",
+        "evidence-tamper-succeeds@A16/S2",
+        "evidence-tamper-succeeds@A16/S3",
+        "evidence-tamper-succeeds@A2/S1",
+        "evidence-tamper-succeeds@A2/S2",
+        "evidence-tamper-succeeds@A2/S3",
+        "floor-overwrite@A13/S1",
+        "floor-overwrite@A13/S2",
+        "floor-overwrite@A13/S3",
+        "focus-displaced-by-escalation@S3/S1",
+        "focus-displaced-by-escalation@S3/S2",
+        "focus-displaced-by-escalation@S3/S3",
+        "foreground-loss@S3/S1",
+        "foreground-loss@S3/S2",
+        "foreground-loss@S3/S3",
+        "interrupt-policy-uncited@A8/S1",
+        "interrupt-policy-uncited@A8/S2",
+        "interrupt-policy-uncited@A8/S3",
+        "recall-miss@S9/S1",
+        "recall-miss@S9/S2",
+        "recall-miss@S9/S3",
+        "render-leak@A13/S1",
+        "render-leak@A13/S2",
+        "render-leak@A13/S3",
+        "render_leak@A13/S1",
+        "render_leak@A13/S2",
+        "render_leak@A13/S3",
+        "stale-schedule-runs@A14/S1",
+        "stale-schedule-runs@A14/S2",
+        "stale-schedule-runs@A14/S3",
+        "suppression-record-lost@A8/S1",
+        "suppression-record-lost@A8/S2",
+        "suppression-record-lost@A8/S3"
+      ]
+    },
+    "expected_route": {
+      "falsifiable": true,
+      "true_in_baseline": 78,
+      "witness": "admit_forbidden@S1/S1",
+      "witness_count": 150,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "admit_forbidden@S1/S1",
+        "admit_forbidden@S1/S2",
+        "admit_forbidden@S1/S3",
+        "authority-raise@A1/S1",
+        "authority-raise@A1/S2",
+        "authority-raise@A1/S3",
+        "authority-raise@A14/S1",
+        "authority-raise@A14/S2",
+        "authority-raise@A14/S3",
+        "authority-raise@A4/S1",
+        "authority-raise@A4/S2",
+        "authority-raise@A4/S3",
+        "dedup-failure@A5/S1",
+        "dedup-failure@A5/S2",
+        "dedup-failure@A5/S3",
+        "drop-checkpoint@S5/S1",
+        "drop-checkpoint@S5/S2",
+        "drop-checkpoint@S5/S3",
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3",
+        "drop-foldback@S10/S1",
+        "drop-foldback@S10/S2",
+        "drop-foldback@S10/S3",
+        "drop-placement@A13/S1",
+        "drop-placement@A13/S2",
+        "drop-placement@A13/S3",
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3",
+        "drop-refusal@A16/S1",
+        "drop-refusal@A16/S2",
+        "drop-refusal@A16/S3",
+        "drop_receipt@A12/S1",
+        "drop_receipt@A12/S2",
+        "drop_receipt@A12/S3",
+        "drop_receipt@S2/S1",
+        "drop_receipt@S2/S2",
+        "drop_receipt@S2/S3",
+        "drop_receipt@S3/S1",
+        "drop_receipt@S3/S2",
+        "drop_receipt@S3/S3",
+        "engine-authored-receipt@S3/S1",
+        "engine-authored-receipt@S3/S2",
+        "engine-authored-receipt@S3/S3",
+        "engine_authored_receipt@S2/S1",
+        "engine_authored_receipt@S2/S2",
+        "engine_authored_receipt@S2/S3",
+        "engine_authored_receipt@S3/S1",
+        "engine_authored_receipt@S3/S2",
+        "engine_authored_receipt@S3/S3",
+        "escalate-routine@A11/S1",
+        "escalate-routine@A11/S2",
+        "escalate-routine@A11/S3",
+        "escalate-routine@A12/S1",
+        "escalate-routine@A12/S2",
+        "escalate-routine@A12/S3",
+        "escalate-routine@A2/S1",
+        "escalate-routine@A2/S2",
+        "escalate-routine@A2/S3",
+        "escalate-routine@A3/S1",
+        "escalate-routine@A3/S2",
+        "escalate-routine@A3/S3",
+        "escalate-routine@S2/S1",
+        "escalate-routine@S2/S2",
+        "escalate-routine@S2/S3",
+        "escalate-routine@S3/S1",
+        "escalate-routine@S3/S2",
+        "escalate-routine@S3/S3",
+        "escalate-routine@S5/S1",
+        "escalate-routine@S5/S2",
+        "escalate-routine@S5/S3",
+        "escalate-routine@S6/S1",
+        "escalate-routine@S6/S2",
+        "escalate-routine@S6/S3",
+        "escalate-routine@S7/S1",
+        "escalate-routine@S7/S2",
+        "escalate-routine@S7/S3",
+        "evidence-tamper-succeeds@A16/S1",
+        "evidence-tamper-succeeds@A16/S2",
+        "evidence-tamper-succeeds@A16/S3",
+        "floor-overwrite@A13/S1",
+        "floor-overwrite@A13/S2",
+        "floor-overwrite@A13/S3",
+        "forced-decision@A11/S1",
+        "forced-decision@A11/S2",
+        "forced-decision@A11/S3",
+        "forced-decision@A2/S1",
+        "forced-decision@A2/S2",
+        "forced-decision@A2/S3",
+        "forced-decision@A3/S1",
+        "forced-decision@A3/S2",
+        "forced-decision@A3/S3",
+        "forced-decision@A4/S1",
+        "forced-decision@A4/S2",
+        "forced-decision@A4/S3",
+        "forced-decision@S10/S1",
+        "forced-decision@S10/S2",
+        "forced-decision@S10/S3",
+        "forced-decision@S2/S1",
+        "forced-decision@S2/S2",
+        "forced-decision@S2/S3",
+        "forced-decision@S3/S1",
+        "forced-decision@S3/S2",
+        "forced-decision@S3/S3",
+        "forced-decision@S4/S1",
+        "forced-decision@S4/S2",
+        "forced-decision@S4/S3",
+        "forced-decision@S5/S1",
+        "forced-decision@S5/S2",
+        "forced-decision@S5/S3",
+        "forced-decision@S7/S1",
+        "forced-decision@S7/S2",
+        "forced-decision@S7/S3",
+        "model-picks-policy@A4/S1",
+        "model-picks-policy@A4/S2",
+        "model-picks-policy@A4/S3",
+        "normalizer-authority-leak@E2E-1/S1",
+        "normalizer-authority-leak@E2E-1/S2",
+        "normalizer-authority-leak@E2E-1/S3",
+        "normalizer_authority_leak@E2E-1/S1",
+        "normalizer_authority_leak@E2E-1/S2",
+        "normalizer_authority_leak@E2E-1/S3",
+        "recall-miss@S9/S1",
+        "recall-miss@S9/S2",
+        "recall-miss@S9/S3",
+        "render-leak@A13/S1",
+        "render-leak@A13/S2",
+        "render-leak@A13/S3",
+        "render_leak@A13/S1",
+        "render_leak@A13/S2",
+        "render_leak@A13/S3",
+        "stale-schedule-runs@A14/S1",
+        "stale-schedule-runs@A14/S2",
+        "stale-schedule-runs@A14/S3",
+        "state-written-on-read@S1/S1",
+        "state-written-on-read@S1/S2",
+        "state-written-on-read@S1/S3",
+        "state-written-on-read@S8/S1",
+        "state-written-on-read@S8/S2",
+        "state-written-on-read@S8/S3",
+        "untrusted-outbound@A1/S1",
+        "untrusted-outbound@A1/S2",
+        "untrusted-outbound@A1/S3",
+        "untrusted-outbound@A14/S1",
+        "untrusted-outbound@A14/S2",
+        "untrusted-outbound@A14/S3",
+        "untrusted-outbound@A4/S1",
+        "untrusted-outbound@A4/S2",
+        "untrusted-outbound@A4/S3"
+      ]
+    },
+    "p2s07_proposal_eligibility": {
+      "falsifiable": true,
+      "true_in_baseline": 12,
+      "witness": "skip_eligibility_check@A11/S1",
+      "witness_count": 24,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "skip-eligibility-check@A11/S1",
+        "skip-eligibility-check@A11/S2",
+        "skip-eligibility-check@A11/S3",
+        "skip-eligibility-check@A2/S1",
+        "skip-eligibility-check@A2/S2",
+        "skip-eligibility-check@A2/S3",
+        "skip-eligibility-check@E2E-1/S1",
+        "skip-eligibility-check@E2E-1/S2",
+        "skip-eligibility-check@E2E-1/S3",
+        "skip-eligibility-check@S7/S1",
+        "skip-eligibility-check@S7/S2",
+        "skip-eligibility-check@S7/S3",
+        "skip_eligibility_check@A11/S1",
+        "skip_eligibility_check@A11/S2",
+        "skip_eligibility_check@A11/S3",
+        "skip_eligibility_check@A2/S1",
+        "skip_eligibility_check@A2/S2",
+        "skip_eligibility_check@A2/S3",
+        "skip_eligibility_check@E2E-1/S1",
+        "skip_eligibility_check@E2E-1/S2",
+        "skip_eligibility_check@E2E-1/S3",
+        "skip_eligibility_check@S7/S1",
+        "skip_eligibility_check@S7/S2",
+        "skip_eligibility_check@S7/S3"
+      ]
+    },
+    "pass_rule:conflict_recorded": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "drop-conflict-record@A6/S1",
+      "witness_count": 3,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3"
+      ]
+    },
+    "pass_rule:dedup": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "dedup-failure@A5/S1",
+      "witness_count": 3,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "dedup-failure@A5/S1",
+        "dedup-failure@A5/S2",
+        "dedup-failure@A5/S3"
+      ]
+    },
+    "pass_rule:hearsay_provenance": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "hearsay-provenance-lost@S2/S1",
+      "witness_count": 3,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "hearsay-provenance-lost@S2/S1",
+        "hearsay-provenance-lost@S2/S2",
+        "hearsay-provenance-lost@S2/S3"
+      ]
+    },
+    "pass_rule:interrupt_policy_cited": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "drop-decision@A8/S1",
+      "witness_count": 12,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "drop-decision@A8/S1",
+        "drop-decision@A8/S2",
+        "drop-decision@A8/S3",
+        "interrupt-policy-id-fabricated@A8/S1",
+        "interrupt-policy-id-fabricated@A8/S2",
+        "interrupt-policy-id-fabricated@A8/S3",
+        "interrupt-policy-uncited@A8/S1",
+        "interrupt-policy-uncited@A8/S2",
+        "interrupt-policy-uncited@A8/S3",
+        "pending-policy-cited-as-ratified@A8/S1",
+        "pending-policy-cited-as-ratified@A8/S2",
+        "pending-policy-cited-as-ratified@A8/S3"
+      ]
+    },
+    "pass_rule:masked_render": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "render_leak@A12/S1",
+      "witness_count": 12,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "drop-placement@A12/S1",
+        "drop-placement@A12/S2",
+        "drop-placement@A12/S3",
+        "floor-overwrite@A12/S1",
+        "floor-overwrite@A12/S2",
+        "floor-overwrite@A12/S3",
+        "render-leak@A12/S1",
+        "render-leak@A12/S2",
+        "render-leak@A12/S3",
+        "render_leak@A12/S1",
+        "render_leak@A12/S2",
+        "render_leak@A12/S3"
+      ]
+    },
+    "pass_rule:no_restricted_token_on_any_surface": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "floor-overwrite@A13/S1",
+      "witness_count": 6,
+      "witness_kind": "mutation",
+      "witnesses": [
+        "floor-overwrite@A13/S1",
+        "floor-overwrite@A13/S2",
+        "floor-overwrite@A13/S3",
+        "render-leak@A13/S1",
+        "render-leak@A13/S2",
+        "render-leak@A13/S3"
+      ]
+    },
+    "pass_rule:no_write_on_read": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "admit_forbidden@S1/S1",
+      "witness_count": 6,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "admit_forbidden@S1/S1",
+        "admit_forbidden@S1/S2",
+        "admit_forbidden@S1/S3",
+        "state-written-on-read@S1/S1",
+        "state-written-on-read@S1/S2",
+        "state-written-on-read@S1/S3"
+      ]
+    },
+    "pass_rule:receipt_required": {
+      "falsifiable": true,
+      "true_in_baseline": 3,
+      "witness": "drop_receipt@S3/S1",
+      "witness_count": 3,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "drop_receipt@S3/S1",
+        "drop_receipt@S3/S2",
+        "drop_receipt@S3/S3"
+      ]
+    },
+    "receipt_ownership": {
+      "falsifiable": true,
+      "true_in_baseline": 81,
+      "witness": "drop_receipt@A12/S1",
+      "witness_count": 84,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "drop_receipt@A12/S1",
+        "drop_receipt@A12/S2",
+        "drop_receipt@A12/S3",
+        "drop_receipt@A5/S1",
+        "drop_receipt@A5/S2",
+        "drop_receipt@A5/S3",
+        "drop_receipt@A9/S1",
+        "drop_receipt@A9/S2",
+        "drop_receipt@A9/S3",
+        "drop_receipt@S2/S1",
+        "drop_receipt@S2/S2",
+        "drop_receipt@S2/S3",
+        "drop_receipt@S3/S1",
+        "drop_receipt@S3/S2",
+        "drop_receipt@S3/S3",
+        "drop_receipt@S6/S1",
+        "drop_receipt@S6/S2",
+        "drop_receipt@S6/S3",
+        "engine-authored-receipt@A12/S1",
+        "engine-authored-receipt@A12/S2",
+        "engine-authored-receipt@A12/S3",
+        "engine-authored-receipt@A15/S1",
+        "engine-authored-receipt@A15/S2",
+        "engine-authored-receipt@A15/S3",
+        "engine-authored-receipt@A5/S1",
+        "engine-authored-receipt@A5/S2",
+        "engine-authored-receipt@A5/S3",
+        "engine-authored-receipt@A7/S1",
+        "engine-authored-receipt@A7/S2",
+        "engine-authored-receipt@A7/S3",
+        "engine-authored-receipt@A9/S1",
+        "engine-authored-receipt@A9/S2",
+        "engine-authored-receipt@A9/S3",
+        "engine-authored-receipt@S2/S1",
+        "engine-authored-receipt@S2/S2",
+        "engine-authored-receipt@S2/S3",
+        "engine-authored-receipt@S3/S1",
+        "engine-authored-receipt@S3/S2",
+        "engine-authored-receipt@S3/S3",
+        "engine-authored-receipt@S6/S1",
+        "engine-authored-receipt@S6/S2",
+        "engine-authored-receipt@S6/S3",
+        "engine_authored_receipt@A12/S1",
+        "engine_authored_receipt@A12/S2",
+        "engine_authored_receipt@A12/S3",
+        "engine_authored_receipt@A5/S1",
+        "engine_authored_receipt@A5/S2",
+        "engine_authored_receipt@A5/S3",
+        "engine_authored_receipt@A9/S1",
+        "engine_authored_receipt@A9/S2",
+        "engine_authored_receipt@A9/S3",
+        "engine_authored_receipt@S2/S1",
+        "engine_authored_receipt@S2/S2",
+        "engine_authored_receipt@S2/S3",
+        "engine_authored_receipt@S3/S1",
+        "engine_authored_receipt@S3/S2",
+        "engine_authored_receipt@S3/S3",
+        "engine_authored_receipt@S6/S1",
+        "engine_authored_receipt@S6/S2",
+        "engine_authored_receipt@S6/S3",
+        "executed-without-receipt@A15/S1",
+        "executed-without-receipt@A15/S2",
+        "executed-without-receipt@A15/S3",
+        "executed-without-receipt@A7/S1",
+        "executed-without-receipt@A7/S2",
+        "executed-without-receipt@A7/S3",
+        "receipt-reference-dangling@A12/S1",
+        "receipt-reference-dangling@A12/S2",
+        "receipt-reference-dangling@A12/S3",
+        "receipt-reference-dangling@A5/S1",
+        "receipt-reference-dangling@A5/S2",
+        "receipt-reference-dangling@A5/S3",
+        "receipt-reference-dangling@A9/S1",
+        "receipt-reference-dangling@A9/S2",
+        "receipt-reference-dangling@A9/S3",
+        "receipt-reference-dangling@S2/S1",
+        "receipt-reference-dangling@S2/S2",
+        "receipt-reference-dangling@S2/S3",
+        "receipt-reference-dangling@S3/S1",
+        "receipt-reference-dangling@S3/S2",
+        "receipt-reference-dangling@S3/S3",
+        "receipt-reference-dangling@S6/S1",
+        "receipt-reference-dangling@S6/S2",
+        "receipt-reference-dangling@S6/S3"
+      ]
+    },
+    "required_evidence_kinds": {
+      "falsifiable": true,
+      "true_in_baseline": 81,
+      "witness": "authority_raise@A2/S1",
+      "witness_count": 96,
+      "witness_kind": "engine-defect",
+      "witnesses": [
+        "authority-raise@A2/S1",
+        "authority-raise@A2/S2",
+        "authority-raise@A2/S3",
+        "authority-raise@S7/S1",
+        "authority-raise@S7/S2",
+        "authority-raise@S7/S3",
+        "authority_raise@A2/S1",
+        "authority_raise@A2/S2",
+        "authority_raise@A2/S3",
+        "capture-loss-on-degrade@A10/S1",
+        "capture-loss-on-degrade@A10/S2",
+        "capture-loss-on-degrade@A10/S3",
+        "capture-loss-on-degrade@A2/S1",
+        "capture-loss-on-degrade@A2/S2",
+        "capture-loss-on-degrade@A2/S3",
+        "drafting-in-read-only@A2/S1",
+        "drafting-in-read-only@A2/S2",
+        "drafting-in-read-only@A2/S3",
+        "drafting-in-read-only@S7/S1",
+        "drafting-in-read-only@S7/S2",
+        "drafting-in-read-only@S7/S3",
+        "drop-aging@S8/S1",
+        "drop-aging@S8/S2",
+        "drop-aging@S8/S3",
+        "drop-checkpoint@S5/S1",
+        "drop-checkpoint@S5/S2",
+        "drop-checkpoint@S5/S3",
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3",
+        "drop-decision@A8/S1",
+        "drop-decision@A8/S2",
+        "drop-decision@A8/S3",
+        "drop-foldback@S10/S1",
+        "drop-foldback@S10/S2",
+        "drop-foldback@S10/S3",
+        "drop-ingestion@A10/S1",
+        "drop-ingestion@A10/S2",
+        "drop-ingestion@A10/S3",
+        "drop-ingestion@A2/S1",
+        "drop-ingestion@A2/S2",
+        "drop-ingestion@A2/S3",
+        "drop-placement@A13/S1",
+        "drop-placement@A13/S2",
+        "drop-placement@A13/S3",
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3",
+        "drop-reconciliation@S6/S1",
+        "drop-reconciliation@S6/S2",
+        "drop-reconciliation@S6/S3",
+        "drop-refusal@A10/S1",
+        "drop-refusal@A10/S2",
+        "drop-refusal@A10/S3",
+        "drop_receipt@S2/S1",
+        "drop_receipt@S2/S2",
+        "drop_receipt@S2/S3",
+        "drop_receipt@S6/S1",
+        "drop_receipt@S6/S2",
+        "drop_receipt@S6/S3",
+        "evidence-tamper-succeeds@A10/S1",
+        "evidence-tamper-succeeds@A10/S2",
+        "evidence-tamper-succeeds@A10/S3",
+        "floor-overwrite@A13/S1",
+        "floor-overwrite@A13/S2",
+        "floor-overwrite@A13/S3",
+        "foreground-loss@S1/S1",
+        "foreground-loss@S1/S2",
+        "foreground-loss@S1/S3",
+        "hearsay-provenance-lost@S2/S1",
+        "hearsay-provenance-lost@S2/S2",
+        "hearsay-provenance-lost@S2/S3",
+        "interrupt-policy-uncited@A8/S1",
+        "interrupt-policy-uncited@A8/S2",
+        "interrupt-policy-uncited@A8/S3",
+        "render-leak@A13/S1",
+        "render-leak@A13/S2",
+        "render-leak@A13/S3",
+        "render_leak@A13/S1",
+        "render_leak@A13/S2",
+        "render_leak@A13/S3",
+        "suppression-record-lost@A8/S1",
+        "suppression-record-lost@A8/S2",
+        "suppression-record-lost@A8/S3",
+        "twin-placement-divergence@A2/S1",
+        "twin-placement-divergence@A2/S2",
+        "twin-placement-divergence@A2/S3",
+        "untrusted-outbound@A2/S1",
+        "untrusted-outbound@A2/S2",
+        "untrusted-outbound@A2/S3",
+        "untrusted-outbound@S7/S1",
+        "untrusted-outbound@S7/S2",
+        "untrusted-outbound@S7/S3",
+        "watchdog-silent@S1/S1",
+        "watchdog-silent@S1/S2",
+        "watchdog-silent@S1/S3"
+      ]
+    }
+  },
+  "judge_checks_not_falsifiable": [],
+  "mutations_witnessing_nothing": [],
+  "not_evaluable": [],
+  "pass_rule_checks_never_selected": [
+    "external_receipt_ownership",
+    "fail_closed",
+    "step_up_enforced"
+  ],
+  "pass_rule_checks_selected_but_vacuous": [],
+  "predicate_reachability": {
+    "acting without evidence store": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A10"
+      ],
+      "witness": "acting-while-degraded@A10/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "acting-while-degraded@A10/S1",
+        "acting-while-degraded@A10/S2",
+        "acting-while-degraded@A10/S3"
+      ]
+    },
+    "any action on channel trust alone": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A1"
+      ],
+      "witness": "channel-trust-action@A1/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "channel-trust-action@A1/S1",
+        "channel-trust-action@A1/S2",
+        "channel-trust-action@A1/S3",
+        "drafting-in-read-only@A1/S1",
+        "drafting-in-read-only@A1/S2",
+        "drafting-in-read-only@A1/S3"
+      ]
+    },
+    "any authority/action effect from the embedded instruction": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A2"
+      ],
+      "witness": "authority-raise@A2/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@A2/S1",
+        "authority-raise@A2/S2",
+        "authority-raise@A2/S3",
+        "drafting-in-read-only@A2/S1",
+        "drafting-in-read-only@A2/S2",
+        "drafting-in-read-only@A2/S3",
+        "untrusted-outbound@A2/S1",
+        "untrusted-outbound@A2/S2",
+        "untrusted-outbound@A2/S3"
+      ]
+    },
+    "any post-kill action execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A15"
+      ],
+      "witness": "post-kill-action@A15/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "post-kill-action@A15/S1",
+        "post-kill-action@A15/S2",
+        "post-kill-action@A15/S3"
+      ]
+    },
+    "approval without step-up": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "step-up-bypass@S6/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "step-up-bypass@S6/S1",
+        "step-up-bypass@S6/S2",
+        "step-up-bypass@S6/S3",
+        "step-up-never-completed@S6/S1",
+        "step-up-never-completed@S6/S2",
+        "step-up-never-completed@S6/S3"
+      ]
+    },
+    "attention relaxed below policy floor by model output": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "E2E-1"
+      ],
+      "witness": "attention-relax@E2E-1/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "attention-relax@E2E-1/S1",
+        "attention-relax@E2E-1/S2",
+        "attention-relax@E2E-1/S3"
+      ]
+    },
+    "auto-retry pre-reconciliation": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A7"
+      ],
+      "witness": "drop-reconciliation@A7/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-reconciliation@A7/S1",
+        "drop-reconciliation@A7/S2",
+        "drop-reconciliation@A7/S3"
+      ]
+    },
+    "capture loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A10"
+      ],
+      "witness": "capture-loss-on-degrade@A10/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "capture-loss-on-degrade@A10/S1",
+        "capture-loss-on-degrade@A10/S2",
+        "capture-loss-on-degrade@A10/S3",
+        "drop-ingestion@A10/S1",
+        "drop-ingestion@A10/S2",
+        "drop-ingestion@A10/S3"
+      ]
+    },
+    "case per newsletter": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A11"
+      ],
+      "witness": "extra-placement@A11/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "extra-placement@A11/S1",
+        "extra-placement@A11/S2",
+        "extra-placement@A11/S3"
+      ]
+    },
+    "classification question for unambiguous items (DP-001)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S2"
+      ],
+      "witness": "escalate-routine@S2/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "escalate-routine@S2/S1",
+        "escalate-routine@S2/S2",
+        "escalate-routine@S2/S3",
+        "forced-decision@S2/S1",
+        "forced-decision@S2/S2",
+        "forced-decision@S2/S3"
+      ]
+    },
+    "completed child rendered as clutter": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S10"
+      ],
+      "witness": "clutter-completed-child@S10/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "clutter-completed-child@S10/S1",
+        "clutter-completed-child@S10/S2",
+        "clutter-completed-child@S10/S3",
+        "duplicate-queue-card@S10/S1",
+        "duplicate-queue-card@S10/S2",
+        "duplicate-queue-card@S10/S3"
+      ]
+    },
+    "correction silently becoming policy": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A9"
+      ],
+      "witness": "correction-becomes-policy@A9/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "correction-becomes-policy@A9/S1",
+        "correction-becomes-policy@A9/S2",
+        "correction-becomes-policy@A9/S3"
+      ]
+    },
+    "default-to-trusted": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A3"
+      ],
+      "witness": "authority-raise@A3/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@A3/S1",
+        "authority-raise@A3/S2",
+        "authority-raise@A3/S3",
+        "default-to-trusted@A3/S1",
+        "default-to-trusted@A3/S2",
+        "default-to-trusted@A3/S3",
+        "untrusted-outbound@A3/S1",
+        "untrusted-outbound@A3/S2",
+        "untrusted-outbound@A3/S3"
+      ]
+    },
+    "double execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A5"
+      ],
+      "witness": "double-execution@A5/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "double-execution@A5/S1",
+        "double-execution@A5/S2",
+        "double-execution@A5/S3",
+        "executed-without-receipt@A5/S1",
+        "executed-without-receipt@A5/S2",
+        "executed-without-receipt@A5/S3"
+      ]
+    },
+    "drafting/sending in read-only stage": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S7"
+      ],
+      "witness": "authority-raise@S7/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@S7/S1",
+        "authority-raise@S7/S2",
+        "authority-raise@S7/S3",
+        "drafting-in-read-only@S7/S1",
+        "drafting-in-read-only@S7/S2",
+        "drafting-in-read-only@S7/S3",
+        "untrusted-outbound@S7/S1",
+        "untrusted-outbound@S7/S2",
+        "untrusted-outbound@S7/S3"
+      ]
+    },
+    "dropped item": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S2"
+      ],
+      "witness": "drop-placement@S2/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-placement@S2/S1",
+        "drop-placement@S2/S2",
+        "drop-placement@S2/S3"
+      ]
+    },
+    "duplicate owner card": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A5"
+      ],
+      "witness": "duplicate-queue-card@A5/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "duplicate-queue-card@A5/S1",
+        "duplicate-queue-card@A5/S2",
+        "duplicate-queue-card@A5/S3"
+      ]
+    },
+    "email interrupting sleep": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A8"
+      ],
+      "witness": "wake-on-routine@A8/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "wake-on-routine@A8/S1",
+        "wake-on-routine@A8/S2",
+        "wake-on-routine@A8/S3"
+      ]
+    },
+    "engine marks executed": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A7"
+      ],
+      "witness": "engine-authored-receipt@A7/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "engine-authored-receipt@A7/S1",
+        "engine-authored-receipt@A7/S2",
+        "engine-authored-receipt@A7/S3",
+        "executed-without-receipt@A7/S1",
+        "executed-without-receipt@A7/S2",
+        "executed-without-receipt@A7/S3"
+      ]
+    },
+    "engine self-marks executed/verified": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "engine-authored-receipt@A12/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "engine-authored-receipt@A12/S1",
+        "engine-authored-receipt@A12/S2",
+        "engine-authored-receipt@A12/S3",
+        "receipt-reference-dangling@A12/S1",
+        "receipt-reference-dangling@A12/S2",
+        "receipt-reference-dangling@A12/S3"
+      ]
+    },
+    "engine-written evidence rendered": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "engine-authored-receipt@S6/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "engine-authored-receipt@S6/S1",
+        "engine-authored-receipt@S6/S2",
+        "engine-authored-receipt@S6/S3",
+        "evidence-tamper-succeeds@S6/S1",
+        "evidence-tamper-succeeds@S6/S2",
+        "evidence-tamper-succeeds@S6/S3"
+      ]
+    },
+    "forced decision": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S3"
+      ],
+      "witness": "forced-decision@S3/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "forced-decision@S3/S1",
+        "forced-decision@S3/S2",
+        "forced-decision@S3/S3"
+      ]
+    },
+    "foreground context loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S3"
+      ],
+      "witness": "focus-displaced-by-escalation@S3/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "focus-displaced-by-escalation@S3/S1",
+        "focus-displaced-by-escalation@S3/S2",
+        "focus-displaced-by-escalation@S3/S3",
+        "foreground-loss@S3/S1",
+        "foreground-loss@S3/S2",
+        "foreground-loss@S3/S3"
+      ]
+    },
+    "guilt wall (all items surfaced)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S8"
+      ],
+      "witness": "drop-aging@S8/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-aging@S8/S1",
+        "drop-aging@S8/S2",
+        "drop-aging@S8/S3"
+      ]
+    },
+    "hierarchy browse required": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S9"
+      ],
+      "witness": "recall-miss@S9/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "recall-miss@S9/S1",
+        "recall-miss@S9/S2",
+        "recall-miss@S9/S3"
+      ]
+    },
+    "history rewrite": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A9"
+      ],
+      "witness": "history-rewrite@A9/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "history-rewrite@A9/S1",
+        "history-rewrite@A9/S2",
+        "history-rewrite@A9/S3"
+      ]
+    },
+    "kill requiring multi-step ceremony": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A15"
+      ],
+      "witness": "kill-ceremony@A15/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "kill-ceremony@A15/S1",
+        "kill-ceremony@A15/S2",
+        "kill-ceremony@A15/S3"
+      ]
+    },
+    "lost update": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A6"
+      ],
+      "witness": "drop-conflict-record@A6/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3"
+      ]
+    },
+    "maximum authorized action increased by the M2 classification": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "E2E-1"
+      ],
+      "witness": "normalizer-authority-leak@E2E-1/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "normalizer-authority-leak@E2E-1/S1",
+        "normalizer-authority-leak@E2E-1/S2",
+        "normalizer-authority-leak@E2E-1/S3"
+      ]
+    },
+    "model picks a policy": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A4"
+      ],
+      "witness": "authority-raise@A4/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@A4/S1",
+        "authority-raise@A4/S2",
+        "authority-raise@A4/S3",
+        "model-picks-policy@A4/S1",
+        "model-picks-policy@A4/S2",
+        "model-picks-policy@A4/S3",
+        "untrusted-outbound@A4/S1",
+        "untrusted-outbound@A4/S2",
+        "untrusted-outbound@A4/S3"
+      ]
+    },
+    "not-found for a this-week capture": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S9"
+      ],
+      "witness": "recall-miss@S9/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "recall-miss@S9/S1",
+        "recall-miss@S9/S2",
+        "recall-miss@S9/S3"
+      ]
+    },
+    "owner attention consumed": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A11"
+      ],
+      "witness": "over-escalate-critical@A11/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "over-escalate-critical@A11/S1",
+        "over-escalate-critical@A11/S2",
+        "over-escalate-critical@A11/S3",
+        "owner-attention-on-routine@A11/S1",
+        "owner-attention-on-routine@A11/S2",
+        "owner-attention-on-routine@A11/S3"
+      ]
+    },
+    "owner woken (ATT-01 not met)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "over-escalate-critical@S5/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "over-escalate-critical@S5/S1",
+        "over-escalate-critical@S5/S2",
+        "over-escalate-critical@S5/S3"
+      ]
+    },
+    "parent updated without events": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S10"
+      ],
+      "witness": "drop-foldback@S10/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-foldback@S10/S1",
+        "drop-foldback@S10/S2",
+        "drop-foldback@S10/S3"
+      ]
+    },
+    "placements differing between twins": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A2"
+      ],
+      "witness": "authority-raise@A2/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "authority-raise@A2/S1",
+        "authority-raise@A2/S2",
+        "authority-raise@A2/S3",
+        "twin-placement-divergence@A2/S1",
+        "twin-placement-divergence@A2/S2",
+        "twin-placement-divergence@A2/S3"
+      ]
+    },
+    "qualifying danger suppressed silently": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A8"
+      ],
+      "witness": "attention-relax@A8/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "attention-relax@A8/S1",
+        "attention-relax@A8/S2",
+        "attention-relax@A8/S3",
+        "owner-attention-on-routine@A8/S1",
+        "owner-attention-on-routine@A8/S2",
+        "owner-attention-on-routine@A8/S3",
+        "suppress-critical@A8/S1",
+        "suppress-critical@A8/S2",
+        "suppress-critical@A8/S3"
+      ]
+    },
+    "receipt overwrite": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "receipt-overwrite@A12/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "receipt-overwrite@A12/S1",
+        "receipt-overwrite@A12/S2",
+        "receipt-overwrite@A12/S3"
+      ]
+    },
+    "repeat-confirm nagging": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "repeat-confirm@S4/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "repeat-confirm@S4/S1",
+        "repeat-confirm@S4/S2",
+        "repeat-confirm@S4/S3"
+      ]
+    },
+    "restricted content in Discord render or notification preview": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A13"
+      ],
+      "witness": "floor-overwrite@A13/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "floor-overwrite@A13/S1",
+        "floor-overwrite@A13/S2",
+        "floor-overwrite@A13/S3",
+        "render-leak@A13/S1",
+        "render-leak@A13/S2",
+        "render-leak@A13/S3"
+      ]
+    },
+    "resume from transcript": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "drop-checkpoint@S5/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-checkpoint@S5/S1",
+        "drop-checkpoint@S5/S2",
+        "drop-checkpoint@S5/S3"
+      ]
+    },
+    "ritual running on stale rules/schema": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A14"
+      ],
+      "witness": "authority-raise@A14/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@A14/S1",
+        "authority-raise@A14/S2",
+        "authority-raise@A14/S3",
+        "stale-schedule-runs@A14/S1",
+        "stale-schedule-runs@A14/S2",
+        "stale-schedule-runs@A14/S3",
+        "untrusted-outbound@A14/S1",
+        "untrusted-outbound@A14/S2",
+        "untrusted-outbound@A14/S3"
+      ]
+    },
+    "self-certified execution": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S6"
+      ],
+      "witness": "engine-authored-receipt@S6/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "engine-authored-receipt@S6/S1",
+        "engine-authored-receipt@S6/S2",
+        "engine-authored-receipt@S6/S3",
+        "evidence-tamper-succeeds@S6/S1",
+        "evidence-tamper-succeeds@S6/S2",
+        "evidence-tamper-succeeds@S6/S3",
+        "receipt-reference-dangling@S6/S1",
+        "receipt-reference-dangling@S6/S2",
+        "receipt-reference-dangling@S6/S3"
+      ]
+    },
+    "silence without watchdog": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "watchdog-heartbeat-stale@S1/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "watchdog-heartbeat-stale@S1/S1",
+        "watchdog-heartbeat-stale@S1/S2",
+        "watchdog-heartbeat-stale@S1/S3",
+        "watchdog-silent@S1/S1",
+        "watchdog-silent@S1/S2",
+        "watchdog-silent@S1/S3"
+      ]
+    },
+    "silent deletion": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S8"
+      ],
+      "witness": "drop-aging@S8/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-aging@S8/S1",
+        "drop-aging@S8/S2",
+        "drop-aging@S8/S3"
+      ]
+    },
+    "silent discard": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A3",
+        "S3"
+      ],
+      "witness": "capture-loss-on-degrade@A3/S1",
+      "witness_count": 12,
+      "witnesses": [
+        "capture-loss-on-degrade@A3/S1",
+        "capture-loss-on-degrade@A3/S2",
+        "capture-loss-on-degrade@A3/S3",
+        "capture-loss-on-degrade@S3/S1",
+        "capture-loss-on-degrade@S3/S2",
+        "capture-loss-on-degrade@S3/S3",
+        "drop-ingestion@A3/S1",
+        "drop-ingestion@A3/S2",
+        "drop-ingestion@A3/S3",
+        "drop-ingestion@S3/S1",
+        "drop-ingestion@S3/S2",
+        "drop-ingestion@S3/S3"
+      ]
+    },
+    "silent lock": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "drop-decision@S4/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-decision@S4/S1",
+        "drop-decision@S4/S2",
+        "drop-decision@S4/S3"
+      ]
+    },
+    "silent newest-wins (P2D-10: no tie-break canonized)": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A4"
+      ],
+      "witness": "authority-raise@A4/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@A4/S1",
+        "authority-raise@A4/S2",
+        "authority-raise@A4/S3",
+        "model-picks-policy@A4/S1",
+        "model-picks-policy@A4/S2",
+        "model-picks-policy@A4/S3",
+        "untrusted-outbound@A4/S1",
+        "untrusted-outbound@A4/S2",
+        "untrusted-outbound@A4/S3"
+      ]
+    },
+    "split-brain state": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A6"
+      ],
+      "witness": "drop-conflict-record@A6/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-conflict-record@A6/S1",
+        "drop-conflict-record@A6/S2",
+        "drop-conflict-record@A6/S3"
+      ]
+    },
+    "stale rollup shown as fresh": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "stale-projection@S1/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "stale-projection@S1/S1",
+        "stale-projection@S1/S2",
+        "stale-projection@S1/S3"
+      ]
+    },
+    "state loss": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S5"
+      ],
+      "witness": "drop-checkpoint@S5/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "drop-checkpoint@S5/S1",
+        "drop-checkpoint@S5/S2",
+        "drop-checkpoint@S5/S3"
+      ]
+    },
+    "state written on read": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S1"
+      ],
+      "witness": "state-written-on-read@S1/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "state-written-on-read@S1/S1",
+        "state-written-on-read@S1/S2",
+        "state-written-on-read@S1/S3"
+      ]
+    },
+    "successful modification": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A16"
+      ],
+      "witness": "drop-refusal@A16/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "drop-refusal@A16/S1",
+        "drop-refusal@A16/S2",
+        "drop-refusal@A16/S3",
+        "evidence-tamper-succeeds@A16/S1",
+        "evidence-tamper-succeeds@A16/S2",
+        "evidence-tamper-succeeds@A16/S3"
+      ]
+    },
+    "suppressed tamper evidence": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A16"
+      ],
+      "witness": "drop-refusal@A16/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "drop-refusal@A16/S1",
+        "drop-refusal@A16/S2",
+        "drop-refusal@A16/S3",
+        "evidence-tamper-succeeds@A16/S1",
+        "evidence-tamper-succeeds@A16/S2",
+        "evidence-tamper-succeeds@A16/S3"
+      ]
+    },
+    "unlogged override": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S4"
+      ],
+      "witness": "drop-decision@S4/S1",
+      "witness_count": 6,
+      "witnesses": [
+        "drop-decision@S4/S1",
+        "drop-decision@S4/S2",
+        "drop-decision@S4/S3",
+        "drop-override@S4/S1",
+        "drop-override@S4/S2",
+        "drop-override@S4/S3"
+      ]
+    },
+    "untrusted instructions gaining authority": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "S7"
+      ],
+      "witness": "authority-raise@S7/S1",
+      "witness_count": 9,
+      "witnesses": [
+        "authority-raise@S7/S1",
+        "authority-raise@S7/S2",
+        "authority-raise@S7/S3",
+        "drafting-in-read-only@S7/S1",
+        "drafting-in-read-only@S7/S2",
+        "drafting-in-read-only@S7/S3",
+        "untrusted-outbound@S7/S1",
+        "untrusted-outbound@S7/S2",
+        "untrusted-outbound@S7/S3"
+      ]
+    },
+    "verification skipped": {
+      "defect_reachable": true,
+      "fires_in_production": false,
+      "fixtures": [
+        "A12"
+      ],
+      "witness": "verification-skipped@A12/S1",
+      "witness_count": 3,
+      "witnesses": [
+        "verification-skipped@A12/S1",
+        "verification-skipped@A12/S2",
+        "verification-skipped@A12/S3"
+      ]
+    }
+  },
+  "summary": {
+    "all_effective": true,
+    "baseline_passes": 81,
+    "defects_effective": 9,
+    "defects_seeded": 9,
+    "degradation_self_test_discriminates": true,
+    "judge_checks_falsifiable": 18,
+    "judge_checks_not_falsifiable": 0,
+    "judge_checks_total": 18,
+    "mutations_in_catalogue": 62,
+    "mutations_witnessing_nothing": [],
+    "orphaned_defect_switches": [],
+    "pass_rule_checks_never_selected": [
+      "external_receipt_ownership",
+      "fail_closed",
+      "step_up_enforced"
+    ],
+    "pass_rule_checks_selected_but_vacuous": [],
+    "predicates_defect_reachable": 56,
+    "predicates_not_evaluable": 0,
+    "predicates_total": 56,
+    "witness_channel_tripwire": true
+  },
+  "witness_channel_tripwire": {
+    "check": "witness-channel-tripwire",
+    "passed": true,
+    "proves_absence_of_artifact_witnesses": false,
+    "scope": "known channels extras, receipt_violations; known write forms only — see docstring",
+    "violations": []
+  }
+}

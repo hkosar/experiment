@@ -18,7 +18,7 @@ from __future__ import annotations
 import hashlib
 import json
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Sequence
+from typing import Dict, List, Optional, Sequence, Tuple
 
 from events import (Event, EXTERNAL_BASIS_STORES, GENESIS_EVENT_TYPES,
                     ShapeStorage)

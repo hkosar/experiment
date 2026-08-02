@@ -39,10 +39,26 @@ the fixture's input fields" claim was false, and these are why):
     action carry its own XR -> VR -> RE chain; without it the verification stage of
     the lifecycle is never reached. A12's input-side support for this is thinner
     than S6's and is carried as a disclosed limit rather than a claim.
+  * S3 `actions` (TASK-0004, closure finding M-1) — the filing action itself. S3's
+    narrative is a question captured during a design session; with no action the
+    interjection was never filed and no receipt existed. The action CLASS is the
+    narrative's; that an action is attempted is Builder-added.
+  * S10 `placement_scope` / `proposed_action_class` (TASK-0004, closure finding M-1)
+    — the AUT-05 inputs, as on S2, A9 and S3. Folding a completed child into its
+    named parent ("winter-slip topic completes" / "parent Storage Strategy has open
+    blocker") is an in-subtree filing-routing action.
+  * S6 / A12 `actions` (TASK-0004, closure finding M-1 — found by the structural
+    guard, not by the review, which named only S3 and S10). Both fixtures' narratives
+    are consequential lifecycles; without an action tuple there is nothing to
+    approve, execute, receipt or verify, and every lifecycle check is vacuous.
 
-The set above is exhaustive as far as I can determine, and that is precisely the
-claim I cannot verify from inside (falsifier row 3): an omission here is invisible
-to the author who made it. Two successive reviews each found entries missing.
+This enumeration is no longer a promise. `BUILDER_ADDED_FIELDS` below names the
+fields that require an entry, and `check_anticircularity.check_stimulus_enumeration`
+fails the gate for any fixture-field pair that is set but not enumerated above. Three
+successive reviews found this list stale (RW-24, RW-27, and the TASK-0004 return);
+the guard that closed it immediately found two pairs beyond the two the third review
+named. "As far as I can determine" was exactly the wrong standard for a disclosure
+three Delivery Records lean on — the check now determines it.
 
 A12's `notification_preview` was REMOVED in R2 (RW-14): nothing in A12's input side
 mentions a notification surface; that belongs to A13.
@@ -83,6 +99,25 @@ from engine_core import (
     T2,
     T3,
 )
+
+
+# ---------------------------------------------------------------------------
+# The Builder-added-stimulus REGISTRY, made structural (closure finding M-1).
+#
+# A field named here is a Builder-added minimal stimulus, not a transcription of the
+# fixture's own text. Every fixture that sets one MUST appear in the enumeration
+# block of this module's docstring naming that field, and
+# `check_anticircularity.check_stimulus_enumeration()` fails the gate when it does
+# not. The registry no longer depends on anyone remembering to update it: this
+# omission recurred three times (RW-24, RW-27, and the TASK-0004 return), and the
+# guard that closes it found two MORE unenumerated pairs than the review named.
+# ---------------------------------------------------------------------------
+
+BUILDER_ADDED_FIELDS: Tuple[str, ...] = (
+    "actions", "placement_scope", "proposed_action_class", "owner_step_up_provided",
+)
+# Set on a RequestedAction rather than the spec, so it is checked separately.
+BUILDER_ADDED_ACTION_FIELDS: Tuple[str, ...] = ("verification_arrives",)
 
 
 @dataclass(frozen=True)
@@ -269,7 +304,9 @@ SCENARIOS: Dict[str, ScenarioSpec] = {
         # scenario emitted no action at all, so nothing was filed and no receipt
         # existed — the same omission RW-01 corrected on A10 and RW-24 enumerated for
         # S2/A5/A9. The action CLASS comes from the narrative; that an action is
-        # attempted is Builder-added and enumerated in the docstring above.
+        # attempted is Builder-added. (This comment claimed the entry was already in
+        # the docstring enumeration when it was not — closure finding M-1. It is now,
+        # and the structural guard makes the claim checkable rather than trusted.)
         actions=(RequestedAction("act-S3-file", "filing-routing"),),
         policies=(ROUTING_DEFAULT,),
         notes="interjection routed without destroying foreground focus",

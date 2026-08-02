@@ -115,23 +115,46 @@ def _quoted(cell: str) -> List[str]:
     return out
 
 
-def derive_patterns(design_dir: str) -> Tuple[List[Dict[str, str]], List[str]]:
-    """Parse D-SM at RUNTIME into patterns. A new row needs no code change here."""
+def derive_patterns(design_dir: str):
+    """Parse D-SM at RUNTIME into patterns. A new row needs no code change here.
+
+    Returns (patterns, notes, malformed). `malformed` lists table lines that look
+    like data rows but could not be parsed — see closure finding M-2.
+    """
     path = os.path.join(design_dir, MAP_NAME)
     notes: List[str] = []
     if not os.path.exists(path):
-        return [], ["%s not found — no map-derived patterns available" % MAP_NAME]
+        return [], ["%s not found — no map-derived patterns available" % MAP_NAME], []
 
     patterns: List[Dict[str, str]] = []
     rows = 0
     unquoted: List[str] = []
     unscoped: List[str] = []
+    malformed: List[str] = []
+    # Closure finding M-2. The parser used to skip any line it could not read —
+    # a mangled row ID or a dropped cell fell silently out of enforcement and the
+    # only symptom was a pattern count nobody was watching. A checker whose whole
+    # purpose is fail-closed enforcement must not fail open on its own input.
+    #
+    # The rule: once the table header is seen, EVERY line starting with `|` is a
+    # data row and must be well formed (>= 4 cells, numeric ID). Anything else is
+    # malformed, reported, and fails the run. Tracking the header rather than
+    # sniffing each line means a second table added to the map later gets its own
+    # region instead of being reported as damage.
+    in_table = False
     with open(path, "r", encoding="utf-8") as fh:
         for line in fh:
             if not line.startswith("|"):
+                in_table = False
                 continue
             cells = [c.strip() for c in line.strip().strip("|").split("|")]
+            if cells and (cells[0] == "#" or re.fullmatch(r"-{2,}", cells[0] or "")):
+                in_table = True          # header or separator
+                continue
+            if not in_table:
+                continue
             if len(cells) < 4 or not cells[0].isdigit():
+                malformed.append(line.strip()[:90])
                 continue
             rows += 1
             row_id, where, superseded, replacement = cells[0], cells[1], cells[2], cells[3]
@@ -161,7 +184,7 @@ def derive_patterns(design_dir: str) -> Tuple[List[Dict[str, str]], List[str]]:
     if unscoped:
         notes.append("D-SM rows naming no parseable artifact, so their patterns are "
                      "checked across every file: %s" % "; ".join(unscoped))
-    return patterns, notes
+    return patterns, notes, malformed
 
 
 def structural_patterns() -> List[Dict[str, str]]:
@@ -175,7 +198,7 @@ def structural_patterns() -> List[Dict[str, str]]:
 
 
 def scan(design_dir: str) -> Dict[str, object]:
-    map_patterns, notes = derive_patterns(design_dir)
+    map_patterns, notes, malformed = derive_patterns(design_dir)
     all_patterns = map_patterns + structural_patterns()
     compiled = [(p, re.compile(p["pattern"])) for p in all_patterns]
 
@@ -209,8 +232,9 @@ def scan(design_dir: str) -> Dict[str, object]:
         "structural_patterns": len(all_patterns) - len(map_patterns),
         "patterns_total": len(all_patterns),
         "notes": notes,
+        "malformed_map_rows": malformed,
         "hits": hits,
-        "passed": not hits,
+        "passed": not hits and not malformed,
     }
 
 
@@ -270,6 +294,35 @@ def self_test() -> Dict[str, object]:
                         "hits": len(marked["hits"]), "ok": marked["passed"],
                         "detail": [h["matched"] for h in marked["hits"][:3]]})
 
+        os.remove(target)
+
+        # Closure finding M-2: a data row the parser cannot read must FAIL, not
+        # quietly drop out of enforcement. Two shapes: a mangled row ID, and a row
+        # with a cell removed. Both previously went unnoticed — the pattern count
+        # simply fell.
+        map_path = os.path.join(scratch, MAP_NAME)
+        original = open(map_path, encoding="utf-8").read()
+        before = scan(scratch)
+        for label, broken in (
+                ("mangled row ID", original.replace("\n| 3 |", "\n| 3x |", 1)),
+                ("row with a dropped cell",
+                 original.replace(
+                     "| 4 | D-B5 §3 F5 |", "| 4 | D-B5 §3 F5", 1)),
+        ):
+            with open(map_path, "w", encoding="utf-8", newline="\n") as fh:
+                fh.write(broken)
+            got = scan(scratch)
+            results.append({
+                "case": "malformed D-SM row: " + label, "expect": "FAIL",
+                "got": "PASS" if got["passed"] else "FAIL",
+                "hits": len(got["malformed_map_rows"]), "ok": not got["passed"],
+                "detail": got["malformed_map_rows"][:2]
+                + ["patterns %d -> %d" % (before["map_derived_patterns"],
+                                          got["map_derived_patterns"])],
+            })
+        with open(map_path, "w", encoding="utf-8", newline="\n") as fh:
+            fh.write(original)
+
     return {"cases": results, "passed": all(r["ok"] for r in results)}
 
 
@@ -302,6 +355,13 @@ def main(argv: List[str]) -> int:
 
     for note in report["notes"]:
         print("  note: %s" % note)
+    if report["malformed_map_rows"]:
+        print("FAIL — %d malformed D-SM table row(s); the map is the authority and an "
+              "unparseable row silently leaves its statement unenforced:"
+              % len(report["malformed_map_rows"]))
+        for row in report["malformed_map_rows"][:10]:
+            print("  - %s" % row)
+        return 1
     if report["hits"]:
         print("FAIL — %d unmarked superseded statement(s):" % len(report["hits"]))
         for h in report["hits"][:40]:

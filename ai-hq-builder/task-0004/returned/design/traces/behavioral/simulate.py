@@ -430,15 +430,24 @@ def simulate(stim: Stimulus, shape: str, defects: Optional[Defects] = None,
     # under D-B2 §2.4 (lower/escalate-only). The refusal was recorded only in a
     # `proposal_notes` string; A2's expected "flag record on twin B" had no computed
     # artefact to match. The rejected raise is a governance fact, so it is evented.
+    # Closure finding L-1: the record is emitted only where the proposal actually
+    # RAISES the ceiling above the model-free base. D-B2 §2.4 permits lowering, so
+    # labelling every `proposed_ceiling` a "rejected-ceiling-raise" would file a
+    # legitimate lowering as a refusal — a false record is worse than none.
     for i, prop in enumerate(spec.proposals):
-        if prop is not None and getattr(prop, "proposed_ceiling", None):
-            add("RefusalEvent", "proposal-raise", n=i + 1, caused_by=(eval_id,),
-                payload={"record": "rejected-ceiling-raise",
-                         "proposal_index": i,
-                         "proposed_ceiling": str(prop.proposed_ceiling),
-                         "reason": "model-proposed fields may lower or escalate, "
-                                   "never raise (D-B2 §2.4)"},
-                object_key="case")
+        proposed = prop is not None and getattr(prop, "proposed_ceiling", None)
+        if not proposed:
+            continue
+        if core.CEILING_ORDER[str(prop.proposed_ceiling)] <= core.CEILING_ORDER[gov.ceiling]:
+            continue                      # a lowering or a no-op: permitted, not refused
+        add("RefusalEvent", "proposal-raise", n=i + 1, caused_by=(eval_id,),
+            payload={"record": "rejected-ceiling-raise",
+                     "proposal_index": i,
+                     "proposed_ceiling": str(prop.proposed_ceiling),
+                     "base_ceiling": gov.ceiling,
+                     "reason": "model-proposed fields may lower or escalate, "
+                               "never raise (D-B2 §2.4)"},
+            object_key="case")
 
     decision_payload: Dict[str, object] = {
         "disposition": disp.tier, "ceiling": disp.ceiling,

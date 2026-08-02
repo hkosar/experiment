@@ -139,6 +139,77 @@ def check_structural() -> Dict[str, object]:
     }
 
 
+def check_stimulus_enumeration() -> Dict[str, object]:
+    """D — every Builder-added stimulus is enumerated in scenarios.py's registry.
+
+    Closure finding M-1. `scenarios.py`'s docstring carries the enumeration of
+    Builder-added minimal stimuli, and the honesty of three Delivery Records rests on
+    it (falsifier row 3 cites it by name). It fell out of date three times running,
+    each time discovered by a reviewer rather than by the harness.
+
+    This makes it structural. Every fixture whose `ScenarioSpec` sets a field in
+    `scenarios.BUILDER_ADDED_FIELDS` — or whose actions set one in
+    `BUILDER_ADDED_ACTION_FIELDS` — must appear in the enumeration block naming that
+    field. A pair that is set but not enumerated fails the gate, so a fourth
+    recurrence is impossible by construction rather than by diligence.
+    """
+    import scenarios as scen
+
+    doc = scen.__doc__ or ""
+    start = doc.find("BUILDER-ADDED MINIMAL STIMULI")
+    end = doc.find("A12's `notification_preview`")
+    block = doc[start:end] if 0 <= start < end else ""
+
+    # Accumulate each bullet (they wrap over several lines) and record which
+    # (fixture, field) pairs it names.
+    enumerated = set()
+
+    def flush(text: str) -> None:
+        if not text:
+            return
+        fixtures = set(re.findall(r"\b(?:S\d+|A\d+|E2E-1)\b", text))
+        fields = set(re.findall(r"`([a-z_]+)`", text))
+        for fx in fixtures:
+            for fl in fields:
+                enumerated.add((fx, fl))
+
+    current = ""
+    for line in block.splitlines():
+        if line.strip().startswith("* "):
+            flush(current)
+            current = line
+        elif current:
+            current += " " + line
+    flush(current)          # the LAST bullet: an end-of-loop sentinel whose strip()
+                            # dropped its trailing space silently skipped it, which is
+                            # the same class of quiet omission this guard exists for.
+
+    missing = []
+    used = []
+    for fid, spec in sorted(scen.SCENARIOS.items()):
+        for field_name in scen.BUILDER_ADDED_FIELDS:
+            value = getattr(spec, field_name, None)
+            if value in (None, (), "", False):
+                continue
+            used.append({"fixture": fid, "field": field_name})
+            if (fid, field_name) not in enumerated:
+                missing.append({"fixture": fid, "field": field_name})
+        for action_field in scen.BUILDER_ADDED_ACTION_FIELDS:
+            if any(getattr(a, action_field, False) for a in getattr(spec, "actions", ())):
+                used.append({"fixture": fid, "field": action_field})
+                if (fid, action_field) not in enumerated:
+                    missing.append({"fixture": fid, "field": action_field})
+
+    return {
+        "check": "D-stimulus-enumeration",
+        "passed": not missing and bool(block),
+        "enumeration_block_found": bool(block),
+        "pairs_enumerated": sorted("%s/%s" % p for p in enumerated),
+        "pairs_in_use": sorted("%s/%s" % (u["fixture"], u["field"]) for u in used),
+        "unenumerated": sorted("%s/%s" % (m["fixture"], m["field"]) for m in missing),
+    }
+
+
 def main(argv: Optional[List[str]] = None) -> int:
     ap = argparse.ArgumentParser()
     ap.add_argument("--fixtures", default=None,
@@ -148,7 +219,8 @@ def main(argv: Optional[List[str]] = None) -> int:
                     help="output directory (default: ./out next to this file)")
     args = ap.parse_args(argv if argv is not None else sys.argv[1:])
 
-    results = [check_textual(), check_imports(), check_structural()]
+    results = [check_textual(), check_imports(), check_structural(),
+               check_stimulus_enumeration()]
     print("Anti-circularity check — engine/scenario code vs fixture oracle fields")
     print("  engine/scenario modules : %s" % ", ".join(ENGINE_MODULES))
     print("  oracle-side modules     : %s" % ", ".join(ORACLE_MODULES))
@@ -167,6 +239,11 @@ def main(argv: Optional[List[str]] = None) -> int:
             for v in r["violations"][:10]:
                 print("      VIOLATION %s:%d imports %s"
                       % (v["module"], v["line"], v["imports"]))
+        elif r["check"] == "D-stimulus-enumeration":
+            print("      Builder-added stimulus pairs      : %d in use, %d enumerated"
+                  % (len(r["pairs_in_use"]), len(r["pairs_enumerated"])))
+            for m in r["unenumerated"]:
+                print("      UNENUMERATED                      : %s" % m)
         else:
             print("      Stimulus fields                   : %s"
                   % ", ".join(r["stimulus_fields"]))
