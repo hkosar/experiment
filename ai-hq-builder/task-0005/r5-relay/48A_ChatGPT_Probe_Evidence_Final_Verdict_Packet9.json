@@ -1,0 +1,67 @@
+{
+  "P2Y-01_remaining_defect": {
+    "design_contract": "Evidence-policy authority must be distinct from both the evidence source and receipt authority; the bound policy artifact and its contract rows must represent one coherent policy version.",
+    "probe_policy_artifact_version_mismatch": {
+      "action_context_version": "P1",
+      "actual": "accepted",
+      "causal_violations": [],
+      "contract_version": "P1",
+      "evidence_policy_top_level_version": "P999",
+      "expected": "refused",
+      "fold_error": null,
+      "fold_order": [
+        "decision-ext"
+      ],
+      "folded": true,
+      "problems": []
+    },
+    "probe_policy_authority_equals_receipt_authority": {
+      "actual": "accepted",
+      "causal_violations": [],
+      "evidence_policy_authority": "control-plane-attestation-service",
+      "expected": "refused",
+      "fold_error": null,
+      "fold_order": [
+        "decision-ext"
+      ],
+      "folded": true,
+      "manifest_source_authority": "provider-snapshot-service",
+      "problems": [],
+      "receipt_registry_authority": "control-plane-attestation-service"
+    }
+  },
+  "closed_list_results": {
+    "P2Y-02": {
+      "invalid_histories_refused": "8/8",
+      "positive_control": "passed",
+      "status": "closed"
+    },
+    "P2Y-03": {
+      "invalid_histories_refused": "9/9",
+      "status": "closed",
+      "writer_replay_consistency": "passed"
+    },
+    "P2Y-04": {
+      "explicit_early_window_positive": true,
+      "on_time_positive": true,
+      "premature_t0_for_t10_refused": true,
+      "status": "closed"
+    }
+  },
+  "nonblocking_build_obligation": {
+    "gate_disposition": "Build-gate obligation under the owner terminal rule; does not extend this design gate.",
+    "id": "B-12-proposed",
+    "issue": "ActionContext classification keys are trusted as declared and are not bound to the canonical ActionRequest payload/effect.",
+    "severity": "High"
+  },
+  "packet": {
+    "candidate_commit": "69920ef9214810ff378d26fb9d192afb5c740147",
+    "candidate_tree": "822c160d7e175fca2540a48d97ab5803df7830d1",
+    "path": "/mnt/data/Final_Verdict_Packet_9.zip",
+    "sha256": "9a272a96b7748314bc99afdc04ea0aee917a04cac984f4b522b4a107c1e0ad1b"
+  },
+  "terminal_verdict": {
+    "design_gate_passed": false,
+    "reason": "P2Y-01 is not closed; P2Y-02, P2Y-03, and P2Y-04 are closed."
+  }
+}

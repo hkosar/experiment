@@ -302,9 +302,16 @@ class ActionEvidenceContract:
 class EvidencePolicy:
     """The policy-plane artifact holding the contracts. Independently bound.
 
-    Authored by `authority_id`, which must differ from the manifest's `source_id` for
-    the same reason the receipt registry must: an evidence rule written by the party
-    whose evidence it governs is not a governed rule.
+    Authored by `authority_id`, which must differ from the manifest's `source_id` AND
+    from the receipt registry's `authority_id` (`48_` §4.1). R4 checked only the first
+    half, so the party that ISSUES receipts could also decide which receipt purposes
+    authorize an action — one actor holding both ends of the comparison, which is the
+    same substitution P2Y-01 was raised about, moved one artifact along.
+
+    `policy_version` is the artifact's own version and it is load-bearing: every
+    contract row it carries must declare that same version (`48_` §4.2). A policy that
+    announces P999 while applying P1 rows has an ambiguous identity, and a version
+    nothing is checked against is a label, not a version.
     """
 
     schema_version: str = EVIDENCE_POLICY_SCHEMA
@@ -359,6 +366,18 @@ class EvidencePolicy:
         for c in self.contracts:
             if not str(c.contract_id or "").strip():
                 problems.append("evidence policy holds a contract with no contract_id")
+        # `48_` §4.2 — ONE coherent version per artifact. A multi-version policy set is
+        # separately bound versioned artifacts or an explicitly versioned policy-set
+        # schema; it is never versions silently mixed inside one artifact, because then
+        # the artifact's declared version stops being load-bearing.
+        for c in sorted(self.contracts, key=lambda c: c.contract_id):
+            if c.policy_version != self.policy_version:
+                problems.append(
+                    "evidence policy declares version %r but carries contract %r at "
+                    "version %r — one artifact, one version: a policy that applies rows "
+                    "from a version it does not claim has no determinate identity "
+                    "(P2Y-01, 48_ §4.2)"
+                    % (self.policy_version, c.contract_id, c.policy_version))
         if self.declared_digest is None:
             problems.append(
                 "evidence policy declares no digest — an unbound policy is a "
@@ -801,13 +820,21 @@ def required_control_coverage() -> List[str]:
 
 def governed_purposes(context: Optional[ActionContext],
                       policy: Optional[EvidencePolicy],
-                      manifest: Optional[ExternalManifest]
+                      manifest: Optional[ExternalManifest],
+                      registry: Optional[ReceiptRegistry]
                       ) -> Tuple[Tuple[str, ...], List[str]]:
     """Resolve the purposes the POLICY PLANE allows for this action (P2Y-01).
 
     Returns (allowed_purposes, problems). The event supplies only the four keys; the
     values come from the governed mapping. Every step fails closed, because the
     finding is precisely that a permissive default lets the action pick its own rule.
+
+    `48_` §4.1 adds the receipt-registry authority context to this boundary. R4 could
+    only see one of the two actors it had to separate the policy from, so a policy
+    authored by the receipt authority resolved with `problems: []`. The authority
+    context is now REQUIRED whenever external evidence is used: an absent manifest or
+    an absent registry is not a reason to skip the separation check, it is a reason to
+    refuse, because a check that cannot see its own inputs has not been performed.
     """
     if policy is None:
         return (), ["no action-evidence policy was supplied with the fold input — "
@@ -816,14 +843,54 @@ def governed_purposes(context: Optional[ActionContext],
     problems = policy.integrity_problems()
     if problems:
         return (), ["action-evidence policy unusable — %s" % p for p in problems]
-    if manifest is not None and policy.authority_id == manifest.source_id:
+    # The authority context, both halves of it, before any separation is claimed.
+    # Also over-determined on the present corpus and said so out loud: this boundary is
+    # only reached when the event HAS an external basis, and every such reference is
+    # separately refused downstream when its manifest or its registry is missing. The
+    # clause is here because `48_` §4.1 requires the separation check to fail closed
+    # rather than be skipped, not because it is the only thing standing between a
+    # missing registry and a fold.
+    if manifest is None or registry is None:
+        missing = [name for name, obj in (("external manifest", manifest),
+                                          ("receipt registry", registry))
+                   if obj is None]
+        return (), ["external evidence is in use but the policy boundary was given no "
+                    "%s, so the evidence policy cannot be shown independent of the "
+                    "parties it governs — an unperformed separation check is not a "
+                    "passed one (P2Y-01, 48_ §4.1)" % " and no ".join(missing)]
+    if policy.authority_id == manifest.source_id:
         return (), ["the action-evidence policy is authored by %r, which is also the "
                     "manifest source — an evidence rule written by the party whose "
                     "evidence it governs is not governed (P2Y-01)" % policy.authority_id]
+    if policy.authority_id == registry.authority_id:
+        return (), ["the action-evidence policy is authored by %r, which is also the "
+                    "receipt-registry authority — the same actor would decide which "
+                    "receipt purposes authorize an action AND issue the receipts, so "
+                    "the purpose comparison has one party on both sides of it "
+                    "(P2Y-01, 48_ §4.1)" % policy.authority_id]
     if context is None or not str(context.action_class or "").strip():
         return (), ["the consuming event declares no action class — the governed "
                     "mapping is keyed by action class, scope, policy version and risk "
                     "class, and an event that names none cannot be governed (P2Y-01)"]
+    # `48_` §4.2, the consuming half. Checked BEFORE the lookup and reported on its own
+    # terms: a mismatched version would otherwise surface as "no contract for these
+    # keys", which is the message for an ungoverned action class and says nothing about
+    # which policy artifact the caller thought it was being judged under.
+    #
+    # Stated plainly, because it would otherwise read as a control doing more than it
+    # does: with the first half of §4.2 enforced above, every contract in the artifact
+    # carries the artifact's version, so a context asking for any other version can
+    # never match a row and the lookup would refuse it anyway. This check changes the
+    # REASON given, never whether it refuses. Section C3 of `run_basis.py` ships that
+    # fact rather than asserting it — the R4 reconstruction, which has no such check,
+    # refuses the same fixture saying "the policy holds no contract for those keys".
+    if context.policy_version != policy.policy_version:
+        return (), ["the consuming event asks to be governed under policy version %r; "
+                    "the supplied policy artifact is version %r — the artifact in hand "
+                    "is not the one the action claims governs it, and resolving it "
+                    "anyway would let either side name a version nothing checks "
+                    "(P2Y-01, 48_ §4.2)"
+                    % (context.policy_version, policy.policy_version)]
     contract = policy.lookup(context.action_class, context.scope,
                              context.policy_version, context.risk_class)
     if contract is None:

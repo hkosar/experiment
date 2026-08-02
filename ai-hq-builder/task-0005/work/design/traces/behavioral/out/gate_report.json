@@ -97,9 +97,9 @@
     "cases": 8,
     "closed": 8,
     "digest_enumeration_guard_discriminates": true,
-    "external_accepted_by_the_prefix_check_this_replaces": 49,
-    "external_cases": 50,
-    "external_closed": 50,
+    "external_accepted_by_the_prefix_check_this_replaces": 52,
+    "external_cases": 53,
+    "external_closed": 53,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],
@@ -109,6 +109,12 @@
     "r1_contract_witnesses_not_witnessing": [],
     "r2_contract_witnesses_all_witness": true,
     "r2_contract_witnesses_not_witnessing": [],
+    "r4_contract_probes_accepted_by_r4": 2,
+    "r4_contract_probes_all_refused_for_their_own_reason": true,
+    "r4_contract_probes_not_refused": [],
+    "r4_contract_probes_reason_change_only": [
+      "action-context-version-differs-from-the-policy-artifact"
+    ],
     "witnesses_reproducing_old_behavior": 7
   },
   "composition_summary": {
@@ -215,7 +221,7 @@
     },
     {
       "criterion": "18b every declared external basis resolves or the case fails closed",
-      "detail": "50/50 external-basis cases fail closed (the four P2U-02 probe strings; nonexistent object, wrong version/hash, omission from the frozen manifest, no manifest, degraded and unavailable resolver, tampered digest, unverified record, undeclared store; the P2V-02 receipt cases; and the R2 additions — receipt naming a manifest record, attesting to another subject, revoked, purposeless, abbreviated content hash, no registry, wrong/same authority, stale revocation snapshot, unbound registry, duplicate receipt ids, snapshot identity edited, envelope-control cases; and the R3 additions — registry substituted under a reused label in both directions, receipt purpose not matching the consuming action, consumer declaring no purpose, receipt authority version skewed from its registry, self-declared receipt content hash, missing registry digest). 49 were accepted by the prefix check TASK-0005 replaced. The resolvable reference folds under two distinct authorities; the enumeration guards are shown failing; 3/3 `38A_` and 3/3 `41A_` probes witness their finding under the contract each replaced",
+      "detail": "53/53 external-basis cases fail closed (the four P2U-02 probe strings; nonexistent object, wrong version/hash, omission from the frozen manifest, no manifest, degraded and unavailable resolver, tampered digest, unverified record, undeclared store; the P2V-02 receipt cases; and the R2 additions — receipt naming a manifest record, attesting to another subject, revoked, purposeless, abbreviated content hash, no registry, wrong/same authority, stale revocation snapshot, unbound registry, duplicate receipt ids, snapshot identity edited, envelope-control cases; and the R3 additions — registry substituted under a reused label in both directions, receipt purpose not matching the consuming action, consumer declaring no purpose, receipt authority version skewed from its registry, self-declared receipt content hash, missing registry digest; and the R5 additions — a policy authored by the receipt-registry authority, an artifact whose declared version is not its contracts' version, an action context asking for a version the supplied artifact is not). 52 were accepted by the prefix check TASK-0005 replaced. The resolvable reference folds under three distinct authorities and a version-coherent policy; the enumeration guards are shown failing; 3/3 `38A_` and 3/3 `41A_` probes witness their finding under the contract each replaced; 3/3 `48A_` probes refuse naming their own defect, 2 of them accepted by R4 with problems [] and the rest a change in the refusal REASON only (action-context-version-differs-from-the-policy-artifact)",
       "passed": true
     },
     {

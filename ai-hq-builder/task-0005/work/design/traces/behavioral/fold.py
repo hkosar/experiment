@@ -154,8 +154,11 @@ def validate_basis(events: Sequence[Event],
             # P2Y-01 — the purposes come from the POLICY PLANE, keyed by what the
             # event declares about itself. The event's own opinion of what evidence
             # it needs is not consulted, because that opinion was the finding.
+            # RW-46: the registry goes in too. The policy must be shown independent of
+            # BOTH the party whose evidence it governs and the party that issues the
+            # attestations, and this call is the only place that can see all three.
             allowed, policy_problems = external_basis.governed_purposes(
-                e.action_context, evidence_policy, external_manifest)
+                e.action_context, evidence_policy, external_manifest, receipt_registry)
             for problem in policy_problems:
                 problems.append("event %s: %s" % (e.event_id, problem))
         else:

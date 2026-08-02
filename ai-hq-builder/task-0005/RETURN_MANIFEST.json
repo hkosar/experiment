@@ -6,8 +6,10 @@
     "outside_writable_area": 0,
     "unchanged": 29
   },
-  "cycle": "R4 (APP-07 rework \u2014 final design-gate cycle under the 47_ \u00a71 terminal condition)",
-  "dispositions": [],
+  "cycle": "R5 (APP-07 rework \u2014 the single item 49_ \u00a72 authorizes)",
+  "dispositions": [
+    "49_P2Y01_Final_Dispositions_and_R5_Packet.md"
+  ],
   "files": [
     {
       "bytes": 56240,
@@ -100,9 +102,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 35059,
+      "bytes": 36049,
       "path": "design/traces/behavioral/README.md",
-      "sha256": "005afd1da15e6666310497e0f4c7b3b289c52af8eb2203497a98b207c46d22e8",
+      "sha256": "5c96ca3c98017e5decd5215a70a67b0a75da181cf08b5facaec3807b0bb33b29",
       "state": "modified"
     },
     {
@@ -124,9 +126,9 @@
       "state": "modified"
     },
     {
-      "bytes": 50628,
+      "bytes": 55583,
       "path": "design/traces/behavioral/external_basis.py",
-      "sha256": "7ca5b1f003947f79ea4edfd395efc2245b5c7f4e6838b4847726894def9a7795",
+      "sha256": "08f173b645dba8138632f369bc1d28265f91bb8975ba3c42c47f74115e73d64a",
       "state": "added"
     },
     {
@@ -136,9 +138,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 20099,
+      "bytes": 20373,
       "path": "design/traces/behavioral/fold.py",
-      "sha256": "03c8478e95cdf331f8314b3e3bf4979d8309e536f676bdde8e2c2d26eb3a697a",
+      "sha256": "df4d1de1f95dbe3e27f9f68aa7f9142a02d3feaf607164eddfde6d6ce5168047",
       "state": "modified"
     },
     {
@@ -172,9 +174,9 @@
       "state": "modified"
     },
     {
-      "bytes": 71826,
+      "bytes": 81334,
       "path": "design/traces/behavioral/out/basis_validation.json",
-      "sha256": "e042f312a37e328d63fced857f893080b6347ecf1287fa00db88af9e98cbfea7",
+      "sha256": "568002fa5cba721a04a56c49c538aac5692ac77a6072e38de47d18510d6df403",
       "state": "modified"
     },
     {
@@ -190,9 +192,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 18987,
+      "bytes": 19701,
       "path": "design/traces/behavioral/out/gate_report.json",
-      "sha256": "ea787e016916f3384dcb3a84283ae0b041135117f49476eb3202026f0f521b90",
+      "sha256": "2fd8b65a95520ee6dce8c216aebbd7afaffdea7532289955616f7c491b078a62",
       "state": "modified"
     },
     {
@@ -250,9 +252,9 @@
       "state": "modified"
     },
     {
-      "bytes": 72581,
+      "bytes": 84097,
       "path": "design/traces/behavioral/run_basis.py",
-      "sha256": "1d855c729ee4a633bb0b4cbc7ada954ecd251b71ac9158a7377d7b834508c73f",
+      "sha256": "dd66186a0190212237fc6c0a76862774c2e36835b6cb9d54833ee095dbe22633",
       "state": "modified"
     },
     {
@@ -268,9 +270,9 @@
       "state": "modified"
     },
     {
-      "bytes": 27607,
+      "bytes": 28526,
       "path": "design/traces/behavioral/run_gate.py",
-      "sha256": "ccf79b3fb6992c3fa8db1421a9e2dc5a90e01f5a05ebf8a9289dab8237f5ac64",
+      "sha256": "3f5169140242dc85dfdba4ca014d097d9164ccdd674532b7cf77af92e99ed0f6",
       "state": "modified"
     },
     {
@@ -317,21 +319,21 @@
     }
   ],
   "governing_findings": [
-    "44_ChatGPT_Scoped_Reverification_TASK-0005_R3.md",
-    "44A_ChatGPT_Probe_Evidence_TASK-0005_R3.json",
-    "46_ChatGPT_Design_Gate_Scope_Ruling_Response.md (\u00a73 contract texts \u2014 adopted verbatim as design rulings by 47_ \u00a72)"
+    "48_ChatGPT_Final_Design_Gate_Verification_Packet9.md (\u00a74 correction contract, governing verbatim)",
+    "48A_ChatGPT_Probe_Evidence_Final_Verdict_Packet9.json"
   ],
   "instruction_authority": [
     "34_",
     "37_",
     "40_",
     "43_",
-    "47_Owner_Arbitration_and_TASK-0005_R4_Packet.md"
+    "47_",
+    "49_P2Y01_Final_Dispositions_and_R5_Packet.md"
   ],
   "produced_by": "Builder (Claude Code)",
   "relay_integrity": {
-    "sha256sums_total": 4,
-    "sha256sums_verified": 4
+    "sha256sums_total": 3,
+    "sha256sums_verified": 3
   },
   "returned_to": "Fable (not the verifier)",
   "snapshot_export_manifest": {
@@ -346,18 +348,16 @@
     "13V_end_to_end_probe": "PASS \u2014 5 gate cases + 28 CLI cases",
     "13V_self_test": "PASS \u2014 25 cases",
     "allowlist_violations": 0,
-    "anticircularity": "4/4 PASS",
+    "anticircularity": "4/4 PASS, 0 oracle field names in engine code",
     "determinism": "13/13 outputs byte-identical across two runs",
-    "external_basis_cases": "50/50 closed; 8/8 missing-basis",
+    "external_basis_cases": "53/53 closed; 8/8 missing-basis",
     "gate_criteria": "21/21 PASS",
+    "not_implemented_by_ruling": "B-12 (48_ \u00a75) \u2014 routed to the build gate, non-blocking",
     "schedule_behaviors": "17/17 discriminating",
-    "verifier_probes_defeated": "4/4 (44A_)"
+    "verifier_probes_defeated": "3/3 (48A_, each refusing for its own reason; 2 of the 3 were accepted by the R4 contract, the third refused under R4 for a reason that named no version)"
   },
   "work_items": [
-    "RW-42",
-    "RW-43",
-    "RW-44",
-    "RW-45"
+    "RW-46"
   ],
   "writable_area": [
     "design/traces/behavioral/**",

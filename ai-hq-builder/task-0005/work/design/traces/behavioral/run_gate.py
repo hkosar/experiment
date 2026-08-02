@@ -351,7 +351,9 @@ def main(argv: List[str]) -> int:
          and bool(basis["summary"]["external_positive_resolves"])
          and bool(basis["summary"]["digest_enumeration_guard_discriminates"])
          and bool(basis["summary"]["r1_contract_witnesses_all_witness"])
-         and bool(basis["summary"]["r2_contract_witnesses_all_witness"]),
+         and bool(basis["summary"]["r2_contract_witnesses_all_witness"])
+         and bool(basis["summary"][
+             "r4_contract_probes_all_refused_for_their_own_reason"]),
          "%d/%d external-basis cases fail closed (the four P2U-02 probe strings; "
          "nonexistent object, wrong version/hash, omission from the frozen manifest, "
          "no manifest, degraded and unavailable resolver, tampered digest, "
@@ -363,11 +365,16 @@ def main(argv: List[str]) -> int:
          "and the R3 additions — registry substituted under a reused label in both "
          "directions, receipt purpose not matching the consuming action, consumer "
          "declaring no purpose, receipt authority version skewed from its registry, "
-         "self-declared receipt content hash, missing registry digest). %d were "
+         "self-declared receipt content hash, missing registry digest; and the R5 "
+         "additions — a policy authored by the receipt-registry authority, an "
+         "artifact whose declared version is not its contracts' version, an action "
+         "context asking for a version the supplied artifact is not). %d were "
          "accepted by the prefix check TASK-0005 replaced. The resolvable reference "
-         "folds under two distinct authorities; the enumeration guards are shown "
-         "failing; %d/%d `38A_` and %d/%d `41A_` probes witness their finding under "
-         "the contract each replaced"
+         "folds under three distinct authorities and a version-coherent policy; the "
+         "enumeration guards are shown failing; %d/%d `38A_` and %d/%d `41A_` probes "
+         "witness their finding under the contract each replaced; %d/%d `48A_` probes "
+         "refuse naming their own defect, %d of them accepted by R4 with problems [] "
+         "and the rest a change in the refusal REASON only (%s)"
          % (basis["summary"]["external_closed"], basis["summary"]["external_cases"],
             basis["summary"]["external_accepted_by_the_prefix_check_this_replaces"],
             len(basis["r1_contract_witnesses"]["probes"])
@@ -375,7 +382,13 @@ def main(argv: List[str]) -> int:
             len(basis["r1_contract_witnesses"]["probes"]),
             len(basis["r2_contract_witnesses"]["probes"])
             - len(basis["summary"]["r2_contract_witnesses_not_witnessing"]),
-            len(basis["r2_contract_witnesses"]["probes"]))),
+            len(basis["r2_contract_witnesses"]["probes"]),
+            len(basis["r4_contract_witnesses"]["probes"])
+            - len(basis["summary"]["r4_contract_probes_not_refused"]),
+            len(basis["r4_contract_witnesses"]["probes"]),
+            basis["summary"]["r4_contract_probes_accepted_by_r4"],
+            ", ".join(basis["summary"]["r4_contract_probes_reason_change_only"])
+            or "none")),
         ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03, "
          "P2V-04, P2W-04, P2X and P2Y-02/03/04 probes)",
          sched["summary"]["discriminating"] == sched["summary"]["behaviors"],

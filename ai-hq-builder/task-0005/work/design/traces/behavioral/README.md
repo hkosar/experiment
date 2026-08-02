@@ -280,6 +280,18 @@ add no mechanism, so it is listed rather than re-driven.
   believes governs it, and that name is checked against the lookup rather than
   trusted. **Three distinct authorities** now have to agree before external evidence
   grounds an action.
+- **The policy artifact's own authority and version are enforced (P2Y-01, RW-46).**
+  R4 wrote "distinct from both" in the contract and checked one half of it: the
+  boundary took no registry argument, so it could compare the policy author to the
+  manifest source and to nothing else. A policy authored by the *receipt* authority
+  folded with `problems: []` — the same actor deciding which receipt purposes
+  authorize an action and issuing the receipts. R4 also never compared the artifact's
+  declared `policy_version` to the versions of the rows it carried, so an artifact
+  could announce P999 while applying P1 contracts and its version was decorative.
+  Per `48_` §4.1/§4.2 the boundary now receives the receipt-registry authority
+  context and refuses on either collision; the absence of that context is a refusal,
+  not a skipped check; and one artifact carries one version, end to end. A
+  multi-version policy set has to be separately bound versioned artifacts.
 - **Eight logical transaction invariants (P2Y-02).** R3's preflight asked whether a
   `txn` that retired something also adopted something — globally. So a change with no
   retirement replayed clean, one `txn` string reused across two schedules put a
@@ -485,7 +497,7 @@ the runner fails if any mutation witnesses no predicate and no judge check.
 | `out/p2s07_eligibility.json` | negative and positive eligibility tests |
 | `out/anticircularity.json` | the three-way boundary proof |
 | `out/oracle_mutations.json` | P2T-01/P2U-01 — verifier probes defeated, sentinel + contradictory + same-kind corruption per fixture-dimension pair, and the restored-defect witness |
-| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W/P2X external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1- and R2-contract witnesses |
+| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W/P2X/P2Y-01 external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1-, R2- and R4-contract witnesses |
 | `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04/P2X/P2Y — the seventeen schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
 | `out/gate_report.json` | acceptance-criteria table |
 

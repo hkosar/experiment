@@ -517,6 +517,28 @@ AMBIGUOUS_POLICY = extb.EvidencePolicy(
                    risk_class="consequential",
                    allowed_purposes=("anything-goes",)))).bound()
 
+# ---- RW-46: the two artifacts the verifier built for `48A_`, in exact form ----
+# `48_` §4.3(1). A valid, bound policy whose author is the RECEIPT authority. Under R4
+# this folded with `problems: []`: the separation check could only see the manifest
+# source, so the party issuing the attestations was free to write the rule that says
+# which attestations count. The manifest source is still separate here — that is the
+# point of the probe, and why "three authorities" had to mean three, not two.
+RECEIPT_AUTHORED_POLICY = extb.EvidencePolicy(
+    authority_id=RECEIPT_AUTHORITY, policy_version=POLICY_VERSION,
+    contracts=(CONTRACT_KILL,)).bound()
+# `48_` §4.3(2). The artifact announces P999; the row it applies is P1. Bound, so the
+# digest is self-consistent and the ONLY defect is that the declared version governs
+# nothing. R4 accepted it, which is what made `policy_version` decorative.
+VERSION_INCOHERENT_POLICY = extb.EvidencePolicy(
+    authority_id=POLICY_AUTHORITY, policy_version="P999",
+    contracts=(CONTRACT_KILL,)).bound()
+# `48_` §4.3(3). The consuming side of the same defect: an event asking to be judged
+# under a policy version that is not the one supplied. Its action class, scope and risk
+# class all match a real contract; only the version does not.
+OTHER_VERSION_CONTEXT = extb.ActionContext(
+    action_class="kill-command", scope="business",
+    policy_version="P2", risk_class="consequential")
+
 GOOD_REF = extb.reference_for(GOOD_RECORD)
 
 # name -> (description, external_basis refs, manifest, registry, expected substring)
@@ -836,6 +858,27 @@ EXTERNAL_CASES: List[Tuple[str, str, Tuple[str, ...], object, object, str]] = [
         (GOOD_REF,), BAD_ALGORITHM_MANIFEST, REGISTRY,
         "approved algorithms are",
     ),
+    # ---- RW-46: the three `48_` §4.3 negatives, in the verifier's exact form ----
+    (
+        "evidence-policy-authored-by-the-receipt-authority",
+        "48_ §4.3(1) — the party that issues the receipts also writes the rule saying "
+        "which receipt purposes authorize an action",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "which is also the receipt-registry authority",
+    ),
+    (
+        "evidence-policy-version-differs-from-its-contract-version",
+        "48_ §4.3(2) — the bound artifact declares P999 and applies a P1 contract row",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "one artifact, one version",
+    ),
+    (
+        "action-context-requests-a-version-the-policy-is-not",
+        "48_ §4.3(3) — the consuming event asks to be governed under a policy version "
+        "that is not the artifact supplied",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "the supplied policy artifact is version",
+    ),
 ]
 def _p2v_era_accepts(raw: str, manifest, registry) -> bool:
     """Would the contract THIS REWORK replaces (R1 / P2V) have accepted this?
@@ -941,6 +984,8 @@ CASE_CONTEXTS: Dict[str, object] = {
         action_class="delete-production-data", scope="business",
         policy_version=POLICY_VERSION, risk_class="consequential",
         declared_contract_id="AEC-display-01"),
+    # RW-46 / `48_` §4.3(3): everything about this event resolves except its version.
+    "action-context-requests-a-version-the-policy-is-not": OTHER_VERSION_CONTEXT,
 }
 
 
@@ -951,6 +996,10 @@ CASE_POLICIES: Dict[str, object] = {
     "evidence-policy-authored-by-the-manifest-source": SELF_AUTHORED_POLICY,
     "evidence-policy-unbound": UNBOUND_POLICY,
     "evidence-policy-ambiguous-for-one-key": AMBIGUOUS_POLICY,
+    # RW-46 / `48_` §4.3(1) and (2).
+    "evidence-policy-authored-by-the-receipt-authority": RECEIPT_AUTHORED_POLICY,
+    "evidence-policy-version-differs-from-its-contract-version":
+        VERSION_INCOHERENT_POLICY,
 }
 
 
@@ -1174,6 +1223,119 @@ def r2_contract_witnesses() -> Dict[str, object]:
                                if not r["witnesses_the_finding"]]}
 
 
+def _r4_governed_purposes(context, policy, manifest):
+    """R4's policy boundary, reconstructed. Returns (purposes, refusal_reason).
+
+    Two differences from the shipped one, and they are exactly the two findings:
+    R4 took no registry argument at all, so it could compare the policy author to the
+    manifest source and to nothing else; and it never compared the artifact's declared
+    version to the versions of the rows it carried. The integrity list is taken from
+    the shipped class with the version-coherence problems FILTERED OUT rather than
+    re-typed, so this reconstruction cannot drift from the real one in any other way.
+    """
+    if policy is None:
+        return (), "no action-evidence policy was supplied"
+    problems = [p for p in policy.integrity_problems()
+                if "one artifact, one version" not in p]
+    if problems:
+        return (), problems[0]
+    if manifest is not None and policy.authority_id == manifest.source_id:
+        return (), "the policy is authored by the manifest source"
+    if context is None or not str(context.action_class or "").strip():
+        return (), "the consuming event declares no action class"
+    contract = policy.lookup(context.action_class, context.scope,
+                             context.policy_version, context.risk_class)
+    if contract is None:
+        return (), "the policy holds no contract for those keys"
+    declared = str(context.declared_contract_id or "").strip()
+    if declared and declared != contract.contract_id:
+        return (), "the event cannot select the contract that governs it"
+    if not contract.allowed_purposes:
+        return (), "the contract allows no evidence purpose"
+    return tuple(contract.allowed_purposes), None
+
+
+def r4_contract_witnesses() -> Dict[str, object]:
+    """Section C3 — `48A_`'s probes under the R4 contract (RW-46).
+
+    Sections C and C2 do this for the R1 and R2 findings. The rule is the same and it
+    is applied HONESTLY here, which means reporting that the three rows do not all
+    witness the same way:
+
+      * two of them were ACCEPTED by R4 with `problems: []` — `48A_` recorded exactly
+        that, and those rows reproduce it;
+      * the third was already refused by R4, but for "no contract for those keys",
+        which is the message for an ungoverned action class and says nothing about a
+        version. `48_` §4.2 requires version incoherence to be refused AS version
+        incoherence, so the change that row witnesses is in the REASON, not in
+        acceptance. Counting it as a third "previously accepted" row would be a padded
+        count, so the two kinds are counted separately and both are reported.
+    """
+    rows: List[Dict[str, object]] = []
+
+    def row(probe, description, policy, context, expect_fragment):
+        purposes, reason = _r4_governed_purposes(context, policy, MANIFEST)
+        r4_accepted = bool(purposes) and GOOD_RECEIPT.purpose in purposes
+        problems_now = validate_basis(
+            _external_events((GOOD_REF,), context), external_manifest=MANIFEST,
+            receipt_registry=REGISTRY, evidence_policy=policy)
+        return {
+            "probe": probe,
+            "description": description,
+            "r4_contract_accepted": r4_accepted,
+            "r4_refusal_reason": reason,
+            "problems_now": problems_now,
+            "refused_now": bool(problems_now),
+            "refused_now_for_this_reason":
+                any(expect_fragment in p for p in problems_now),
+        }
+
+    # `48A_/probe_policy_authority_equals_receipt_authority`, exact form.
+    rows.append(row(
+        "policy-authority-equals-receipt-authority",
+        "48A_: manifest source provider-snapshot-service, receipt authority "
+        "control-plane-attestation-service, policy authority the same as the receipt "
+        "authority — recorded by the verifier as problems [] and folded true",
+        RECEIPT_AUTHORED_POLICY, KILL_CONTEXT,
+        "which is also the receipt-registry authority"))
+
+    # `48A_/probe_policy_artifact_version_mismatch`, exact form.
+    rows.append(row(
+        "policy-artifact-version-mismatch",
+        "48A_: policy artifact version P999, contract version P1, action-context "
+        "version P1 — recorded by the verifier as problems [] and folded true",
+        VERSION_INCOHERENT_POLICY, KILL_CONTEXT,
+        "one artifact, one version"))
+
+    # `48_` §4.3(3) in its literal form. Included because the correction contract asks
+    # for it by name; reported for what it is.
+    rows.append(row(
+        "action-context-version-differs-from-the-policy-artifact",
+        "48_ §4.3(3): a coherent P1 policy and an event asking to be governed under "
+        "P2 — refused under R4 too, but as an ungoverned action class",
+        EVIDENCE_POLICY, OTHER_VERSION_CONTEXT,
+        "the supplied policy artifact is version"))
+
+    for r in rows:
+        r["witnesses_a_change_in_acceptance"] = (bool(r["r4_contract_accepted"])
+                                                 and bool(r["refused_now"]))
+        r["witnesses_a_change_in_reason"] = (
+            not r["r4_contract_accepted"] and bool(r["refused_now_for_this_reason"]))
+    accepted = [r["probe"] for r in rows if r["witnesses_a_change_in_acceptance"]]
+    reason_only = [r["probe"] for r in rows if r["witnesses_a_change_in_reason"]]
+    return {
+        "probes": rows,
+        # Every probe must refuse now, and must do so naming its own defect.
+        "all_refused_for_their_own_reason":
+            all(r["refused_now_for_this_reason"] for r in rows),
+        "not_refused": [r["probe"] for r in rows
+                        if not r["refused_now_for_this_reason"]],
+        "witnessing_a_change_in_acceptance": accepted,
+        "witnessing_only_a_change_in_reason": reason_only,
+        "r4_accepted_count": len(accepted),
+    }
+
+
 def digest_enumeration_guard() -> Dict[str, object]:
     """P2V-03 / P2W-03 — the enumerations that decide what is bound are themselves
     checked, and the checks are OBSERVED failing before they count as guards.
@@ -1300,13 +1462,28 @@ def external_basis_positive() -> Dict[str, object]:
         "three_distinct_authorities": len({MANIFEST.source_id, REGISTRY.authority_id,
                                            EVIDENCE_POLICY.authority_id}) == 3,
         "authorities_are_distinct": MANIFEST.source_id != REGISTRY.authority_id,
+        # RW-46 — the positive must satisfy the new rules, not sidestep them. It is
+        # only a control for `48_` §4.1/§4.2 if the thing it demonstrates is a policy
+        # that IS separately authored and IS version-coherent end to end.
+        "policy_authority_distinct_from_both": (
+            EVIDENCE_POLICY.authority_id != MANIFEST.source_id
+            and EVIDENCE_POLICY.authority_id != REGISTRY.authority_id),
+        "policy_version_coherent": all(
+            c.policy_version == EVIDENCE_POLICY.policy_version
+            for c in EVIDENCE_POLICY.contracts),
+        "action_context_version_matches_policy":
+            KILL_CONTEXT.policy_version == EVIDENCE_POLICY.policy_version,
         "problems": problems,
         "folded": folded,
         "error": error,
         "resolved_and_folded": not problems and folded is not None
         and not folded["causal_violations"]
         and len({MANIFEST.source_id, REGISTRY.authority_id,
-                 EVIDENCE_POLICY.authority_id}) == 3,
+                 EVIDENCE_POLICY.authority_id}) == 3
+        and EVIDENCE_POLICY.authority_id != REGISTRY.authority_id
+        and all(c.policy_version == EVIDENCE_POLICY.policy_version
+                for c in EVIDENCE_POLICY.contracts)
+        and KILL_CONTEXT.policy_version == EVIDENCE_POLICY.policy_version,
     }
 
 
@@ -1375,6 +1552,7 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
     ext_guard = digest_enumeration_guard()
     ext_r1 = r1_contract_witnesses()
     ext_r2 = r2_contract_witnesses()
+    ext_r4 = r4_contract_witnesses()
 
     payload = {
         "summary": {
@@ -1396,6 +1574,12 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
             "r1_contract_witnesses_not_witnessing": ext_r1["not_witnessing"],
             "r2_contract_witnesses_all_witness": ext_r2["all_witness"],
             "r2_contract_witnesses_not_witnessing": ext_r2["not_witnessing"],
+            "r4_contract_probes_all_refused_for_their_own_reason":
+                ext_r4["all_refused_for_their_own_reason"],
+            "r4_contract_probes_not_refused": ext_r4["not_refused"],
+            "r4_contract_probes_accepted_by_r4": ext_r4["r4_accepted_count"],
+            "r4_contract_probes_reason_change_only":
+                ext_r4["witnessing_only_a_change_in_reason"],
             "production_combinations_validated": len(stimuli) * 3,
             "production_basis_problems": production_problems,
         },
@@ -1405,6 +1589,7 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
         "digest_enumeration_guard": ext_guard,
         "r1_contract_witnesses": ext_r1,
         "r2_contract_witnesses": ext_r2,
+        "r4_contract_witnesses": ext_r4,
         "external_reference_grammar": extb.REFERENCE_GRAMMAR,
     }
     os.makedirs(out_dir, exist_ok=True)
@@ -1474,6 +1659,29 @@ def main(argv: List[str]) -> int:
         print("       %s" % r["description"])
 
     print()
+    print("C3. R4-CONTRACT WITNESSES — 48A_'s probes under the contract THIS cycle")
+    print("    replaces. Every probe must refuse now, naming its own defect. Two were")
+    print("    accepted by R4 with problems []; the third R4 refused for a reason that")
+    print("    named no version, and it is counted separately, not as a third accept.")
+    print("    %-52s %-11s %-11s %s"
+          % ("PROBE", "R4 ACCEPTS", "REFUSED", "OWN REASON"))
+    for r in payload["r4_contract_witnesses"]["probes"]:
+        print("    %-52s %-11s %-11s %s%s"
+              % (r["probe"][:52], r["r4_contract_accepted"], r["refused_now"],
+                 r["refused_now_for_this_reason"],
+                 "" if r["refused_now_for_this_reason"]
+                 else "   *** NOT REFUSED FOR ITS OWN REASON ***"))
+        print("       %s" % r["description"])
+        if not r["r4_contract_accepted"]:
+            print("       R4 refused it too, saying: %s" % r["r4_refusal_reason"])
+    print("    accepted by R4 and refused now      : %d of %d"
+          % (payload["r4_contract_witnesses"]["r4_accepted_count"],
+             len(payload["r4_contract_witnesses"]["probes"])))
+    print("    change is in the REASON only        : %s"
+          % (", ".join(payload["r4_contract_witnesses"][
+              "witnessing_only_a_change_in_reason"]) or "none"))
+
+    print()
     g = payload["digest_enumeration_guard"]
     print("  manifest digest binds %d field(s); registry binds %d; the contract names "
           "%d required controls"
@@ -1509,7 +1717,8 @@ def main(argv: List[str]) -> int:
           and not s["external_open"] and bool(s["external_positive_resolves"])
           and bool(s["digest_enumeration_guard_discriminates"])
           and bool(s["r1_contract_witnesses_all_witness"])
-          and bool(s["r2_contract_witnesses_all_witness"]))
+          and bool(s["r2_contract_witnesses_all_witness"])
+          and bool(s["r4_contract_probes_all_refused_for_their_own_reason"]))
     print()
     print("MISSING-BASIS SUITE %s" % ("PASS" if ok else "FAIL"))
     return 0 if ok else 1

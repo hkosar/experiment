@@ -404,6 +404,7 @@
       "fold_refused": true,
       "manifest": "none",
       "problems": [
+        "event decision-ext: external evidence is in use but the policy boundary was given no external manifest, so the evidence policy cannot be shown independent of the parties it governs — an unperformed separation check is not a passed one (P2Y-01, 48_ §4.1)",
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 cannot be resolved: no external manifest was supplied with the fold input (P2U-02: declared is not resolvable)"
       ],
       "references": [
@@ -659,6 +660,7 @@
       "fold_refused": true,
       "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
+        "event decision-ext: external evidence is in use but the policy boundary was given no receipt registry, so the evidence policy cannot be shown independent of the parties it governs — an unperformed separation check is not a passed one (P2Y-01, 48_ §4.1)",
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 cites receipt receipt:att-77@auth-v4#971e1ee1e3491696c3cf09de5fd2091720635a87e8e87f4c00c31976bcaa9e9d but no receipt registry was supplied with the fold input — a same-manifest attestation is not independent evidence and there is no other source (P2W-02)"
       ],
       "references": [
@@ -1114,9 +1116,64 @@
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
       ],
       "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "evidence-policy-authored-by-the-receipt-authority",
+      "closed": true,
+      "description": "48_ §4.3(1) — the party that issues the receipts also writes the rule saying which receipt purposes authorize an action",
+      "detected": true,
+      "expected_problem": "which is also the receipt-registry authority",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the action-evidence policy is authored by 'control-plane-attestation-service', which is also the receipt-registry authority — the same actor would decide which receipt purposes authorize an action AND issue the receipts, so the purpose comparison has one party on both sides of it (P2Y-01, 48_ §4.1)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "evidence-policy-version-differs-from-its-contract-version",
+      "closed": true,
+      "description": "48_ §4.3(2) — the bound artifact declares P999 and applies a P1 contract row",
+      "detected": true,
+      "expected_problem": "one artifact, one version",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: action-evidence policy unusable — evidence policy declares version 'P999' but carries contract 'AEC-kill-01' at version 'P1' — one artifact, one version: a policy that applies rows from a version it does not claim has no determinate identity (P2Y-01, 48_ §4.2)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "action-context-requests-a-version-the-policy-is-not",
+      "closed": true,
+      "description": "48_ §4.3(3) — the consuming event asks to be governed under a policy version that is not the artifact supplied",
+      "detected": true,
+      "expected_problem": "the supplied policy artifact is version",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the consuming event asks to be governed under policy version 'P2'; the supplied policy artifact is version 'P1' — the artifact in hand is not the one the action claims governs it, and resolving it anyway would let either side name a version nothing checks (P2Y-01, 48_ §4.2)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     }
   ],
   "external_basis_positive": {
+    "action_context_version_matches_policy": true,
     "attestation": {
       "purpose": "kill-command-delivery",
       "receipt_id": "att-77",
@@ -1158,6 +1215,8 @@
       "provider:short-target"
     ],
     "manifest_source_id": "provider-snapshot-service",
+    "policy_authority_distinct_from_both": true,
+    "policy_version_coherent": true,
     "problems": [],
     "reference": "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82",
     "registry_authority_id": "control-plane-attestation-service",
@@ -1248,13 +1307,69 @@
       }
     ]
   },
+  "r4_contract_witnesses": {
+    "all_refused_for_their_own_reason": true,
+    "not_refused": [],
+    "probes": [
+      {
+        "description": "48A_: manifest source provider-snapshot-service, receipt authority control-plane-attestation-service, policy authority the same as the receipt authority — recorded by the verifier as problems [] and folded true",
+        "probe": "policy-authority-equals-receipt-authority",
+        "problems_now": [
+          "event decision-ext: the action-evidence policy is authored by 'control-plane-attestation-service', which is also the receipt-registry authority — the same actor would decide which receipt purposes authorize an action AND issue the receipts, so the purpose comparison has one party on both sides of it (P2Y-01, 48_ §4.1)",
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+        ],
+        "r4_contract_accepted": true,
+        "r4_refusal_reason": null,
+        "refused_now": true,
+        "refused_now_for_this_reason": true,
+        "witnesses_a_change_in_acceptance": true,
+        "witnesses_a_change_in_reason": false
+      },
+      {
+        "description": "48A_: policy artifact version P999, contract version P1, action-context version P1 — recorded by the verifier as problems [] and folded true",
+        "probe": "policy-artifact-version-mismatch",
+        "problems_now": [
+          "event decision-ext: action-evidence policy unusable — evidence policy declares version 'P999' but carries contract 'AEC-kill-01' at version 'P1' — one artifact, one version: a policy that applies rows from a version it does not claim has no determinate identity (P2Y-01, 48_ §4.2)",
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+        ],
+        "r4_contract_accepted": true,
+        "r4_refusal_reason": null,
+        "refused_now": true,
+        "refused_now_for_this_reason": true,
+        "witnesses_a_change_in_acceptance": true,
+        "witnesses_a_change_in_reason": false
+      },
+      {
+        "description": "48_ §4.3(3): a coherent P1 policy and an event asking to be governed under P2 — refused under R4 too, but as an ungoverned action class",
+        "probe": "action-context-version-differs-from-the-policy-artifact",
+        "problems_now": [
+          "event decision-ext: the consuming event asks to be governed under policy version 'P2'; the supplied policy artifact is version 'P1' — the artifact in hand is not the one the action claims governs it, and resolving it anyway would let either side name a version nothing checks (P2Y-01, 48_ §4.2)",
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+        ],
+        "r4_contract_accepted": false,
+        "r4_refusal_reason": "the policy holds no contract for those keys",
+        "refused_now": true,
+        "refused_now_for_this_reason": true,
+        "witnesses_a_change_in_acceptance": false,
+        "witnesses_a_change_in_reason": true
+      }
+    ],
+    "r4_accepted_count": 2,
+    "witnessing_a_change_in_acceptance": [
+      "policy-authority-equals-receipt-authority",
+      "policy-artifact-version-mismatch"
+    ],
+    "witnessing_only_a_change_in_reason": [
+      "action-context-version-differs-from-the-policy-artifact"
+    ]
+  },
   "summary": {
     "cases": 8,
     "closed": 8,
     "digest_enumeration_guard_discriminates": true,
-    "external_accepted_by_the_prefix_check_this_replaces": 49,
-    "external_cases": 50,
-    "external_closed": 50,
+    "external_accepted_by_the_prefix_check_this_replaces": 52,
+    "external_cases": 53,
+    "external_closed": 53,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],
@@ -1264,6 +1379,12 @@
     "r1_contract_witnesses_not_witnessing": [],
     "r2_contract_witnesses_all_witness": true,
     "r2_contract_witnesses_not_witnessing": [],
+    "r4_contract_probes_accepted_by_r4": 2,
+    "r4_contract_probes_all_refused_for_their_own_reason": true,
+    "r4_contract_probes_not_refused": [],
+    "r4_contract_probes_reason_change_only": [
+      "action-context-version-differs-from-the-policy-artifact"
+    ],
     "witnesses_reproducing_old_behavior": 7
   }
 }
