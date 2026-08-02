@@ -75,9 +75,9 @@ from __future__ import annotations
 
 import argparse
 import hashlib
-import re
 import json
 import os
+import re
 import sys
 from typing import Dict, List, Tuple
 
@@ -199,49 +199,55 @@ AUTHORITY_VERSION = "auth-v4"
 REVOCATION_SNAPSHOT = "rev-2026-07-31"
 
 # The basis record the frozen manifest lists.
+GOOD_RECORD_UNATTESTED = extb.ExternalRecord(
+    store="control-journal", object_id="kill-cmd-77", version="v3",
+    content_hash=_h("kill-cmd-77"))
+
+# Its attestation, held by the OTHER authority, naming this record as its subject.
+# P2X-02: `.bound()` sets `content_hash` to the receipt's own canonical row digest,
+# so the reference below cites a COMPUTED identity rather than a declared one.
+GOOD_RECEIPT = extb.Receipt(
+    receipt_id="att-77", subject_ref=extb.reference_for(GOOD_RECORD_UNATTESTED),
+    purpose="kill-command-delivery", authority_version=AUTHORITY_VERSION,
+    content_hash="").bound()
+
 GOOD_RECORD = extb.ExternalRecord(
     store="control-journal", object_id="kill-cmd-77", version="v3",
     content_hash=_h("kill-cmd-77"),
-    verification_receipt="receipt:att-77@%s#%s" % (AUTHORITY_VERSION, _h("att-77")))
+    verification_receipt=extb.receipt_reference_for(GOOD_RECEIPT))
 
-# Its attestation, held by the OTHER authority, naming this record as its subject.
-GOOD_RECEIPT = extb.Receipt(
-    receipt_id="att-77", subject_ref=extb.reference_for(GOOD_RECORD),
-    purpose="kill-command-delivery", authority_version=AUTHORITY_VERSION,
-    content_hash=_h("att-77"))
+# What a consuming event must declare to use GOOD_RECORD as evidence (P2X-02).
+CONSUMING_PURPOSES = ("kill-command-delivery",)
 
 # The verifier's P2W-02 probe, in its exact shape: an attestation that is real,
 # registered and bound, but names a DIFFERENT subject.
 UNRELATED_RECEIPT = extb.Receipt(
     receipt_id="att-unrelated", subject_ref="provider:something-else@v1#" + _h("else"),
     purpose="unrelated", authority_version=AUTHORITY_VERSION,
-    content_hash=_h("att-unrelated"))
+    content_hash=_h("att-unrelated")).bound()
 UNRELATED_TARGET = extb.ExternalRecord(
     store="provider", object_id="action-42", version="v7",
     content_hash=_h("action-42"),
-    verification_receipt="receipt:att-unrelated@%s#%s"
-                         % (AUTHORITY_VERSION, _h("att-unrelated")))
+    verification_receipt=extb.receipt_reference_for(UNRELATED_RECEIPT))
 
 REVOKED_RECEIPT = extb.Receipt(
     receipt_id="att-revoked", subject_ref="provider:revoked-target@v1#" + _h("revoked"),
     purpose="filing", authority_version=AUTHORITY_VERSION,
-    content_hash=_h("att-revoked"))
+    content_hash=_h("att-revoked")).bound()
 REVOKED_TARGET = extb.ExternalRecord(
     store="provider", object_id="revoked-target", version="v1",
     content_hash=_h("revoked"),
-    verification_receipt="receipt:att-revoked@%s#%s"
-                         % (AUTHORITY_VERSION, _h("att-revoked")))
+    verification_receipt=extb.receipt_reference_for(REVOKED_RECEIPT))
 
 NO_PURPOSE_RECEIPT = extb.Receipt(
     receipt_id="att-nopurpose",
     subject_ref="provider:nopurpose-target@v1#" + _h("nopurpose"),
     purpose="   ", authority_version=AUTHORITY_VERSION,
-    content_hash=_h("att-nopurpose"))
+    content_hash=_h("att-nopurpose")).bound()
 NO_PURPOSE_TARGET = extb.ExternalRecord(
     store="provider", object_id="nopurpose-target", version="v1",
     content_hash=_h("nopurpose"),
-    verification_receipt="receipt:att-nopurpose@%s#%s"
-                         % (AUTHORITY_VERSION, _h("att-nopurpose")))
+    verification_receipt=extb.receipt_reference_for(NO_PURPOSE_RECEIPT))
 
 STRING_RECEIPT_RECORD = extb.ExternalRecord(
     store="control-journal", object_id="obj-str", version="v1",
@@ -316,11 +322,17 @@ def _registry(**overrides):
     return extb.ReceiptRegistry(**base)
 
 
-MANIFEST = _manifest().bound()
+# P2X-01 — the registry is bound FIRST, and the manifest binds its content digest.
+# The ordering is the contract: a manifest cannot be sealed until the exact registry
+# body it depends on exists, which is what stops a second body being supplied later
+# under the same authority/version/snapshot labels.
 REGISTRY = _registry().bound()
+MANIFEST = _manifest(receipt_registry_digest=REGISTRY.declared_digest).bound()
 
-DEGRADED_MANIFEST = _manifest(resolver_state=extb.RESOLVER_DEGRADED).bound()
-UNAVAILABLE_MANIFEST = _manifest(resolver_state=extb.RESOLVER_UNAVAILABLE).bound()
+DEGRADED_MANIFEST = _manifest(receipt_registry_digest=REGISTRY.declared_digest,
+                              resolver_state=extb.RESOLVER_DEGRADED).bound()
+UNAVAILABLE_MANIFEST = _manifest(receipt_registry_digest=REGISTRY.declared_digest,
+                                 resolver_state=extb.RESOLVER_UNAVAILABLE).bound()
 
 # A manifest whose declared digest no longer matches its contents.
 TAMPERED_MANIFEST = extb.ExternalManifest(
@@ -342,32 +354,124 @@ SNAPSHOT_TAMPERED_MANIFEST = extb.ExternalManifest(
            snapshot_id="snap-2026-01-01T00:00Z"))
 # P2V-03 — one identity, two records.
 DUPLICATE_IDENTITY_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
     records=RECORDS + (extb.ExternalRecord(
         store="control-journal", object_id="kill-cmd-77", version="v4",
         content_hash=_h("kill-cmd-77-v4"),
         verification_receipt=GOOD_RECORD.verification_receipt),)).bound()
 UNVERIFIED_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
     records=(extb.ExternalRecord(store="provider", object_id="obj-5", version="v1",
                                  content_hash=_h("obj-5"),
                                  verification_receipt=None),)).bound()
 # P2W-03 — envelope controls left undeclared, one at a time.
-NO_SNAPSHOT_MANIFEST = _manifest(snapshot_id="").bound()
-NO_AUTHORITY_MANIFEST = _manifest(receipt_authority_id="").bound()
-BAD_SCHEMA_MANIFEST = _manifest(schema_version="external-basis-manifest/1").bound()
-BAD_ALGORITHM_MANIFEST = _manifest(digest_algorithm="md5").bound()
+NO_SNAPSHOT_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest, snapshot_id="").bound()
+NO_AUTHORITY_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
+    receipt_authority_id="").bound()
+BAD_SCHEMA_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
+    schema_version="external-basis-manifest/1").bound()
+BAD_ALGORITHM_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
+    digest_algorithm="md5").bound()
 # P2W-02 — the manifest naming ITSELF as its own receipt authority.
-SELF_AUTHORITY_MANIFEST = _manifest(receipt_authority_id=MANIFEST_SOURCE).bound()
+SELF_AUTHORITY_MANIFEST = _manifest(
+    receipt_registry_digest=REGISTRY.declared_digest,
+    receipt_authority_id=MANIFEST_SOURCE).bound()
 
 # ---- registries that break the independence contract -------------------------
 FOREIGN_REGISTRY = _registry(authority_id="some-other-service").bound()
+FOREIGN_MANIFEST = _manifest(
+    receipt_registry_digest=FOREIGN_REGISTRY.declared_digest).bound()
 SAME_ACTOR_REGISTRY = _registry(authority_id=MANIFEST_SOURCE).bound()
+SAME_ACTOR_MANIFEST = _manifest(
+    receipt_registry_digest=SAME_ACTOR_REGISTRY.declared_digest).bound()
+SELF_AUTHORITY_MANIFEST_2 = _manifest(
+    receipt_registry_digest=SAME_ACTOR_REGISTRY.declared_digest,
+    receipt_authority_id=MANIFEST_SOURCE).bound()
 STALE_REVOCATION_REGISTRY = _registry(snapshot_id="rev-2020-01-01").bound()
+STALE_REVOCATION_MANIFEST = _manifest(
+    receipt_registry_digest=STALE_REVOCATION_REGISTRY.declared_digest).bound()
 UNBOUND_REGISTRY = _registry()                       # declared_digest is None
+# The manifest here is well-formed and binds the digest the registry WOULD have,
+# so the case fails on the registry being unbound rather than on the envelope.
+UNBOUND_MANIFEST = _manifest(
+    receipt_registry_digest=UNBOUND_REGISTRY.computed_digest()).bound()
 DUPLICATE_RECEIPT_REGISTRY = _registry(
     receipts=(GOOD_RECEIPT, UNRELATED_RECEIPT, REVOKED_RECEIPT, NO_PURPOSE_RECEIPT,
               extb.Receipt(receipt_id="att-77", subject_ref="x:y@v1#" + _h("x"),
                            purpose="p", authority_version=AUTHORITY_VERSION,
-                           content_hash=_h("dup")))).bound()
+                           content_hash="").bound())).bound()
+DUPLICATE_RECEIPT_MANIFEST = _manifest(
+    receipt_registry_digest=DUPLICATE_RECEIPT_REGISTRY.declared_digest).bound()
+
+# ---- P2X-01: two registries, one label ---------------------------------------
+# `r-late` is present in one registry body and absent from the other. Both are valid,
+# both are bound, both declare the SAME authority, version and snapshot label. The
+# manifest is byte-identical across the pair. This is the verifier's substitution.
+LATE_RECEIPT = extb.Receipt(
+    receipt_id="r-late", subject_ref=extb.reference_for(GOOD_RECORD_UNATTESTED),
+    purpose="kill-command-delivery", authority_version=AUTHORITY_VERSION,
+    content_hash="").bound()
+LATE_RECORD = extb.ExternalRecord(
+    store="control-journal", object_id="kill-cmd-77", version="v3",
+    content_hash=_h("kill-cmd-77"),
+    verification_receipt=extb.receipt_reference_for(LATE_RECEIPT))
+REGISTRY_WITHOUT_LATE = _registry(receipts=(GOOD_RECEIPT,)).bound()
+REGISTRY_WITH_LATE = _registry(receipts=(GOOD_RECEIPT, LATE_RECEIPT)).bound()
+# One manifest, bound to the FIRST body. Supplying the second must now fail.
+LATE_MANIFEST = _manifest(
+    records=(LATE_RECORD,),
+    receipt_registry_digest=REGISTRY_WITHOUT_LATE.declared_digest).bound()
+LATE_REF = extb.reference_for(LATE_RECORD)
+
+# ---- P2X-02: purpose and authority identity ----------------------------------
+DISPLAY_RECEIPT = extb.Receipt(
+    receipt_id="r-display", subject_ref=extb.reference_for(GOOD_RECORD_UNATTESTED),
+    purpose="display-monthly-digest", authority_version=AUTHORITY_VERSION,
+    content_hash="").bound()
+DISPLAY_RECORD = extb.ExternalRecord(
+    store="control-journal", object_id="kill-cmd-77", version="v3",
+    content_hash=_h("kill-cmd-77"),
+    verification_receipt=extb.receipt_reference_for(DISPLAY_RECEIPT))
+DISPLAY_REGISTRY = _registry(receipts=(DISPLAY_RECEIPT,)).bound()
+DISPLAY_MANIFEST = _manifest(
+    records=(DISPLAY_RECORD,),
+    receipt_registry_digest=DISPLAY_REGISTRY.declared_digest).bound()
+
+# The verifier's second probe: a receipt object carrying an authority version its own
+# registry does not. `.bound()` after the skew, so the row digest is self-consistent
+# and the ONLY thing wrong is the identity disagreement.
+SKEW_RECEIPT = extb.Receipt(
+    receipt_id="r-skew", subject_ref=extb.reference_for(GOOD_RECORD_UNATTESTED),
+    purpose="kill-command-delivery", authority_version="receipt-object-v999",
+    content_hash="").bound()
+SKEW_RECORD = extb.ExternalRecord(
+    store="control-journal", object_id="kill-cmd-77", version="v3",
+    content_hash=_h("kill-cmd-77"),
+    verification_receipt=extb.receipt_reference_for(SKEW_RECEIPT))
+SKEW_REGISTRY = _registry(receipts=(SKEW_RECEIPT,)).bound()
+SKEW_MANIFEST = _manifest(
+    records=(SKEW_RECORD,),
+    receipt_registry_digest=SKEW_REGISTRY.declared_digest).bound()
+
+# A receipt whose declared content hash is not its canonical row digest.
+FORGED_HASH_RECEIPT = extb.Receipt(
+    receipt_id="r-forged", subject_ref=extb.reference_for(GOOD_RECORD_UNATTESTED),
+    purpose="kill-command-delivery", authority_version=AUTHORITY_VERSION,
+    content_hash=_h("whatever-i-say"))
+FORGED_HASH_RECORD = extb.ExternalRecord(
+    store="control-journal", object_id="kill-cmd-77", version="v3",
+    content_hash=_h("kill-cmd-77"),
+    verification_receipt=extb.receipt_reference_for(FORGED_HASH_RECEIPT))
+FORGED_HASH_REGISTRY = _registry(receipts=(FORGED_HASH_RECEIPT,)).bound()
+FORGED_HASH_MANIFEST = _manifest(
+    records=(FORGED_HASH_RECORD,),
+    receipt_registry_digest=FORGED_HASH_REGISTRY.declared_digest).bound()
+
+NO_REGISTRY_DIGEST_MANIFEST = _manifest(receipt_registry_digest="").bound()
 
 GOOD_REF = extb.reference_for(GOOD_RECORD)
 
@@ -524,37 +628,37 @@ EXTERNAL_CASES: List[Tuple[str, str, Tuple[str, ...], object, object, str]] = [
     (
         "registry-from-the-wrong-authority",
         "a bound registry authored by someone the manifest did not name",
-        (GOOD_REF,), MANIFEST, FOREIGN_REGISTRY,
+        (GOOD_REF,), FOREIGN_MANIFEST, FOREIGN_REGISTRY,
         "must be the one the manifest declared",
     ),
     (
         "registry-authored-by-the-manifest-source",
         "the same actor authored both artifacts — structurally not independent",
-        (GOOD_REF,), MANIFEST, SAME_ACTOR_REGISTRY,
+        (GOOD_REF,), SAME_ACTOR_MANIFEST, SAME_ACTOR_REGISTRY,
         "must be the one the manifest declared",
     ),
     (
         "manifest-names-itself-as-receipt-authority",
         "the manifest declares its own source as the attestation authority",
-        (GOOD_REF,), SELF_AUTHORITY_MANIFEST, SAME_ACTOR_REGISTRY,
+        (GOOD_REF,), SELF_AUTHORITY_MANIFEST_2, SAME_ACTOR_REGISTRY,
         "names itself",
     ),
     (
         "registry-stale-revocation-snapshot",
         "a registry whose revocation snapshot is not the one the manifest is bound to",
-        (GOOD_REF,), MANIFEST, STALE_REVOCATION_REGISTRY,
+        (GOOD_REF,), STALE_REVOCATION_MANIFEST, STALE_REVOCATION_REGISTRY,
         "a stale revocation list cannot answer",
     ),
     (
         "registry-unbound",
         "a registry with no declared digest — a list, not a bound artifact",
-        (GOOD_REF,), MANIFEST, UNBOUND_REGISTRY,
+        (GOOD_REF,), UNBOUND_MANIFEST, UNBOUND_REGISTRY,
         "receipt registry declares no digest",
     ),
     (
         "registry-duplicate-receipt-ids",
         "two attestations sharing one receipt id",
-        (GOOD_REF,), MANIFEST, DUPLICATE_RECEIPT_REGISTRY,
+        (GOOD_REF,), DUPLICATE_RECEIPT_MANIFEST, DUPLICATE_RECEIPT_REGISTRY,
         "more than one receipt with id",
     ),
     # ---- P2W-03: the envelope -------------------------------------------------
@@ -594,6 +698,55 @@ EXTERNAL_CASES: List[Tuple[str, str, Tuple[str, ...], object, object, str]] = [
         "a manifest declaring a schema this validator does not approve",
         (GOOD_REF,), BAD_SCHEMA_MANIFEST, REGISTRY,
         "approved schemas are",
+    ),
+    # ---- P2X-01 / P2X-02 ------------------------------------------------------
+    (
+        "registry-substituted-under-a-reused-label",
+        "the verifier's P2X-01 probe: a second valid, bound registry with the SAME "
+        "authority, version and snapshot label but different receipt content, "
+        "against a byte-identical manifest",
+        (LATE_REF,), LATE_MANIFEST, REGISTRY_WITH_LATE,
+        "DIFFERENT content",
+    ),
+    (
+        "registry-body-the-manifest-was-not-bound-to",
+        "the same substitution the other way round: the body the manifest WAS bound "
+        "to no longer holds the receipt the record cites",
+        (LATE_REF,), LATE_MANIFEST, REGISTRY_WITHOUT_LATE,
+        "names no attestation in the registry",
+    ),
+    (
+        "receipt-purpose-does-not-match-the-consuming-action",
+        "the verifier's P2X-02 probe: a `display-monthly-digest` receipt consumed by "
+        "an event requiring `delete-production-data`",
+        (extb.reference_for(DISPLAY_RECORD),), DISPLAY_MANIFEST, DISPLAY_REGISTRY,
+        "is not evidence for a materially different one",
+    ),
+    (
+        "consuming-event-declares-no-required-purpose",
+        "an event with an external basis and no stated evidence requirement",
+        (extb.reference_for(DISPLAY_RECORD),), DISPLAY_MANIFEST, DISPLAY_REGISTRY,
+        "declares no required receipt purpose",
+    ),
+    (
+        "receipt-authority-version-skewed-from-its-registry",
+        "the verifier's P2X-02 second probe: `receipt-object-v999` inside an "
+        "`auth-v4` registry",
+        (extb.reference_for(SKEW_RECORD),), SKEW_MANIFEST, SKEW_REGISTRY,
+        "cannot carry an authority identity its own registry does not",
+    ),
+    (
+        "receipt-content-hash-is-self-declared",
+        "a receipt whose declared content hash is not its canonical row digest",
+        (extb.reference_for(FORGED_HASH_RECORD),), FORGED_HASH_MANIFEST,
+        FORGED_HASH_REGISTRY,
+        "a self-declared content identity is not an identity",
+    ),
+    (
+        "envelope-missing-receipt-registry-digest",
+        "the manifest declares no registry content identity at all",
+        (GOOD_REF,), NO_REGISTRY_DIGEST_MANIFEST, REGISTRY,
+        "declares no receipt_registry_digest",
     ),
     (
         "envelope-unapproved-digest-algorithm",
@@ -681,15 +834,33 @@ def _p2v_declared_digest(manifest) -> str:
     return _p2v_digest(manifest)
 
 
-def _external_events(refs: Tuple[str, ...]) -> List[Event]:
-    """The verifier's exact shape: one non-genesis DecisionEvent, no `caused_by`."""
-    return [_ev("decision-ext", "DecisionEvent", external_basis=refs, seq=1)]
+# P2X-02 — what the CONSUMING event declares, per case. Everything not listed uses
+# `CONSUMING_PURPOSES`, so the pre-existing cases keep testing what they were written
+# to test. These two are the verifier's probe and its undeclared-consumer companion.
+CASE_PURPOSES: Dict[str, Tuple[str, ...]] = {
+    "receipt-purpose-does-not-match-the-consuming-action":
+        ("delete-production-data",),
+    "consuming-event-declares-no-required-purpose": (),
+}
+
+
+def _external_events(refs: Tuple[str, ...],
+                     purposes: Tuple[str, ...] = CONSUMING_PURPOSES) -> List[Event]:
+    """The verifier's exact shape: one non-genesis DecisionEvent, no `caused_by`.
+
+    P2X-02: the consumer declares what the attestation must be FOR. Defaulting to
+    `CONSUMING_PURPOSES` keeps every pre-existing case testing what it was written to
+    test; the purpose-mismatch and undeclared-purpose cases pass their own tuples.
+    """
+    return [Event(event_id="decision-ext", event_type="DecisionEvent",
+                  partition="business", object_key="case", store_seq=1,
+                  external_basis=refs, required_receipt_purposes=purposes)]
 
 
 def external_basis_cases() -> List[Dict[str, object]]:
     rows: List[Dict[str, object]] = []
     for name, description, refs, manifest, registry, expect in EXTERNAL_CASES:
-        events = _external_events(refs)
+        events = _external_events(refs, CASE_PURPOSES.get(name, CONSUMING_PURPOSES))
         problems = validate_basis(events, external_manifest=manifest,
                                   receipt_registry=registry)
         detected = any(expect in p for p in problems)
@@ -800,6 +971,83 @@ def r1_contract_witnesses() -> Dict[str, object]:
             and ctx_a.declared_digest != ctx_b.declared_digest,
     })
 
+    return {"probes": rows,
+            "all_witness": all(r["witnesses_the_finding"] for r in rows),
+            "not_witnessing": [r["probe"] for r in rows
+                               if not r["witnesses_the_finding"]]}
+
+
+def r2_contract_witnesses() -> Dict[str, object]:
+    """Section C2 — `41A_`'s probes under the R2 contract, which must ACCEPT them.
+
+    Section C does this for the R1 findings. This does it for R2's, using the same
+    rule: a row witnesses its finding only if the superseded contract accepted what
+    the shipped one refuses. The R2 contract is re-implemented as three predicates
+    rather than a whole resolver, because the three differences are exactly the three
+    findings — the manifest bound the registry's LABELS and not its content, the
+    receipt purpose was checked for nonemptiness and not against a consumer, and the
+    receipt's authority version was compared only to the reference that cited it.
+    """
+    rows: List[Dict[str, object]] = []
+
+    def r2_accepts_registry(manifest, registry):
+        """R2 bound authority id, authority version and snapshot label only."""
+        return (registry.authority_id == manifest.receipt_authority_id
+                and registry.authority_version == manifest.receipt_authority_version
+                and registry.snapshot_id == manifest.revocation_snapshot_id)
+
+    # P2X-01 — the substitution, both bodies, under one manifest.
+    rows.append({
+        "probe": "registry-substituted-under-a-reused-label",
+        "description": "41A_/registry_snapshot_substitution: same authority, version "
+                       "and snapshot label; different content; manifest unchanged",
+        "r2_contract_accepted": (r2_accepts_registry(LATE_MANIFEST, REGISTRY_WITH_LATE)
+                                 and REGISTRY_WITH_LATE.declared_digest
+                                 != REGISTRY_WITHOUT_LATE.declared_digest),
+        "registry_before_digest": REGISTRY_WITHOUT_LATE.declared_digest,
+        "registry_after_digest": REGISTRY_WITH_LATE.declared_digest,
+        "same_declared_snapshot_id":
+            REGISTRY_WITH_LATE.snapshot_id == REGISTRY_WITHOUT_LATE.snapshot_id,
+        "problems_now": validate_basis(
+            _external_events((LATE_REF,)), external_manifest=LATE_MANIFEST,
+            receipt_registry=REGISTRY_WITH_LATE),
+    })
+
+    # P2X-02a — purpose. R2 required only that it was nonempty.
+    rows.append({
+        "probe": "receipt-purpose-does-not-match-the-consuming-action",
+        "description": "41A_/receipt_purpose_mismatch: display receipt, "
+                       "delete-production-data consumer",
+        "r2_contract_accepted": bool(str(DISPLAY_RECEIPT.purpose or "").strip()),
+        "receipt_purpose": DISPLAY_RECEIPT.purpose,
+        "consuming_action_class": "delete-production-data",
+        "problems_now": validate_basis(
+            _external_events((extb.reference_for(DISPLAY_RECORD),),
+                             ("delete-production-data",)),
+            external_manifest=DISPLAY_MANIFEST, receipt_registry=DISPLAY_REGISTRY),
+    })
+
+    # P2X-02b — authority-version skew. R2 compared the receipt only to the
+    # reference that cited it, and those agree by construction.
+    skew_ref, _ = extb.parse_receipt_reference(SKEW_RECORD.verification_receipt)
+    rows.append({
+        "probe": "receipt-authority-version-skewed-from-its-registry",
+        "description": "41A_/receipt_object_authority_version_unbound: "
+                       "receipt-object-v999 inside an auth-v4 registry",
+        "r2_contract_accepted":
+            SKEW_RECEIPT.authority_version == skew_ref.authority_version
+            and SKEW_RECEIPT.authority_version != SKEW_REGISTRY.authority_version,
+        "registry_authority_version": SKEW_REGISTRY.authority_version,
+        "receipt_authority_version": SKEW_RECEIPT.authority_version,
+        "problems_now": validate_basis(
+            _external_events((extb.reference_for(SKEW_RECORD),)),
+            external_manifest=SKEW_MANIFEST, receipt_registry=SKEW_REGISTRY),
+    })
+
+    for row in rows:
+        row["refused_now"] = bool(row["problems_now"])
+        row["witnesses_the_finding"] = bool(row["r2_contract_accepted"]) \
+            and row["refused_now"]
     return {"probes": rows,
             "all_witness": all(r["witnesses_the_finding"] for r in rows),
             "not_witnessing": [r["probe"] for r in rows
@@ -996,6 +1244,7 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
     ext_positive = external_basis_positive()
     ext_guard = digest_enumeration_guard()
     ext_r1 = r1_contract_witnesses()
+    ext_r2 = r2_contract_witnesses()
 
     payload = {
         "summary": {
@@ -1015,6 +1264,8 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
                 ext_guard["guard_discriminates"],
             "r1_contract_witnesses_all_witness": ext_r1["all_witness"],
             "r1_contract_witnesses_not_witnessing": ext_r1["not_witnessing"],
+            "r2_contract_witnesses_all_witness": ext_r2["all_witness"],
+            "r2_contract_witnesses_not_witnessing": ext_r2["not_witnessing"],
             "production_combinations_validated": len(stimuli) * 3,
             "production_basis_problems": production_problems,
         },
@@ -1023,6 +1274,7 @@ def run(fixtures_path: str, out_dir: str) -> Dict[str, object]:
         "external_basis_positive": ext_positive,
         "digest_enumeration_guard": ext_guard,
         "r1_contract_witnesses": ext_r1,
+        "r2_contract_witnesses": ext_r2,
         "external_reference_grammar": extb.REFERENCE_GRAMMAR,
     }
     os.makedirs(out_dir, exist_ok=True)
@@ -1082,6 +1334,16 @@ def main(argv: List[str]) -> int:
         print("      %s" % r["description"])
 
     print()
+    print("C2. R2-CONTRACT WITNESSES — 41A_'s probes under the contract this cycle")
+    print("    replaces. R2 must ACCEPT and the shipped contract must REFUSE.")
+    print("    %-52s %-11s %s" % ("PROBE", "R2 ACCEPTS", "REFUSED NOW"))
+    for r in payload["r2_contract_witnesses"]["probes"]:
+        print("    %-52s %-11s %s%s"
+              % (r["probe"][:52], r["r2_contract_accepted"], r["refused_now"],
+                 "" if r["witnesses_the_finding"] else "   *** NOT A WITNESS ***"))
+        print("       %s" % r["description"])
+
+    print()
     g = payload["digest_enumeration_guard"]
     print("  manifest digest binds %d field(s); registry binds %d; the contract names "
           "%d required controls"
@@ -1116,7 +1378,8 @@ def main(argv: List[str]) -> int:
     ok = (not s["open"] and not s["production_basis_problems"]
           and not s["external_open"] and bool(s["external_positive_resolves"])
           and bool(s["digest_enumeration_guard_discriminates"])
-          and bool(s["r1_contract_witnesses_all_witness"]))
+          and bool(s["r1_contract_witnesses_all_witness"])
+          and bool(s["r2_contract_witnesses_all_witness"]))
     print()
     print("MISSING-BASIS SUITE %s" % ("PASS" if ok else "FAIL"))
     return 0 if ok else 1

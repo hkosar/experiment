@@ -32,7 +32,9 @@ python3 run_basis.py                # P2T-02 — incomplete causal basis fails c
                                     # P2U-02 — every external basis must resolve
 python3 run_p2s04.py                # P2T-03 — schedule-liveness suite (harness self-test);
                                     # P2U-03 version-bound horizons; P2V-04 permanent retirement;
-                                    # P2W-04 durable monotonic identity via a control journal
+                                    # P2W-04 durable monotonic identity via a control journal;
+                                    # P2X-03/04/05 mandatory CAS, version-bound run receipts,
+                                    # journal-replay transition invariants
 ```
 
 Two more validators live one level up, outside this directory:
@@ -99,7 +101,7 @@ hits rather than false positives.
 | `oracle_schema.py` | typed schema for all four expected dimensions + the fail-closed coverage floor | oracle |
 | `engine_core.py` | envelope authority (D-B2 §3), policy composition (D-B8 P2G-10), tier function (D-B6 §2.2) | engine |
 | `events.py` | event taxonomy, store-ownership matrix, ordering keys/phases (D-B9), the three shapes | engine |
-| `external_basis.py` | reference grammar, canonical versioned manifest envelope, separately bound receipt registry, resolver contract (P2U-02, P2V-02/03, P2W-02/03) | engine |
+| `external_basis.py` | reference grammar, canonical versioned manifest envelope, separately bound receipt registry with subject/purpose/authority binding, resolver contract (P2U-02, P2V-02/03, P2W-02/03, P2X-01/02) | engine |
 | `fold.py` | deterministic causal-topological replay fold (D-B9 P2S-06) | engine |
 | `scenarios.py` | 27 input-side stimulus encodings | engine |
 | `simulate.py` | orchestration; E2E-1 normalizers; seeded-defect switches | engine |
@@ -266,6 +268,37 @@ add no mechanism, so it is listed rather than re-driven.
   the specific sub-Needs-Owner band is not, per the `27_` ruling), and 7 have no
   same-kind alternative anywhere in a 27-row corpus. An undeclared value-blind pair
   fails the run, and so does a coarsened declaration that has stopped being true.
+- **The manifest binds the registry's CONTENT, not its labels (P2X-01).** R2 bound
+  the receipt authority id, its version and a snapshot label — three values an author
+  chooses. Two separately valid, separately bound registries could carry the same
+  three and different receipts, and the verifier swapped one for the other under a
+  byte-identical manifest: unresolved became resolved. `receipt_registry_digest` is
+  now a bound envelope control, and the supplied registry's declared digest must
+  equal it.
+- **A receipt is evidence FOR something (P2X-02).** The purpose was checked for
+  nonemptiness and never against the use, so a `display-monthly-digest` receipt
+  grounded a `delete-production-data` action with `basis_problems: []`. The consuming
+  event now declares `required_receipt_purposes`, the receipt's purpose must be in
+  that set, and an event with an external basis and no declared requirement fails
+  closed. A receipt's `authority_version` must equal its own registry's — it was
+  compared only against the reference that cited it, so `receipt-object-v999` sat
+  inside an `auth-v4` registry and resolved. And `content_hash` is the receipt's
+  canonical row digest rather than a value its author asserts.
+- **Compare-and-swap is mandatory (P2X-03).** `expected_current_version` defaulted to
+  `None` and the check ran only when a caller supplied it, so omitting it was an
+  unconditional update. A property a caller can decline is not enforced; omission is
+  a usage error now, and `register()` remains the only initial-create path.
+- **Run receipts name their version (P2X-04).** A `RunStarted` receipt recorded only
+  `(schedule, tick)`, so a stale v1 scheduler reporting at t10 satisfied v2's t10
+  deadline and nothing was missed. Receipts carry version and occurrence, are matched
+  per version, and a receipt from a retired or non-current version is refused.
+- **Journal replay validates before it folds (P2X-05).** The mutation methods enforced
+  monotonic versions; `_replay()` trusted arbitrary rows, so two definitions for one
+  `(schedule, version)` folded and left a horizon computed under the first eligible
+  for the second. `journal_problems()` checks entry kinds and required fields, order,
+  one immutable definition per version, monotonic transitions, the declared
+  expected-current-version, complete retirement/adoption transactions, and orphaned
+  references — and `from_journal()` raises rather than producing partial state.
 - **No CLI combination bypasses the final gate (P2W-01).** R1 deleted a bypass flag
   and tested four renamed spellings of it. The bypass that remained needed no flag:
   modes were sniffed out of `sys.argv` with `in`, so `--final-gate --self-test` ran
@@ -420,8 +453,8 @@ the runner fails if any mutation witnesses no predicate and no judge check.
 | `out/p2s07_eligibility.json` | negative and positive eligibility tests |
 | `out/anticircularity.json` | the three-way boundary proof |
 | `out/oracle_mutations.json` | P2T-01/P2U-01 — verifier probes defeated, sentinel + contradictory + same-kind corruption per fixture-dimension pair, and the restored-defect witness |
-| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1-contract witnesses |
-| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04 — the eleven schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
+| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W/P2X external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1- and R2-contract witnesses |
+| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04/P2X — the fourteen schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
 | `out/gate_report.json` | acceptance-criteria table |
 
 ## Scope and limits

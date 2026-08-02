@@ -1,0 +1,81 @@
+{
+  "verifier": "ChatGPT",
+  "review": "TASK-0005 R2 scoped re-verification",
+  "packet_sha256": "15fcc2a6a009ceea0ca191db1d90844387656ae9dfe5dddcd3d2a9c3659a59fb",
+  "candidate_commit": "6b6e0b413983c32efc068cb463d71a9f8562e340",
+  "candidate_tree": "cda2083cdb2a29c890a37cdc406eb37021b393f5",
+  "base_commit": "0e906694b7298e12596cbbef6c989300da54ad31",
+  "packet_integrity": {
+    "export_manifest_passed": 51,
+    "export_manifest_total": 51,
+    "checksums_passed": 52,
+    "checksums_total": 52,
+    "git_bundle_fresh_clone": true,
+    "git_fsck_full": true,
+    "fresh_checkout_clean": true,
+    "diff_check_passed": true,
+    "supplied_patch_byte_identical": true
+  },
+  "supplied_evidence_reproduction": {
+    "behavioral_gate_runs": 2,
+    "behavioral_outputs_byte_identical": true,
+    "shipped_outputs_match_regenerated": true,
+    "design_matrix_self_tests_passed": 25,
+    "design_matrix_e2e_gate_cases_passed": 5,
+    "design_matrix_e2e_cli_cases_passed": 28,
+    "plain_final_gate_exit": 1,
+    "supersession_checker_passed": true,
+    "supersession_self_test_passed": true
+  },
+  "independent_probes": {
+    "receipt_purpose_mismatch": {
+      "receipt_purpose": "display-monthly-digest",
+      "consuming_action_class": "delete-production-data",
+      "basis_problems": [],
+      "fold_accepted_action": true,
+      "result": "FAIL"
+    },
+    "registry_snapshot_substitution": {
+      "same_manifest": true,
+      "same_registry_authority": true,
+      "same_registry_authority_version": true,
+      "same_registry_snapshot_id": true,
+      "registry_before_digest": "6d29bf478bd204b49a815a7899573f40c8a7d970b1c04cea19367c0d5210eca0",
+      "registry_after_digest": "a409ab989217c43e63ca6dc3fa74f62ff8e2e9eb3edfbd4d46d57ffe60542160",
+      "before_resolved": false,
+      "after_resolved": true,
+      "result": "FAIL"
+    },
+    "receipt_object_authority_version_unbound": {
+      "manifest_expected_authority_version": "ra-v1",
+      "registry_authority_version": "ra-v1",
+      "receipt_authority_version": "receipt-object-v999",
+      "basis_problems": [],
+      "resolved": true,
+      "result": "FAIL"
+    },
+    "optional_expected_current_version": {
+      "v1_registered": true,
+      "v2_change_with_expected_v1_landed": true,
+      "v3_change_without_expected_version_landed": true,
+      "version_in_force": 3,
+      "result": "FAIL"
+    },
+    "run_started_not_version_bound": {
+      "current_version": 2,
+      "stale_v1_run_started_at_current_v2_deadline": true,
+      "missed_deadlines_at_t11": [],
+      "stale_receipt_satisfied_current_version": true,
+      "result": "FAIL"
+    },
+    "contradictory_same_version_journal": {
+      "journal_accepted": true,
+      "version": 1,
+      "first_definition": {"first_due": 10, "period": 10},
+      "second_definition": {"first_due": 11, "period": 7},
+      "eligible_horizon": [10, 20, 30, 40, 50],
+      "eligible_horizon_matches_current_definition": false,
+      "result": "FAIL"
+    }
+  }
+}

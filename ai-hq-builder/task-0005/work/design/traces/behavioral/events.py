@@ -132,6 +132,14 @@ class Event:
     # fold treated an unresolvable reference as already satisfied, so an incomplete
     # basis folded silently. Each entry must name a store in `EXTERNAL_BASIS_STORES`.
     external_basis: Tuple[str, ...] = ()
+    # P2X-02 — the CONSUMING evidence contract. An event that depends on an external
+    # basis must state what the attestation has to be FOR. The receipt check used to
+    # require only that a purpose was nonempty, so a `display-monthly-digest` receipt
+    # grounded a `delete-production-data` ActionRequest and the basis validated
+    # clean. Declared here rather than inferred from the event type, because the
+    # requirement is a property of what this event is doing, not of its family; an
+    # event with an external basis and an empty tuple fails closed.
+    required_receipt_purposes: Tuple[str, ...] = ()
 
     @property
     def store(self) -> str:

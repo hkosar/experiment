@@ -150,9 +150,10 @@ def validate_basis(events: Sequence[Event],
                     "satisfaction)" % (e.event_id, ref))
 
         for ext in e.external_basis:
-            for problem in external_basis.resolve(ext, external_manifest,
-                                                  EXTERNAL_BASIS_STORES,
-                                                  receipt_registry=receipt_registry):
+            for problem in external_basis.resolve(
+                    ext, external_manifest, EXTERNAL_BASIS_STORES,
+                    receipt_registry=receipt_registry,
+                    required_purposes=e.required_receipt_purposes):
                 problems.append("event %s: %s" % (e.event_id, problem))
 
         if (not e.caused_by and not e.external_basis

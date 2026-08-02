@@ -131,6 +131,7 @@
       "receipt_authority_id",
       "receipt_authority_version",
       "receipt_verification_config",
+      "receipt_registry_digest",
       "trust_root_id",
       "trust_root_key_version",
       "revocation_snapshot_id",
@@ -148,6 +149,7 @@
       "digest_hex_length",
       "receipt_authority_id",
       "receipt_authority_version",
+      "receipt_registry_digest",
       "receipt_verification_config",
       "record_identity_rule",
       "records",
@@ -186,6 +188,7 @@
       "approved digest algorithm": "digest_algorithm",
       "canonicalization version": "canonicalization_version",
       "creation or capture context": "creation_context",
+      "exact receipt-registry content identity": "receipt_registry_digest",
       "manifest schema version": "schema_version",
       "receipt authority version/configuration": "receipt_authority_version",
       "receipt verification configuration": "receipt_verification_config",
@@ -262,7 +265,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis 'control-journal:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
@@ -279,7 +282,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis 'evidence:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
@@ -296,7 +299,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis 'provider:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
@@ -313,7 +316,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis 'schedule:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
@@ -330,7 +333,7 @@
       "detected": true,
       "expected_problem": "names no record in the external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:no-such-object@v1#0feb0fca6fbb94e019d3ac72609f270cfd7c247ae3e1336aefa7b5ca4ed71b88 names no record in the external manifest (10 record(s): control-journal:kill-cmd-77, control-journal:obj-chain, control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, provider:action-42, provider:nopurpose-target, provider:revoked-target, provider:short-target)"
       ],
@@ -347,7 +350,7 @@
       "detected": true,
       "expected_problem": "names version 'v2'; the manifest records 'v3'",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v2#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 names version 'v2'; the manifest records 'v3'"
       ],
@@ -364,7 +367,7 @@
       "detected": true,
       "expected_problem": "names content hash",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#0000000000000000000000000000000000000000000000000000000000000000 names content hash '0000000000000000000000000000000000000000000000000000000000000000'; the manifest records '317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82'"
       ],
@@ -381,7 +384,7 @@
       "detected": true,
       "expected_problem": "OMITTED from the frozen external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis evidence:exec-receipt-91@v1#9c2212c5c6977d1c194c18f565d9a93d862596bc5f71222cb1422b16082da7d4 is known to the resolver but is OMITTED from the frozen external manifest (10 record(s): control-journal:kill-cmd-77, control-journal:obj-chain, control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, provider:action-42, provider:nopurpose-target, provider:revoked-target, provider:short-target) — the replay is not entitled to depend on it"
       ],
@@ -415,7 +418,7 @@
       "detected": true,
       "expected_problem": "external resolver is degraded",
       "fold_refused": true,
-      "manifest": "degraded resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 4c3dea8cb420",
+      "manifest": "degraded resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 2fb8c40beabc",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external resolver is degraded; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
@@ -432,7 +435,7 @@
       "detected": true,
       "expected_problem": "external resolver is unavailable",
       "fold_refused": true,
-      "manifest": "unavailable resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest b24faaf1614a",
+      "manifest": "unavailable resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest c53ee0b79935",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external resolver is unavailable; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
@@ -449,9 +452,9 @@
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared 01bfa5897df52741, contents hash to 64007a7cbe04fb6f — the frozen snapshot has been altered after binding"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared dbde12ed9d6a30e0, contents hash to 4a534f20f0651289 — the frozen snapshot has been altered after binding"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -466,7 +469,7 @@
       "detected": true,
       "expected_problem": "no verification receipt",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest cb06a0872fec",
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 526d87f3f269",
       "problems": [
         "event decision-ext: external basis provider:obj-5@v1#a0dc5a24c3d5935dadfe9096fde7cc070d9f1a92f52c3e03c52d612cbfa2a6cc resolves to a record with no verification receipt — an unverified external record is not evidence"
       ],
@@ -483,7 +486,7 @@
       "detected": true,
       "expected_problem": "not a declared external store",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis hearsay:obj-1@v1#0d7a58c00bd91c843ffd5c6f6099a70729ad8aa61cb8e5cc75b6b5a14593297c names store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
       ],
@@ -500,7 +503,7 @@
       "detected": true,
       "expected_problem": "does not parse as",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:obj-str@v1#723c45d2ed0b4dc4641e1d0add002cdfe607889a4e5a50e33ae507a53bd5e225: verification receipt 'verified-trust-me' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
       ],
@@ -517,7 +520,7 @@
       "detected": true,
       "expected_problem": "not a string and not a record in the manifest being attested",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:obj-chain@v1#af95f838dbb8f7a7896c229227d4f61811eb70576e6517f777077dba486289fc: verification receipt 'evidence:some-root@v1#d02c40abfb288ff4f7da3876c30eaec5c241f8631f75fa6af43fda808cb81e7a' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
       ],
@@ -534,7 +537,7 @@
       "detected": true,
       "expected_problem": "names no attestation in the registry",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:obj-unreg@v1#cbe1655abca7eec1b6e187333ecb94e1ce4d22deb5c1aa499d508d6f2f9e63f0: record control-journal:obj-unreg cites receipt receipt:att-nonexistent@auth-v4#9fb6f7593d409942ff08a178d25be1d206f19b68260477fe9225e61493013b32, which names no attestation in the registry (4 receipt(s))"
       ],
@@ -551,7 +554,7 @@
       "detected": true,
       "expected_problem": "at authority version 'auth-v9'",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:obj-ver@v1#4ace8e6b5a88c6a38a14f958ba5baeaf8686a8d5f6a9c08f73b16c8bdd8c3bb8: record control-journal:obj-ver cites receipt att-77 at authority version 'auth-v9'; the registry records 'auth-v4'"
       ],
@@ -568,9 +571,9 @@
       "detected": true,
       "expected_problem": "with content hash",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
-        "event decision-ext: external basis control-journal:obj-hash@v1#54237152d551253a441ad02e46f18925c0b89c9b6d73c836f61afb22543c4b18: record control-journal:obj-hash cites receipt att-77 with content hash '0000000000000000000000000000000000000000000000000000000000000000'; the registry records '2c789d57e5070fb4f745847a65645f3a6e5a2bda44097833c5f8ff80dcb2e28b'"
+        "event decision-ext: external basis control-journal:obj-hash@v1#54237152d551253a441ad02e46f18925c0b89c9b6d73c836f61afb22543c4b18: record control-journal:obj-hash cites receipt att-77 with content hash '0000000000000000000000000000000000000000000000000000000000000000'; the registry records '971e1ee1e3491696c3cf09de5fd2091720635a87e8e87f4c00c31976bcaa9e9d'"
       ],
       "references": [
         "control-journal:obj-hash@v1#54237152d551253a441ad02e46f18925c0b89c9b6d73c836f61afb22543c4b18"
@@ -585,7 +588,7 @@
       "detected": true,
       "expected_problem": "cannot certify this one",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis provider:action-42@v7#2cecb3d9fcbdfe6244c0aa7584f2002eac8f300c40dfe12cc66d18abab6d335a: receipt att-unrelated attests to provider:something-else@v1#8377c85031a564beace5b9a347c078606b222cee86d0afabaec68b2a7bfc6900, not to provider:action-42@v7#2cecb3d9fcbdfe6244c0aa7584f2002eac8f300c40dfe12cc66d18abab6d335a — a registered attestation for another record cannot certify this one (P2W-02)"
       ],
@@ -602,7 +605,7 @@
       "detected": true,
       "expected_problem": "which the registry lists as REVOKED",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis provider:revoked-target@v1#78a40175967b76c93dd6f3f11910ac1514cbceda95f4b794375cbfee3d486ede: record provider:revoked-target is attested by receipt att-revoked, which the registry lists as REVOKED"
       ],
@@ -619,7 +622,7 @@
       "detected": true,
       "expected_problem": "declares no purpose",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis provider:nopurpose-target@v1#50c23b71f39f9226bf02cb0cfdfd0b5d81a5537aa312aaf695df8c0a0a58425e: receipt att-nopurpose declares no purpose — an attestation with no action class attests to nothing in particular (P2W-02)"
       ],
@@ -636,7 +639,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis 'provider:short-target@1#cafebabe' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
@@ -653,9 +656,9 @@
       "detected": true,
       "expected_problem": "no receipt registry was supplied",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 cites receipt receipt:att-77@auth-v4#2c789d57e5070fb4f745847a65645f3a6e5a2bda44097833c5f8ff80dcb2e28b but no receipt registry was supplied with the fold input — a same-manifest attestation is not independent evidence and there is no other source (P2W-02)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 cites receipt receipt:att-77@auth-v4#971e1ee1e3491696c3cf09de5fd2091720635a87e8e87f4c00c31976bcaa9e9d but no receipt registry was supplied with the fold input — a same-manifest attestation is not independent evidence and there is no other source (P2W-02)"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -670,7 +673,7 @@
       "detected": true,
       "expected_problem": "must be the one the manifest declared",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest eeb7a1d32ca0",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest names receipt authority 'control-plane-attestation-service'; the supplied registry is authored by 'some-other-service' — the authority must be the one the manifest declared before the registry was consulted (P2W-02)"
       ],
@@ -687,7 +690,7 @@
       "detected": true,
       "expected_problem": "must be the one the manifest declared",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 7ec69456c0f5",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest names receipt authority 'control-plane-attestation-service'; the supplied registry is authored by 'provider-snapshot-service' — the authority must be the one the manifest declared before the registry was consulted (P2W-02)"
       ],
@@ -704,7 +707,7 @@
       "detected": true,
       "expected_problem": "names itself",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest effd4be3ea58",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 504593f84e22",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest names itself (provider-snapshot-service) as its own receipt authority — attestations from the record author are not independent evidence (P2W-02)"
       ],
@@ -721,7 +724,7 @@
       "detected": true,
       "expected_problem": "a stale revocation list cannot answer",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest d3f9a122b329",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest is bound to revocation snapshot 'rev-2026-07-31'; the supplied registry is snapshot 'rev-2020-01-01' — a stale revocation list cannot answer for this manifest (P2W-03)"
       ],
@@ -738,7 +741,7 @@
       "detected": true,
       "expected_problem": "receipt registry declares no digest",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: receipt registry unusable — receipt registry declares no digest — an unbound registry is a list, not an independently bound artifact"
       ],
@@ -755,7 +758,7 @@
       "detected": true,
       "expected_problem": "more than one receipt with id",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 1ba5fbcc17c8",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: receipt registry unusable — receipt registry carries more than one receipt with id 'att-77' — which one answers would depend on tuple order (P2W-03 ambiguous identity)"
       ],
@@ -772,9 +775,9 @@
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest b24faaf1614a",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest c53ee0b79935",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared b24faaf1614a700b, contents hash to 01bfa5897df52741 — the frozen snapshot has been altered after binding"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared c53ee0b79935bc87, contents hash to dbde12ed9d6a30e0 — the frozen snapshot has been altered after binding"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -789,9 +792,9 @@
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-01-01T00:00Z, digest 01bfa5897df5",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-01-01T00:00Z, digest dbde12ed9d6a",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared 01bfa5897df52741, contents hash to 712233ffac11b7dc — the frozen snapshot has been altered after binding"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared dbde12ed9d6a30e0, contents hash to da83de93e4c37faa — the frozen snapshot has been altered after binding"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -806,7 +809,7 @@
       "detected": true,
       "expected_problem": "records for identity control-journal:kill-cmd-77",
       "fold_refused": true,
-      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest a704064da1f0",
+      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest df1bb0f024de",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest carries 2 records for identity control-journal:kill-cmd-77 (versions v3, v4) — which one answers for that identity would depend on tuple order, so the manifest is refused (P2V-03)"
       ],
@@ -823,7 +826,7 @@
       "detected": true,
       "expected_problem": "declares no snapshot_id",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot -, digest 42388c08b32e",
+      "manifest": "available resolver, 10 record(s), snapshot -, digest 315622c9a352",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares no snapshot_id (control 'snapshot id / epoch') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
       ],
@@ -840,7 +843,7 @@
       "detected": true,
       "expected_problem": "declares no receipt_authority_id",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 62e9917eda3e",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 41498996d475",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares no receipt_authority_id (control 'receipt/evidence authority identity') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
       ],
@@ -857,9 +860,128 @@
       "detected": true,
       "expected_problem": "approved schemas are",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest d1fb3cd118c7",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 7e56a0fefe42",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares schema 'external-basis-manifest/1'; approved schemas are ['external-basis-manifest/2'] (P2W-03: unknown schema versions are refused)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-substituted-under-a-reused-label",
+      "closed": true,
+      "description": "the verifier's P2X-01 probe: a second valid, bound registry with the SAME authority, version and snapshot label but different receipt content, against a byte-identical manifest",
+      "detected": true,
+      "expected_problem": "DIFFERENT content",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 22e5b4812cd1",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest is bound to receipt-registry content 0fb5c6297764ad7a; the supplied registry's declared digest is 085fc7a926f8d5bf — same authority, same version, same snapshot label, DIFFERENT content, so the replay is not bound to its own declared evidence basis (P2X-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 2 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-body-the-manifest-was-not-bound-to",
+      "closed": true,
+      "description": "the same substitution the other way round: the body the manifest WAS bound to no longer holds the receipt the record cites",
+      "detected": true,
+      "expected_problem": "names no attestation in the registry",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 22e5b4812cd1",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 cites receipt receipt:r-late@auth-v4#8913676522c9e87cc9203669154e19b1cdbefc2381968481b137a4f145d95bd6, which names no attestation in the registry (1 receipt(s))"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-purpose-does-not-match-the-consuming-action",
+      "closed": true,
+      "description": "the verifier's P2X-02 probe: a `display-monthly-digest` receipt consumed by an event requiring `delete-production-data`",
+      "detected": true,
+      "expected_problem": "is not evidence for a materially different one",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 1ea3ecab2add",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the consuming event requires one of ['delete-production-data'] — a receipt for one purpose is not evidence for a materially different one (P2X-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "consuming-event-declares-no-required-purpose",
+      "closed": true,
+      "description": "an event with an external basis and no stated evidence requirement",
+      "detected": true,
+      "expected_problem": "declares no required receipt purpose",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 1ea3ecab2add",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but the consuming event declares no required receipt purpose — evidence cannot be matched to a use that was never stated (P2X-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-authority-version-skewed-from-its-registry",
+      "closed": true,
+      "description": "the verifier's P2X-02 second probe: `receipt-object-v999` inside an `auth-v4` registry",
+      "detected": true,
+      "expected_problem": "cannot carry an authority identity its own registry does not",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest b225cf3f7825",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-skew declares authority version 'receipt-object-v999'; the registry that holds it is control-plane-attestation-service@'auth-v4' — a receipt cannot carry an authority identity its own registry does not (P2X-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-content-hash-is-self-declared",
+      "closed": true,
+      "description": "a receipt whose declared content hash is not its canonical row digest",
+      "detected": true,
+      "expected_problem": "a self-declared content identity is not an identity",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest ef1871c8d64f",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-forged declares content hash 5bd88381ef2ed15a; its canonical row hashes to 862d7dd2b36344b5 — a self-declared content identity is not an identity (P2X-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "envelope-missing-receipt-registry-digest",
+      "closed": true,
+      "description": "the manifest declares no registry content identity at all",
+      "detected": true,
+      "expected_problem": "declares no receipt_registry_digest",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest fe368fcde0fc",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares no receipt_registry_digest (control 'exact receipt-registry content identity') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -874,7 +996,7 @@
       "detected": true,
       "expected_problem": "approved algorithms are",
       "fold_refused": true,
-      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 112e02899671",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest a49b691ad458",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares digest algorithm 'md5'; approved algorithms are ['sha256'] (P2W-02: no abbreviated or unapproved content identity)"
       ],
@@ -899,7 +1021,7 @@
         "decision-ext"
       ]
     },
-    "manifest_digest": "01bfa5897df52741ca22cc46f61f8a4007e50eed74c6ddb6eaf8e122296e5f9e",
+    "manifest_digest": "dbde12ed9d6a30e0d4508b6d12dbddf0d46a1333a2660a402343af4be3c8ad38",
     "manifest_records": [
       "control-journal:kill-cmd-77",
       "control-journal:obj-chain",
@@ -916,7 +1038,7 @@
     "problems": [],
     "reference": "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82",
     "registry_authority_id": "control-plane-attestation-service",
-    "registry_digest": "6ab7c8ff421e2ac0ba286537c4993e5484f3cf12c627ee1dec7bb03a6fc5682f",
+    "registry_digest": "b8633a02f30d92b4529fe3754919b480e4c682b0752cc5c04bc981394cb3a931",
     "resolved_and_folded": true
   },
   "external_reference_grammar": "store:object-id@version#<64-hex-sha256>",
@@ -928,7 +1050,7 @@
         "description": "38A_/P2W-02: `integrity_problems: []`, `fold accepted: true`",
         "probe": "unrelated-root-certifies-target",
         "problems_now": [
-          "event decision-ext: external basis provider:action-42@7#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: verification receipt 'evidence:unrelated-root@1#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
+          "event decision-ext: external basis provider:action-42@7#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa not resolvable — external manifest declares no receipt_registry_digest (control 'exact receipt-registry content identity') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
         ],
         "r1_contract_accepted": true,
         "reference": "provider:action-42@7#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
@@ -950,7 +1072,7 @@
         "description": "38A_/P2W-03: `same_records_same_digest: true` — the R1 envelope could not represent a snapshot identity, so two contexts hashed alike NECESSARILY",
         "probe": "same-rows-different-snapshot-context",
         "problems_now": [
-          "digests differ: 619bd33a4cbf6dee vs 75f09232fa2ab8fa"
+          "digests differ: f190e393ad1db241 vs ce5382fce04da951"
         ],
         "r1_contract_accepted": true,
         "reference": "-",
@@ -959,13 +1081,56 @@
       }
     ]
   },
+  "r2_contract_witnesses": {
+    "all_witness": true,
+    "not_witnessing": [],
+    "probes": [
+      {
+        "description": "41A_/registry_snapshot_substitution: same authority, version and snapshot label; different content; manifest unchanged",
+        "probe": "registry-substituted-under-a-reused-label",
+        "problems_now": [
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest is bound to receipt-registry content 0fb5c6297764ad7a; the supplied registry's declared digest is 085fc7a926f8d5bf — same authority, same version, same snapshot label, DIFFERENT content, so the replay is not bound to its own declared evidence basis (P2X-01)"
+        ],
+        "r2_contract_accepted": true,
+        "refused_now": true,
+        "registry_after_digest": "085fc7a926f8d5bf84afc1eb3d05ce0e8246c9b6ef07219e620c7c8496180207",
+        "registry_before_digest": "0fb5c6297764ad7a980ca8f70f502ee4ad602d2d0abcf5aa5605a891eefb0157",
+        "same_declared_snapshot_id": true,
+        "witnesses_the_finding": true
+      },
+      {
+        "consuming_action_class": "delete-production-data",
+        "description": "41A_/receipt_purpose_mismatch: display receipt, delete-production-data consumer",
+        "probe": "receipt-purpose-does-not-match-the-consuming-action",
+        "problems_now": [
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the consuming event requires one of ['delete-production-data'] — a receipt for one purpose is not evidence for a materially different one (P2X-02)"
+        ],
+        "r2_contract_accepted": true,
+        "receipt_purpose": "display-monthly-digest",
+        "refused_now": true,
+        "witnesses_the_finding": true
+      },
+      {
+        "description": "41A_/receipt_object_authority_version_unbound: receipt-object-v999 inside an auth-v4 registry",
+        "probe": "receipt-authority-version-skewed-from-its-registry",
+        "problems_now": [
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-skew declares authority version 'receipt-object-v999'; the registry that holds it is control-plane-attestation-service@'auth-v4' — a receipt cannot carry an authority identity its own registry does not (P2X-02)"
+        ],
+        "r2_contract_accepted": true,
+        "receipt_authority_version": "receipt-object-v999",
+        "refused_now": true,
+        "registry_authority_version": "auth-v4",
+        "witnesses_the_finding": true
+      }
+    ]
+  },
   "summary": {
     "cases": 8,
     "closed": 8,
     "digest_enumeration_guard_discriminates": true,
-    "external_accepted_by_the_prefix_check_this_replaces": 36,
-    "external_cases": 37,
-    "external_closed": 37,
+    "external_accepted_by_the_prefix_check_this_replaces": 43,
+    "external_cases": 44,
+    "external_closed": 44,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],
@@ -973,6 +1138,8 @@
     "production_combinations_validated": 81,
     "r1_contract_witnesses_all_witness": true,
     "r1_contract_witnesses_not_witnessing": [],
+    "r2_contract_witnesses_all_witness": true,
+    "r2_contract_witnesses_not_witnessing": [],
     "witnesses_reproducing_old_behavior": 7
   }
 }

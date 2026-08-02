@@ -185,8 +185,8 @@
         "journal": [
           "ScheduleRegistered:ritual.digest@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:ritual.digest@t0(through=1920, version=1)",
-          "HorizonRetired:ritual.digest@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:ritual.digest@t936(first_due=963, period=24, version=2)"
+          "HorizonRetired:ritual.digest@t936(stale_ticks=41, txn=ritual.digest@t936->v2, version=1)",
+          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.digest@t936->v2, version=2)"
         ],
         "materialized_by_version": {
           "1": [
@@ -294,8 +294,8 @@
         "journal": [
           "ScheduleRegistered:ritual.digest@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:ritual.digest@t0(through=1920, version=1)",
-          "HorizonRetired:ritual.digest@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:ritual.digest@t936(first_due=963, period=24, version=2)"
+          "HorizonRetired:ritual.digest@t936(stale_ticks=41, txn=ritual.digest@t936->v2, version=1)",
+          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.digest@t936->v2, version=2)"
         ],
         "materialized_by_version": {
           "1": [
@@ -364,11 +364,11 @@
         "journal": [
           "ScheduleRegistered:ritual.brief@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:ritual.brief@t0(through=1920, version=1)",
-          "HorizonRetired:ritual.brief@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:ritual.brief@t936(first_due=963, period=24, version=2)",
+          "HorizonRetired:ritual.brief@t936(stale_ticks=41, txn=ritual.brief@t936->v2, version=1)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.brief@t936->v2, version=2)",
           "TransitionRefused:ritual.brief@t936(reason=version retired at an earlier change; its horizon has 41 stale tick(s) and cannot answer for the schedule again — use reactivate(), version=1)",
-          "HorizonRetired:ritual.brief@t936(stale_ticks=0, version=2)",
-          "ScheduleChanged:ritual.brief@t936(first_due=984, period=24, version=3)"
+          "HorizonRetired:ritual.brief@t936(stale_ticks=0, txn=ritual.brief@t936->v3, version=2)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=984, period=24, txn=ritual.brief@t936->v3, version=3)"
         ],
         "now": 936,
         "reactivated_eligible_ticks": 0,
@@ -387,11 +387,11 @@
         "journal": [
           "ScheduleRegistered:ritual.brief@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:ritual.brief@t0(through=1920, version=1)",
-          "HorizonRetired:ritual.brief@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:ritual.brief@t936(first_due=963, period=24, version=2)",
-          "HorizonRetired:ritual.brief@t936(stale_ticks=0, version=2)",
-          "ScheduleChanged:ritual.brief@t936(first_due=960, period=24, version=1)",
-          "ScheduleChanged:ritual.brief@t936(first_due=984, period=24, version=3)"
+          "HorizonRetired:ritual.brief@t936(stale_ticks=41, txn=ritual.brief@t936->v2, version=1)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.brief@t936->v2, version=2)",
+          "HorizonRetired:ritual.brief@t936(stale_ticks=0, txn=ritual.brief@t936->v1, version=2)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=960, period=24, txn=ritual.brief@t936->v1, version=1)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=984, period=24, txn=ritual.brief@t936->v3, version=3)"
         ],
         "now": 936,
         "reactivated_eligible_ticks": 0,
@@ -439,7 +439,7 @@
         "journal": [
           "ScheduleRegistered:same-version@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:same-version@t0(through=1920, version=1)",
-          "ScheduleChanged:same-version@t936(first_due=965, period=48, version=1)"
+          "ScheduleChanged:same-version@t936(expected_current_version=1, first_due=965, period=48, txn=same-version@t936->v1, version=1)"
         ],
         "mutated_recurrence": [
           965,
@@ -516,8 +516,8 @@
         "journal": [
           "ScheduleRegistered:monotonic@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:monotonic@t0(through=1920, version=1)",
-          "HorizonRetired:monotonic@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:monotonic@t936(first_due=984, period=24, version=5)",
+          "HorizonRetired:monotonic@t936(stale_ticks=41, txn=monotonic@t936->v5, version=1)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, period=24, txn=monotonic@t936->v5, version=5)",
           "TransitionRefused:monotonic@t936(reason=version 5 is not above the highest ever used for this schedule (5) — schedule-version identity is minted once and never reused (P2W-04), version=5)",
           "TransitionRefused:monotonic@t936(reason=version 3 is not above the highest ever used for this schedule (5) — schedule-version identity is minted once and never reused (P2W-04), version=3)"
         ],
@@ -537,11 +537,11 @@
         "journal": [
           "ScheduleRegistered:monotonic@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:monotonic@t0(through=1920, version=1)",
-          "HorizonRetired:monotonic@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:monotonic@t936(first_due=984, period=24, version=5)",
-          "ScheduleChanged:monotonic@t936(first_due=1008, period=24, version=5)",
-          "HorizonRetired:monotonic@t936(stale_ticks=0, version=5)",
-          "ScheduleChanged:monotonic@t936(first_due=1032, period=24, version=3)"
+          "HorizonRetired:monotonic@t936(stale_ticks=41, txn=monotonic@t936->v5, version=1)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, period=24, txn=monotonic@t936->v5, version=5)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1008, period=24, txn=monotonic@t936->v5, version=5)",
+          "HorizonRetired:monotonic@t936(stale_ticks=0, txn=monotonic@t936->v3, version=5)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1032, period=24, txn=monotonic@t936->v3, version=3)"
         ],
         "lower_accepted": true,
         "now": 936,
@@ -565,8 +565,8 @@
         "journal": [
           "ScheduleRegistered:restart@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:restart@t0(through=1920, version=1)",
-          "HorizonRetired:restart@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:restart@t936(first_due=963, period=24, version=2)",
+          "HorizonRetired:restart@t936(stale_ticks=41, txn=restart@t936->v2, version=1)",
+          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, period=24, txn=restart@t936->v2, version=2)",
           "TransitionRefused:restart@t936(reason=version retired at an earlier change; its horizon has 41 stale tick(s) and cannot answer for the schedule again — use reactivate(), version=1)"
         ],
         "journal_entries_persisted": 4,
@@ -593,10 +593,10 @@
         "journal": [
           "ScheduleRegistered:restart@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:restart@t0(through=1920, version=1)",
-          "HorizonRetired:restart@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:restart@t936(first_due=963, period=24, version=2)",
-          "HorizonRetired:restart@t936(stale_ticks=0, version=2)",
-          "ScheduleChanged:restart@t936(first_due=960, period=24, version=1)"
+          "HorizonRetired:restart@t936(stale_ticks=41, txn=restart@t936->v2, version=1)",
+          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, period=24, txn=restart@t936->v2, version=2)",
+          "HorizonRetired:restart@t936(stale_ticks=0, txn=restart@t936->v1, version=2)",
+          "ScheduleChanged:restart@t936(expected_current_version=2, first_due=960, period=24, txn=restart@t936->v1, version=1)"
         ],
         "journal_entries_persisted": 4,
         "now": 936,
@@ -623,8 +623,8 @@
         "journal": [
           "ScheduleRegistered:concurrent@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:concurrent@t0(through=1920, version=1)",
-          "HorizonRetired:concurrent@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:concurrent@t936(first_due=984, period=24, version=2)",
+          "HorizonRetired:concurrent@t936(stale_ticks=41, txn=concurrent@t936->v2, version=1)",
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, period=24, txn=concurrent@t936->v2, version=2)",
           "TransitionRefused:concurrent@t936(reason=concurrent change: caller expected v1 in force, found v2, version=3)"
         ],
         "now": 936,
@@ -640,10 +640,10 @@
         "journal": [
           "ScheduleRegistered:concurrent@t0(first_due=960, period=24, version=1)",
           "HorizonExtended:concurrent@t0(through=1920, version=1)",
-          "HorizonRetired:concurrent@t936(stale_ticks=41, version=1)",
-          "ScheduleChanged:concurrent@t936(first_due=984, period=24, version=2)",
-          "HorizonRetired:concurrent@t936(stale_ticks=0, version=2)",
-          "ScheduleChanged:concurrent@t936(first_due=1008, period=24, version=3)"
+          "HorizonRetired:concurrent@t936(stale_ticks=41, txn=concurrent@t936->v2, version=1)",
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, period=24, txn=concurrent@t936->v2, version=2)",
+          "HorizonRetired:concurrent@t936(stale_ticks=0, txn=concurrent@t936->v3, version=2)",
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=1008, period=24, txn=concurrent@t936->v3, version=3)"
         ],
         "now": 936,
         "observed_version": 1,
@@ -1629,13 +1629,222 @@
       "discriminates": true,
       "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
       "targeted_defect": "the restart fold ignores retirement entries, so the replay disagrees"
+    },
+    {
+      "behavior": "mandatory-expected-current-version",
+      "clean": {
+        "change_with_expectation_OMITTED_landed": false,
+        "change_with_expectation_landed": true,
+        "change_with_stale_expectation_landed": false,
+        "detected": true,
+        "journal": [
+          "ScheduleRegistered:mandatory-cas@t0(first_due=960, period=24, version=1)",
+          "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v2, version=1)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, period=24, txn=mandatory-cas@t936->v2, version=2)",
+          "TransitionRefused:mandatory-cas@t936(reason=change_schedule() requires expected_current_version: a compare-and-swap a caller can decline is not a concurrency control, and omission is a usage error rather than an unconditional update (P2X-03), version=3)",
+          "TransitionRefused:mandatory-cas@t936(reason=concurrent change: caller expected v99 in force, found v2, version=4)"
+        ],
+        "now": 936,
+        "version_in_force": 2
+      },
+      "clean_detects": true,
+      "contract": "P2X-03 — every change to an existing schedule must state the version it was computed against; omission is a usage error, not an unconditional update",
+      "defect": {
+        "change_with_expectation_OMITTED_landed": true,
+        "change_with_expectation_landed": true,
+        "change_with_stale_expectation_landed": true,
+        "detected": false,
+        "journal": [
+          "ScheduleRegistered:mandatory-cas@t0(first_due=960, period=24, version=1)",
+          "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v2, version=1)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, period=24, txn=mandatory-cas@t936->v2, version=2)",
+          "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v3, version=2)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=None, first_due=1008, period=24, txn=mandatory-cas@t936->v3, version=3)",
+          "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v4, version=3)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=99, first_due=1032, period=24, txn=mandatory-cas@t936->v4, version=4)"
+        ],
+        "now": 936,
+        "version_in_force": 4
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "optimistic concurrency optional: an omitted expectation is a default pass"
+    },
+    {
+      "behavior": "run-receipts-bound-to-their-version",
+      "clean": {
+        "current_v2_receipt_accepted": true,
+        "current_version": 2,
+        "detected": true,
+        "journal": [
+          "ScheduleRegistered:stale-receipt@t0(first_due=10, period=100, version=1)",
+          "HorizonRetired:stale-receipt@t5(stale_ticks=0, txn=stale-receipt@t5->v2, version=1)",
+          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, period=100, txn=stale-receipt@t5->v2, version=2)",
+          "TransitionRefused:stale-receipt@t10(reason=RunStarted receipt from RETIRED v1 — a superseded scheduler instance cannot answer for the schedule (P2X-04), version=1)",
+          "RunStarted:stale-receipt@t10(occurrence=10, version=2)"
+        ],
+        "missed_deadlines_after_current_receipt": [],
+        "missed_deadlines_at_t11": [
+          10
+        ],
+        "stale_v1_receipt_accepted": false
+      },
+      "clean_detects": true,
+      "contract": "P2X-04 — a RunStarted receipt names the version that produced it; a stale version's receipt never satisfies the current version's deadline, and the current version's receipt still does",
+      "defect": {
+        "current_v2_receipt_accepted": true,
+        "current_version": 2,
+        "detected": false,
+        "journal": [
+          "ScheduleRegistered:stale-receipt@t0(first_due=10, period=100, version=1)",
+          "HorizonRetired:stale-receipt@t5(stale_ticks=0, txn=stale-receipt@t5->v2, version=1)",
+          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, period=100, txn=stale-receipt@t5->v2, version=2)",
+          "RunStarted:stale-receipt@t10(occurrence=10, version=1)",
+          "RunStarted:stale-receipt@t10(occurrence=10, version=2)"
+        ],
+        "missed_deadlines_after_current_receipt": [],
+        "missed_deadlines_at_t11": [],
+        "stale_v1_receipt_accepted": true
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "unattributed receipts: any receipt answers any version's deadline"
+    },
+    {
+      "behavior": "journal-replay-validates-transitions",
+      "clean": {
+        "all_refused": true,
+        "detected": true,
+        "histories": [
+          {
+            "history": "contradictory-same-version",
+            "reason": "journal replay refused (2 problem(s)): journal[2] redefines conflict v1: already defined as first_due=10 period=10, now first_due=11 period=7 — one im",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "incomplete-transaction",
+            "reason": "journal replay refused (2 problem(s)): journal[1] retires incomplete v1 while it is in force and its transaction adopts no successor (P2X-05); transac",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "orphaned-horizon-reference",
+            "reason": "journal replay refused (1 problem(s)): journal[1] (HorizonExtended) references orphan v7, which the journal never defines — orphaned reference (P2X-05",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "out-of-order-entries",
+            "reason": "journal replay refused (1 problem(s)): journal[1] is out of order: at=1 follows at=5",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "unknown-entry-kind",
+            "reason": "journal replay refused (1 problem(s)): journal[0] declares unknown kind 'ScheduleWhatever'",
+            "replay_refused": true,
+            "state_if_accepted": null
+          }
+        ],
+        "wellformed_journal_still_replays": true
+      },
+      "clean_detects": true,
+      "contract": "P2X-05 — replay refuses a contradictory, orphaned, incomplete, out-of-order or unknown-kind history before producing state, and a well-formed journal still replays deterministically",
+      "defect": {
+        "all_refused": false,
+        "detected": false,
+        "histories": [
+          {
+            "history": "contradictory-same-version",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "eligible_horizon": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "recurrence": [
+                11,
+                7
+              ],
+              "version_in_force": 1
+            }
+          },
+          {
+            "history": "incomplete-transaction",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "eligible_horizon": [],
+              "recurrence": [
+                10,
+                10
+              ],
+              "version_in_force": 1
+            }
+          },
+          {
+            "history": "orphaned-horizon-reference",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "eligible_horizon": [],
+              "recurrence": [
+                10,
+                10
+              ],
+              "version_in_force": 1
+            }
+          },
+          {
+            "history": "out-of-order-entries",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "eligible_horizon": [
+                10,
+                20,
+                30,
+                40,
+                50
+              ],
+              "recurrence": [
+                10,
+                10
+              ],
+              "version_in_force": 1
+            }
+          },
+          {
+            "history": "unknown-entry-kind",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "eligible_horizon": [],
+              "recurrence": null,
+              "version_in_force": null
+            }
+          }
+        ],
+        "wellformed_journal_still_replays": true
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "replay folds whatever it is given"
     }
   ],
   "summary": {
-    "behaviors": 11,
+    "behaviors": 14,
     "clock": "logical ticks only; no wall-clock read anywhere in this suite",
-    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All eleven behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
-    "discriminating": 11,
+    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All fourteen behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
+    "discriminating": 14,
     "not_discriminating": []
   }
 }

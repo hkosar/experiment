@@ -2,18 +2,14 @@
   "counts": {
     "added": 1,
     "files": 51,
-    "modified": 20,
+    "modified": 21,
     "outside_writable_area": 0,
-    "unchanged": 30
+    "unchanged": 29
   },
-  "cycle": "R2 (APP-07 rework)",
-  "export_manifest_validation": {
-    "declared": 49,
-    "mismatched": 0,
-    "missing": 0,
-    "undeclared_extras": 0,
-    "valid": 49
-  },
+  "cycle": "R3 (APP-07 rework)",
+  "dispositions": [
+    "42_P2X_Dispositions.md"
+  ],
   "files": [
     {
       "bytes": 56240,
@@ -106,9 +102,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 29845,
+      "bytes": 32560,
       "path": "design/traces/behavioral/README.md",
-      "sha256": "3f9c16276af923072e7f982bcdb678deb78e2c642514e92bbcbeb6f764cb9625",
+      "sha256": "26a1ede35aeb754932bc4ca85a27c288b0d8663d9562d56b9221d135af7a58c1",
       "state": "modified"
     },
     {
@@ -124,15 +120,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 11217,
+      "bytes": 11839,
       "path": "design/traces/behavioral/events.py",
-      "sha256": "26c33442db0e6d876ac7f2a395ff79fa6cee39cf8682a38e6119516f88fdc18d",
-      "state": "unchanged"
+      "sha256": "77df38efd7f9fc00de26589326c8f40715ae8fc1d116b5cf3a21030362163e9c",
+      "state": "modified"
     },
     {
-      "bytes": 36631,
+      "bytes": 41720,
       "path": "design/traces/behavioral/external_basis.py",
-      "sha256": "49dcc4b0dadae4e399b086a5dbbc4b63fadae6591c27cbf3c589636a7e16117a",
+      "sha256": "73ed03e9d3d05c45d251aeb1f468a945a27e05b110ae25f0d94867c229cff72a",
       "state": "added"
     },
     {
@@ -142,9 +138,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 19308,
+      "bytes": 19316,
       "path": "design/traces/behavioral/fold.py",
-      "sha256": "2fbb5e0d6a53c64f6081925febbd7bcbd213ee6f6088ba07972502378f22d7fe",
+      "sha256": "83e46594861c7c0b2e7dfb562324b85d1fd6924454cccbe4ad100037e9a6ae64",
       "state": "modified"
     },
     {
@@ -178,9 +174,9 @@
       "state": "modified"
     },
     {
-      "bytes": 52108,
+      "bytes": 63128,
       "path": "design/traces/behavioral/out/basis_validation.json",
-      "sha256": "e0126dc03d03c6a7105edd817a06228ada836dcc7eb9c5a7da5d0452bb0fc93d",
+      "sha256": "100581db5cd8ab1a0db1efbfda60a842de2f632e9395e851ca70a39ea0373ef9",
       "state": "modified"
     },
     {
@@ -196,9 +192,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 18215,
+      "bytes": 18816,
       "path": "design/traces/behavioral/out/gate_report.json",
-      "sha256": "f65e981a3041d04be25a26b26516044118ad05dc63500eb7293ff55a84ba1504",
+      "sha256": "666bf7c2ab0b816088f21988752524cdd14424f2d807d9fa0488b7d99c76bf48",
       "state": "modified"
     },
     {
@@ -214,9 +210,9 @@
       "state": "modified"
     },
     {
-      "bytes": 42520,
+      "bytes": 52923,
       "path": "design/traces/behavioral/out/p2s04_schedule_liveness.json",
-      "sha256": "e81cd5fadac303137406c414c5bed3926a323aa6ee1d240903bee6ab13672821",
+      "sha256": "56a165bdfe8a94e8b4bef6dadb5c3218aa0f8a2b8bbd46361edc7acd1f40e6ae",
       "state": "modified"
     },
     {
@@ -256,9 +252,9 @@
       "state": "modified"
     },
     {
-      "bytes": 52096,
+      "bytes": 66102,
       "path": "design/traces/behavioral/run_basis.py",
-      "sha256": "8968f48480099a1198f8ba8a1505a4d27f9c74217babab9c7ebcddbcecee9dd8",
+      "sha256": "e053e5710be67da1e3120d4526379f99546d39446e82e5032a97ed16421c56e5",
       "state": "modified"
     },
     {
@@ -274,9 +270,9 @@
       "state": "modified"
     },
     {
-      "bytes": 26556,
+      "bytes": 27413,
       "path": "design/traces/behavioral/run_gate.py",
-      "sha256": "398825bf9eae40ff18f464a8c04377389b28af230c511359c1d240d570fd7f9d",
+      "sha256": "f7dbeb5ce199a96591d7edf2841e7631ba69287c7fc1e32b034e3faf243fe422",
       "state": "modified"
     },
     {
@@ -286,9 +282,9 @@
       "state": "modified"
     },
     {
-      "bytes": 52552,
+      "bytes": 75834,
       "path": "design/traces/behavioral/run_p2s04.py",
-      "sha256": "5060b1c478115062dc43e095f489b24dc4bc5a214296bf3a62c05584d8df60e0",
+      "sha256": "f13c7c2ec691cb76415b77af1615851e6243cbe5b8a9b8b4b317c19986a3da6a",
       "state": "modified"
     },
     {
@@ -323,21 +319,20 @@
     }
   ],
   "governing_findings": [
-    "38_ChatGPT_Scoped_Reverification_TASK0005_R1.md",
-    "38A_ChatGPT_Probe_Evidence_TASK0005_R1.json"
+    "41_ChatGPT_Scoped_Reverification_TASK-0005_R2.md",
+    "41A_ChatGPT_Probe_Evidence_TASK-0005_R2.json"
   ],
   "instruction_authority": [
-    "34_TASK0005_Task_Packet_P2U_Corrections.md",
-    "37_TASK0005_Rework_Packet_R1.md",
-    "40_TASK0005_Rework_Packet_R2.md"
-  ],
-  "not_executed": {
-    "RW-36 (P2W-05 checker leg)": "check_supersessions.py, D-SM and D-B11 are not in the snapshot; design/traces/ is outside the allowlist. Returned as a change request (Delivery Record section 7)."
-  },
-  "not_held": [
-    "39_ dispositions"
+    "34_",
+    "37_",
+    "40_",
+    "43_TASK-0005_Rework_Packet_R3.md"
   ],
   "produced_by": "Builder (Claude Code)",
+  "relay_integrity": {
+    "sha256sums_total": 4,
+    "sha256sums_verified": 4
+  },
   "returned_to": "Fable (not the verifier)",
   "source_snapshot_zip_sha256": "06e8bc97c8031724c5e82a29bd777cc691d880a4e3bc320a15780d4285ab79f9",
   "task": "TASK-0005",

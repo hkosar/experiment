@@ -219,6 +219,13 @@ class Receipt:
     `subject_ref` is the whole point: the receipt names the record it attests to, at
     a version and content hash. Without it, any registered receipt certifies any
     record — which is what the verifier's unrelated-root probe demonstrated.
+
+    P2X-02: `content_hash` used to be self-declared — a field the receipt's author
+    filled in with anything, compared only against the reference that cited it. Two
+    self-declared values agreeing with each other is not integrity. It is now the
+    CANONICAL DIGEST of the receipt's own content, computed by `row_digest()`, and a
+    receipt whose declared hash does not equal its computed one is refused before it
+    can attest to anything.
     """
 
     receipt_id: str
@@ -227,10 +234,23 @@ class Receipt:
     authority_version: str
     content_hash: str
 
-    def as_row(self) -> Dict[str, object]:
+    def content_row(self) -> Dict[str, object]:
+        """Everything the content hash covers — the row minus the hash itself."""
         return {"receipt_id": self.receipt_id, "subject_ref": self.subject_ref,
-                "purpose": self.purpose, "authority_version": self.authority_version,
-                "content_hash": self.content_hash}
+                "purpose": self.purpose, "authority_version": self.authority_version}
+
+    def row_digest(self) -> str:
+        return _digest(self.content_row())
+
+    def as_row(self) -> Dict[str, object]:
+        return dict(self.content_row(), content_hash=self.content_hash)
+
+    def bound(self) -> "Receipt":
+        """This receipt with `content_hash` set to its own canonical row digest."""
+        return Receipt(receipt_id=self.receipt_id, subject_ref=self.subject_ref,
+                       purpose=self.purpose,
+                       authority_version=self.authority_version,
+                       content_hash=self.row_digest())
 
 
 def reference_for(record: ExternalRecord) -> str:
@@ -367,6 +387,14 @@ class ExternalManifest:
     receipt_authority_id: str = ""
     receipt_authority_version: str = ""
     receipt_verification_config: str = ""
+    # P2X-01 — the registry's CONTENT digest, not its label. The manifest bound
+    # `receipt_authority_id`, `receipt_authority_version` and `revocation_snapshot_id`
+    # and nothing about what the registry actually contained, so two separately valid
+    # registries could carry the same three labels and different receipts. The
+    # verifier supplied one without `r-late` (unresolved) and one with it (resolved)
+    # while the manifest stayed byte-identical: the replay was deterministic over the
+    # pair of runtime arguments, not over its own declared evidence basis.
+    receipt_registry_digest: str = ""
     trust_root_id: str = TRUST_ROOT_NOT_APPLICABLE
     trust_root_key_version: str = TRUST_ROOT_NOT_APPLICABLE
     revocation_snapshot_id: str = ""
@@ -514,7 +542,8 @@ DIGEST_BOUND_FIELDS: Tuple[str, ...] = (
     "digest_algorithm", "digest_hex_length",
     "resolver_id", "resolver_version", "resolver_state",
     "receipt_authority_id", "receipt_authority_version",
-    "receipt_verification_config", "trust_root_id", "trust_root_key_version",
+    "receipt_verification_config", "receipt_registry_digest",
+    "trust_root_id", "trust_root_key_version",
     "revocation_snapshot_id",
     "records", "resolver_known_ids",
 )
@@ -551,6 +580,7 @@ REQUIRED_CONTRACT_CONTROLS: Dict[str, str] = {
     "receipt/evidence authority identity": "receipt_authority_id",
     "receipt authority version/configuration": "receipt_authority_version",
     "receipt verification configuration": "receipt_verification_config",
+    "exact receipt-registry content identity": "receipt_registry_digest",
     "trust-root or key version": "trust_root_id",
     "trust-root key version": "trust_root_key_version",
     "revocation/status snapshot": "revocation_snapshot_id",
@@ -637,7 +667,8 @@ def required_control_coverage() -> List[str]:
 # --------------------------------------------------------------------------
 
 def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
-                     registry: Optional[ReceiptRegistry]) -> List[str]:
+                     registry: Optional[ReceiptRegistry],
+                     required_purposes: Sequence[str] = ()) -> List[str]:
     """P2W-02 — the attestation must come from a separately controlled authority.
 
     Every step is a refusal the previous contract did not make:
@@ -683,6 +714,16 @@ def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
                 "supplied registry is snapshot %r — a stale revocation list cannot "
                 "answer for this manifest (P2W-03)"
                 % (record.key, manifest.revocation_snapshot_id, registry.snapshot_id)]
+    # P2X-01 — the CONTENT, not the label. The three identity fields above are
+    # labels an author chooses; two registries can carry the same three and
+    # different receipts, which is exactly what the verifier substituted.
+    if registry.declared_digest != manifest.receipt_registry_digest:
+        return ["record %s: the manifest is bound to receipt-registry content %s; "
+                "the supplied registry's declared digest is %s — same authority, "
+                "same version, same snapshot label, DIFFERENT content, so the "
+                "replay is not bound to its own declared evidence basis (P2X-01)"
+                % (record.key, (manifest.receipt_registry_digest or "-")[:16],
+                   (registry.declared_digest or "-")[:16])]
 
     receipt = registry.lookup(ref)
     if receipt is None:
@@ -693,6 +734,24 @@ def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
         return ["record %s cites receipt %s at authority version %r; the registry "
                 "records %r" % (record.key, ref.receipt_id, ref.authority_version,
                                 receipt.authority_version)]
+    # P2X-02 — the receipt's own authority identity must agree with the registry that
+    # owns it. The reference and the receipt agreeing with each other says nothing
+    # about which authority issued it: the verifier put `receipt-object-v999` on a
+    # receipt inside an `ra-v1` registry and it resolved.
+    if receipt.authority_version != registry.authority_version:
+        return ["receipt %s declares authority version %r; the registry that holds "
+                "it is %s@%r — a receipt cannot carry an authority identity its own "
+                "registry does not (P2X-02)"
+                % (receipt.receipt_id, receipt.authority_version,
+                   registry.authority_id, registry.authority_version)]
+    # P2X-02 — `content_hash` is the receipt's canonical row digest, not a value its
+    # author asserts. Comparing a self-declared field against the reference that
+    # cites it is two assertions agreeing, which is not integrity.
+    if receipt.content_hash != receipt.row_digest():
+        return ["receipt %s declares content hash %s; its canonical row hashes to "
+                "%s — a self-declared content identity is not an identity (P2X-02)"
+                % (receipt.receipt_id, receipt.content_hash[:16],
+                   receipt.row_digest()[:16])]
     if receipt.content_hash != ref.content_hash:
         return ["record %s cites receipt %s with content hash %r; the registry "
                 "records %r" % (record.key, ref.receipt_id, ref.content_hash,
@@ -709,12 +768,30 @@ def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
         return ["receipt %s attests to %s, not to %s — a registered attestation for "
                 "another record cannot certify this one (P2W-02)"
                 % (receipt.receipt_id, receipt.subject_ref, subject)]
+
+    # P2X-02 — the purpose must match the CONSUMING contract. "Nonempty" was the
+    # whole check, so a `display-monthly-digest` receipt grounded a
+    # `delete-production-data` action and `basis_problems` came back empty. The
+    # consumer declares what evidence it needs; an undeclared consumer fails closed,
+    # because a consequential action with no stated evidence requirement is the
+    # case this check exists for.
+    wanted = [str(p) for p in required_purposes if str(p).strip()]
+    if not wanted:
+        return ["record %s resolves an attestation but the consuming event declares "
+                "no required receipt purpose — evidence cannot be matched to a use "
+                "that was never stated (P2X-02)" % record.key]
+    if receipt.purpose not in wanted:
+        return ["receipt %s attests purpose %r; the consuming event requires one of "
+                "%s — a receipt for one purpose is not evidence for a materially "
+                "different one (P2X-02)"
+                % (receipt.receipt_id, receipt.purpose, wanted)]
     return []
 
 
 def resolve(raw: str, manifest: Optional[ExternalManifest],
             declared_stores: Sequence[str],
-            receipt_registry: Optional[ReceiptRegistry] = None) -> List[str]:
+            receipt_registry: Optional[ReceiptRegistry] = None,
+            required_purposes: Sequence[str] = ()) -> List[str]:
     """Resolve ONE reference. Returns the problems; empty means it resolved.
 
     Order matters and is fail-closed at every step: nothing about a reference is
@@ -764,5 +841,6 @@ def resolve(raw: str, manifest: Optional[ExternalManifest],
                         % ref)
     else:
         problems.extend("external basis %s: %s" % (ref, p)
-                        for p in _resolve_receipt(record, manifest, receipt_registry))
+                        for p in _resolve_receipt(record, manifest, receipt_registry,
+                                                  required_purposes))
     return problems

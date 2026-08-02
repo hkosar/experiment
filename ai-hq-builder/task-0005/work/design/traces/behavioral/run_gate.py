@@ -350,7 +350,8 @@ def main(argv: List[str]) -> int:
          basis["summary"]["external_closed"] == basis["summary"]["external_cases"]
          and bool(basis["summary"]["external_positive_resolves"])
          and bool(basis["summary"]["digest_enumeration_guard_discriminates"])
-         and bool(basis["summary"]["r1_contract_witnesses_all_witness"]),
+         and bool(basis["summary"]["r1_contract_witnesses_all_witness"])
+         and bool(basis["summary"]["r2_contract_witnesses_all_witness"]),
          "%d/%d external-basis cases fail closed (the four P2U-02 probe strings; "
          "nonexistent object, wrong version/hash, omission from the frozen manifest, "
          "no manifest, degraded and unavailable resolver, tampered digest, "
@@ -358,18 +359,25 @@ def main(argv: List[str]) -> int:
          "R2 additions — receipt naming a manifest record, attesting to another "
          "subject, revoked, purposeless, abbreviated content hash, no registry, "
          "wrong/same authority, stale revocation snapshot, unbound registry, "
-         "duplicate receipt ids, snapshot identity edited, and four envelope-control "
-         "cases). %d were accepted by the prefix check TASK-0005 replaced. The "
-         "resolvable reference folds under two distinct authorities; the four "
-         "enumeration guards are shown failing; %d/%d `38A_` probes witness their "
-         "finding under both contracts"
+         "duplicate receipt ids, snapshot identity edited, envelope-control cases; "
+         "and the R3 additions — registry substituted under a reused label in both "
+         "directions, receipt purpose not matching the consuming action, consumer "
+         "declaring no purpose, receipt authority version skewed from its registry, "
+         "self-declared receipt content hash, missing registry digest). %d were "
+         "accepted by the prefix check TASK-0005 replaced. The resolvable reference "
+         "folds under two distinct authorities; the enumeration guards are shown "
+         "failing; %d/%d `38A_` and %d/%d `41A_` probes witness their finding under "
+         "the contract each replaced"
          % (basis["summary"]["external_closed"], basis["summary"]["external_cases"],
             basis["summary"]["external_accepted_by_the_prefix_check_this_replaces"],
             len(basis["r1_contract_witnesses"]["probes"])
             - len(basis["summary"]["r1_contract_witnesses_not_witnessing"]),
-            len(basis["r1_contract_witnesses"]["probes"]))),
+            len(basis["r1_contract_witnesses"]["probes"]),
+            len(basis["r2_contract_witnesses"]["probes"])
+            - len(basis["summary"]["r2_contract_witnesses_not_witnessing"]),
+            len(basis["r2_contract_witnesses"]["probes"]))),
         ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03, "
-         "P2V-04 and P2W-04 probes)",
+         "P2V-04, P2W-04 and P2X-03/04/05 probes)",
          sched["summary"]["discriminating"] == sched["summary"]["behaviors"],
          "%d/%d behaviors discriminate under their targeted defect "
          "(scheduler death before registration; horizon exhaustion; atomic "
@@ -377,7 +385,10 @@ def main(argv: List[str]) -> int:
          "stale-horizon probe; the P2V-04 retired-version probe; and the six P2W-04 "
          "cases — same-version change, register-is-initial-only, monotonic identity, "
          "restart preserving retirement through the control-journal fold, concurrent "
-         "changes, and replay determinism from the durable journal)"
+         "changes, replay determinism from the durable journal; and the three P2X "
+         "cases — mandatory compare-and-swap, run receipts bound to their version, "
+         "and journal replay refusing contradictory, orphaned, incomplete, "
+         "out-of-order and unknown-kind histories)"
          % (sched["summary"]["discriminating"], sched["summary"]["behaviors"])),
     ]
 
