@@ -1,0 +1,124 @@
+{
+  "cases": [
+    {
+      "case": "missing-direct-cause",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "the verifier's exact probe: DecisionEvent caused_by=[missing-policy-event]",
+      "detected": true,
+      "expected_problem": "absent from the replay basis",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1 names causal basis missing-policy-event, which is absent from the replay basis (P2T-02: an unresolvable reference is incompleteness, not satisfaction)"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "missing-transitive-cause",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "the decision's parent is present; the parent's own basis is not",
+      "detected": true,
+      "expected_problem": "ingest-missing",
+      "fold_refused": true,
+      "problems": [
+        "event eval-1 names causal basis ingest-missing, which is absent from the replay basis (P2T-02: an unresolvable reference is incompleteness, not satisfaction)"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "missing-external-receipt-basis",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "an evidence record answers an ActionRequest nobody delivered",
+      "detected": true,
+      "expected_problem": "answers action action-missing",
+      "fold_refused": true,
+      "problems": [
+        "evidence evidence-1 answers action action-missing, which is absent from the basis"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "unknown-external-reference-type",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "an external_basis entry naming a store outside the declared set",
+      "detected": true,
+      "expected_problem": "not a declared external store",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1 declares external basis 'hearsay:some-id' naming store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "no-declared-basis-non-genesis",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "a non-genesis event declaring no causal basis at all",
+      "detected": true,
+      "expected_problem": "not a declared genesis root",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1 (DecisionEvent) declares no causal basis and its family is not a declared genesis root"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "causal-cycle",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=1",
+      "description": "two canonical events naming each other",
+      "detected": true,
+      "expected_problem": "causal cycle",
+      "fold_refused": true,
+      "problems": [
+        "causal cycle: decision-1 -> decision-2 -> decision-1"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "duplicate-event-ids",
+      "closed": true,
+      "defect_witness": "not reproducible with both checks off: duplicate event IDs in fold input",
+      "description": "the same event ID delivered twice",
+      "detected": true,
+      "expected_problem": "duplicate event IDs",
+      "fold_refused": true,
+      "problems": [
+        "duplicate event IDs: decision-1"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": false
+    },
+    {
+      "case": "store-sequence-collision",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "two events claiming the same sequence in one store",
+      "detected": true,
+      "expected_problem": "sequence 7 used by both",
+      "fold_refused": true,
+      "problems": [
+        "store canonical sequence 7 used by both decision-1 and decision-2"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    }
+  ],
+  "summary": {
+    "cases": 8,
+    "closed": 8,
+    "open": [],
+    "production_basis_problems": {},
+    "production_combinations_validated": 81,
+    "witnesses_reproducing_old_behavior": 7
+  }
+}

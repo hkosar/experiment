@@ -1,0 +1,124 @@
+{
+  "schema": "chatgpt-verifier-probes/2",
+  "review": "P2T Correction Packet 4 scoped re-verification",
+  "packet_sha256": "c6a9c18b370182087b4a88e9b2ce3082736115b91179a1fe2da3fb00c9a01798",
+  "repository": {
+    "commit": "bbc58dc6f5d5aed6f1f947a1c92beb7853747044",
+    "tree": "977eea7231b8f03e7a45c2dec237d9af8da92f69",
+    "diff_base": "68f768dba081030da8a88ae27133cddeba91b1ce",
+    "supplied_patch_sha256": "ad07c51a5b86ed5a06ef8192b37cd141af7a7e04d0a4c0fd0eb73c32e2e2f8b2"
+  },
+  "mechanical_verification": {
+    "checksums_passed": 54,
+    "checksums_total": 54,
+    "manifest_passed": 54,
+    "manifest_total": 54,
+    "fresh_checkout_clean": true,
+    "git_diff_check_passed": true,
+    "patch_byte_identical": true,
+    "two_run_outputs_byte_identical": true,
+    "bundle_fresh_clone_passed": true,
+    "bundle_fsck_passed": true
+  },
+  "probes": [
+    {
+      "id": "P2U-01",
+      "severity": "High",
+      "title": "mapped presentation receipt expectation has an empty comparator",
+      "mutations": [
+        {
+          "fixture": "S1",
+          "path": "expected.receipt",
+          "before": "Desk view",
+          "after": "completely wrong card",
+          "gate_exit_code": 0,
+          "gate_passed": true
+        },
+        {
+          "fixture": "S1",
+          "path": "expected.receipt",
+          "before": "Desk view",
+          "after": "completely wrong summary surface",
+          "gate_exit_code": 0,
+          "gate_passed": true
+        }
+      ],
+      "code_observation": "KIND_PRESENTATION is mapped; parse_receipt sets only surface; _compare_dimension evaluates no surface or receipt value and succeeds when requires/forbids are empty.",
+      "falsified_claim": "every mapped expected dimension is actually compared and load-bearing"
+    },
+    {
+      "id": "P2U-02",
+      "severity": "High",
+      "title": "unresolved external basis is accepted",
+      "references_tested": [
+        "control-journal:definitely-missing",
+        "evidence:definitely-missing",
+        "provider:definitely-missing",
+        "schedule:definitely-missing"
+      ],
+      "result_for_each": {
+        "validate_basis_problems": [],
+        "fold_accepted": true,
+        "fold_order": ["decision-ext"],
+        "causal_violations": []
+      },
+      "falsified_claim": "an incomplete causal basis fails closed before state emission"
+    },
+    {
+      "id": "P2U-03",
+      "severity": "High",
+      "title": "stale prior-version horizon suppresses current-version warning",
+      "setup": [
+        "register recurrence v1",
+        "materialize v1 horizon far into the future",
+        "atomically change specification to v2",
+        "do not extend the v2 horizon"
+      ],
+      "result": {
+        "current_spec_version": 2,
+        "materialized_horizon_remained_v1": true,
+        "horizon_warning_at_v2_start": null,
+        "warning_should_have_fired": true
+      },
+      "falsified_claim": "versioned schedule change leaves no orphaned old or missing new expectation and preserves horizon liveness"
+    },
+    {
+      "id": "P2U-04",
+      "severity": "High",
+      "title": "supersession checker passes active normative contradictions",
+      "examples": [
+        {
+          "file": "design/D-B11_Ritual_Integration.md",
+          "line": 11,
+          "active_text": "a missed/failed run emits its own DegradationEvent-class notice",
+          "contradicted_by": "lines 25 and 36-59: self-report is circular and watchdog-owned recurrence is authoritative"
+        },
+        {
+          "file": "design/D-B12_Design_Gate_Test_Report.md",
+          "lines": [26, 63, 88],
+          "problem": "multiple incompatible current count/gate snapshots remain in one normative artifact"
+        }
+      ],
+      "checker_result": "PASS",
+      "falsified_claim": "no unmarked superseded statement remains in current normative artifacts"
+    },
+    {
+      "id": "P2U-05",
+      "severity": "High",
+      "title": "final gate ignores globally blocking findings",
+      "probe_1": {
+        "setup": "mark the four finding-dependent rows Complete, clear their dependencies, regenerate the count summary; leave all six findings blocks_gate=true",
+        "exit_code": 0,
+        "verdict": "PASS",
+        "reported_open_findings": 6
+      },
+      "probe_2": {
+        "setup": "same completed rows, remove 13F_Open_Findings.json",
+        "exit_code": 0,
+        "verdict": "PASS",
+        "reported_state": "open-findings file absent"
+      },
+      "falsified_claim": "the design gate fails closed whenever a gate-blocking finding is open or the findings authority is unavailable"
+    }
+  ]
+}

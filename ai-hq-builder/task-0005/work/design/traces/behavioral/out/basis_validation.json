@@ -1,0 +1,373 @@
+{
+  "cases": [
+    {
+      "case": "missing-direct-cause",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "the verifier's exact probe: DecisionEvent caused_by=[missing-policy-event]",
+      "detected": true,
+      "expected_problem": "absent from the replay basis",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1 names causal basis missing-policy-event, which is absent from the replay basis (P2T-02: an unresolvable reference is incompleteness, not satisfaction)"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "missing-transitive-cause",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "the decision's parent is present; the parent's own basis is not",
+      "detected": true,
+      "expected_problem": "ingest-missing",
+      "fold_refused": true,
+      "problems": [
+        "event eval-1 names causal basis ingest-missing, which is absent from the replay basis (P2T-02: an unresolvable reference is incompleteness, not satisfaction)"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "missing-external-receipt-basis",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "an evidence record answers an ActionRequest nobody delivered",
+      "detected": true,
+      "expected_problem": "answers action action-missing",
+      "fold_refused": true,
+      "problems": [
+        "evidence evidence-1 answers action action-missing, which is absent from the basis"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "unknown-external-reference-type",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "an external_basis entry that is neither well-formed nor a declared store",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1: external basis 'hearsay:some-id' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "no-declared-basis-non-genesis",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "a non-genesis event declaring no causal basis at all",
+      "detected": true,
+      "expected_problem": "not a declared genesis root",
+      "fold_refused": true,
+      "problems": [
+        "event decision-1 (DecisionEvent) declares no causal basis and its family is not a declared genesis root"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "causal-cycle",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=1",
+      "description": "two canonical events naming each other",
+      "detected": true,
+      "expected_problem": "causal cycle",
+      "fold_refused": true,
+      "problems": [
+        "causal cycle: decision-1 -> decision-2 -> decision-1"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": true
+    },
+    {
+      "case": "duplicate-event-ids",
+      "closed": true,
+      "defect_witness": "not reproducible with both checks off: duplicate event IDs in fold input",
+      "description": "the same event ID delivered twice",
+      "detected": true,
+      "expected_problem": "duplicate event IDs",
+      "fold_refused": true,
+      "problems": [
+        "duplicate event IDs: decision-1"
+      ],
+      "second_layer_alone": "rejected by the topological sort",
+      "witness_reproduces_old_behavior": false
+    },
+    {
+      "case": "store-sequence-collision",
+      "closed": true,
+      "defect_witness": "old behavior reproduced: folded, causal_violations=0",
+      "description": "two events claiming the same sequence in one store",
+      "detected": true,
+      "expected_problem": "sequence 7 used by both",
+      "fold_refused": true,
+      "problems": [
+        "store canonical sequence 7 used by both decision-1 and decision-2"
+      ],
+      "second_layer_alone": "accepted",
+      "witness_reproduces_old_behavior": true
+    }
+  ],
+  "external_basis_cases": [
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "probe-control-journal",
+      "closed": true,
+      "description": "the verifier's probe string, verbatim",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis 'control-journal:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+      ],
+      "references": [
+        "control-journal:definitely-missing"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "probe-evidence",
+      "closed": true,
+      "description": "the verifier's probe string, verbatim",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis 'evidence:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+      ],
+      "references": [
+        "evidence:definitely-missing"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "probe-provider",
+      "closed": true,
+      "description": "the verifier's probe string, verbatim",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis 'provider:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+      ],
+      "references": [
+        "provider:definitely-missing"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "probe-schedule",
+      "closed": true,
+      "description": "the verifier's probe string, verbatim",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis 'schedule:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+      ],
+      "references": [
+        "schedule:definitely-missing"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "nonexistent-object",
+      "closed": true,
+      "description": "well-formed reference to an object no manifest record names",
+      "detected": true,
+      "expected_problem": "names no record in the external manifest",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:no-such-object@v1#deadbeef01 names no record in the external manifest (1 record(s): control-journal:kill-cmd-77)"
+      ],
+      "references": [
+        "control-journal:no-such-object@v1#deadbeef01"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "wrong-version",
+      "closed": true,
+      "description": "the record exists; the reference names a different version",
+      "detected": true,
+      "expected_problem": "names version 'v2'; the manifest records 'v3'",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v2#4f1c2ab9de3057c6 names version 'v2'; the manifest records 'v3'"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v2#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "wrong-content-hash",
+      "closed": true,
+      "description": "the record exists at that version; the content hash disagrees",
+      "detected": true,
+      "expected_problem": "names content hash '0000000000000000'",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#0000000000000000 names content hash '0000000000000000'; the manifest records '4f1c2ab9de3057c6'"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#0000000000000000"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "omitted-from-frozen-manifest",
+      "closed": true,
+      "description": "the resolver knows the object; the frozen snapshot does not list it",
+      "detected": true,
+      "expected_problem": "OMITTED from the frozen external manifest",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis evidence:exec-receipt-91@v1#123456789abc is known to the resolver but is OMITTED from the frozen external manifest (1 record(s): control-journal:kill-cmd-77) — the replay is not entitled to depend on it"
+      ],
+      "references": [
+        "evidence:exec-receipt-91@v1#123456789abc"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "no-manifest-supplied",
+      "closed": true,
+      "description": "an external basis with no manifest in the fold input at all",
+      "detected": true,
+      "expected_problem": "no external manifest was supplied",
+      "fold_refused": true,
+      "manifest": "none",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 cannot be resolved: no external manifest was supplied with the fold input (P2U-02: declared is not resolvable)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "resolver-degraded",
+      "closed": true,
+      "description": "the manifest declares its resolver answered from a degraded path",
+      "detected": true,
+      "expected_problem": "external resolver is degraded",
+      "fold_refused": true,
+      "manifest": "degraded resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is degraded; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "resolver-unavailable",
+      "closed": true,
+      "description": "the manifest declares its resolver could not be reached",
+      "detected": true,
+      "expected_problem": "external resolver is unavailable",
+      "fold_refused": true,
+      "manifest": "unavailable resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is unavailable; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "tampered-manifest",
+      "closed": true,
+      "description": "a record added to the frozen snapshot after it was hash-bound",
+      "detected": true,
+      "expected_problem": "external manifest digest mismatch",
+      "fold_refused": true,
+      "manifest": "available resolver, 2 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared c7acd6bccd645d9c, contents hash to bc8a6076c84b133d — the frozen snapshot has been altered"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "unverified-record",
+      "closed": true,
+      "description": "the reference resolves to a record carrying no verification receipt",
+      "detected": true,
+      "expected_problem": "no verification receipt",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest 74b21371d07a",
+      "problems": [
+        "event decision-ext: external basis provider:obj-5@v1#aa11bb22 resolves to a record with no verification receipt — an unverified external record is not evidence"
+      ],
+      "references": [
+        "provider:obj-5@v1#aa11bb22"
+      ]
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": false,
+      "case": "undeclared-store",
+      "closed": true,
+      "description": "a well-formed reference naming a store outside the P2G-11 matrix",
+      "detected": true,
+      "expected_problem": "not a declared external store",
+      "fold_refused": true,
+      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "problems": [
+        "event decision-ext: external basis hearsay:obj-1@v1#aabbccdd names store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
+      ],
+      "references": [
+        "hearsay:obj-1@v1#aabbccdd"
+      ]
+    }
+  ],
+  "external_basis_positive": {
+    "error": null,
+    "folded": {
+      "canonical_records": 1,
+      "causal_violations": [],
+      "order": [
+        "decision-ext"
+      ]
+    },
+    "manifest_digest": "c7acd6bccd645d9c9970feb6daa34f71fea7210cbfa9e1c1f803107e45d22e5e",
+    "manifest_records": [
+      "control-journal:kill-cmd-77"
+    ],
+    "problems": [],
+    "reference": "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6",
+    "resolved_and_folded": true
+  },
+  "external_reference_grammar": "store:object-id@version#content-hash",
+  "summary": {
+    "cases": 8,
+    "closed": 8,
+    "external_accepted_by_the_prefix_check_this_replaces": 13,
+    "external_cases": 14,
+    "external_closed": 14,
+    "external_open": [],
+    "external_positive_resolves": true,
+    "open": [],
+    "production_basis_problems": {},
+    "production_combinations_validated": 81,
+    "witnesses_reproducing_old_behavior": 7
+  }
+}

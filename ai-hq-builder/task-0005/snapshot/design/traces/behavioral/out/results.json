@@ -1,0 +1,5447 @@
+{
+  "results": [
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display-only",
+        "relational": false,
+        "surface": "display-only",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S1",
+      "fold_digest": "a0ca7be03f93951a6e7fb90fde4f4f27251afc851c81712c37f58f9f6a2f8c62",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] derived-views read path -> record-only, no state written on read"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S1"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display-only",
+        "relational": false,
+        "surface": "display-only",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S1",
+      "fold_digest": "b5a4ae9c9a8eeb271a9303a900a83c608d10734955997f76adf5d2a577fc694f",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] derived-views read path -> record-only, no state written on read"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:S1/AttentionChangeEvent",
+          "case:S1/DecisionEvent",
+          "case:S1/FocusPointerEvent",
+          "case:S1/IngestionEvent",
+          "case:S1/PolicyEvaluationRecord",
+          "case:S1/PolicyVersionEvent",
+          "case:S1/WatchdogHeartbeatEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display-only",
+        "relational": false,
+        "surface": "display-only",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "WatchdogHeartbeatEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S1",
+      "fold_digest": "a0953b5fd6a2802cb46138fd5ce25de3c1f03fe0e75b3054f092b7823e0b336e",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] derived-views read path -> record-only, no state written on read"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:control-journal",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S2/S1/action-act-S2-1",
+        "S2/S1/action-act-S2-2",
+        "S2/S1/action-act-S2-3"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 15,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
+      ],
+      "executed": [
+        "S2/S1/action-act-S2-1",
+        "S2/S1/action-act-S2-2",
+        "S2/S1/action-act-S2-3"
+      ],
+      "extras": {},
+      "fixture": "S2",
+      "fold_digest": "ceed9850a6dbbafe135280e3e57b17ddbbd10b43d74982a47c8bad348705b4a0",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S2"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 15,
+        "shape": "S1"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S2/S2/action-act-S2-1",
+        "S2/S2/action-act-S2-2",
+        "S2/S2/action-act-S2-3"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 15,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
+      ],
+      "executed": [
+        "S2/S2/action-act-S2-1",
+        "S2/S2/action-act-S2-2",
+        "S2/S2/action-act-S2-3"
+      ],
+      "extras": {},
+      "fixture": "S2",
+      "fold_digest": "61fa07e23cd5974570387c005aee92e151992a34d947ba2e9d109cc93ff273cd",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 9,
+        "buckets": [
+          "case:S2/ActionRequest",
+          "case:S2/AttentionChangeEvent",
+          "case:S2/DecisionEvent",
+          "case:S2/EvidenceIngestionEvent",
+          "case:S2/IngestionEvent",
+          "case:S2/PlacementEvent",
+          "case:S2/PolicyEvaluationRecord",
+          "case:S2/PolicyVersionEvent",
+          "case:S2/ProvenanceRecord"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 15,
+        "shape": "S2"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S2/S3/action-act-S2-1",
+        "S2/S3/action-act-S2-2",
+        "S2/S3/action-act-S2-3"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 15,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ProvenanceRecord"
+      ],
+      "executed": [
+        "S2/S3/action-act-S2-1",
+        "S2/S3/action-act-S2-2",
+        "S2/S3/action-act-S2-3"
+      ],
+      "extras": {},
+      "fixture": "S2",
+      "fold_digest": "1b8f01af4ec45441c6c530c11c4a7a484a12b1c5a20ca4f53c1ddd8e38041d58",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 15,
+        "shape": "S3"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S3/S1/action-act-S3-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "S3/S1/action-act-S3-file"
+      ],
+      "extras": {},
+      "fixture": "S3",
+      "fold_digest": "80b3adda8294674280060ef463a3a8d3c3795f8923a312cbfdb26b520fc308c9",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S3"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S3/S2/action-act-S3-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "S3/S2/action-act-S3-file"
+      ],
+      "extras": {},
+      "fixture": "S3",
+      "fold_digest": "f213556e9a487d2b139587a7f6fbe42ab01c51d29c94b448795ab8ae54723e1c",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 8,
+        "buckets": [
+          "case:S3/ActionRequest",
+          "case:S3/AttentionChangeEvent",
+          "case:S3/DecisionEvent",
+          "case:S3/EvidenceIngestionEvent",
+          "case:S3/FocusPointerEvent",
+          "case:S3/IngestionEvent",
+          "case:S3/PolicyEvaluationRecord",
+          "case:S3/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S3/S3/action-act-S3-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "S3/S3/action-act-S3-file"
+      ],
+      "extras": {},
+      "fixture": "S3",
+      "fold_digest": "aa2c79182f8420aea66af4f2f9b22a5fa26a4a4446d49ccd6a7778b33c6a7407",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "OverrideEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S4",
+      "fold_digest": "c4f05d2e9211e2b33176593fb2f0ced9b6a446e07d259735e62cc90288bd9916",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S4"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "OverrideEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S4",
+      "fold_digest": "d9894561cbbe6cb66d635bf530e3f328651081505028c43263c2a1f3799edbf3",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:S4/AttentionChangeEvent",
+          "case:S4/DecisionEvent",
+          "case:S4/IngestionEvent",
+          "case:S4/OverrideEvent",
+          "case:S4/PolicyEvaluationRecord",
+          "case:S4/PolicyVersionEvent",
+          "case:S4/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "OverrideEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S4",
+      "fold_digest": "e6952a566de48a464bbe509a91978722d68f0dd72296ee07642bc27db1ce5d07",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None (brief line only)",
+        "relational": false,
+        "surface": "brief line only",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "CheckpointEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S5",
+      "fold_digest": "2b9d05637c8565a426448a6f1a23ad6035dca8825fbe172b87b82865481b5ccf",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S5"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None (brief line only)",
+        "relational": false,
+        "surface": "brief line only",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "CheckpointEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S5",
+      "fold_digest": "ca9c48ad39b1747a172bdcafe6f1399bcf0a47a6610fff983ac306ee071be25d",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:S5/AttentionChangeEvent",
+          "case:S5/CheckpointEvent",
+          "case:S5/DecisionEvent",
+          "case:S5/IngestionEvent",
+          "case:S5/PolicyEvaluationRecord",
+          "case:S5/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None (brief line only)",
+        "relational": false,
+        "surface": "brief line only",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "CheckpointEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S5",
+      "fold_digest": "ab697a51f8aefc388897a3538a64ff840a824fdeea1ed7c80d62e638992c7278",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "S6/S1/action-act-S6-deploy"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 10,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "S6/S1/action-act-S6-deploy"
+      ],
+      "extras": {},
+      "fixture": "S6",
+      "fold_digest": "8529242942cb45ebf805b308608febd6835e7d5e26181b9793c24bda215c4c32",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] step-up pending -> no external effect until satisfied (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S6"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 10,
+        "shape": "S1"
+      },
+      "tier": "T4",
+      "verified": [
+        "S6/S1/action-act-S6-deploy"
+      ]
+    },
+    {
+      "action_requests": [
+        "S6/S2/action-act-S6-deploy"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 10,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "S6/S2/action-act-S6-deploy"
+      ],
+      "extras": {},
+      "fixture": "S6",
+      "fold_digest": "2cf63f9553b1704d1f826b7010a486f88b8a26b41c811ce9d11fe5768eafb165",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] step-up pending -> no external effect until satisfied (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 9,
+        "buckets": [
+          "case:S6/ActionRequest",
+          "case:S6/AttentionChangeEvent",
+          "case:S6/DecisionEvent",
+          "case:S6/EvidenceIngestionEvent",
+          "case:S6/IngestionEvent",
+          "case:S6/PolicyEvaluationRecord",
+          "case:S6/PolicyVersionEvent",
+          "case:S6/QueueAdmissionEvent",
+          "case:S6/ReconciliationEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 10,
+        "shape": "S2"
+      },
+      "tier": "T4",
+      "verified": [
+        "S6/S2/action-act-S6-deploy"
+      ]
+    },
+    {
+      "action_requests": [
+        "S6/S3/action-act-S6-deploy"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 10,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "S6/S3/action-act-S6-deploy"
+      ],
+      "extras": {},
+      "fixture": "S6",
+      "fold_digest": "7844fe33ccb31e22f149c03b365e3fa9cd5d727b021a8b8fad6fdd48a499ec7b",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] step-up pending -> no external effect until satisfied (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 10,
+        "shape": "S3"
+      },
+      "tier": "T4",
+      "verified": [
+        "S6/S3/action-act-S6-deploy"
+      ]
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 11,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S7",
+      "fold_digest": "0b7c8ee7859f8cf62a45cbe28c976d782447769d8fd85363e50550e0520fe69e",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[2] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[3] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[4] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[5] verification-failed:sender-mismatch -> no authority, flag"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S7"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 11,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S7",
+      "fold_digest": "a837418eb1a2c5d6531878adf468f2efe5ec3a6d9cfbd024175b82712ebc6afe",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[2] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[3] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[4] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[5] verification-failed:sender-mismatch -> no authority, flag"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:S7/AttentionChangeEvent",
+          "case:S7/DecisionEvent",
+          "case:S7/IngestionEvent",
+          "case:S7/PolicyEvaluationRecord",
+          "case:S7/PolicyVersionEvent",
+          "case:S7/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 11,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S7",
+      "fold_digest": "c38ff8c292a018736671febad4e895efa4815af7cbb55c4a025317d3dc8b5fde",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[2] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[3] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[4] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[5] verification-failed:sender-mismatch -> no authority, flag"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display + one suggestion max",
+        "relational": false,
+        "surface": "one suggestion max",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AgingEvent",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S8",
+      "fold_digest": "29f45ffb4f0b1122f498510c9abf636c60329b43fcd2771a445514464ff47a45",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S8"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display + one suggestion max",
+        "relational": false,
+        "surface": "one suggestion max",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AgingEvent",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S8",
+      "fold_digest": "65fb927c10d9639bf46b545018850b295ba77eb8d99a11cd7f19f2cfa566675e",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:S8/AgingEvent",
+          "case:S8/AttentionChangeEvent",
+          "case:S8/DecisionEvent",
+          "case:S8/IngestionEvent",
+          "case:S8/PolicyEvaluationRecord",
+          "case:S8/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "display + one suggestion max",
+        "relational": false,
+        "surface": "one suggestion max",
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AgingEvent",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S8",
+      "fold_digest": "22c92ac588f4977f102d22b6f9c838aae16959d1a55d9737180d04bd0087ab6c",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecallResultEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S9",
+      "fold_digest": "bc50d552fdca5433592550465ee5956e9a6ea3119471af80b5cfdd4ff31d43bc",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[0] owner read/retrieval path -> record-only, no owner attention queued (D-B7 §2.1 Needs-Owner is queue admission; a read queues nothing)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S9"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecallResultEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S9",
+      "fold_digest": "f3fcbdc3bae58ea9724891d25ec211761c0857a442e6c8c1b0486452bd011b6d",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[0] owner read/retrieval path -> record-only, no owner attention queued (D-B7 §2.1 Needs-Owner is queue admission; a read queues nothing)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:S9/AttentionChangeEvent",
+          "case:S9/DecisionEvent",
+          "case:S9/FocusPointerEvent",
+          "case:S9/IngestionEvent",
+          "case:S9/PolicyEvaluationRecord",
+          "case:S9/PolicyVersionEvent",
+          "case:S9/RecallResultEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FocusPointerEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecallResultEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S9",
+      "fold_digest": "fc8cee3141711e8f1870cefec800e087c82e2fcc1c50db2f11572b2968f1bb02",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[0] owner read/retrieval path -> record-only, no owner attention queued (D-B7 §2.1 Needs-Owner is queue admission; a read queues nothing)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per class') instead of naming a band",
+        "raw": "per class",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FoldBackEvent",
+        "IngestionEvent",
+        "IntentEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S10",
+      "fold_digest": "8d7d9387ea058c8665969ac395288ab69ee4c99b19f8b082ff257cf0cf847150",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal, routine in-subtree filing -> T2 act-with-receipt (AUT-05, D-B6 §3 scopes the autonomy class by action class, not origin)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:S10"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per class') instead of naming a band",
+        "raw": "per class",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FoldBackEvent",
+        "IngestionEvent",
+        "IntentEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S10",
+      "fold_digest": "1decca04b05e830e68662988f2d4dbb05383bcc711bba106751faf6517b89064",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal, routine in-subtree filing -> T2 act-with-receipt (AUT-05, D-B6 §3 scopes the autonomy class by action class, not origin)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:S10/AttentionChangeEvent",
+          "case:S10/DecisionEvent",
+          "case:S10/FoldBackEvent",
+          "case:S10/IngestionEvent",
+          "case:S10/IntentEvent",
+          "case:S10/PolicyEvaluationRecord",
+          "case:S10/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per class') instead of naming a band",
+        "raw": "per class",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "FoldBackEvent",
+        "IngestionEvent",
+        "IntentEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "S10",
+      "fold_digest": "11d2b6e57456a7e437c25b8a691361a45143ff2309877c210e87617a821cc33c",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal, routine in-subtree filing -> T2 act-with-receipt (AUT-05, D-B6 §3 scopes the autonomy class by action class, not origin)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "raw": "security event",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A1",
+      "fold_digest": "2ee6232a7b34adf6ab81442666b82b7dbad6ac47fe18f5ee284ce33cda6d44a3",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] identity-binding-failed:authority-suspended (IDN-01)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A1"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "raw": "security event",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A1",
+      "fold_digest": "06fd0e9d2b0c4998e33f901f86603f4c1a71887b9ee03da5b8169c9802a2b202",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] identity-binding-failed:authority-suspended (IDN-01)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A1/AttentionChangeEvent",
+          "case:A1/DecisionEvent",
+          "case:A1/IngestionEvent",
+          "case:A1/PolicyEvaluationRecord",
+          "case:A1/PolicyVersionEvent",
+          "case:A1/QueueAdmissionEvent",
+          "case:A1/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('security event')",
+        "raw": "security event",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A1",
+      "fold_digest": "8885ca008c14f92885b8e90367b4f312d514118d434775948f8092c3afd430f0",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] identity-binding-failed:authority-suspended (IDN-01)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 9,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecordedModelOutput",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A2",
+      "fold_digest": "a3ebc41b24b3cf7993778f693af04b7e034dab3a9a13d2deccf07ac796f10f67",
+      "proposal_notes": [
+        "proposal[1] model proposal to raise ceiling refused (lower/escalate-only)"
+      ],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A2"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 9,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 9,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecordedModelOutput",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A2",
+      "fold_digest": "7dbaa56057ea886f14ad966fd2ae1a29d56b5b0f38fb95fc009f607bec12600c",
+      "proposal_notes": [
+        "proposal[1] model proposal to raise ceiling refused (lower/escalate-only)"
+      ],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A2/AttentionChangeEvent",
+          "case:A2/DecisionEvent",
+          "case:A2/IngestionEvent",
+          "case:A2/PolicyEvaluationRecord",
+          "case:A2/PolicyVersionEvent",
+          "case:A2/RecordedModelOutput",
+          "case:A2/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 9,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 9,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RecordedModelOutput",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A2",
+      "fold_digest": "74a8613653e79c7a53acd5e815e11805aa315c8f75e1495aba637bdd06822dbf",
+      "proposal_notes": [
+        "proposal[1] model proposal to raise ceiling refused (lower/escalate-only)"
+      ],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:model-output",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 9,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner (source setup)",
+        "relational": false,
+        "surface": "source setup",
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A3",
+      "fold_digest": "0f78b1c945d45f683f015b9dca5a712128251cc0eb21b702c1402a2b1a37286a",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": true,
+      "reasons": [
+        "env[0] fail-closed:unknown-mandatory-controls:origin,trust_class,instruction_authority,sensitivity_class,data_class,verification_state",
+        "env[0] source unclassifiable -> T0 quarantine + one-time T3 source-classification ask (A3 route)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A3"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner (source setup)",
+        "relational": false,
+        "surface": "source setup",
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A3",
+      "fold_digest": "a483527b8aae63ddad864338c7c850557daecf0d71f7094c665b6bff61985324",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": true,
+      "reasons": [
+        "env[0] fail-closed:unknown-mandatory-controls:origin,trust_class,instruction_authority,sensitivity_class,data_class,verification_state",
+        "env[0] source unclassifiable -> T0 quarantine + one-time T3 source-classification ask (A3 route)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A3/AttentionChangeEvent",
+          "case:A3/DecisionEvent",
+          "case:A3/IngestionEvent",
+          "case:A3/PolicyEvaluationRecord",
+          "case:A3/PolicyVersionEvent",
+          "case:A3/QueueAdmissionEvent",
+          "case:A3/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner (source setup)",
+        "relational": false,
+        "surface": "source setup",
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A3",
+      "fold_digest": "ffc3685333e01e0f9d168dd9cbe25170c5c231cd50c6c1aabdb5e727c99aaf32",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": true,
+      "reasons": [
+        "env[0] fail-closed:unknown-mandatory-controls:origin,trust_class,instruction_authority,sensitivity_class,data_class,verification_state",
+        "env[0] source unclassifiable -> T0 quarantine + one-time T3 source-classification ask (A3 route)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A4",
+      "fold_digest": "5373bd4828da5c4dc3d2dd1e3e866f6b67caf9ac5391071eb9a412ba41f482e7",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "equal-priority-contradiction:routing:tier_max:routing.filing,routing.filing",
+        "policy-composition failed closed -> no-action + T3 escalation"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A4"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S1"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A4",
+      "fold_digest": "44ed4fc28a34daee9092f2c5a5d1b0814c1cdbff9eea07cb341f1fec786e510b",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "equal-priority-contradiction:routing:tier_max:routing.filing,routing.filing",
+        "policy-composition failed closed -> no-action + T3 escalation"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:A4/AttentionChangeEvent",
+          "case:A4/DecisionEvent",
+          "case:A4/IngestionEvent",
+          "case:A4/PolicyEvaluationRecord",
+          "case:A4/PolicyVersionEvent",
+          "case:A4/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S2"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A4",
+      "fold_digest": "09071d880b334b8cdf33ee42006b4a2676be05ca5a7994c3335d54f505889ed4",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "equal-priority-contradiction:routing:tier_max:routing.filing,routing.filing",
+        "policy-composition failed closed -> no-action + T3 escalation"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S3"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A5/S1/action-act-A5-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DuplicateDeliveryEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A5/S1/action-act-A5-file"
+      ],
+      "extras": {},
+      "fixture": "A5",
+      "fold_digest": "89841aed3c450705ef9bff7d42345c6aaa995ef25b974eee3a738fff2e425750",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] signature-verified connected system, routine in-subtree filing -> T2 act-with-receipt (AUT-05, OD-2 scope)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A5"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A5/S2/action-act-A5-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DuplicateDeliveryEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A5/S2/action-act-A5-file"
+      ],
+      "extras": {},
+      "fixture": "A5",
+      "fold_digest": "07cd8b3552d17f6ec13474eec3a2f8d15ca666d16acd99a65d67d5829f3e0ac5",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] signature-verified connected system, routine in-subtree filing -> T2 act-with-receipt (AUT-05, OD-2 scope)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 8,
+        "buckets": [
+          "case:A5/ActionRequest",
+          "case:A5/AttentionChangeEvent",
+          "case:A5/DecisionEvent",
+          "case:A5/DuplicateDeliveryEvent",
+          "case:A5/EvidenceIngestionEvent",
+          "case:A5/IngestionEvent",
+          "case:A5/PolicyEvaluationRecord",
+          "case:A5/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A5/S3/action-act-A5-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DuplicateDeliveryEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A5/S3/action-act-A5-file"
+      ],
+      "extras": {},
+      "fixture": "A5",
+      "fold_digest": "c0ed7e65e6faf513cd2c4173fdf467e90f8195849256672255d6eb69564023ae",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] signature-verified connected system, routine in-subtree filing -> T2 act-with-receipt (AUT-05, OD-2 scope)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per outcome') instead of naming a band",
+        "raw": "per outcome",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "ConflictRecord",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A6",
+      "fold_digest": "b4e304dc4c044ca281909b6b643be79b0cd1a7f3ca3b6e49d09025d93a7535a1",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[1] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A6"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per outcome') instead of naming a band",
+        "raw": "per outcome",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "ConflictRecord",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A6",
+      "fold_digest": "bf75642ec94cefaa4a499b5c7391f024ea006e64100dc51a6b1c6461f6a85c3b",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[1] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A6/AttentionChangeEvent",
+          "case:A6/ConflictRecord",
+          "case:A6/DecisionEvent",
+          "case:A6/IngestionEvent",
+          "case:A6/PolicyEvaluationRecord",
+          "case:A6/PolicyVersionEvent",
+          "case:A6/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per outcome') instead of naming a band",
+        "raw": "per outcome",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "ConflictRecord",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A6",
+      "fold_digest": "8df125a444558c1ece8b7ac90708281fef21e978d24b46551608a56f1273ac42",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available",
+        "env[1] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A7/S1/accomplished-act-A7-external"
+      ],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": "unresolved",
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner if unresolved",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A7",
+      "fold_digest": "26b8e9d3029b63769904bdfba9775138c250fc527bd4318355b05599ff6619c6",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A7"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A7/S2/accomplished-act-A7-external"
+      ],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": "unresolved",
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner if unresolved",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A7",
+      "fold_digest": "9a43c65851166a6e90e7212a62fc168cc97f310c77977fc354c84c655c208847",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A7/ActionRequest",
+          "case:A7/AttentionChangeEvent",
+          "case:A7/DecisionEvent",
+          "case:A7/IngestionEvent",
+          "case:A7/PolicyEvaluationRecord",
+          "case:A7/PolicyVersionEvent",
+          "case:A7/ReconciliationEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A7/S3/accomplished-act-A7-external"
+      ],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": "unresolved",
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner if unresolved",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A7",
+      "fold_digest": "dee2bcee69ba4650880580732d15914c45e636990f89c45918370b92a2de2428",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical",
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical / Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A8",
+      "fold_digest": "e22d3851f59d7a5c26801053220d4e93cb05dcd6ab97ee13821a12cb680d0c8c",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] watchdog-confirmed system death -> critical interruption (ATT-01)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A8"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical",
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical / Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A8",
+      "fold_digest": "3e8ef9ba2f450fbd0ed094bb647f1c34571156a06cac8533a245d7f0f9f4c787",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] watchdog-confirmed system death -> critical interruption (ATT-01)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:A8/AttentionChangeEvent",
+          "case:A8/DecisionEvent",
+          "case:A8/IngestionEvent",
+          "case:A8/PolicyEvaluationRecord",
+          "case:A8/PolicyVersionEvent",
+          "case:A8/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical",
+          "briefing"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical / Briefing",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A8",
+      "fold_digest": "8dee4072b3f00a19211fbbde2a42882e2a212de6e41556eb6c2608a481818e3c",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] watchdog-confirmed system death -> critical interruption (ATT-01)",
+        "env[1] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A9/S1/action-act-A9-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "CorrectionEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A9/S1/action-act-A9-file"
+      ],
+      "extras": {},
+      "fixture": "A9",
+      "fold_digest": "c21a9a61a0abdcf05eb2cf60ec63a2c5d5ce22dabaa497402dff495d45e337d2",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A9"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A9/S2/action-act-A9-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "CorrectionEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A9/S2/action-act-A9-file"
+      ],
+      "extras": {},
+      "fixture": "A9",
+      "fold_digest": "abc1af1c4f1323e39ae2911e757d9ae95a7aa299c1f0206564b599f20317b162",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 8,
+        "buckets": [
+          "case:A9/ActionRequest",
+          "case:A9/AttentionChangeEvent",
+          "case:A9/CorrectionEvent",
+          "case:A9/DecisionEvent",
+          "case:A9/EvidenceIngestionEvent",
+          "case:A9/IngestionEvent",
+          "case:A9/PolicyEvaluationRecord",
+          "case:A9/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A9/S3/action-act-A9-file"
+      ],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "act-with-receipt",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "CorrectionEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [
+        "A9/S3/action-act-A9-file"
+      ],
+      "extras": {},
+      "fixture": "A9",
+      "fold_digest": "0e81b87bee53d8eb026404d56ffeb88b285f3640e3393ce70f2ef7a867828e63",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] owner-authored, identity-bound -> owner authority available"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T2",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "raw": "RES alarm",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DegradationEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A10",
+      "fold_digest": "cb20d359498374a4353550e6da205204c9fb100ea67153486cb8d4b81498edf9",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A10"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "raw": "RES alarm",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DegradationEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A10",
+      "fold_digest": "f98f58bd4d5e40fa3183969260b89062073f64b23b2e212b5c93106d34f1c9b1",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A10/AttentionChangeEvent",
+          "case:A10/DecisionEvent",
+          "case:A10/DegradationEvent",
+          "case:A10/IngestionEvent",
+          "case:A10/PolicyEvaluationRecord",
+          "case:A10/PolicyVersionEvent",
+          "case:A10/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "names no band in the D-B7 §2.1 vocabulary ('RES alarm')",
+        "raw": "RES alarm",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "DegradationEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A10",
+      "fold_digest": "b734ecd5274645ff3f51b2950eb01a91ee810140ab031c15fcd069a2e78c9a71",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] system-internal under standing rules -> deterministic internal handling"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing"
+      ],
+      "event_count": 5,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A11",
+      "fold_digest": "a6c51bf6e38c9e1b08c0a16d557ab4d8d1a6ce7742f982268a590a3bc0676e15",
+      "proposal_notes": [],
+      "proposals_emitted": [
+        "filing"
+      ],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A11"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 5,
+        "shape": "S1"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing"
+      ],
+      "event_count": 5,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A11",
+      "fold_digest": "661c43cf70f8886073a8d1970923124463e130f3f79fc9f922f65f56f45f55b5",
+      "proposal_notes": [],
+      "proposals_emitted": [
+        "filing"
+      ],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 5,
+        "buckets": [
+          "case:A11/AttentionChangeEvent",
+          "case:A11/DecisionEvent",
+          "case:A11/IngestionEvent",
+          "case:A11/PolicyEvaluationRecord",
+          "case:A11/PolicyVersionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 5,
+        "shape": "S2"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "briefing",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "ceiling",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "None",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing"
+      ],
+      "event_count": 5,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A11",
+      "fold_digest": "ee29c6c4297d457451d49e29b3e8411e4147a06553d255411c0ff55b28d15abe",
+      "proposal_notes": [],
+      "proposals_emitted": [
+        "filing"
+      ],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 5,
+        "shape": "S3"
+      },
+      "tier": "T1",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A12/S1/action-act-A12-pay"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 11,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "A12/S1/action-act-A12-pay"
+      ],
+      "extras": {},
+      "fixture": "A12",
+      "fold_digest": "f8678ed87d72366c2c5767dcc12b7e27a7770936b770528d29b4f8da051cf22f",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] consequential class (payment-affecting/financial-restricted) -> T4 chain",
+        "env[0] step-up required before any external effect (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A12"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S1"
+      },
+      "tier": "T4",
+      "verified": [
+        "A12/S1/action-act-A12-pay"
+      ]
+    },
+    {
+      "action_requests": [
+        "A12/S2/action-act-A12-pay"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 11,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "A12/S2/action-act-A12-pay"
+      ],
+      "extras": {},
+      "fixture": "A12",
+      "fold_digest": "4d716730c2e28ad25d86c0b1ade1a28ebf7bcd8c13ef1319664f540cce821786",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] consequential class (payment-affecting/financial-restricted) -> T4 chain",
+        "env[0] step-up required before any external effect (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 10,
+        "buckets": [
+          "case:A12/ActionRequest",
+          "case:A12/AttentionChangeEvent",
+          "case:A12/DecisionEvent",
+          "case:A12/EvidenceIngestionEvent",
+          "case:A12/IngestionEvent",
+          "case:A12/PlacementEvent",
+          "case:A12/PolicyEvaluationRecord",
+          "case:A12/PolicyVersionEvent",
+          "case:A12/QueueAdmissionEvent",
+          "case:A12/ReconciliationEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S2"
+      },
+      "tier": "T4",
+      "verified": [
+        "A12/S2/action-act-A12-pay"
+      ]
+    },
+    {
+      "action_requests": [
+        "A12/S3/action-act-A12-pay"
+      ],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "consequential-external",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 11,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "EvidenceIngestionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "ReconciliationEvent"
+      ],
+      "executed": [
+        "A12/S3/action-act-A12-pay"
+      ],
+      "extras": {},
+      "fixture": "A12",
+      "fold_digest": "3debcb67afdedf558b3a4898db05c9ed8669c22f99a7a557bd3afea884d9bc1e",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] consequential class (payment-affecting/financial-restricted) -> T4 chain",
+        "env[0] step-up required before any external effect (IDN-02)",
+        "owner step-up completed (IDN-02) -> consequential chain authorized"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:evidence",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 11,
+        "shape": "S3"
+      },
+      "tier": "T4",
+      "verified": [
+        "A12/S3/action-act-A12-pay"
+      ]
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A13",
+      "fold_digest": "a5ae2577f334ec434c6e9c269a1da24199446df1b6ce6b06f76eb83293f6a942",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] restricted data class -> masked render, owner decision (DAT-01/02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A13"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A13",
+      "fold_digest": "99dea60a4b347bd3ea65c61291d9293254239b252c443ec3d04fcd175ab59799",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] restricted data class -> masked render, owner decision (DAT-01/02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A13/AttentionChangeEvent",
+          "case:A13/DecisionEvent",
+          "case:A13/IngestionEvent",
+          "case:A13/PlacementEvent",
+          "case:A13/PolicyEvaluationRecord",
+          "case:A13/PolicyVersionEvent",
+          "case:A13/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [
+          "needs-owner"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Needs Owner",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "internal-write",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PlacementEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A13",
+      "fold_digest": "7f01edf4897a4796c1fded32a29e6901ec66a9f69f4b37d8746b15402359c844",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] restricted data class -> masked render, owner decision (DAT-01/02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "hub-update (band + flag)",
+        "conditional": null,
+        "hub_update": true,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Hub",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A14",
+      "fold_digest": "174dbe7ba6e566f746936dc978f723dddc9d6da797ffbdd17d70ae89fd98156d",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:scheduled-control-envelope-expired (SCH-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A14"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S1"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "hub-update (band + flag)",
+        "conditional": null,
+        "hub_update": true,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Hub",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A14",
+      "fold_digest": "157571453f2b614de9d19191e247b8330e57f55cc7ef14292cc03a9872347994",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:scheduled-control-envelope-expired (SCH-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:A14/AttentionChangeEvent",
+          "case:A14/DecisionEvent",
+          "case:A14/IngestionEvent",
+          "case:A14/PolicyEvaluationRecord",
+          "case:A14/PolicyVersionEvent",
+          "case:A14/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S2"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "none",
+      "attention_mapping": {
+        "bands": [
+          "none"
+        ],
+        "comparison": "hub-update (band + flag)",
+        "conditional": null,
+        "hub_update": true,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Hub",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 7,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A14",
+      "fold_digest": "457199010659ddace15b54c9089b3ebb1a5e4d187738f002d8ea8c1d06da45d3",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:scheduled-control-envelope-expired (SCH-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 7,
+        "shape": "S3"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A15/S1/inflight-act-A15-batch-1",
+        "A15/S1/inflight-act-A15-batch-2",
+        "A15/S1/inflight-act-A15-batch-3"
+      ],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical (owner-initiated)",
+        "relational": false,
+        "surface": "owner-initiated",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 13,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "KillCommandEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A15",
+      "fold_digest": "9411aa8761ae465f70c9ca3f69dd0dc2e8d02d0e92cf77b1b7627a5e35537597",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] security-critical class -> kill/revoke plane, T4",
+        "IDN-03 kill executed -> action authority revoked; emergency read-only retained (D-KR §1.2/§1.3)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A15"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 13,
+        "shape": "S1"
+      },
+      "tier": "T4",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A15/S2/inflight-act-A15-batch-1",
+        "A15/S2/inflight-act-A15-batch-2",
+        "A15/S2/inflight-act-A15-batch-3"
+      ],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical (owner-initiated)",
+        "relational": false,
+        "surface": "owner-initiated",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 13,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "KillCommandEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A15",
+      "fold_digest": "46c5719358393397b992ff6d4ab657f58ec4a06a91627ebc9d2ac71fd0d963bb",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] security-critical class -> kill/revoke plane, T4",
+        "IDN-03 kill executed -> action authority revoked; emergency read-only retained (D-KR §1.2/§1.3)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 9,
+        "buckets": [
+          "case:A15/ActionRequest",
+          "case:A15/AttentionChangeEvent",
+          "case:A15/DecisionEvent",
+          "case:A15/IngestionEvent",
+          "case:A15/KillCommandEvent",
+          "case:A15/PolicyEvaluationRecord",
+          "case:A15/PolicyVersionEvent",
+          "case:A15/QueueAdmissionEvent",
+          "case:A15/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 13,
+        "shape": "S2"
+      },
+      "tier": "T4",
+      "verified": []
+    },
+    {
+      "action_requests": [
+        "A15/S3/inflight-act-A15-batch-1",
+        "A15/S3/inflight-act-A15-batch-2",
+        "A15/S3/inflight-act-A15-batch-3"
+      ],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [
+          "critical"
+        ],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "",
+        "raw": "Critical (owner-initiated)",
+        "relational": false,
+        "surface": "owner-initiated",
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 13,
+      "event_types": [
+        "ActionRequest",
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "KillCommandEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A15",
+      "fold_digest": "d5cbed0e8373a13ae3100ac655cfba62cf989c11b049e625d673514efe767648",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] security-critical class -> kill/revoke plane, T4",
+        "IDN-03 kill executed -> action authority revoked; emergency read-only retained (D-KR §1.2/§1.3)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": true,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 4,
+        "buckets": [
+          "store:canonical",
+          "store:control-journal",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 13,
+        "shape": "S3"
+      },
+      "tier": "T4",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "raw": "per ATT-01 security assessment",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A16",
+      "fold_digest": "c7700c569629b65fdec26dae003def47f7e50fa2d74593e9580f06a7c7846c51",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:unauthorized-evidence-store-write refused (LOG-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:A16"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S1"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "raw": "per ATT-01 security assessment",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A16",
+      "fold_digest": "51029f50c836acf76af2fd33bb22fe2dfb2e5316036358b822c2c1ab5ecd0b63",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:unauthorized-evidence-store-write refused (LOG-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 7,
+        "buckets": [
+          "case:A16/AttentionChangeEvent",
+          "case:A16/DecisionEvent",
+          "case:A16/IngestionEvent",
+          "case:A16/PolicyEvaluationRecord",
+          "case:A16/PolicyVersionEvent",
+          "case:A16/QueueAdmissionEvent",
+          "case:A16/RefusalEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S2"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "critical",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "equality",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": false,
+        "rationale": "defers to another rule ('per ATT-01 security assessment') instead of naming a band",
+        "raw": "per ATT-01 security assessment",
+        "relational": false,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "none",
+      "eligible_proposal_classes": [
+        "filing",
+        "placement",
+        "summary",
+        "outbound"
+      ],
+      "event_count": 8,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent",
+        "RefusalEvent"
+      ],
+      "executed": [],
+      "extras": {},
+      "fixture": "A16",
+      "fold_digest": "2e7996bde09591dc8d487ddd0e740a31535f729fa5c2048caf555e82966ae46b",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] fail-closed:unauthorized-evidence-store-write refused (LOG-02)"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 8,
+        "shape": "S3"
+      },
+      "tier": "T0",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "relational",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "relational: the M2 path may not sit below the M1 path",
+        "raw": "same or escalated, never relaxed by M2",
+        "relational": true,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {
+        "authority_invariant": true,
+        "normalizers": {
+          "M1": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "payment-request",
+            "tier": "T3"
+          },
+          "M2": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "routine-note",
+            "tier": "T3"
+          }
+        },
+        "risk_suggestions_differ": true
+      },
+      "fixture": "E2E-1",
+      "fold_digest": "dd3d00fe2fc2e5ed8392f2e3140d55f6d7d5937fd00b7cf2dc661a5af715cd4d",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[0] financial-restricted external content -> owner decision"
+      ],
+      "receipt_violations": [],
+      "shape": "S1",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 1,
+        "buckets": [
+          "root:E2E-1"
+        ],
+        "layout": "aggregate root: append-only children under one root per case",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S1"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "relational",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "relational: the M2 path may not sit below the M1 path",
+        "raw": "same or escalated, never relaxed by M2",
+        "relational": true,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {
+        "authority_invariant": true,
+        "normalizers": {
+          "M1": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "payment-request",
+            "tier": "T3"
+          },
+          "M2": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "routine-note",
+            "tier": "T3"
+          }
+        },
+        "risk_suggestions_differ": true
+      },
+      "fixture": "E2E-1",
+      "fold_digest": "ad7234fded000328cc2f79fa32d6d01fc554889bb1501d691db7881e5b40ba42",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[0] financial-restricted external content -> owner decision"
+      ],
+      "receipt_violations": [],
+      "shape": "S2",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 6,
+        "buckets": [
+          "case:E2E-1/AttentionChangeEvent",
+          "case:E2E-1/DecisionEvent",
+          "case:E2E-1/IngestionEvent",
+          "case:E2E-1/PolicyEvaluationRecord",
+          "case:E2E-1/PolicyVersionEvent",
+          "case:E2E-1/QueueAdmissionEvent"
+        ],
+        "layout": "Decision Case linking separately-owned typed records",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S2"
+      },
+      "tier": "T3",
+      "verified": []
+    },
+    {
+      "action_requests": [],
+      "attention": "needs-owner",
+      "attention_mapping": {
+        "bands": [],
+        "comparison": "relational",
+        "conditional": null,
+        "hub_update": false,
+        "mapped": true,
+        "rationale": "relational: the M2 path may not sit below the M1 path",
+        "raw": "same or escalated, never relaxed by M2",
+        "relational": true,
+        "surface": null,
+        "unresolved": false
+      },
+      "ceiling": "record-only",
+      "eligible_proposal_classes": [],
+      "event_count": 6,
+      "event_types": [
+        "AttentionChangeEvent",
+        "DecisionEvent",
+        "IngestionEvent",
+        "PolicyEvaluationRecord",
+        "PolicyVersionEvent",
+        "QueueAdmissionEvent"
+      ],
+      "executed": [],
+      "extras": {
+        "authority_invariant": true,
+        "normalizers": {
+          "M1": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "payment-request",
+            "tier": "T3"
+          },
+          "M2": {
+            "attention": "needs-owner",
+            "ceiling": "record-only",
+            "risk_suggestion": "routine-note",
+            "tier": "T3"
+          }
+        },
+        "risk_suggestions_differ": true
+      },
+      "fixture": "E2E-1",
+      "fold_digest": "f0a88a1a0d3cc09f097ac870b6f7c8e6052a6a14c2111c9d7deb62a6146969be",
+      "proposal_notes": [],
+      "proposals_emitted": [],
+      "quarantined": false,
+      "reasons": [
+        "env[0] external-untrusted:analyzable-with-zero-instruction-authority (TRS-02)",
+        "env[0] financial-restricted external content -> owner decision"
+      ],
+      "receipt_violations": [],
+      "shape": "S3",
+      "step_up_required": false,
+      "step_up_satisfied": true,
+      "storage": {
+        "bucket_count": 3,
+        "buckets": [
+          "store:canonical",
+          "store:intake",
+          "store:policy"
+        ],
+        "layout": "independent records/events + separately materialized projections",
+        "projection_materialized": true,
+        "projection_stale": false,
+        "record_count": 6,
+        "shape": "S3"
+      },
+      "tier": "T3",
+      "verified": []
+    }
+  ],
+  "summary": {
+    "attention_compared": 66,
+    "attention_unmapped": 15,
+    "attention_unresolved": 0,
+    "attention_unresolved_fixtures": [],
+    "combinations_computed": 81,
+    "combinations_expected": 81,
+    "dimension_coverage": {
+      "attention": {
+        "compared": 66,
+        "not_applicable": 0,
+        "unmappable": 15
+      },
+      "authority": {
+        "compared": 72,
+        "not_applicable": 9,
+        "unmappable": 0
+      },
+      "receipt": {
+        "compared": 75,
+        "not_applicable": 6,
+        "unmappable": 0
+      },
+      "route": {
+        "compared": 78,
+        "not_applicable": 0,
+        "unmappable": 3
+      }
+    },
+    "dimension_floor_fixtures": {
+      "attention": 22,
+      "authority": 24,
+      "receipt": 25,
+      "route": 26
+    },
+    "divergences": 81,
+    "failures": 0,
+    "fixtures": 27,
+    "forbidden_predicates_evaluated": 171,
+    "passes": 81,
+    "shapes": 3,
+    "unclassifiable": 0
+  }
+}

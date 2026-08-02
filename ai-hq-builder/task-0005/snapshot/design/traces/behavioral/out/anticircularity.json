@@ -1,0 +1,91 @@
+{
+  "checks": [
+    {
+      "check": "A-textual",
+      "code_hits": [],
+      "doc_mentions": 20,
+      "passed": true
+    },
+    {
+      "check": "B-imports",
+      "passed": true,
+      "violations": []
+    },
+    {
+      "check": "C-structural",
+      "field_set_as_declared": true,
+      "oracle_fields_leaked": [],
+      "passed": true,
+      "stimulus_fields": [
+        "id",
+        "title",
+        "normalized_input",
+        "start_state",
+        "policy",
+        "envelopes"
+      ]
+    },
+    {
+      "check": "D-stimulus-enumeration",
+      "enumeration_block_found": true,
+      "pairs_enumerated": [
+        "A10/actions",
+        "A12/actions",
+        "A12/owner_step_up_provided",
+        "A12/verification_arrives",
+        "A5/actions",
+        "A5/placement_scope",
+        "A5/proposed_action_class",
+        "A9/actions",
+        "A9/normalized_input",
+        "A9/placement_scope",
+        "A9/proposed_action_class",
+        "A9/routine_filing",
+        "A9/start_state",
+        "S10/actions",
+        "S10/placement_scope",
+        "S10/proposed_action_class",
+        "S2/actions",
+        "S2/normalized_input",
+        "S2/placement_scope",
+        "S2/proposed_action_class",
+        "S2/routine_filing",
+        "S2/start_state",
+        "S3/actions",
+        "S3/normalized_input",
+        "S3/placement_scope",
+        "S3/proposed_action_class",
+        "S3/start_state",
+        "S6/actions",
+        "S6/owner_step_up_provided",
+        "S6/verification_arrives"
+      ],
+      "pairs_in_use": [
+        "A10/actions",
+        "A12/actions",
+        "A12/owner_step_up_provided",
+        "A12/verification_arrives",
+        "A5/actions",
+        "A5/placement_scope",
+        "A5/proposed_action_class",
+        "A9/actions",
+        "A9/placement_scope",
+        "A9/proposed_action_class",
+        "S10/placement_scope",
+        "S10/proposed_action_class",
+        "S2/actions",
+        "S2/placement_scope",
+        "S2/proposed_action_class",
+        "S3/actions",
+        "S3/placement_scope",
+        "S3/proposed_action_class",
+        "S6/actions",
+        "S6/owner_step_up_provided",
+        "S6/verification_arrives"
+      ],
+      "passed": true,
+      "unenumerated": []
+    }
+  ],
+  "passed": true
+}

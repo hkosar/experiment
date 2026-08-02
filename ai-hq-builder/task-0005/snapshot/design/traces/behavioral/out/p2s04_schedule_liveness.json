@@ -1,0 +1,92 @@
+{
+  "behaviors": [
+    {
+      "behavior": "scheduler-death-before-registration",
+      "clean": {
+        "detected": true,
+        "missed": [
+          264
+        ],
+        "now": 265,
+        "watchdog_computed_deadlines": [
+          240,
+          264
+        ]
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 1 — the spec-computed deadline fires even though the scheduler died before registering the next occurrence",
+      "defect": {
+        "detected": false,
+        "missed": [],
+        "now": 265,
+        "watchdog_computed_deadlines": [
+          240,
+          264
+        ]
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "watchdog depends on scheduler self-reports (the superseded ExpectedRun model)"
+    },
+    {
+      "behavior": "horizon-exhaustion-early-warning",
+      "clean": {
+        "detected": true,
+        "fires_before_anything_is_due": true,
+        "next_deadline": 720,
+        "now": 715,
+        "warning": "horizon exhausted: 53 ticks of cover remain, below the 168-tick minimum"
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 2 — the horizon stops being extended and the alarm fires before any run is due",
+      "defect": {
+        "detected": false,
+        "fires_before_anything_is_due": false,
+        "next_deadline": 720,
+        "now": 715,
+        "warning": null
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "horizon monitoring disabled"
+    },
+    {
+      "behavior": "versioned-schedule-change-atomic",
+      "clean": {
+        "detected": true,
+        "expectations": [
+          486
+        ],
+        "missing_new_deadlines": [],
+        "now": 479,
+        "orphaned_old_deadlines": [],
+        "version_in_force": 2
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 3 — a governed change re-registers atomically: no orphaned old deadline, no missing new one",
+      "defect": {
+        "detected": false,
+        "expectations": [],
+        "missing_new_deadlines": [
+          486
+        ],
+        "now": 479,
+        "orphaned_old_deadlines": [],
+        "version_in_force": null
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "non-atomic change (withdraw then fail to adopt)"
+    }
+  ],
+  "summary": {
+    "behaviors": 3,
+    "clock": "logical ticks only; no wall-clock read anywhere in this suite",
+    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. These three behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
+    "discriminating": 3,
+    "not_discriminating": []
+  }
+}

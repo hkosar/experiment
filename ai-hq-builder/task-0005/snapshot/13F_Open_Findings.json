@@ -1,0 +1,43 @@
+{
+  "schema": "open-findings/1",
+  "generated_by": "Fable (control plane)",
+  "note": "P2T findings remain open until the verifier's scoped re-verification closes them; corrections delivered (TASK-0004) or applied (Fable) do not close a finding.",
+  "open": [
+    {
+      "id": "P2T-01",
+      "severity": "Critical",
+      "title": "gate does not enforce the complete expected result",
+      "blocks_gate": true
+    },
+    {
+      "id": "P2T-02",
+      "severity": "High",
+      "title": "fold accepted an incomplete causal basis",
+      "blocks_gate": true
+    },
+    {
+      "id": "P2T-03",
+      "severity": "High",
+      "title": "required schedule-liveness tests were not delivered",
+      "blocks_gate": true
+    },
+    {
+      "id": "P2T-04",
+      "severity": "High",
+      "title": "normative supersession incomplete; checker too narrow",
+      "blocks_gate": true
+    },
+    {
+      "id": "P2T-05",
+      "severity": "High",
+      "title": "requirements gate internally contradictory",
+      "blocks_gate": true
+    },
+    {
+      "id": "P2T-06",
+      "severity": "Medium",
+      "title": "packet bundle not self-contained",
+      "blocks_gate": true
+    }
+  ]
+}

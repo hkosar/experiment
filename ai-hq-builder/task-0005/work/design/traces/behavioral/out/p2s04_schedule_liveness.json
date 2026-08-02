@@ -1,0 +1,352 @@
+{
+  "behaviors": [
+    {
+      "behavior": "scheduler-death-before-registration",
+      "clean": {
+        "detected": true,
+        "missed": [
+          264
+        ],
+        "now": 265,
+        "watchdog_computed_deadlines": [
+          240,
+          264
+        ]
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 1 — the spec-computed deadline fires even though the scheduler died before registering the next occurrence",
+      "defect": {
+        "detected": false,
+        "missed": [],
+        "now": 265,
+        "watchdog_computed_deadlines": [
+          240,
+          264
+        ]
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "watchdog depends on scheduler self-reports (the superseded ExpectedRun model)"
+    },
+    {
+      "behavior": "horizon-exhaustion-early-warning",
+      "clean": {
+        "detected": true,
+        "fires_before_anything_is_due": true,
+        "next_deadline": 720,
+        "now": 715,
+        "warning": "horizon exhausted: 53 ticks of cover remain for v1, below the 168-tick minimum"
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 2 — the horizon stops being extended and the alarm fires before any run is due",
+      "defect": {
+        "detected": false,
+        "fires_before_anything_is_due": false,
+        "next_deadline": 720,
+        "now": 715,
+        "warning": null
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "horizon monitoring disabled"
+    },
+    {
+      "behavior": "versioned-schedule-change-atomic",
+      "clean": {
+        "detected": true,
+        "expectations": [
+          486
+        ],
+        "horizon_after_change": {
+          "eligible_ticks": [],
+          "materialized_by_version": {
+            "1": [
+              480,
+              504,
+              528,
+              552,
+              576,
+              600
+            ],
+            "2": []
+          },
+          "retired_versions": [
+            1
+          ],
+          "version_in_force": 2
+        },
+        "horizon_before_change": {
+          "eligible_ticks": [
+            480,
+            504,
+            528,
+            552,
+            576,
+            600
+          ],
+          "materialized_by_version": {
+            "1": [
+              480,
+              504,
+              528,
+              552,
+              576,
+              600
+            ]
+          },
+          "retired_versions": [],
+          "version_in_force": 1
+        },
+        "missing_new_deadlines": [],
+        "now": 479,
+        "orphaned_old_deadlines": [],
+        "v1_ticks_still_eligible": false,
+        "v1_ticks_still_recorded": true,
+        "version_in_force": 2
+      },
+      "clean_detects": true,
+      "contract": "D-KR P2S-04 rule 3 — a governed change re-registers atomically: no orphaned old deadline, no missing new one, and the prior version's materialized ticks are retained as a record but retired as coverage",
+      "defect": {
+        "detected": false,
+        "expectations": [],
+        "horizon_after_change": {
+          "eligible_ticks": [],
+          "materialized_by_version": {
+            "1": [
+              480,
+              504,
+              528,
+              552,
+              576,
+              600
+            ]
+          },
+          "retired_versions": [],
+          "version_in_force": null
+        },
+        "horizon_before_change": {
+          "eligible_ticks": [
+            480,
+            504,
+            528,
+            552,
+            576,
+            600
+          ],
+          "materialized_by_version": {
+            "1": [
+              480,
+              504,
+              528,
+              552,
+              576,
+              600
+            ]
+          },
+          "retired_versions": [],
+          "version_in_force": 1
+        },
+        "missing_new_deadlines": [
+          486
+        ],
+        "now": 479,
+        "orphaned_old_deadlines": [],
+        "v1_ticks_still_eligible": false,
+        "v1_ticks_still_recorded": true,
+        "version_in_force": null
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "non-atomic change (withdraw then fail to adopt)"
+    },
+    {
+      "behavior": "stale-prior-version-horizon",
+      "clean": {
+        "current_spec_version": 2,
+        "detected": true,
+        "eligible_ticks": [],
+        "fires_before_anything_is_due": true,
+        "journal": [
+          "ScheduleRegistered:ritual.digest@v1",
+          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible)",
+          "ScheduleChanged:ritual.digest@v2(atomic; horizon reset at tick 936)"
+        ],
+        "materialized_by_version": {
+          "1": [
+            960,
+            984,
+            1008,
+            1032,
+            1056,
+            1080,
+            1104,
+            1128,
+            1152,
+            1176,
+            1200,
+            1224,
+            1248,
+            1272,
+            1296,
+            1320,
+            1344,
+            1368,
+            1392,
+            1416,
+            1440,
+            1464,
+            1488,
+            1512,
+            1536,
+            1560,
+            1584,
+            1608,
+            1632,
+            1656,
+            1680,
+            1704,
+            1728,
+            1752,
+            1776,
+            1800,
+            1824,
+            1848,
+            1872,
+            1896,
+            1920
+          ],
+          "2": []
+        },
+        "next_deadline": 963,
+        "now": 936,
+        "retired_versions": [
+          1
+        ],
+        "v1_cover_ticks_past_now": 984,
+        "warning": "horizon exhausted: 0 ticks of cover remain for v2, below the 168-tick minimum"
+      },
+      "clean_detects": true,
+      "contract": "P2U-03 — a v1 horizon extending far ahead cannot satisfy v2 coverage: after an atomic change the v2 horizon-exhaustion warning fires even though v1 had 40 days of cover left",
+      "defect": {
+        "current_spec_version": 2,
+        "detected": false,
+        "eligible_ticks": [
+          960,
+          984,
+          1008,
+          1032,
+          1056,
+          1080,
+          1104,
+          1128,
+          1152,
+          1176,
+          1200,
+          1224,
+          1248,
+          1272,
+          1296,
+          1320,
+          1344,
+          1368,
+          1392,
+          1416,
+          1440,
+          1464,
+          1488,
+          1512,
+          1536,
+          1560,
+          1584,
+          1608,
+          1632,
+          1656,
+          1680,
+          1704,
+          1728,
+          1752,
+          1776,
+          1800,
+          1824,
+          1848,
+          1872,
+          1896,
+          1920
+        ],
+        "fires_before_anything_is_due": false,
+        "journal": [
+          "ScheduleRegistered:ritual.digest@v1",
+          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible)",
+          "ScheduleChanged:ritual.digest@v2(atomic; horizon reset at tick 936)"
+        ],
+        "materialized_by_version": {
+          "1": [
+            960,
+            984,
+            1008,
+            1032,
+            1056,
+            1080,
+            1104,
+            1128,
+            1152,
+            1176,
+            1200,
+            1224,
+            1248,
+            1272,
+            1296,
+            1320,
+            1344,
+            1368,
+            1392,
+            1416,
+            1440,
+            1464,
+            1488,
+            1512,
+            1536,
+            1560,
+            1584,
+            1608,
+            1632,
+            1656,
+            1680,
+            1704,
+            1728,
+            1752,
+            1776,
+            1800,
+            1824,
+            1848,
+            1872,
+            1896,
+            1920
+          ],
+          "2": []
+        },
+        "next_deadline": 963,
+        "now": 936,
+        "retired_versions": [
+          1
+        ],
+        "v1_cover_ticks_past_now": 984,
+        "warning": null
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "unversioned horizon (the pre-P2U-03 reading: any materialized tick counts)"
+    }
+  ],
+  "summary": {
+    "behaviors": 4,
+    "clock": "logical ticks only; no wall-clock read anywhere in this suite",
+    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All four behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
+    "discriminating": 4,
+    "not_discriminating": []
+  }
+}
