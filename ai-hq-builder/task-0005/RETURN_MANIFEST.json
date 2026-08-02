@@ -6,6 +6,7 @@
     "outside_writable_area": 0,
     "unchanged": 30
   },
+  "cycle": "R1 (APP-07 rework)",
   "export_manifest_validation": {
     "declared": 49,
     "mismatched": 0,
@@ -39,9 +40,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 38481,
+      "bytes": 44100,
       "path": "13V_validate_design_matrix.py",
-      "sha256": "9b02509f6dae39e5a288aaf48cdf6a11da43fa6f2a36bc3f097be67ee348b830",
+      "sha256": "36c82d35486c4aefa0c114220ab47144349004db021027acfe274ae8786093b8",
       "state": "modified"
     },
     {
@@ -105,9 +106,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 23855,
+      "bytes": 26258,
       "path": "design/traces/behavioral/README.md",
-      "sha256": "07b07e5f06e6309aa2b6a933fffe78c13c2c3ad429a8caf93b768409b79d52b6",
+      "sha256": "2ae7f1905e976636620bb2e99c5e70cfd668a00de02a28b81f963bb770c8670f",
       "state": "modified"
     },
     {
@@ -129,9 +130,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 12318,
+      "bytes": 21331,
       "path": "design/traces/behavioral/external_basis.py",
-      "sha256": "3f1a020478fb74e52fac85e731eaae363230a2768bdabce74bb73d5e25c25676",
+      "sha256": "7cb734f9137f16b204d17358ed0a10bb85d709482a7cfa507aa5779d4a2a45d6",
       "state": "added"
     },
     {
@@ -173,13 +174,13 @@
     {
       "bytes": 2256,
       "path": "design/traces/behavioral/out/anticircularity.json",
-      "sha256": "5d773c8116976fbe3d00c06c001ce8669e88fe2181882ba3bee2cb2444827e56",
+      "sha256": "b5e7fc77ef7a279e0917271deb0ffb789ba7977a531e6a8cc04fdd4c1303cf13",
       "state": "modified"
     },
     {
-      "bytes": 15425,
+      "bytes": 25305,
       "path": "design/traces/behavioral/out/basis_validation.json",
-      "sha256": "5afd7cab0241b0d21a033ef9c55257e41a61c3a8230563a04b109d4f627fdf07",
+      "sha256": "55158cb2f075ddc32a081fabd77d288dc0177b30969f931e9c1bf760d30949a3",
       "state": "modified"
     },
     {
@@ -195,9 +196,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 17448,
+      "bytes": 18363,
       "path": "design/traces/behavioral/out/gate_report.json",
-      "sha256": "9689a367fe22e7813e3b96804f6550cd8a017f1f03dc9f5c6f80400ad69451cb",
+      "sha256": "bbb30127c1172961b66ac48085f0b9c0201a550922aaf2cbcd2af8bc3909038e",
       "state": "modified"
     },
     {
@@ -213,9 +214,9 @@
       "state": "modified"
     },
     {
-      "bytes": 9033,
+      "bytes": 11968,
       "path": "design/traces/behavioral/out/p2s04_schedule_liveness.json",
-      "sha256": "ffb93591ad6fa7961fd11975ce05d598ce14f4621614011727d7ed069df13452",
+      "sha256": "8fae2ef9d85ef3c7838305d47d1546039e313bdd662b911cd77539f14747f528",
       "state": "modified"
     },
     {
@@ -255,9 +256,9 @@
       "state": "modified"
     },
     {
-      "bytes": 22187,
+      "bytes": 35565,
       "path": "design/traces/behavioral/run_basis.py",
-      "sha256": "ed45baea35815b8d3bf505d4fa7cdea0d9779319206ecdd3f35e5cc8a9a158e4",
+      "sha256": "910ba3c263781c400239dde5e7b362ac5639f0daf03373382e4eda1fcb1fe851",
       "state": "modified"
     },
     {
@@ -273,9 +274,9 @@
       "state": "modified"
     },
     {
-      "bytes": 25499,
+      "bytes": 26242,
       "path": "design/traces/behavioral/run_gate.py",
-      "sha256": "87559f13a881414a15cda76933bfc8fc918ffa100c5555fd6b1f296f8d76c20e",
+      "sha256": "441132f55c38420a6a551fc74578fbc66784571bf0cc94da9370de1a371e3acd",
       "state": "modified"
     },
     {
@@ -285,9 +286,9 @@
       "state": "modified"
     },
     {
-      "bytes": 25160,
+      "bytes": 34636,
       "path": "design/traces/behavioral/run_p2s04.py",
-      "sha256": "3f0eb1e7c4de0f81d6cf0ed6bf7dac6099b93bf33e7d52b8c2d37d27ad7a300e",
+      "sha256": "1fb2a9672dacf8703354e41835f9ca81e53c409e8a4066d442b3a9c18652a5e8",
       "state": "modified"
     },
     {
@@ -321,13 +322,17 @@
       "state": "unchanged"
     }
   ],
+  "governing_findings_not_held": [
+    "35_",
+    "35A_",
+    "36_"
+  ],
   "instruction_authority": [
     "34_TASK0005_Task_Packet_P2U_Corrections.md",
-    "32_Verifier_Scoped_Reverification_P2T_Packet4.md",
-    "32A_Verifier_Probe_Evidence_P2T_Packet4.json",
-    "33_P2U_Dispositions.md"
+    "37_TASK0005_Rework_Packet_R1.md"
   ],
   "produced_by": "Builder (Claude Code)",
+  "returned_to": "Fable (not the verifier) — per 37_ sequencing",
   "source_snapshot_zip_sha256": "06e8bc97c8031724c5e82a29bd777cc691d880a4e3bc320a15780d4285ab79f9",
   "task": "TASK-0005",
   "writable_area": [

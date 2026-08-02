@@ -31,7 +31,7 @@ python3 run_oracle_mutations.py     # P2T-01 — every expected dimension shown 
 python3 run_basis.py                # P2T-02 — incomplete causal basis fails closed;
                                     # P2U-02 — every external basis must resolve
 python3 run_p2s04.py                # P2T-03 — schedule-liveness suite (harness self-test);
-                                    # P2U-03 — version-bound horizons
+                                    # P2U-03 version-bound horizons; P2V-04 permanent retirement
 ```
 
 Two more validators live one level up, outside this directory:
@@ -40,8 +40,9 @@ Two more validators live one level up, outside this directory:
 python3 ../check_supersessions.py              # P2T-04 — patterns derived from D-SM at runtime
 python3 ../check_supersessions.py --self-test  #          seeded violations must fail
 python3 ../../../13V_validate_design_matrix.py --self-test   # P2T-05 summary/finding checks,
-                                    # P2U-05 global open-finding gate, and an end-to-end probe
-                                    # that runs --final-gate as a subprocess against synthetic repos
+                                    # P2U-05 global open-finding gate, an end-to-end probe that runs
+                                    # --final-gate as a subprocess against synthetic repos, and the
+                                    # P2V-01 cases proving no argv can switch that gate off
 ```
 
 Fixture-driven runners default to `--fixtures ../../../03F_Replay_Fixtures.json`
@@ -263,6 +264,35 @@ add no mechanism, so it is listed rather than re-driven.
   the specific sub-Needs-Owner band is not, per the `27_` ruling), and 7 have no
   same-kind alternative anywhere in a 27-row corpus. An undeclared value-blind pair
   fails the run, and so does a coarsened declaration that has stopped being true.
+- **The external-basis contract was corrected twice.** TASK-0005 replaced a store-
+  prefix check; R1 replaced three holes in the replacement, each the same shape as
+  the finding it was meant to close — a control that names a thing without
+  establishing it. `verification_receipt` was any nonempty string, so a record could
+  attest to itself with the word "verified"; it is now a reference in the same
+  grammar that must resolve to a registered record at a matching version and hash,
+  with self-reference and mutual-attestation cycles refused. The manifest digest
+  covered `records` only, so `resolver_state` — the control that fails every
+  reference closed when the resolver is unreachable — could be edited from
+  `unavailable` to `available` under a still-valid binding; the digest now binds
+  every field in `DIGEST_BOUND_FIELDS`, and a mechanical guard fails any manifest
+  whose dataclass carries a field in neither that list nor the exempt list.
+  Duplicate `store:object_id` identities were accepted and `lookup()` answered with
+  whichever came first; they fail the manifest now. **Eight of the 22 section-B
+  cases were accepted by the TASK-0005 contract** and are labelled as this cycle's
+  witnesses in the shipped output.
+- **No argv disables the final gate (P2V-01).** The first correction for P2U-05
+  shipped with a `--p2u05-defect-witness` flag that turned the new global check off,
+  so `--final-gate --p2u05-defect-witness` returned 0 with six blocking findings
+  open. The counterfactual was worth having; putting it on the gate command was not.
+  The flag is deleted, the counterfactual is built by eliding the check from a
+  throwaway copy of the file in a temp directory, and `--self-test` runs the real
+  command with that flag and three other plausible disable spellings and requires
+  exit 1 for each.
+- **Schedule retirement is permanent (P2V-04).** Version-binding the horizon left
+  the retired version's ticks in place under their version key, so changing back to
+  a retired version reinstated 41 stale ticks and silenced the exhaustion warning.
+  A retired version can no longer re-enter force; `reactivate()` mints a version
+  number that has never been used, with an empty horizon.
 - **An external basis must RESOLVE, not merely be declared.** Until TASK-0005 the
   fold checked only that an `external_basis` string began with one of four store
   names, so `control-journal:definitely-missing` on a DecisionEvent with no
@@ -347,8 +377,8 @@ the runner fails if any mutation witnesses no predicate and no judge check.
 | `out/p2s07_eligibility.json` | negative and positive eligibility tests |
 | `out/anticircularity.json` | the three-way boundary proof |
 | `out/oracle_mutations.json` | P2T-01/P2U-01 — verifier probes defeated, sentinel + contradictory + same-kind corruption per fixture-dimension pair, and the restored-defect witness |
-| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02 external-basis resolution cases + the positive case |
-| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03 — the four schedule-liveness behaviors and their targeted defects |
+| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V-02/P2V-03 external-basis resolution cases + the positive case + the digest-enumeration guard |
+| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04 — the five schedule-liveness behaviors and their targeted defects |
 | `out/gate_report.json` | acceptance-criteria table |
 
 ## Scope and limits

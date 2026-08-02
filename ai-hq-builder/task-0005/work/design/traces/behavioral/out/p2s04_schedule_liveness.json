@@ -171,7 +171,7 @@
         "fires_before_anything_is_due": true,
         "journal": [
           "ScheduleRegistered:ritual.digest@v1",
-          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible)",
+          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible, permanently)",
           "ScheduleChanged:ritual.digest@v2(atomic; horizon reset at tick 936)"
         ],
         "materialized_by_version": {
@@ -279,7 +279,7 @@
         "fires_before_anything_is_due": false,
         "journal": [
           "ScheduleRegistered:ritual.digest@v1",
-          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible)",
+          "HorizonRetired:ritual.digest@v1(41 materialized tick(s) now ineligible, permanently)",
           "ScheduleChanged:ritual.digest@v2(atomic; horizon reset at tick 936)"
         ],
         "materialized_by_version": {
@@ -340,13 +340,64 @@
       "discriminates": true,
       "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
       "targeted_defect": "unversioned horizon (the pre-P2U-03 reading: any materialized tick counts)"
+    },
+    {
+      "behavior": "retired-version-cannot-re-enter-force",
+      "clean": {
+        "detected": true,
+        "eligible_ticks_after_reentry_attempt": 0,
+        "journal": [
+          "ScheduleRegistered:ritual.brief@v1",
+          "HorizonRetired:ritual.brief@v1(41 materialized tick(s) now ineligible, permanently)",
+          "ScheduleChanged:ritual.brief@v2(atomic; horizon reset at tick 936)",
+          "ScheduleChangeRefused:ritual.brief@v1(version retired at an earlier change; its horizon has 41 stale tick(s) and cannot answer for the schedule again — use reactivate())",
+          "ScheduleReactivated:ritual.brief@v3(fresh version, empty horizon, at tick 936)",
+          "HorizonRetired:ritual.brief@v2(0 materialized tick(s) now ineligible, permanently)",
+          "ScheduleChanged:ritual.brief@v3(atomic; horizon reset at tick 936)"
+        ],
+        "now": 936,
+        "reactivated_eligible_ticks": 0,
+        "reactivated_version": 3,
+        "reactivated_warning_fires": true,
+        "reentry_accepted": false,
+        "version_in_force_after_reentry_attempt": 2,
+        "warning_after_reentry_attempt": "horizon exhausted: 0 ticks of cover remain for v2, below the 168-tick minimum",
+        "warning_at_v2": "horizon exhausted: 0 ticks of cover remain for v2, below the 168-tick minimum"
+      },
+      "clean_detects": true,
+      "contract": "P2V-04 — retirement is permanent: changing back to a retired version is refused, its stale horizon never becomes eligible again, and reactivation mints a fresh version with an empty horizon",
+      "defect": {
+        "detected": false,
+        "eligible_ticks_after_reentry_attempt": 41,
+        "journal": [
+          "ScheduleRegistered:ritual.brief@v1",
+          "HorizonRetired:ritual.brief@v1(41 materialized tick(s) now ineligible, permanently)",
+          "ScheduleChanged:ritual.brief@v2(atomic; horizon reset at tick 936)",
+          "HorizonRetired:ritual.brief@v2(0 materialized tick(s) now ineligible, permanently)",
+          "ScheduleChanged:ritual.brief@v1(atomic; horizon reset at tick 936)",
+          "ScheduleReactivated:ritual.brief@v3(fresh version, empty horizon, at tick 936)",
+          "ScheduleChanged:ritual.brief@v3(atomic; horizon reset at tick 936)"
+        ],
+        "now": 936,
+        "reactivated_eligible_ticks": 0,
+        "reactivated_version": 3,
+        "reactivated_warning_fires": true,
+        "reentry_accepted": true,
+        "version_in_force_after_reentry_attempt": 1,
+        "warning_after_reentry_attempt": null,
+        "warning_at_v2": "horizon exhausted: 0 ticks of cover remain for v2, below the 168-tick minimum"
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "retirement lapses when the version leaves force (the pre-P2V-04 reading)"
     }
   ],
   "summary": {
-    "behaviors": 4,
+    "behaviors": 5,
     "clock": "logical ticks only; no wall-clock read anywhere in this suite",
-    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All four behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
-    "discriminating": 4,
+    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All five behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
+    "discriminating": 5,
     "not_discriminating": []
   }
 }

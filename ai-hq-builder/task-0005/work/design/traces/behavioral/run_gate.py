@@ -348,23 +348,32 @@ def main(argv: List[str]) -> int:
         # single green line covering both is how the second one stayed open.
         ("18b every declared external basis resolves or the case fails closed",
          basis["summary"]["external_closed"] == basis["summary"]["external_cases"]
-         and bool(basis["summary"]["external_positive_resolves"]),
-         "%d/%d external-basis cases fail closed (the verifier's 4 probe strings, "
+         and bool(basis["summary"]["external_positive_resolves"])
+         and bool(basis["summary"]["digest_enumeration_guard_discriminates"]),
+         "%d/%d external-basis cases fail closed (the verifier's 4 probe strings; "
          "nonexistent object, wrong version, wrong content hash, omission from the "
          "frozen manifest, no manifest supplied, degraded and unavailable resolver, "
-         "tampered manifest digest, unverified record, undeclared store); %d of them "
-         "were accepted by the prefix check this replaces; the resolvable reference "
-         "folds"
+         "tampered manifest digest, unverified record, undeclared store; and the "
+         "R1 additions — receipt as an arbitrary string, unregistered receipt, "
+         "receipt version and hash mismatch, self-referential and mutual receipt "
+         "cycles, resolver_state edited under a valid digest, duplicate record "
+         "identity). %d were accepted by the prefix check TASK-0005 replaced and %d "
+         "by the TASK-0005 contract this rework replaces. The resolvable reference "
+         "folds; the digest-field enumeration guard is shown failing under a dropped "
+         "field and a stale name"
          % (basis["summary"]["external_closed"], basis["summary"]["external_cases"],
-            basis["summary"]["external_accepted_by_the_prefix_check_this_replaces"])),
-        ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. P2U-03 stale "
-         "prior-version horizon)",
+            basis["summary"]["external_accepted_by_the_prefix_check_this_replaces"],
+            len(basis["summary"][
+                "external_accepted_by_the_p2u_contract_this_rework_replaces"]))),
+        ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03 stale "
+         "horizon and P2V-04 retired-version probes)",
          sched["summary"]["discriminating"] == sched["summary"]["behaviors"],
          "%d/%d behaviors discriminate under their targeted defect "
          "(scheduler death before registration; horizon exhaustion; atomic "
-         "versioned change, now inspecting the watchdog's own horizon state; and "
-         "the verifier's P2U-03 probe — a v1 horizon 40 days ahead cannot suppress "
-         "the v2 exhaustion warning)"
+         "versioned change, now inspecting the watchdog's own horizon state; the "
+         "P2U-03 probe — a v1 horizon 40 days ahead cannot suppress the v2 "
+         "exhaustion warning; and the P2V-04 probe — a retired version cannot "
+         "re-enter force and reinstate its stale horizon)"
          % (sched["summary"]["discriminating"], sched["summary"]["behaviors"])),
     ]
 

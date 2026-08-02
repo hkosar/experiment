@@ -42,6 +42,19 @@ the new spec, and `horizon_exhausted()` counts only entries materialized under t
 version currently in force. Behavior 4 is the verifier's probe, and behavior 3 now
 inspects `expected_runs` rather than re-deriving it.
 
+P2V-04 — WHAT THE VERSION-BINDING STILL MISSED. Retiring a version made its horizon
+ineligible while that version was out of force, and left the materialized ticks in
+place under their version key. Changing BACK to a retired version therefore reinstated
+its entire pre-retirement horizon: v1's 41 ticks became eligible again, none of them
+extended since before the first change, and the exhaustion warning went quiet. A
+schedule changed away from and back was covered by a horizon nobody had touched.
+
+Retirement is permanent now. `change_schedule()` refuses a spec whose version has been
+retired and adopts nothing; `register()` refuses one too. The legitimate need — an
+owner reinstating a schedule — is `reactivate()`, which mints a version number that has
+never been in force and an empty horizon the scheduler must extend. Behavior 5 is the
+probe, with `retired_versions_can_return` as its targeted defect.
+
 THIS IS A HARNESS SELF-TEST, NOT A FIXTURE, and is labelled as one everywhere it is
 reported — the same standing as the D-B5 degradation self-test (`run_defects.py`
 layer E). No corpus fixture carries a recurring schedule at all: A14 is a single
@@ -97,7 +110,7 @@ class RecurrenceSpec:
 class Watchdog:
     """The control-service watchdog. Holds specs; computes its own expectations.
 
-    Three TARGETED DEFECT switches, one per behavior that needs one:
+    Five TARGETED DEFECT switches, one per behavior that needs one:
       `depends_on_scheduler_reports`  behavior 1 — the superseded model in which the
                                       watchdog only knew about occurrences the
                                       scheduler announced.
@@ -106,6 +119,9 @@ class Watchdog:
       `version_bound_horizon`         behavior 4 (P2U-03) — the horizon read as one
                                       unversioned list, so a retired version's
                                       coverage answers for the current one.
+      `retired_versions_can_return`   behavior 5 (P2V-04) — retirement lapses when
+                                      the version leaves force, so changing back
+                                      reinstates its pre-retirement horizon.
 
     `expected_runs` is keyed schedule -> VERSION -> materialized ticks. It was
     `schedule -> ticks` and that single missing key is the whole of P2U-03: the ticks
@@ -121,15 +137,46 @@ class Watchdog:
     horizon_monitoring: bool = True
     atomic_schedule_change: bool = True
     version_bound_horizon: bool = True
+    retired_versions_can_return: bool = False
     journal: List[str] = field(default_factory=list)
 
     # --- governed registration (SCH-01 versioned) --------------------------
-    def register(self, spec: RecurrenceSpec) -> None:
+    def is_retired(self, schedule_id: str, version: int) -> bool:
+        if self.retired_versions_can_return:
+            # TARGETED DEFECT for behavior 5: retirement lapses the moment the
+            # version is out of force, so changing back to it reinstates the horizon
+            # it held before it was retired. This is the P2V-04 behavior, reproduced
+            # through the one predicate that decides it.
+            return False
+        return version in self.retired_versions.get(schedule_id, [])
+
+    def next_version(self, schedule_id: str) -> int:
+        """One past the highest version this schedule has ever held.
+
+        Drawn from every version the watchdog has SEEN — live spec, materialized
+        horizons and the retired list — not from the live spec alone, so a mint can
+        never collide with a version that has already been in force and retired.
+        """
+        seen = [0]
+        spec = self.specs.get(schedule_id)
+        if spec is not None:
+            seen.append(spec.version)
+        seen.extend(self.expected_runs.get(schedule_id, {}))
+        seen.extend(self.retired_versions.get(schedule_id, []))
+        return max(seen) + 1
+
+    def register(self, spec: RecurrenceSpec) -> bool:
+        if self.is_retired(spec.schedule_id, spec.version):
+            self.journal.append(
+                "ScheduleRegistrationRefused:%s@v%d(version is retired)"
+                % (spec.schedule_id, spec.version))
+            return False
         self.specs[spec.schedule_id] = spec
         self.expected_runs.setdefault(spec.schedule_id, {}).setdefault(spec.version, [])
         self.journal.append("ScheduleRegistered:%s@v%d" % (spec.schedule_id, spec.version))
+        return True
 
-    def change_schedule(self, spec: RecurrenceSpec, now: int) -> None:
+    def change_schedule(self, spec: RecurrenceSpec, now: int) -> bool:
         """A governed change re-registers the spec ATOMICALLY with the watchdog.
 
         The non-atomic defect drops the old expectation before adopting the new one,
@@ -137,28 +184,71 @@ class Watchdog:
 
         P2U-03: the same transaction that adopts the new spec RETIRES every
         prior-version horizon entry and establishes the new version's horizon state —
-        empty, because the scheduler has not extended it yet. Both legs land together
-        or neither does; a change that adopted the spec and left the old horizon
-        eligible is the state the verifier found, and it is no longer reachable
-        through this method.
+        empty, because the scheduler has not extended it yet.
+
+        P2V-04: retirement is now PERMANENT, and that is the correction. Retiring a
+        version made its horizon ineligible while the version was out of force, and
+        left the ticks in place under their version key. Changing BACK to that
+        version therefore reinstated its entire pre-retirement horizon — the v1 ticks
+        became eligible again, all 41 of them, and the exhaustion warning went quiet.
+        A schedule that had been changed away from and back was covered by a horizon
+        nobody had extended since before the first change.
+
+        A retired version cannot re-enter force. Reactivating an old recurrence is
+        `reactivate()`, which mints a version number that has never been used and a
+        horizon the scheduler has to extend before anything counts as covered.
+        Returns False and adopts nothing when the change is refused.
         """
         if not self.atomic_schedule_change:
             self.specs.pop(spec.schedule_id, None)
             self.journal.append("ScheduleWithdrawn:%s" % spec.schedule_id)
             # ... and the adoption never lands (the race the rule forbids).
-            return
+            return False
+
+        if self.is_retired(spec.schedule_id, spec.version):
+            self.journal.append(
+                "ScheduleChangeRefused:%s@v%d(version retired at an earlier change; "
+                "its horizon has %d stale tick(s) and cannot answer for the schedule "
+                "again — use reactivate())"
+                % (spec.schedule_id, spec.version,
+                   len(self.expected_runs.get(spec.schedule_id, {}).get(
+                       spec.version, []))))
+            return False
 
         horizons = self.expected_runs.setdefault(spec.schedule_id, {})
-        superseded = sorted(v for v in horizons if v != spec.version)
+        # Already-retired versions are skipped rather than re-appended: retirement is
+        # permanent, so retiring twice would double the journal line and leave
+        # `retired_versions` carrying a version more than once.
+        superseded = sorted(v for v in horizons
+                            if v != spec.version
+                            and v not in self.retired_versions.get(spec.schedule_id, []))
         self.specs[spec.schedule_id] = spec
         for version in superseded:
             self.retired_versions.setdefault(spec.schedule_id, []).append(version)
             self.journal.append(
-                "HorizonRetired:%s@v%d(%d materialized tick(s) now ineligible)"
-                % (spec.schedule_id, version, len(horizons[version])))
+                "HorizonRetired:%s@v%d(%d materialized tick(s) now ineligible, "
+                "permanently)" % (spec.schedule_id, version, len(horizons[version])))
         horizons.setdefault(spec.version, [])
         self.journal.append("ScheduleChanged:%s@v%d(atomic; horizon reset at tick %d)"
                             % (spec.schedule_id, spec.version, now))
+        return True
+
+    def reactivate(self, schedule_id: str, first_due: int, period: int,
+                   now: int) -> RecurrenceSpec:
+        """Bring a retired recurrence back under a FRESH version and empty horizon.
+
+        The legitimate need behind P2V-04 — an owner reinstating a schedule that was
+        changed away from — is served here rather than by letting an old version back
+        in. The returned spec carries a version number that has never been in force,
+        so it has no horizon of its own and the scheduler must extend one before the
+        watchdog treats the schedule as covered.
+        """
+        spec = RecurrenceSpec(schedule_id, self.next_version(schedule_id),
+                              first_due=first_due, period=period)
+        self.journal.append("ScheduleReactivated:%s@v%d(fresh version, empty horizon, "
+                            "at tick %d)" % (schedule_id, spec.version, now))
+        self.change_schedule(spec, now=now)
+        return spec
 
     # --- the scheduler's side ----------------------------------------------
     def scheduler_completes_run(self, schedule_id: str, at: int) -> None:
@@ -348,6 +438,58 @@ def behavior_stale_horizon(defect: bool) -> Dict[str, object]:
             "journal": list(wd.journal)}
 
 
+def behavior_retired_version_reentry(defect: bool) -> Dict[str, object]:
+    """5 — the P2V-04 probe: a retired version cannot re-enter force.
+
+        1. Register v1 and materialize its horizon far into the future.
+        2. Atomically change to v2 — v1's horizon is retired.
+        3. Change BACK to v1.
+
+    Under the defect the change is adopted and v1's pre-retirement horizon becomes
+    eligible again — 41 ticks nobody has extended since before step 2, and the
+    exhaustion warning goes quiet. The correction refuses the change and leaves v2 in
+    force with its own (empty) horizon, so the warning stays up; `reactivate()` is
+    the supported way back, and it mints v3 with nothing materialized.
+
+    The defect switch is `retired_versions_can_return`, which is read only by
+    `is_retired`, so the seeded run reproduces the previous behavior exactly rather
+    than approximating it.
+    """
+    v1 = RecurrenceSpec("ritual.brief", 1, first_due=40 * DAY, period=DAY)
+    v2 = RecurrenceSpec("ritual.brief", 2, first_due=40 * DAY + 3, period=DAY)
+    wd = Watchdog(retired_versions_can_return=defect)
+    wd.register(v1)
+    wd.scheduler_extends_horizon("ritual.brief", through=80 * DAY)
+    now = 39 * DAY
+    wd.change_schedule(v2, now=now)
+    warning_at_v2 = wd.horizon_exhausted("ritual.brief", now)
+
+    accepted = wd.change_schedule(v1, now=now)      # back to the RETIRED version
+    state = wd.horizon_state("ritual.brief")
+    warning_after = wd.horizon_exhausted("ritual.brief", now)
+
+    reactivated = wd.reactivate("ritual.brief", first_due=41 * DAY, period=DAY, now=now)
+    after_reactivation = wd.horizon_state("ritual.brief")
+
+    return {
+        "now": now,
+        "warning_at_v2": warning_at_v2,
+        "reentry_accepted": accepted,
+        "version_in_force_after_reentry_attempt": state["version_in_force"],
+        "eligible_ticks_after_reentry_attempt": len(state["eligible_ticks"]),
+        "warning_after_reentry_attempt": warning_after,
+        "reactivated_version": reactivated.version,
+        "reactivated_eligible_ticks": len(after_reactivation["eligible_ticks"]),
+        "reactivated_warning_fires":
+            wd.horizon_exhausted("ritual.brief", now) is not None,
+        # The claim: a retired version never comes back into force, so a stale
+        # horizon can never answer for the schedule again.
+        "detected": (not accepted and state["version_in_force"] == 2
+                     and not state["eligible_ticks"] and warning_after is not None),
+        "journal": list(wd.journal),
+    }
+
+
 BEHAVIORS = [
     ("scheduler-death-before-registration",
      "D-KR P2S-04 rule 1 — the spec-computed deadline fires even though the "
@@ -371,6 +513,12 @@ BEHAVIORS = [
      "days of cover left",
      "unversioned horizon (the pre-P2U-03 reading: any materialized tick counts)",
      behavior_stale_horizon),
+    ("retired-version-cannot-re-enter-force",
+     "P2V-04 — retirement is permanent: changing back to a retired version is "
+     "refused, its stale horizon never becomes eligible again, and reactivation "
+     "mints a fresh version with an empty horizon",
+     "retirement lapses when the version leaves force (the pre-P2V-04 reading)",
+     behavior_retired_version_reentry),
 ]
 
 
@@ -398,7 +546,7 @@ def run(out_dir: str) -> Dict[str, object]:
             "not_discriminating": [r["behavior"] for r in rows if not r["discriminates"]],
             "corpus_limitation":
                 "No corpus fixture carries a recurring schedule: A14 is a single "
-                "expired control envelope. All four behaviors have NO fixture-driven "
+                "expired control envelope. All five behaviors have NO fixture-driven "
                 "coverage and none is claimed — this suite is the only place they "
                 "are exercised.",
             "clock": "logical ticks only; no wall-clock read anywhere in this suite",
@@ -454,6 +602,27 @@ def main(argv: List[str]) -> int:
             print("     v1 ticks still recorded %s, still eligible %s"
                   % (r["clean"]["v1_ticks_still_recorded"],
                      r["clean"]["v1_ticks_still_eligible"]))
+        elif r["behavior"].startswith("retired-version"):
+            c, d = r["clean"], r["defect"]
+            print("     the P2V-04 probe: v1 horizon materialized, change to v2, "
+                  "then change BACK to v1")
+            print("     %-30s %-24s %s" % ("", "PERMANENT (clean)", "LAPSING (defect)"))
+            for label, key in (("re-entry accepted", "reentry_accepted"),
+                               ("version in force after",
+                                "version_in_force_after_reentry_attempt"),
+                               ("eligible ticks after",
+                                "eligible_ticks_after_reentry_attempt")):
+                print("     %-30s %-24s %s" % (label, c[key], d[key]))
+            print("     %-30s %-24s %s"
+                  % ("horizon warning after",
+                     (c["warning_after_reentry_attempt"] or "None")[:22],
+                     (d["warning_after_reentry_attempt"] or "None")[:22]))
+            print("     reactivate() minted v%s with %d eligible tick(s); warning "
+                  "still up: %s" % (c["reactivated_version"],
+                                    c["reactivated_eligible_ticks"],
+                                    c["reactivated_warning_fires"]))
+            for entry in c["journal"]:
+                print("       journal: %s" % entry)
         else:
             c, d = r["clean"], r["defect"]
             print("     the verifier's probe: v1 horizon materialized, atomic change "

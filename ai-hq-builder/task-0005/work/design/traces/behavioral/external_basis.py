@@ -55,6 +55,32 @@ and one more the verifier's list implies rather than states:
 
     unverified              the record carries no verification receipt.
 
+WHAT THE FIRST VERSION OF THIS MODULE STILL GOT WRONG (P2V-02, P2V-03). Three holes,
+all of the same shape as the finding it was written to close — a control that names a
+thing without establishing it.
+
+  P2V-02  `verification_receipt` was tested with `if not record.verification_receipt`.
+          Any nonempty string satisfied it. A record could attest to itself with the
+          word "yes". The receipt is now a REFERENCE in the same grammar, and it must
+          resolve to a registered record in the same hash-bound manifest: exists,
+          version matches, content hash matches. Self-reference and receipt cycles
+          fail closed, and the chain is depth-bounded.
+
+  P2V-03a `computed_digest()` hashed `records` and nothing else, so `resolver_state`
+          was outside the binding. Flipping a manifest from `unavailable` to
+          `available` left its declared digest valid, and the fail-closed resolver
+          state — the control that refuses every reference when the resolver cannot
+          be reached — could be edited away without detection. The digest now binds
+          every field in `DIGEST_BOUND_FIELDS`, and `_check_digest_field_coverage()`
+          fails if any dataclass field is neither bound nor explicitly declared
+          non-binding, so a field added later cannot quietly escape the digest.
+
+  P2V-03b Two records could share one `store:object_id`. `lookup()` returned the
+          first, so which record answered for an identity depended on tuple order —
+          and a second record with the same identity, a different version and a
+          different hash sat in the manifest unmentioned. Duplicate identities now
+          fail the manifest's integrity check before any reference consults it.
+
 ENGINE-SIDE MODULE. Registered in `check_anticircularity.ENGINE_MODULES`; reads no
 oracle data and imports nothing oracle-side.
 """
@@ -76,6 +102,22 @@ RESOLVER_STATES: Tuple[str, ...] = (RESOLVER_AVAILABLE, RESOLVER_DEGRADED,
                                     RESOLVER_UNAVAILABLE)
 
 REFERENCE_GRAMMAR = "store:object-id@version#content-hash"
+
+# P2V-03 — every security-relevant control field the manifest digest binds, named.
+# `records` is the payload; the other two are CONTROLS, and leaving a control outside
+# the binding is what made a `resolver_state` edit undetectable.
+DIGEST_BOUND_FIELDS: Tuple[str, ...] = ("records", "resolver_known_ids",
+                                        "resolver_state")
+# Fields deliberately outside the digest, each with the reason it cannot be inside.
+DIGEST_EXEMPT_FIELDS: Dict[str, str] = {
+    "declared_digest": "the digest itself — hashing it would be circular, and it is "
+                       "the value the other fields are checked against",
+}
+
+# Receipt chains are followed to prove the attestation is registered, not to build a
+# trust hierarchy. Two records vouching for each other is a cycle and fails closed;
+# the bound stops a long chain from becoming a way to spend the validator's time.
+MAX_RECEIPT_CHAIN = 8
 
 # store:object@version#hash — every part required, none empty. Deliberately strict:
 # a permissive grammar here would re-create the defect one layer down, because a
@@ -146,9 +188,27 @@ class ExternalManifest:
     declared_digest: Optional[str] = None
 
     def computed_digest(self) -> str:
-        blob = json.dumps([r.as_row() for r in
-                           sorted(self.records, key=lambda r: (r.store, r.object_id))],
-                          sort_keys=True, separators=(",", ":"))
+        """Hash over EVERY digest-bound field, in a declared order (P2V-03).
+
+        This hashed `records` alone. `resolver_state` is the control that fails every
+        reference closed when the resolver cannot be reached, and it sat outside the
+        binding — so `unavailable` could be edited to `available` and the declared
+        digest still verified. Both control fields are bound now, and
+        `_check_digest_field_coverage()` refuses a manifest carrying any field that
+        is in neither list.
+        """
+        payload = {
+            "records": [r.as_row() for r in
+                        sorted(self.records, key=lambda r: (r.store, r.object_id))],
+            "resolver_known_ids": sorted(self.resolver_known_ids),
+            "resolver_state": self.resolver_state,
+        }
+        missing = sorted(set(DIGEST_BOUND_FIELDS) - set(payload))
+        if missing:
+            raise AssertionError(
+                "digest-bound field(s) %s are declared but not hashed — the "
+                "enumeration and the hash have drifted (P2V-03)" % missing)
+        blob = json.dumps(payload, sort_keys=True, separators=(",", ":"))
         return hashlib.sha256(blob.encode("utf-8")).hexdigest()
 
     def bound(self) -> "ExternalManifest":
@@ -167,9 +227,23 @@ class ExternalManifest:
     def keys(self) -> List[str]:
         return sorted(r.key for r in self.records)
 
+    def duplicate_identities(self) -> List[str]:
+        """`store:object_id` values carried by more than one record (P2V-03)."""
+        seen: Dict[str, List[str]] = {}
+        for rec in self.records:
+            seen.setdefault(rec.key, []).append(rec.version)
+        return sorted(k for k, versions in seen.items() if len(versions) > 1)
+
     def integrity_problems(self) -> List[str]:
         """Problems with the manifest ITSELF, checked before any reference uses it."""
-        problems: List[str] = []
+        problems: List[str] = list(_check_digest_field_coverage())
+        for key in self.duplicate_identities():
+            versions = sorted(r.version for r in self.records if r.key == key)
+            problems.append(
+                "external manifest carries %d records for identity %s (versions %s) — "
+                "which one answers for that identity would depend on tuple order, so "
+                "the manifest is refused (P2V-03)"
+                % (len(versions), key, ", ".join(versions)))
         if self.resolver_state not in RESOLVER_STATES:
             problems.append(
                 "external manifest declares unknown resolver state %r; the declared "
@@ -196,6 +270,91 @@ class ExternalManifest:
                 "external basis fails closed (P2U-02: an unverified answer is not "
                 "evidence)" % self.resolver_state)
         return problems
+
+
+def _check_digest_field_coverage() -> List[str]:
+    """Every manifest field must be digest-bound or declared exempt (P2V-03).
+
+    The enumeration is the point of the correction, so it is checked mechanically
+    rather than maintained by memory: a field added to `ExternalManifest` tomorrow
+    and listed in neither tuple fails every manifest that uses it, loudly, instead of
+    sitting quietly outside the hash the way `resolver_state` did.
+    """
+    # `present`, not `actual` — `actual` is a fixture oracle field name and
+    # `check_anticircularity.check_textual()` bans that vocabulary from engine code.
+    # This is the SECOND time this file has tripped that check on that identifier;
+    # the check caught it both times, which is the argument for keeping it blunt.
+    declared = set(DIGEST_BOUND_FIELDS) | set(DIGEST_EXEMPT_FIELDS)
+    present = set(ExternalManifest.__dataclass_fields__)
+    problems = []
+    for name in sorted(present - declared):
+        problems.append(
+            "external manifest field %r is neither digest-bound nor declared exempt "
+            "— it could be edited without invalidating the declared digest (P2V-03)"
+            % name)
+    for name in sorted(declared - present):
+        problems.append(
+            "external manifest declares field %r in the digest enumeration, but the "
+            "manifest has no such field — the enumeration is stale (P2V-03)" % name)
+    return problems
+
+
+def _resolve_receipt(record: "ExternalRecord",
+                     manifest: "ExternalManifest") -> List[str]:
+    """P2V-02 — the verification receipt must be a registered, hash-bound record.
+
+    `if not record.verification_receipt` used to be the whole check, so the string
+    "verified" attested to anything. A receipt now has to be a reference in the same
+    grammar that resolves against the same manifest, with version and content hash
+    agreeing — the attestation is an object in the frozen snapshot or it is nothing.
+
+    The chain terminates at the first record that carries no receipt of its own: that
+    record is the attestation root, and requiring IT to be attested would not
+    terminate. What is refused is a cycle — a record vouching for itself, or two
+    vouching for each other — because a closed loop of mutual attestation is exactly
+    the shape a fabricated one takes.
+    """
+    problems: List[str] = []
+    seen = [record.key]
+    current = record
+    for _ in range(MAX_RECEIPT_CHAIN):
+        raw = current.verification_receipt
+        if not raw:
+            return problems                       # attestation root; chain complete
+        ref, problem = parse_reference(raw)
+        if problem:
+            return problems + [
+                "record %s carries verification receipt %r, which is not a reference "
+                "in the form %r — an arbitrary string is not an attestation (P2V-02)"
+                % (current.key, raw, REFERENCE_GRAMMAR)]
+        attestation = manifest.lookup(ref)
+        if attestation is None:
+            return problems + [
+                "record %s cites verification receipt %s, which names no record in "
+                "the external manifest (%s)"
+                % (current.key, ref, ", ".join(manifest.keys()) or "empty")]
+        if attestation.version != ref.version:
+            problems.append(
+                "record %s cites verification receipt %s at version %r; the manifest "
+                "records %r" % (current.key, ref.key, ref.version, attestation.version))
+        if attestation.content_hash != ref.content_hash:
+            problems.append(
+                "record %s cites verification receipt %s with content hash %r; the "
+                "manifest records %r"
+                % (current.key, ref.key, ref.content_hash, attestation.content_hash))
+        if problems:
+            return problems
+        if attestation.key in seen:
+            return problems + [
+                "verification receipt cycle: %s — a closed loop of mutual attestation "
+                "attests to nothing (P2V-02)"
+                % " -> ".join(seen + [attestation.key])]
+        seen.append(attestation.key)
+        current = attestation
+    return problems + [
+        "verification receipt chain from %s exceeds %d links (%s) — refused rather "
+        "than followed further (P2V-02)"
+        % (record.key, MAX_RECEIPT_CHAIN, " -> ".join(seen))]
 
 
 def parse_reference(raw: str) -> Tuple[Optional[ExternalRef], Optional[str]]:
@@ -258,6 +417,9 @@ def resolve(raw: str, manifest: Optional[ExternalManifest],
         problems.append("external basis %s resolves to a record with no verification "
                         "receipt — an unverified external record is not evidence"
                         % ref)
+    else:
+        problems.extend("external basis %s: %s" % (ref, p)
+                        for p in _resolve_receipt(record, manifest))
     return problems
 
 

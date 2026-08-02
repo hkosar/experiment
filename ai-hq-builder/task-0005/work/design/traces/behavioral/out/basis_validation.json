@@ -113,8 +113,48 @@
       "witness_reproduces_old_behavior": true
     }
   ],
+  "digest_enumeration_guard": {
+    "bound_fields": [
+      "records",
+      "resolver_known_ids",
+      "resolver_state"
+    ],
+    "exempt_fields": {
+      "declared_digest": "the digest itself — hashing it would be circular, and it is the value the other fields are checked against"
+    },
+    "guard_discriminates": true,
+    "manifest_fields": [
+      "declared_digest",
+      "records",
+      "resolver_known_ids",
+      "resolver_state"
+    ],
+    "rows": [
+      {
+        "case": "live enumeration",
+        "expect_problem": false,
+        "problems": []
+      },
+      {
+        "case": "control field dropped from the enumeration",
+        "expect_problem": true,
+        "problems": [
+          "external manifest field 'resolver_state' is neither digest-bound nor declared exempt — it could be edited without invalidating the declared digest (P2V-03)"
+        ]
+      },
+      {
+        "case": "enumeration names a field that does not exist",
+        "computed_digest_refused": "digest-bound field(s) ['not_a_manifest_field'] are declared but not hashed — the enumeration and the hash have drifted (P2V-03)",
+        "expect_problem": true,
+        "problems": [
+          "external manifest declares field 'not_a_manifest_field' in the digest enumeration, but the manifest has no such field — the enumeration is stale (P2V-03)"
+        ]
+      }
+    ]
+  },
   "external_basis_cases": [
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-control-journal",
       "closed": true,
@@ -122,7 +162,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis 'control-journal:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
       ],
@@ -131,6 +171,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-evidence",
       "closed": true,
@@ -138,7 +179,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis 'evidence:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
       ],
@@ -147,6 +188,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-provider",
       "closed": true,
@@ -154,7 +196,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis 'provider:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
       ],
@@ -163,6 +205,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-schedule",
       "closed": true,
@@ -170,7 +213,7 @@
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis 'schedule:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
       ],
@@ -179,6 +222,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "nonexistent-object",
       "closed": true,
@@ -186,15 +230,16 @@
       "detected": true,
       "expected_problem": "names no record in the external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
-        "event decision-ext: external basis control-journal:no-such-object@v1#deadbeef01 names no record in the external manifest (1 record(s): control-journal:kill-cmd-77)"
+        "event decision-ext: external basis control-journal:no-such-object@v1#deadbeef01 names no record in the external manifest (2 record(s): control-journal:kill-cmd-77, evidence:ctrl-receipt-77)"
       ],
       "references": [
         "control-journal:no-such-object@v1#deadbeef01"
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "wrong-version",
       "closed": true,
@@ -202,7 +247,7 @@
       "detected": true,
       "expected_problem": "names version 'v2'; the manifest records 'v3'",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v2#4f1c2ab9de3057c6 names version 'v2'; the manifest records 'v3'"
       ],
@@ -211,6 +256,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "wrong-content-hash",
       "closed": true,
@@ -218,7 +264,7 @@
       "detected": true,
       "expected_problem": "names content hash '0000000000000000'",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#0000000000000000 names content hash '0000000000000000'; the manifest records '4f1c2ab9de3057c6'"
       ],
@@ -227,6 +273,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "omitted-from-frozen-manifest",
       "closed": true,
@@ -234,15 +281,16 @@
       "detected": true,
       "expected_problem": "OMITTED from the frozen external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
-        "event decision-ext: external basis evidence:exec-receipt-91@v1#123456789abc is known to the resolver but is OMITTED from the frozen external manifest (1 record(s): control-journal:kill-cmd-77) — the replay is not entitled to depend on it"
+        "event decision-ext: external basis evidence:exec-receipt-91@v1#123456789abc is known to the resolver but is OMITTED from the frozen external manifest (2 record(s): control-journal:kill-cmd-77, evidence:ctrl-receipt-77) — the replay is not entitled to depend on it"
       ],
       "references": [
         "evidence:exec-receipt-91@v1#123456789abc"
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "no-manifest-supplied",
       "closed": true,
@@ -259,6 +307,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "resolver-degraded",
       "closed": true,
@@ -266,7 +315,7 @@
       "detected": true,
       "expected_problem": "external resolver is degraded",
       "fold_refused": true,
-      "manifest": "degraded resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "degraded resolver, 2 record(s), digest b9c5765e7827",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is degraded; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
@@ -275,6 +324,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "resolver-unavailable",
       "closed": true,
@@ -282,7 +332,7 @@
       "detected": true,
       "expected_problem": "external resolver is unavailable",
       "fold_refused": true,
-      "manifest": "unavailable resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "unavailable resolver, 2 record(s), digest ea029f22376f",
       "problems": [
         "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is unavailable; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
@@ -291,6 +341,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "tampered-manifest",
       "closed": true,
@@ -298,15 +349,16 @@
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 3 record(s), digest de43b89e1ba3",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared c7acd6bccd645d9c, contents hash to bc8a6076c84b133d — the frozen snapshot has been altered"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared de43b89e1ba3fca3, contents hash to 909d25e7c5bedecb — the frozen snapshot has been altered"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "unverified-record",
       "closed": true,
@@ -314,7 +366,7 @@
       "detected": true,
       "expected_problem": "no verification receipt",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest 74b21371d07a",
+      "manifest": "available resolver, 1 record(s), digest 706f3d660d49",
       "problems": [
         "event decision-ext: external basis provider:obj-5@v1#aa11bb22 resolves to a record with no verification receipt — an unverified external record is not evidence"
       ],
@@ -323,6 +375,7 @@
       ]
     },
     {
+      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": false,
       "case": "undeclared-store",
       "closed": true,
@@ -330,12 +383,148 @@
       "detected": true,
       "expected_problem": "not a declared external store",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest c7acd6bccd64",
+      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
       "problems": [
         "event decision-ext: external basis hearsay:obj-1@v1#aabbccdd names store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
       ],
       "references": [
         "hearsay:obj-1@v1#aabbccdd"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-is-an-arbitrary-string",
+      "closed": true,
+      "description": "the record attests to itself with a bare word — the verifier's P2V-02 probe",
+      "detected": true,
+      "expected_problem": "is not a reference in the form",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis control-journal:obj-str@v1#1111111111111111: record control-journal:obj-str carries verification receipt 'verified-trust-me', which is not a reference in the form 'store:object-id@version#content-hash' — an arbitrary string is not an attestation (P2V-02)"
+      ],
+      "references": [
+        "control-journal:obj-str@v1#1111111111111111"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-names-no-registered-record",
+      "closed": true,
+      "description": "a well-formed receipt reference resolving to nothing in the manifest",
+      "detected": true,
+      "expected_problem": "names no record in the external manifest",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis control-journal:obj-unreg@v1#2222222222222222: record control-journal:obj-unreg cites verification receipt evidence:no-such-attestation@v1#3333333333333333, which names no record in the external manifest (control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, evidence:ctrl-receipt-77, evidence:cyc-a, evidence:cyc-b, evidence:obj-self)"
+      ],
+      "references": [
+        "control-journal:obj-unreg@v1#2222222222222222"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-wrong-version",
+      "closed": true,
+      "description": "the attestation exists; the receipt cites another version of it",
+      "detected": true,
+      "expected_problem": "cites verification receipt evidence:ctrl-receipt-77 at version 'v9'",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis control-journal:obj-ver@v1#4444444444444444: record control-journal:obj-ver cites verification receipt evidence:ctrl-receipt-77 at version 'v9'; the manifest records 'v1'"
+      ],
+      "references": [
+        "control-journal:obj-ver@v1#4444444444444444"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-wrong-content-hash",
+      "closed": true,
+      "description": "the attestation exists at that version; the receipt's hash disagrees",
+      "detected": true,
+      "expected_problem": "with content hash '0000000000000000'",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis control-journal:obj-hash@v1#5555555555555555: record control-journal:obj-hash cites verification receipt evidence:ctrl-receipt-77 with content hash '0000000000000000'; the manifest records 'cafebabe1234'"
+      ],
+      "references": [
+        "control-journal:obj-hash@v1#5555555555555555"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-self-referential",
+      "closed": true,
+      "description": "a record naming itself as its own attestation",
+      "detected": true,
+      "expected_problem": "verification receipt cycle",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis evidence:obj-self@v1#6666666666666666: verification receipt cycle: evidence:obj-self -> evidence:obj-self — a closed loop of mutual attestation attests to nothing (P2V-02)"
+      ],
+      "references": [
+        "evidence:obj-self@v1#6666666666666666"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-mutual-cycle",
+      "closed": true,
+      "description": "two records vouching for each other",
+      "detected": true,
+      "expected_problem": "verification receipt cycle",
+      "fold_refused": true,
+      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "problems": [
+        "event decision-ext: external basis evidence:cyc-a@v1#7777777777777777: verification receipt cycle: evidence:cyc-a -> evidence:cyc-b -> evidence:cyc-a — a closed loop of mutual attestation attests to nothing (P2V-02)"
+      ],
+      "references": [
+        "evidence:cyc-a@v1#7777777777777777"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "resolver-state-edited-under-a-valid-digest",
+      "closed": true,
+      "description": "the same records with resolver_state edited unavailable -> available; the verifier's P2V-03 probe, and the previous digest verified it",
+      "detected": true,
+      "expected_problem": "external manifest digest mismatch",
+      "fold_refused": true,
+      "manifest": "available resolver, 2 record(s), digest ea029f22376f",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared ea029f22376f96e3, contents hash to 4429b132e86ea7b9 — the frozen snapshot has been altered"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
+      ]
+    },
+    {
+      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "duplicate-external-record-identity",
+      "closed": true,
+      "description": "one store:object_id carried by two records at different versions",
+      "detected": true,
+      "expected_problem": "records for identity control-journal:kill-cmd-77",
+      "fold_refused": true,
+      "manifest": "available resolver, 3 record(s), digest 9fa9eaadc6b5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest carries 2 records for identity control-journal:kill-cmd-77 (versions v3, v4) — which one answers for that identity would depend on tuple order, so the manifest is refused (P2V-03)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
       ]
     }
   ],
@@ -348,9 +537,10 @@
         "decision-ext"
       ]
     },
-    "manifest_digest": "c7acd6bccd645d9c9970feb6daa34f71fea7210cbfa9e1c1f803107e45d22e5e",
+    "manifest_digest": "de43b89e1ba3fca395521fb57fe181ea26d12d5ee7b4655501a2441fe1db0431",
     "manifest_records": [
-      "control-journal:kill-cmd-77"
+      "control-journal:kill-cmd-77",
+      "evidence:ctrl-receipt-77"
     ],
     "problems": [],
     "reference": "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6",
@@ -360,9 +550,20 @@
   "summary": {
     "cases": 8,
     "closed": 8,
-    "external_accepted_by_the_prefix_check_this_replaces": 13,
-    "external_cases": 14,
-    "external_closed": 14,
+    "digest_enumeration_guard_discriminates": true,
+    "external_accepted_by_the_p2u_contract_this_rework_replaces": [
+      "duplicate-external-record-identity",
+      "receipt-is-an-arbitrary-string",
+      "receipt-mutual-cycle",
+      "receipt-names-no-registered-record",
+      "receipt-self-referential",
+      "receipt-wrong-content-hash",
+      "receipt-wrong-version",
+      "resolver-state-edited-under-a-valid-digest"
+    ],
+    "external_accepted_by_the_prefix_check_this_replaces": 21,
+    "external_cases": 22,
+    "external_closed": 22,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],

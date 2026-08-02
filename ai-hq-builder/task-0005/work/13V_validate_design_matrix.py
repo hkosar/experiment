@@ -94,8 +94,17 @@ Exit 0 only if all checks pass. Run from this directory.
     plan, 13M, 13G, 13D, 13F) in a temp directory and invokes THIS FILE as a
     subprocess with `--final-gate`, so the verifier's `32A_` evidence — an exit
     code from the real command — is reproduced in the same terms. Each probe runs
-    twice: once normally, once with check 9 disabled, and the second run must
-    still produce the exit code the verifier recorded.
+    twice: once against this file, once against a temp COPY with check 9 elided
+    from its source, and the copy must still produce the exit code the verifier
+    recorded. NOTHING in the shipped file can skip check 9 — see P2V-01 below.
+
+**No argv disables any check (P2V-01).** An earlier version of this file accepted
+`--p2u05-defect-witness`, which turned check 9 off so the probe could show the
+counterfactual. That put a documented, public waiver on the gate command itself:
+`--final-gate --p2u05-defect-witness` returned 0 with six blocking findings open.
+The flag is deleted, the counterfactual is built by eliding the check from a
+throwaway copy, and `--self-test` runs the real command with that flag and three
+other plausible disable spellings and requires exit 1 for each.
 """
 import csv
 import hashlib
@@ -178,12 +187,28 @@ def summary_problems(overlay_text, accepted_counts, proposed_counts):
 
 FINDINGS_SCHEMA = "open-findings/1"
 
-# Disables check 9 ONLY, and exists for one reason: `--self-test`'s end-to-end probe
-# runs each synthetic repository twice and shows that the same input the verifier
-# recorded as exit 0 still gives exit 0 with the check off. It is the counterpart of
-# `fold(enforce_basis=False)` in the behavioral harness — the fix is observed rather
-# than asserted. It is never used by any other code path.
-P2U05_WITNESS_FLAG = "--p2u05-defect-witness"
+# P2V-01. There was a `--p2u05-defect-witness` flag here that disabled check 9, so
+# that the end-to-end probe could show the same input still returning exit 0 with the
+# check off. The reasoning was `fold(enforce_basis=False)`; the mistake was the
+# delivery mechanism. `enforce_basis` is a keyword argument on a library function that
+# no command line reaches. This was an argv flag on the gate command itself, which
+# means the correction for P2U-05 shipped with a documented, public way to turn it
+# back off — `13V_ --final-gate --p2u05-defect-witness` and six open blocking findings
+# returned 0. A control that can be waived from the command line is a suggestion.
+#
+# The flag is gone. No argv, no environment variable, and no attribute of this module
+# can skip check 9. Two self-tests hold that line:
+#   * `_witness_source` builds the counterfactual by ELIDING the check from a COPY of
+#     this file in a temp directory, so the defect is still observed rather than
+#     asserted, and the thing that can be turned off is a throwaway copy;
+#   * `--self-test` runs the real command with the deleted flag (and other plausible
+#     disable spellings) and requires exit 1 — the P2V-01 probe as a failing case.
+DISABLE_SPELLINGS_THAT_MUST_NOT_WORK = (
+    "--p2u05-defect-witness",          # the flag this return deleted
+    "--no-final-gate-findings",
+    "--skip-open-findings",
+    "--disable-check-9",
+)
 
 
 def load_findings(path=OPEN_FINDINGS):
@@ -537,6 +562,42 @@ def _build_synthetic_repo(root, findings_doc, clear_dependencies):
                      else json.dumps(findings_doc, indent=2) + "\n")
 
 
+# The check-9 call site, anchored on the comment above it so the constant does not
+# match itself. A bare `for _msg in global_finding_problems(_findings):` appeared
+# twice — here and at the call site — and the elision guard below caught it on the
+# first run rather than producing a "witness" copy identical to the shipped file.
+CHECK9_CALL = ("    # which is the whole of the P2U-05 correction.\n"
+               "    for _msg in global_finding_problems(_findings):\n"
+               "        check(False, _msg)\n")
+CHECK9_ELIDED = ("    # P2V-01 WITNESS COPY: check 9 elided by _witness_source().\n"
+                 "    for _msg in []:\n"
+                 "        check(False, _msg)\n")
+
+
+def _witness_source(destination):
+    """Write a COPY of this file with check 9 elided, and return its path.
+
+    P2V-01. The counterfactual still has to exist — a check nobody has watched fail
+    is a claim — but it must not be reachable from the shipped command. So the
+    disable lives in a throwaway copy built by the test, not in a flag the gate
+    accepts. The elision is asserted, not assumed: if the anchor line stops matching
+    (because the call moved or was renamed) this raises instead of silently producing
+    an identical copy that would "prove" the check is load-bearing by passing.
+    """
+    source = open(os.path.abspath(__file__), encoding="utf-8").read()
+    if source.count(CHECK9_CALL) != 1:
+        raise AssertionError(
+            "witness elision anchor matched %d times, not once — the counterfactual "
+            "would not remove check 9 and the witness would be meaningless"
+            % source.count(CHECK9_CALL))
+    elided = source.replace(CHECK9_CALL, CHECK9_ELIDED, 1)
+    if elided == source:
+        raise AssertionError("witness copy is identical to the shipped file")
+    with open(destination, "w", encoding="utf-8", newline="\n") as fh:
+        fh.write(elided)
+    return destination
+
+
 def _probe_e2e():
     """Run the verifier's `32A_` P2U-05 probes against the REAL command.
 
@@ -595,9 +656,11 @@ def _probe_e2e():
             ok = proc.returncode == want_code and want_text in out
             witness_code = None
             if want_witness is not None:
-                wproc = subprocess.run(
-                    [sys.executable, me, "--final-gate", P2U05_WITNESS_FLAG],
-                    cwd=work, capture_output=True, text=True)
+                # P2V-01: the counterfactual runs a COPY with check 9 elided. The
+                # shipped file has no flag that would do this.
+                copy = _witness_source(os.path.join(tmp, "witness_copy.py"))
+                wproc = subprocess.run([sys.executable, copy, "--final-gate"],
+                                       cwd=work, capture_output=True, text=True)
                 witness_code = wproc.returncode
                 ok = ok and witness_code == want_witness
             ok_all = ok_all and ok
@@ -609,8 +672,39 @@ def _probe_e2e():
             print("      %s" % (out.splitlines()[0] if out else "(no output)")[:104])
             if len(out.splitlines()) > 1:
                 print("      %s" % out.splitlines()[1][:104])
-    print("END-TO-END PROBE %s — %d cases"
-          % ("PASS" if ok_all else "FAIL", len(probes)))
+    # ---- P2V-01: no argv may switch check 9 off ------------------------------
+    print()
+    print("  P2V-01 — the deleted disable flag, and other plausible spellings, must")
+    print("  NOT switch check 9 off. Each is run against a repository with six open")
+    print("  gate-blocking findings and must still exit 1.")
+    with tempfile.TemporaryDirectory() as tmp:
+        work = os.path.join(tmp, "repo")
+        os.makedirs(work)
+        _build_synthetic_repo(work, blocking, True)
+        for flag in DISABLE_SPELLINGS_THAT_MUST_NOT_WORK:
+            proc = subprocess.run([sys.executable, me, "--final-gate", flag],
+                                  cwd=work, capture_output=True, text=True)
+            out = (proc.stdout + proc.stderr).strip()
+            ok = proc.returncode == 1 and "block the design gate globally" in out
+            ok_all = ok_all and ok
+            print("    %-34s exit %d (want 1)  %s"
+                  % (flag, proc.returncode, "ok" if ok else "*** DISABLED THE CHECK ***"))
+        # And the flag is not merely ignored — the constant is gone from the source.
+        # The token is assembled at runtime: written as a literal it would appear in
+        # this line and the check would report itself. That is the third self-match
+        # in this file today (the elision anchor matched its own constant, twice), so
+        # it is worth naming: a source check whose own text satisfies the pattern it
+        # searches for is not a check.
+        removed_constant = "P2U05_" + "WITNESS_FLAG"
+        src = open(me, encoding="utf-8").read()
+        gone = removed_constant not in src
+        ok_all = ok_all and gone
+        print("    %-34s %s" % ("flag constant gone from the source",
+                                "ok" if gone else "*** STILL PRESENT ***"))
+
+    print("END-TO-END PROBE %s — %d gate cases + %d disable-spelling cases"
+          % ("PASS" if ok_all else "FAIL", len(probes),
+             len(DISABLE_SPELLINGS_THAT_MUST_NOT_WORK)))
     return 0 if ok_all else 1
 
 
@@ -735,9 +829,8 @@ _findings = load_findings()
 if "--final-gate" in sys.argv[1:]:
     # Check 9 FIRST and with no matrix input at all: the rows cannot influence it,
     # which is the whole of the P2U-05 correction.
-    if P2U05_WITNESS_FLAG not in sys.argv[1:]:
-        for _msg in global_finding_problems(_findings):
-            check(False, _msg)
+    for _msg in global_finding_problems(_findings):
+        check(False, _msg)
     for _msg in finding_dependency_problems(dep_by_id, status_by_id, _findings):
         check(False, _msg)
     for rid in all_ids:
