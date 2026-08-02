@@ -349,31 +349,35 @@ def main(argv: List[str]) -> int:
         ("18b every declared external basis resolves or the case fails closed",
          basis["summary"]["external_closed"] == basis["summary"]["external_cases"]
          and bool(basis["summary"]["external_positive_resolves"])
-         and bool(basis["summary"]["digest_enumeration_guard_discriminates"]),
-         "%d/%d external-basis cases fail closed (the verifier's 4 probe strings; "
-         "nonexistent object, wrong version, wrong content hash, omission from the "
-         "frozen manifest, no manifest supplied, degraded and unavailable resolver, "
-         "tampered manifest digest, unverified record, undeclared store; and the "
-         "R1 additions — receipt as an arbitrary string, unregistered receipt, "
-         "receipt version and hash mismatch, self-referential and mutual receipt "
-         "cycles, resolver_state edited under a valid digest, duplicate record "
-         "identity). %d were accepted by the prefix check TASK-0005 replaced and %d "
-         "by the TASK-0005 contract this rework replaces. The resolvable reference "
-         "folds; the digest-field enumeration guard is shown failing under a dropped "
-         "field and a stale name"
+         and bool(basis["summary"]["digest_enumeration_guard_discriminates"])
+         and bool(basis["summary"]["r1_contract_witnesses_all_witness"]),
+         "%d/%d external-basis cases fail closed (the four P2U-02 probe strings; "
+         "nonexistent object, wrong version/hash, omission from the frozen manifest, "
+         "no manifest, degraded and unavailable resolver, tampered digest, "
+         "unverified record, undeclared store; the P2V-02 receipt cases; and the "
+         "R2 additions — receipt naming a manifest record, attesting to another "
+         "subject, revoked, purposeless, abbreviated content hash, no registry, "
+         "wrong/same authority, stale revocation snapshot, unbound registry, "
+         "duplicate receipt ids, snapshot identity edited, and four envelope-control "
+         "cases). %d were accepted by the prefix check TASK-0005 replaced. The "
+         "resolvable reference folds under two distinct authorities; the four "
+         "enumeration guards are shown failing; %d/%d `38A_` probes witness their "
+         "finding under both contracts"
          % (basis["summary"]["external_closed"], basis["summary"]["external_cases"],
             basis["summary"]["external_accepted_by_the_prefix_check_this_replaces"],
-            len(basis["summary"][
-                "external_accepted_by_the_p2u_contract_this_rework_replaces"]))),
-        ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03 stale "
-         "horizon and P2V-04 retired-version probes)",
+            len(basis["r1_contract_witnesses"]["probes"])
+            - len(basis["summary"]["r1_contract_witnesses_not_witnessing"]),
+            len(basis["r1_contract_witnesses"]["probes"]))),
+        ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03, "
+         "P2V-04 and P2W-04 probes)",
          sched["summary"]["discriminating"] == sched["summary"]["behaviors"],
          "%d/%d behaviors discriminate under their targeted defect "
          "(scheduler death before registration; horizon exhaustion; atomic "
-         "versioned change, now inspecting the watchdog's own horizon state; the "
-         "P2U-03 probe — a v1 horizon 40 days ahead cannot suppress the v2 "
-         "exhaustion warning; and the P2V-04 probe — a retired version cannot "
-         "re-enter force and reinstate its stale horizon)"
+         "versioned change inspecting the watchdog's own horizon state; the P2U-03 "
+         "stale-horizon probe; the P2V-04 retired-version probe; and the six P2W-04 "
+         "cases — same-version change, register-is-initial-only, monotonic identity, "
+         "restart preserving retirement through the control-journal fold, concurrent "
+         "changes, and replay determinism from the durable journal)"
          % (sched["summary"]["discriminating"], sched["summary"]["behaviors"])),
     ]
 

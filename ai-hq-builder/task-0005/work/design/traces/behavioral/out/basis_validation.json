@@ -51,7 +51,7 @@
       "expected_problem": "does not parse",
       "fold_refused": true,
       "problems": [
-        "event decision-1: external basis 'hearsay:some-id' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+        "event decision-1: external basis 'hearsay:some-id' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "second_layer_alone": "accepted",
       "witness_reproduces_old_behavior": true
@@ -114,115 +114,215 @@
     }
   ],
   "digest_enumeration_guard": {
-    "bound_fields": [
+    "guard_discriminates": true,
+    "manifest_bound_fields": [
+      "schema_version",
+      "canonicalization_version",
+      "snapshot_id",
+      "snapshot_epoch",
+      "source_id",
+      "creation_context",
+      "record_identity_rule",
+      "digest_algorithm",
+      "digest_hex_length",
+      "resolver_id",
+      "resolver_version",
+      "resolver_state",
+      "receipt_authority_id",
+      "receipt_authority_version",
+      "receipt_verification_config",
+      "trust_root_id",
+      "trust_root_key_version",
+      "revocation_snapshot_id",
       "records",
-      "resolver_known_ids",
-      "resolver_state"
+      "resolver_known_ids"
     ],
-    "exempt_fields": {
+    "manifest_exempt_fields": {
       "declared_digest": "the digest itself — hashing it would be circular, and it is the value the other fields are checked against"
     },
-    "guard_discriminates": true,
     "manifest_fields": [
+      "canonicalization_version",
+      "creation_context",
       "declared_digest",
+      "digest_algorithm",
+      "digest_hex_length",
+      "receipt_authority_id",
+      "receipt_authority_version",
+      "receipt_verification_config",
+      "record_identity_rule",
       "records",
+      "resolver_id",
       "resolver_known_ids",
-      "resolver_state"
+      "resolver_state",
+      "resolver_version",
+      "revocation_snapshot_id",
+      "schema_version",
+      "snapshot_epoch",
+      "snapshot_id",
+      "source_id",
+      "trust_root_id",
+      "trust_root_key_version"
     ],
+    "registry_bound_fields": [
+      "schema_version",
+      "authority_id",
+      "authority_version",
+      "snapshot_id",
+      "digest_algorithm",
+      "receipts",
+      "revoked_receipt_ids"
+    ],
+    "registry_fields": [
+      "authority_id",
+      "authority_version",
+      "declared_digest",
+      "digest_algorithm",
+      "receipts",
+      "revoked_receipt_ids",
+      "schema_version",
+      "snapshot_id"
+    ],
+    "required_contract_controls": {
+      "approved digest algorithm": "digest_algorithm",
+      "canonicalization version": "canonicalization_version",
+      "creation or capture context": "creation_context",
+      "manifest schema version": "schema_version",
+      "receipt authority version/configuration": "receipt_authority_version",
+      "receipt verification configuration": "receipt_verification_config",
+      "receipt/evidence authority identity": "receipt_authority_id",
+      "record-identity tuple and uniqueness rule": "record_identity_rule",
+      "resolver identity": "resolver_id",
+      "resolver state": "resolver_state",
+      "resolver version": "resolver_version",
+      "revocation/status snapshot": "revocation_snapshot_id",
+      "snapshot epoch": "snapshot_epoch",
+      "snapshot id / epoch": "snapshot_id",
+      "source identity": "source_id",
+      "trust-root key version": "trust_root_key_version",
+      "trust-root or key version": "trust_root_id"
+    },
     "rows": [
       {
-        "case": "live enumeration",
+        "case": "live manifest enumeration",
         "expect_problem": false,
         "problems": []
       },
       {
-        "case": "control field dropped from the enumeration",
+        "case": "live registry enumeration",
+        "expect_problem": false,
+        "problems": []
+      },
+      {
+        "case": "live required-control map",
+        "expect_problem": false,
+        "problems": []
+      },
+      {
+        "case": "live record/receipt as_row coverage",
+        "expect_problem": false,
+        "problems": []
+      },
+      {
+        "case": "manifest control dropped from the enumeration",
         "expect_problem": true,
         "problems": [
           "external manifest field 'resolver_state' is neither digest-bound nor declared exempt — it could be edited without invalidating the declared digest (P2V-03)"
         ]
       },
       {
-        "case": "enumeration names a field that does not exist",
-        "computed_digest_refused": "digest-bound field(s) ['not_a_manifest_field'] are declared but not hashed — the enumeration and the hash have drifted (P2V-03)",
+        "case": "manifest enumeration names a field that does not exist",
+        "computed_digest_refused": "external manifest declares field 'not_a_manifest_field' in the digest enumeration, but the manifest has no such field — the enumeration is stale and no digest can be produced (P2V-03)",
         "expect_problem": true,
         "problems": [
-          "external manifest declares field 'not_a_manifest_field' in the digest enumeration, but the manifest has no such field — the enumeration is stale (P2V-03)"
+          "external manifest declares field 'not_a_manifest_field' in the digest enumeration, but the class has no such field — the enumeration is stale (P2V-03)"
+        ]
+      },
+      {
+        "case": "registry control dropped from the enumeration",
+        "expect_problem": true,
+        "problems": [
+          "receipt registry field 'revoked_receipt_ids' is neither digest-bound nor declared exempt — it could be edited without invalidating the declared digest (P2V-03)"
+        ]
+      },
+      {
+        "case": "required contract control maps to no manifest field",
+        "expect_problem": true,
+        "problems": [
+          "required control 'a control nobody implemented' maps to field 'absent_field', which the manifest does not have"
         ]
       }
     ]
   },
   "external_basis_cases": [
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-control-journal",
       "closed": true,
-      "description": "the verifier's probe string, verbatim",
+      "description": "the verifier's P2U-02 probe string, verbatim",
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis 'control-journal:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+        "event decision-ext: external basis 'control-journal:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "references": [
         "control-journal:definitely-missing"
-      ]
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-evidence",
       "closed": true,
-      "description": "the verifier's probe string, verbatim",
+      "description": "the verifier's P2U-02 probe string, verbatim",
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis 'evidence:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+        "event decision-ext: external basis 'evidence:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "references": [
         "evidence:definitely-missing"
-      ]
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-provider",
       "closed": true,
-      "description": "the verifier's probe string, verbatim",
+      "description": "the verifier's P2U-02 probe string, verbatim",
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis 'provider:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+        "event decision-ext: external basis 'provider:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "references": [
         "provider:definitely-missing"
-      ]
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "probe-schedule",
       "closed": true,
-      "description": "the verifier's probe string, verbatim",
+      "description": "the verifier's P2U-02 probe string, verbatim",
       "detected": true,
       "expected_problem": "does not parse",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis 'schedule:definitely-missing' does not parse as 'store:object-id@version#content-hash' — a store prefix is not a resolvable reference (P2U-02)"
+        "event decision-ext: external basis 'schedule:definitely-missing' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "references": [
         "schedule:definitely-missing"
-      ]
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "nonexistent-object",
       "closed": true,
@@ -230,16 +330,16 @@
       "detected": true,
       "expected_problem": "names no record in the external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:no-such-object@v1#deadbeef01 names no record in the external manifest (2 record(s): control-journal:kill-cmd-77, evidence:ctrl-receipt-77)"
+        "event decision-ext: external basis control-journal:no-such-object@v1#0feb0fca6fbb94e019d3ac72609f270cfd7c247ae3e1336aefa7b5ca4ed71b88 names no record in the external manifest (10 record(s): control-journal:kill-cmd-77, control-journal:obj-chain, control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, provider:action-42, provider:nopurpose-target, provider:revoked-target, provider:short-target)"
       ],
       "references": [
-        "control-journal:no-such-object@v1#deadbeef01"
-      ]
+        "control-journal:no-such-object@v1#0feb0fca6fbb94e019d3ac72609f270cfd7c247ae3e1336aefa7b5ca4ed71b88"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "wrong-version",
       "closed": true,
@@ -247,33 +347,33 @@
       "detected": true,
       "expected_problem": "names version 'v2'; the manifest records 'v3'",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v2#4f1c2ab9de3057c6 names version 'v2'; the manifest records 'v3'"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v2#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 names version 'v2'; the manifest records 'v3'"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v2#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v2#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "wrong-content-hash",
       "closed": true,
       "description": "the record exists at that version; the content hash disagrees",
       "detected": true,
-      "expected_problem": "names content hash '0000000000000000'",
+      "expected_problem": "names content hash",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#0000000000000000 names content hash '0000000000000000'; the manifest records '4f1c2ab9de3057c6'"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#0000000000000000000000000000000000000000000000000000000000000000 names content hash '0000000000000000000000000000000000000000000000000000000000000000'; the manifest records '317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82'"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#0000000000000000"
-      ]
+        "control-journal:kill-cmd-77@v3#0000000000000000000000000000000000000000000000000000000000000000"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "omitted-from-frozen-manifest",
       "closed": true,
@@ -281,16 +381,16 @@
       "detected": true,
       "expected_problem": "OMITTED from the frozen external manifest",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis evidence:exec-receipt-91@v1#123456789abc is known to the resolver but is OMITTED from the frozen external manifest (2 record(s): control-journal:kill-cmd-77, evidence:ctrl-receipt-77) — the replay is not entitled to depend on it"
+        "event decision-ext: external basis evidence:exec-receipt-91@v1#9c2212c5c6977d1c194c18f565d9a93d862596bc5f71222cb1422b16082da7d4 is known to the resolver but is OMITTED from the frozen external manifest (10 record(s): control-journal:kill-cmd-77, control-journal:obj-chain, control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, provider:action-42, provider:nopurpose-target, provider:revoked-target, provider:short-target) — the replay is not entitled to depend on it"
       ],
       "references": [
-        "evidence:exec-receipt-91@v1#123456789abc"
-      ]
+        "evidence:exec-receipt-91@v1#9c2212c5c6977d1c194c18f565d9a93d862596bc5f71222cb1422b16082da7d4"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "no-manifest-supplied",
       "closed": true,
@@ -300,14 +400,14 @@
       "fold_refused": true,
       "manifest": "none",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 cannot be resolved: no external manifest was supplied with the fold input (P2U-02: declared is not resolvable)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 cannot be resolved: no external manifest was supplied with the fold input (P2U-02: declared is not resolvable)"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "resolver-degraded",
       "closed": true,
@@ -315,16 +415,16 @@
       "detected": true,
       "expected_problem": "external resolver is degraded",
       "fold_refused": true,
-      "manifest": "degraded resolver, 2 record(s), digest b9c5765e7827",
+      "manifest": "degraded resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 4c3dea8cb420",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is degraded; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external resolver is degraded; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "resolver-unavailable",
       "closed": true,
@@ -332,16 +432,16 @@
       "detected": true,
       "expected_problem": "external resolver is unavailable",
       "fold_refused": true,
-      "manifest": "unavailable resolver, 2 record(s), digest ea029f22376f",
+      "manifest": "unavailable resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest b24faaf1614a",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external resolver is unavailable; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external resolver is unavailable; no reference can be resolved and every external basis fails closed (P2U-02: an unverified answer is not evidence)"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "tampered-manifest",
       "closed": true,
@@ -349,16 +449,16 @@
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 3 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared de43b89e1ba3fca3, contents hash to 909d25e7c5bedecb — the frozen snapshot has been altered"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared 01bfa5897df52741, contents hash to 64007a7cbe04fb6f — the frozen snapshot has been altered after binding"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "unverified-record",
       "closed": true,
@@ -366,16 +466,16 @@
       "detected": true,
       "expected_problem": "no verification receipt",
       "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), digest 706f3d660d49",
+      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest cb06a0872fec",
       "problems": [
-        "event decision-ext: external basis provider:obj-5@v1#aa11bb22 resolves to a record with no verification receipt — an unverified external record is not evidence"
+        "event decision-ext: external basis provider:obj-5@v1#a0dc5a24c3d5935dadfe9096fde7cc070d9f1a92f52c3e03c52d612cbfa2a6cc resolves to a record with no verification receipt — an unverified external record is not evidence"
       ],
       "references": [
-        "provider:obj-5@v1#aa11bb22"
-      ]
+        "provider:obj-5@v1#a0dc5a24c3d5935dadfe9096fde7cc070d9f1a92f52c3e03c52d612cbfa2a6cc"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": false,
       "accepted_by_the_prefix_check_this_replaces": false,
       "case": "undeclared-store",
       "closed": true,
@@ -383,135 +483,322 @@
       "detected": true,
       "expected_problem": "not a declared external store",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest de43b89e1ba3",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis hearsay:obj-1@v1#aabbccdd names store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
+        "event decision-ext: external basis hearsay:obj-1@v1#0d7a58c00bd91c843ffd5c6f6099a70729ad8aa61cb8e5cc75b6b5a14593297c names store 'hearsay', which is not a declared external store ['control-journal', 'evidence', 'provider', 'schedule']"
       ],
       "references": [
-        "hearsay:obj-1@v1#aabbccdd"
-      ]
+        "hearsay:obj-1@v1#0d7a58c00bd91c843ffd5c6f6099a70729ad8aa61cb8e5cc75b6b5a14593297c"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "receipt-is-an-arbitrary-string",
       "closed": true,
-      "description": "the record attests to itself with a bare word — the verifier's P2V-02 probe",
+      "description": "the record attests to itself with a bare word — the P2V-02 probe",
       "detected": true,
-      "expected_problem": "is not a reference in the form",
+      "expected_problem": "does not parse as",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:obj-str@v1#1111111111111111: record control-journal:obj-str carries verification receipt 'verified-trust-me', which is not a reference in the form 'store:object-id@version#content-hash' — an arbitrary string is not an attestation (P2V-02)"
+        "event decision-ext: external basis control-journal:obj-str@v1#723c45d2ed0b4dc4641e1d0add002cdfe607889a4e5a50e33ae507a53bd5e225: verification receipt 'verified-trust-me' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
       ],
       "references": [
-        "control-journal:obj-str@v1#1111111111111111"
-      ]
+        "control-journal:obj-str@v1#723c45d2ed0b4dc4641e1d0add002cdfe607889a4e5a50e33ae507a53bd5e225"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
       "accepted_by_the_prefix_check_this_replaces": true,
-      "case": "receipt-names-no-registered-record",
+      "case": "receipt-names-a-manifest-record",
       "closed": true,
-      "description": "a well-formed receipt reference resolving to nothing in the manifest",
+      "description": "the R1 same-manifest chain: a receipt pointing back into the manifest. The receipt grammar names the registry, so this is unconstructible, not merely refused",
       "detected": true,
-      "expected_problem": "names no record in the external manifest",
+      "expected_problem": "not a string and not a record in the manifest being attested",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:obj-unreg@v1#2222222222222222: record control-journal:obj-unreg cites verification receipt evidence:no-such-attestation@v1#3333333333333333, which names no record in the external manifest (control-journal:obj-hash, control-journal:obj-str, control-journal:obj-unreg, control-journal:obj-ver, evidence:ctrl-receipt-77, evidence:cyc-a, evidence:cyc-b, evidence:obj-self)"
+        "event decision-ext: external basis control-journal:obj-chain@v1#af95f838dbb8f7a7896c229227d4f61811eb70576e6517f777077dba486289fc: verification receipt 'evidence:some-root@v1#d02c40abfb288ff4f7da3876c30eaec5c241f8631f75fa6af43fda808cb81e7a' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
       ],
       "references": [
-        "control-journal:obj-unreg@v1#2222222222222222"
-      ]
+        "control-journal:obj-chain@v1#af95f838dbb8f7a7896c229227d4f61811eb70576e6517f777077dba486289fc"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
       "accepted_by_the_prefix_check_this_replaces": true,
-      "case": "receipt-wrong-version",
+      "case": "receipt-names-no-registered-attestation",
       "closed": true,
-      "description": "the attestation exists; the receipt cites another version of it",
+      "description": "a well-formed receipt reference resolving to nothing in the registry",
       "detected": true,
-      "expected_problem": "cites verification receipt evidence:ctrl-receipt-77 at version 'v9'",
+      "expected_problem": "names no attestation in the registry",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:obj-ver@v1#4444444444444444: record control-journal:obj-ver cites verification receipt evidence:ctrl-receipt-77 at version 'v9'; the manifest records 'v1'"
+        "event decision-ext: external basis control-journal:obj-unreg@v1#cbe1655abca7eec1b6e187333ecb94e1ce4d22deb5c1aa499d508d6f2f9e63f0: record control-journal:obj-unreg cites receipt receipt:att-nonexistent@auth-v4#9fb6f7593d409942ff08a178d25be1d206f19b68260477fe9225e61493013b32, which names no attestation in the registry (4 receipt(s))"
       ],
       "references": [
-        "control-journal:obj-ver@v1#4444444444444444"
-      ]
+        "control-journal:obj-unreg@v1#cbe1655abca7eec1b6e187333ecb94e1ce4d22deb5c1aa499d508d6f2f9e63f0"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-wrong-authority-version",
+      "closed": true,
+      "description": "the attestation exists; the receipt cites another authority version",
+      "detected": true,
+      "expected_problem": "at authority version 'auth-v9'",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:obj-ver@v1#4ace8e6b5a88c6a38a14f958ba5baeaf8686a8d5f6a9c08f73b16c8bdd8c3bb8: record control-journal:obj-ver cites receipt att-77 at authority version 'auth-v9'; the registry records 'auth-v4'"
+      ],
+      "references": [
+        "control-journal:obj-ver@v1#4ace8e6b5a88c6a38a14f958ba5baeaf8686a8d5f6a9c08f73b16c8bdd8c3bb8"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "receipt-wrong-content-hash",
       "closed": true,
-      "description": "the attestation exists at that version; the receipt's hash disagrees",
+      "description": "the attestation exists; the receipt's content hash disagrees",
       "detected": true,
-      "expected_problem": "with content hash '0000000000000000'",
+      "expected_problem": "with content hash",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis control-journal:obj-hash@v1#5555555555555555: record control-journal:obj-hash cites verification receipt evidence:ctrl-receipt-77 with content hash '0000000000000000'; the manifest records 'cafebabe1234'"
+        "event decision-ext: external basis control-journal:obj-hash@v1#54237152d551253a441ad02e46f18925c0b89c9b6d73c836f61afb22543c4b18: record control-journal:obj-hash cites receipt att-77 with content hash '0000000000000000000000000000000000000000000000000000000000000000'; the registry records '2c789d57e5070fb4f745847a65645f3a6e5a2bda44097833c5f8ff80dcb2e28b'"
       ],
       "references": [
-        "control-journal:obj-hash@v1#5555555555555555"
-      ]
+        "control-journal:obj-hash@v1#54237152d551253a441ad02e46f18925c0b89c9b6d73c836f61afb22543c4b18"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
       "accepted_by_the_prefix_check_this_replaces": true,
-      "case": "receipt-self-referential",
+      "case": "receipt-attests-to-another-subject",
       "closed": true,
-      "description": "a record naming itself as its own attestation",
+      "description": "the verifier's P2W-02 probe: a real, registered, bound attestation that names a DIFFERENT record as its subject",
       "detected": true,
-      "expected_problem": "verification receipt cycle",
+      "expected_problem": "cannot certify this one",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis evidence:obj-self@v1#6666666666666666: verification receipt cycle: evidence:obj-self -> evidence:obj-self — a closed loop of mutual attestation attests to nothing (P2V-02)"
+        "event decision-ext: external basis provider:action-42@v7#2cecb3d9fcbdfe6244c0aa7584f2002eac8f300c40dfe12cc66d18abab6d335a: receipt att-unrelated attests to provider:something-else@v1#8377c85031a564beace5b9a347c078606b222cee86d0afabaec68b2a7bfc6900, not to provider:action-42@v7#2cecb3d9fcbdfe6244c0aa7584f2002eac8f300c40dfe12cc66d18abab6d335a — a registered attestation for another record cannot certify this one (P2W-02)"
       ],
       "references": [
-        "evidence:obj-self@v1#6666666666666666"
-      ]
+        "provider:action-42@v7#2cecb3d9fcbdfe6244c0aa7584f2002eac8f300c40dfe12cc66d18abab6d335a"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
       "accepted_by_the_prefix_check_this_replaces": true,
-      "case": "receipt-mutual-cycle",
+      "case": "receipt-revoked",
       "closed": true,
-      "description": "two records vouching for each other",
+      "description": "the attestation is registered and subject-bound, and revoked",
       "detected": true,
-      "expected_problem": "verification receipt cycle",
+      "expected_problem": "which the registry lists as REVOKED",
       "fold_refused": true,
-      "manifest": "available resolver, 8 record(s), digest 2de64c24d374",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
       "problems": [
-        "event decision-ext: external basis evidence:cyc-a@v1#7777777777777777: verification receipt cycle: evidence:cyc-a -> evidence:cyc-b -> evidence:cyc-a — a closed loop of mutual attestation attests to nothing (P2V-02)"
+        "event decision-ext: external basis provider:revoked-target@v1#78a40175967b76c93dd6f3f11910ac1514cbceda95f4b794375cbfee3d486ede: record provider:revoked-target is attested by receipt att-revoked, which the registry lists as REVOKED"
       ],
       "references": [
-        "evidence:cyc-a@v1#7777777777777777"
-      ]
+        "provider:revoked-target@v1#78a40175967b76c93dd6f3f11910ac1514cbceda95f4b794375cbfee3d486ede"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "receipt-declares-no-purpose",
+      "closed": true,
+      "description": "an attestation with no action class attests to nothing in particular",
+      "detected": true,
+      "expected_problem": "declares no purpose",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis provider:nopurpose-target@v1#50c23b71f39f9226bf02cb0cfdfd0b5d81a5537aa312aaf695df8c0a0a58425e: receipt att-nopurpose declares no purpose — an attestation with no action class attests to nothing in particular (P2W-02)"
+      ],
+      "references": [
+        "provider:nopurpose-target@v1#50c23b71f39f9226bf02cb0cfdfd0b5d81a5537aa312aaf695df8c0a0a58425e"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "abbreviated-content-hash",
+      "closed": true,
+      "description": "the verifier's short-hash probe: `cafebabe` / `deadbeef` as content identity",
+      "detected": true,
+      "expected_problem": "does not parse",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis 'provider:short-target@1#cafebabe' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
+      ],
+      "references": [
+        "provider:short-target@1#cafebabe"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "no-receipt-registry-supplied",
+      "closed": true,
+      "description": "a record citing a receipt with no registry in the fold input",
+      "detected": true,
+      "expected_problem": "no receipt registry was supplied",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 cites receipt receipt:att-77@auth-v4#2c789d57e5070fb4f745847a65645f3a6e5a2bda44097833c5f8ff80dcb2e28b but no receipt registry was supplied with the fold input — a same-manifest attestation is not independent evidence and there is no other source (P2W-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "none"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-from-the-wrong-authority",
+      "closed": true,
+      "description": "a bound registry authored by someone the manifest did not name",
+      "detected": true,
+      "expected_problem": "must be the one the manifest declared",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest names receipt authority 'control-plane-attestation-service'; the supplied registry is authored by 'some-other-service' — the authority must be the one the manifest declared before the registry was consulted (P2W-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority some-other-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-authored-by-the-manifest-source",
+      "closed": true,
+      "description": "the same actor authored both artifacts — structurally not independent",
+      "detected": true,
+      "expected_problem": "must be the one the manifest declared",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest names receipt authority 'control-plane-attestation-service'; the supplied registry is authored by 'provider-snapshot-service' — the authority must be the one the manifest declared before the registry was consulted (P2W-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority provider-snapshot-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "manifest-names-itself-as-receipt-authority",
+      "closed": true,
+      "description": "the manifest declares its own source as the attestation authority",
+      "detected": true,
+      "expected_problem": "names itself",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest effd4be3ea58",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest names itself (provider-snapshot-service) as its own receipt authority — attestations from the record author are not independent evidence (P2W-02)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority provider-snapshot-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-stale-revocation-snapshot",
+      "closed": true,
+      "description": "a registry whose revocation snapshot is not the one the manifest is bound to",
+      "detected": true,
+      "expected_problem": "a stale revocation list cannot answer",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: the manifest is bound to revocation snapshot 'rev-2026-07-31'; the supplied registry is snapshot 'rev-2020-01-01' — a stale revocation list cannot answer for this manifest (P2W-03)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2020-01-01"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-unbound",
+      "closed": true,
+      "description": "a registry with no declared digest — a list, not a bound artifact",
+      "detected": true,
+      "expected_problem": "receipt registry declares no digest",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: receipt registry unusable — receipt registry declares no digest — an unbound registry is a list, not an independently bound artifact"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "registry-duplicate-receipt-ids",
+      "closed": true,
+      "description": "two attestations sharing one receipt id",
+      "detected": true,
+      "expected_problem": "more than one receipt with id",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77: receipt registry unusable — receipt registry carries more than one receipt with id 'att-77' — which one answers would depend on tuple order (P2W-03 ambiguous identity)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 5 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "resolver-state-edited-under-a-valid-digest",
       "closed": true,
-      "description": "the same records with resolver_state edited unavailable -> available; the verifier's P2V-03 probe, and the previous digest verified it",
+      "description": "the P2V-03 probe: the same records with resolver_state edited",
       "detected": true,
       "expected_problem": "external manifest digest mismatch",
       "fold_refused": true,
-      "manifest": "available resolver, 2 record(s), digest ea029f22376f",
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest b24faaf1614a",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest digest mismatch: declared ea029f22376f96e3, contents hash to 4429b132e86ea7b9 — the frozen snapshot has been altered"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared b24faaf1614a700b, contents hash to 01bfa5897df52741 — the frozen snapshot has been altered after binding"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     },
     {
-      "accepted_by_the_p2u_contract_this_rework_replaces": true,
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "snapshot-identity-edited-under-a-valid-digest",
+      "closed": true,
+      "description": "the P2W-03 probe: the same records and resolver state under a different snapshot identity — a context the R1 envelope could not even represent",
+      "detected": true,
+      "expected_problem": "external manifest digest mismatch",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-01-01T00:00Z, digest 01bfa5897df5",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest digest mismatch: declared 01bfa5897df52741, contents hash to 712233ffac11b7dc — the frozen snapshot has been altered after binding"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
       "accepted_by_the_prefix_check_this_replaces": true,
       "case": "duplicate-external-record-identity",
       "closed": true,
@@ -519,16 +806,91 @@
       "detected": true,
       "expected_problem": "records for identity control-journal:kill-cmd-77",
       "fold_refused": true,
-      "manifest": "available resolver, 3 record(s), digest 9fa9eaadc6b5",
+      "manifest": "available resolver, 11 record(s), snapshot snap-2026-07-31T00:00Z, digest a704064da1f0",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6 not resolvable — external manifest carries 2 records for identity control-journal:kill-cmd-77 (versions v3, v4) — which one answers for that identity would depend on tuple order, so the manifest is refused (P2V-03)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest carries 2 records for identity control-journal:kill-cmd-77 (versions v3, v4) — which one answers for that identity would depend on tuple order, so the manifest is refused (P2V-03)"
       ],
       "references": [
-        "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6"
-      ]
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "envelope-missing-snapshot-id",
+      "closed": true,
+      "description": "a required control the contract names is left undeclared",
+      "detected": true,
+      "expected_problem": "declares no snapshot_id",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot -, digest 42388c08b32e",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares no snapshot_id (control 'snapshot id / epoch') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "envelope-missing-receipt-authority",
+      "closed": true,
+      "description": "the manifest declares no receipt authority at all",
+      "detected": true,
+      "expected_problem": "declares no receipt_authority_id",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 62e9917eda3e",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares no receipt_authority_id (control 'receipt/evidence authority identity') — a required control the contract names is missing, so the envelope is incomplete (P2W-03)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "envelope-unknown-schema-version",
+      "closed": true,
+      "description": "a manifest declaring a schema this validator does not approve",
+      "detected": true,
+      "expected_problem": "approved schemas are",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest d1fb3cd118c7",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares schema 'external-basis-manifest/1'; approved schemas are ['external-basis-manifest/2'] (P2W-03: unknown schema versions are refused)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "envelope-unapproved-digest-algorithm",
+      "closed": true,
+      "description": "a manifest declaring an algorithm outside the approved set",
+      "detected": true,
+      "expected_problem": "approved algorithms are",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest 112e02899671",
+      "problems": [
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82 not resolvable — external manifest declares digest algorithm 'md5'; approved algorithms are ['sha256'] (P2W-02: no abbreviated or unapproved content identity)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
     }
   ],
   "external_basis_positive": {
+    "attestation": {
+      "purpose": "kill-command-delivery",
+      "receipt_id": "att-77",
+      "subject_ref": "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+    },
+    "authorities_are_distinct": true,
     "error": null,
     "folded": {
       "canonical_records": 1,
@@ -537,38 +899,80 @@
         "decision-ext"
       ]
     },
-    "manifest_digest": "de43b89e1ba3fca395521fb57fe181ea26d12d5ee7b4655501a2441fe1db0431",
+    "manifest_digest": "01bfa5897df52741ca22cc46f61f8a4007e50eed74c6ddb6eaf8e122296e5f9e",
     "manifest_records": [
       "control-journal:kill-cmd-77",
-      "evidence:ctrl-receipt-77"
+      "control-journal:obj-chain",
+      "control-journal:obj-hash",
+      "control-journal:obj-str",
+      "control-journal:obj-unreg",
+      "control-journal:obj-ver",
+      "provider:action-42",
+      "provider:nopurpose-target",
+      "provider:revoked-target",
+      "provider:short-target"
     ],
+    "manifest_source_id": "provider-snapshot-service",
     "problems": [],
-    "reference": "control-journal:kill-cmd-77@v3#4f1c2ab9de3057c6",
+    "reference": "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82",
+    "registry_authority_id": "control-plane-attestation-service",
+    "registry_digest": "6ab7c8ff421e2ac0ba286537c4993e5484f3cf12c627ee1dec7bb03a6fc5682f",
     "resolved_and_folded": true
   },
-  "external_reference_grammar": "store:object-id@version#content-hash",
+  "external_reference_grammar": "store:object-id@version#<64-hex-sha256>",
+  "r1_contract_witnesses": {
+    "all_witness": true,
+    "not_witnessing": [],
+    "probes": [
+      {
+        "description": "38A_/P2W-02: `integrity_problems: []`, `fold accepted: true`",
+        "probe": "unrelated-root-certifies-target",
+        "problems_now": [
+          "event decision-ext: external basis provider:action-42@7#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa: verification receipt 'evidence:unrelated-root@1#bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb' does not parse as 'receipt:receipt-id@authority-version#<64-hex-sha256>' — an attestation is an object in the receipt registry, not a string and not a record in the manifest being attested (P2W-02)"
+        ],
+        "r1_contract_accepted": true,
+        "reference": "provider:action-42@7#aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+        "refused_now": true,
+        "witnesses_the_finding": true
+      },
+      {
+        "description": "38A_/P2W-02 short-hash probe: 8-hex values resolved",
+        "probe": "abbreviated-content-hash",
+        "problems_now": [
+          "event decision-ext: external basis 'provider:short-target@1#cafebabe' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
+        ],
+        "r1_contract_accepted": true,
+        "reference": "provider:short-target@1#cafebabe",
+        "refused_now": true,
+        "witnesses_the_finding": true
+      },
+      {
+        "description": "38A_/P2W-03: `same_records_same_digest: true` — the R1 envelope could not represent a snapshot identity, so two contexts hashed alike NECESSARILY",
+        "probe": "same-rows-different-snapshot-context",
+        "problems_now": [
+          "digests differ: 619bd33a4cbf6dee vs 75f09232fa2ab8fa"
+        ],
+        "r1_contract_accepted": true,
+        "reference": "-",
+        "refused_now": true,
+        "witnesses_the_finding": true
+      }
+    ]
+  },
   "summary": {
     "cases": 8,
     "closed": 8,
     "digest_enumeration_guard_discriminates": true,
-    "external_accepted_by_the_p2u_contract_this_rework_replaces": [
-      "duplicate-external-record-identity",
-      "receipt-is-an-arbitrary-string",
-      "receipt-mutual-cycle",
-      "receipt-names-no-registered-record",
-      "receipt-self-referential",
-      "receipt-wrong-content-hash",
-      "receipt-wrong-version",
-      "resolver-state-edited-under-a-valid-digest"
-    ],
-    "external_accepted_by_the_prefix_check_this_replaces": 21,
-    "external_cases": 22,
-    "external_closed": 22,
+    "external_accepted_by_the_prefix_check_this_replaces": 36,
+    "external_cases": 37,
+    "external_closed": 37,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],
     "production_basis_problems": {},
     "production_combinations_validated": 81,
+    "r1_contract_witnesses_all_witness": true,
+    "r1_contract_witnesses_not_witnessing": [],
     "witnesses_reproducing_old_behavior": 7
   }
 }

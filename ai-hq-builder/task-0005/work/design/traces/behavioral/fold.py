@@ -91,7 +91,8 @@ class BasisError(FoldError):
 
 
 def validate_basis(events: Sequence[Event],
-                   external_manifest: Optional["external_basis.ExternalManifest"] = None
+                   external_manifest: Optional["external_basis.ExternalManifest"] = None,
+                   receipt_registry: Optional["external_basis.ReceiptRegistry"] = None
                    ) -> List[str]:
     """Check the replay basis is complete and well-formed. Returns problem strings.
 
@@ -150,7 +151,8 @@ def validate_basis(events: Sequence[Event],
 
         for ext in e.external_basis:
             for problem in external_basis.resolve(ext, external_manifest,
-                                                  EXTERNAL_BASIS_STORES):
+                                                  EXTERNAL_BASIS_STORES,
+                                                  receipt_registry=receipt_registry):
                 problems.append("event %s: %s" % (e.event_id, problem))
 
         if (not e.caused_by and not e.external_basis
@@ -246,7 +248,8 @@ def fold(events: Sequence[Event], shape: str, case_id: str,
          enforce_receipt_ownership: bool = True,
          rebuild_projections: bool = True,
          enforce_basis: bool = True,
-         external_manifest: Optional["external_basis.ExternalManifest"] = None
+         external_manifest: Optional["external_basis.ExternalManifest"] = None,
+         receipt_registry: Optional["external_basis.ReceiptRegistry"] = None
          ) -> FoldedState:
     """Replay the full multi-store basis into folded state for one candidate shape.
 
@@ -264,9 +267,16 @@ def fold(events: Sequence[Event], shape: str, case_id: str,
     permissive — an event declaring an `external_basis` with no manifest supplied
     fails closed. No corpus fixture declares one, so the default is also the
     production path.
+
+    P2W-02: `receipt_registry` is the SEPARATELY controlled, separately bound source
+    of attestations. It is a distinct argument, not a section of the manifest,
+    because the independence the contract rests on is structural: the manifest's
+    author cannot supply both. It defaults to None, and None is not permissive
+    either — a record citing a receipt with no registry supplied fails closed.
     """
     if enforce_basis:
-        problems = validate_basis(events, external_manifest=external_manifest)
+        problems = validate_basis(events, external_manifest=external_manifest,
+                                  receipt_registry=receipt_registry)
         if problems:
             raise BasisError("incomplete replay basis (%d problem(s)): %s"
                              % (len(problems), "; ".join(problems[:4])))

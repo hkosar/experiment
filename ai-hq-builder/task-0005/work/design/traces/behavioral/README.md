@@ -31,7 +31,8 @@ python3 run_oracle_mutations.py     # P2T-01 — every expected dimension shown 
 python3 run_basis.py                # P2T-02 — incomplete causal basis fails closed;
                                     # P2U-02 — every external basis must resolve
 python3 run_p2s04.py                # P2T-03 — schedule-liveness suite (harness self-test);
-                                    # P2U-03 version-bound horizons; P2V-04 permanent retirement
+                                    # P2U-03 version-bound horizons; P2V-04 permanent retirement;
+                                    # P2W-04 durable monotonic identity via a control journal
 ```
 
 Two more validators live one level up, outside this directory:
@@ -39,10 +40,11 @@ Two more validators live one level up, outside this directory:
 ```
 python3 ../check_supersessions.py              # P2T-04 — patterns derived from D-SM at runtime
 python3 ../check_supersessions.py --self-test  #          seeded violations must fail
-python3 ../../../13V_validate_design_matrix.py --self-test   # P2T-05 summary/finding checks,
-                                    # P2U-05 global open-finding gate, an end-to-end probe that runs
-                                    # --final-gate as a subprocess against synthetic repos, and the
-                                    # P2V-01 cases proving no argv can switch that gate off
+python3 ../../../13V_validate_design_matrix.py --self-test          # P2T-05/P2U-05 check cases
+python3 ../../../13V_validate_design_matrix.py --end-to-end-probe   # the real command as a
+                                    # subprocess against synthetic repos, plus the P2W-01 CLI probes
+                                    # (mode combination, unknown arguments) — exactly one mode may be
+                                    # selected and unknown arguments are a usage error, exit 2
 ```
 
 Fixture-driven runners default to `--fixtures ../../../03F_Replay_Fixtures.json`
@@ -97,7 +99,7 @@ hits rather than false positives.
 | `oracle_schema.py` | typed schema for all four expected dimensions + the fail-closed coverage floor | oracle |
 | `engine_core.py` | envelope authority (D-B2 §3), policy composition (D-B8 P2G-10), tier function (D-B6 §2.2) | engine |
 | `events.py` | event taxonomy, store-ownership matrix, ordering keys/phases (D-B9), the three shapes | engine |
-| `external_basis.py` | external-basis reference grammar, hash-bound manifest, resolver contract (P2U-02) | engine |
+| `external_basis.py` | reference grammar, canonical versioned manifest envelope, separately bound receipt registry, resolver contract (P2U-02, P2V-02/03, P2W-02/03) | engine |
 | `fold.py` | deterministic causal-topological replay fold (D-B9 P2S-06) | engine |
 | `scenarios.py` | 27 input-side stimulus encodings | engine |
 | `simulate.py` | orchestration; E2E-1 normalizers; seeded-defect switches | engine |
@@ -264,6 +266,47 @@ add no mechanism, so it is listed rather than re-driven.
   the specific sub-Needs-Owner band is not, per the `27_` ruling), and 7 have no
   same-kind alternative anywhere in a 27-row corpus. An undeclared value-blind pair
   fails the run, and so does a coarsened declaration that has stopped being true.
+- **No CLI combination bypasses the final gate (P2W-01).** R1 deleted a bypass flag
+  and tested four renamed spellings of it. The bypass that remained needed no flag:
+  modes were sniffed out of `sys.argv` with `in`, so `--final-gate --self-test` ran
+  the self-test branch and exited from it with code 0 while six gate-blocking
+  findings were open — and `--final-gate --definitely-unknown` was accepted because
+  unrecognised arguments were ignored. `13V_` now has four explicit modes, exactly
+  one selectable, parsed before anything executes; combining `--final-gate` with a
+  test mode is a usage error raised before any test runs; unknown arguments exit 2.
+  Every combination is probed against a repository with six open blocking findings
+  and against a clear one, asserting both the exit code and the absence of test
+  output.
+- **Attestations come from a different actor (P2W-02).** R1 made the receipt resolve
+  to a registered record — in the same manifest. The chain terminated at the first
+  record with no receipt of its own, and that record was trusted because the same
+  author had listed it; an unrelated root certified an unrelated target with
+  `integrity_problems: []`. There are now TWO independently bound artifacts: the
+  `ExternalManifest`, authored by `source_id`, and the `ReceiptRegistry`, authored by
+  an `authority_id` that must differ from it and that the manifest names in advance.
+  A receipt is a `receipt:` reference that cannot name a manifest record, and it
+  carries the full reference of its subject, a purpose, and a revocation state. This
+  is structural independence, **not cryptographic attestation** — there is no
+  signature and no trust root, and `trust_root_id` is an explicit not-applicable
+  sentinel so the absence is a recorded decision.
+- **Content identity is a full-length sha256 (P2W-02).** The grammar accepted 8-hex
+  values; `deadbeef` and `cafebabe` resolved. It requires 64 lowercase hex now, and
+  the manifest declares its algorithm and length as bound controls.
+- **The manifest is a canonical versioned envelope (P2W-03).** It could not represent
+  — so could not bind — schema version, snapshot identity, source, creation context,
+  or receipt authority, and two different authority/snapshot contexts with the same
+  rows hashed alike **necessarily**. It carries all of them now;
+  `REQUIRED_CONTRACT_CONTROLS` maps each item of the verifier's enumeration to the
+  field that holds it and fails if one is missing, and the coverage guard extends to
+  `ExternalRecord.as_row()` / `Receipt.as_row()`, since the row is what gets hashed.
+- **Schedule identity is durable and minted once (P2W-04).** Three paths still
+  reactivated stale coverage: a same-version change (the current version was excluded
+  from retirement and its horizon kept), `register()` replacing a live schedule, and a
+  restart that lost the in-memory retirement set. Per Fable's ruling the control
+  journal is now the authority: every governed transition is an entry, and the live
+  spec, materialized horizons, retired set and highest-version-ever are all **derived
+  by folding it**. A restart is `Watchdog.from_journal()`, so there is no way to
+  restore some of the state and not the rest.
 - **The external-basis contract was corrected twice.** TASK-0005 replaced a store-
   prefix check; R1 replaced three holes in the replacement, each the same shape as
   the finding it was meant to close — a control that names a thing without
@@ -377,8 +420,8 @@ the runner fails if any mutation witnesses no predicate and no judge check.
 | `out/p2s07_eligibility.json` | negative and positive eligibility tests |
 | `out/anticircularity.json` | the three-way boundary proof |
 | `out/oracle_mutations.json` | P2T-01/P2U-01 — verifier probes defeated, sentinel + contradictory + same-kind corruption per fixture-dimension pair, and the restored-defect witness |
-| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V-02/P2V-03 external-basis resolution cases + the positive case + the digest-enumeration guard |
-| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04 — the five schedule-liveness behaviors and their targeted defects |
+| `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1-contract witnesses |
+| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04 — the eleven schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
 | `out/gate_report.json` | acceptance-criteria table |
 
 ## Scope and limits

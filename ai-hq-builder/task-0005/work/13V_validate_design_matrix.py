@@ -85,26 +85,34 @@ and its reader cannot drift apart):
   * `id` must match the token before the colon in a dependency cell.
   * Any other key is ignored, so the file can carry notes without breaking.
 
-Exit 0 only if all checks pass. Run from this directory.
+MODES — exactly one, and unknown arguments are refused (P2W-01):
 
-`--self-test` runs two suites and touches no repository file:
-  * the check-level cases, including file-level ones against real files written
-    into a temp directory;
-  * an END-TO-END probe that builds a complete synthetic matrix set (register,
-    plan, 13M, 13G, 13D, 13F) in a temp directory and invokes THIS FILE as a
-    subprocess with `--final-gate`, so the verifier's `32A_` evidence — an exit
-    code from the real command — is reproduced in the same terms. Each probe runs
-    twice: once against this file, once against a temp COPY with check 9 elided
-    from its source, and the copy must still produce the exit code the verifier
-    recorded. NOTHING in the shipped file can skip check 9 — see P2V-01 below.
+    --structural          the default when no mode is given: checks 1-8 over the
+                          repository, without the final gate
+    --final-gate          --structural plus check 9 and the final-gate row rule
+    --self-test           the check-level cases; touches no repository file
+    --end-to-end-probe    builds a complete synthetic matrix set (register, plan,
+                          13M, 13G, 13D, 13F) in a temp directory and invokes THIS
+                          FILE as a subprocess, so the verifier's evidence — an exit
+                          code from the real command — is reproduced in its own
+                          terms; also the CLI probes below
 
-**No argv disables any check (P2V-01).** An earlier version of this file accepted
-`--p2u05-defect-witness`, which turned check 9 off so the probe could show the
-counterfactual. That put a documented, public waiver on the gate command itself:
-`--final-gate --p2u05-defect-witness` returned 0 with six blocking findings open.
-The flag is deleted, the counterfactual is built by eliding the check from a
-throwaway copy, and `--self-test` runs the real command with that flag and three
-other plausible disable spellings and requires exit 1 for each.
+Exit 0 only if all checks pass; exit 2 for a usage error. Run from this directory.
+
+**No CLI combination bypasses the gate (P2V-01, then P2W-01).** An earlier version
+accepted `--p2u05-defect-witness`, which turned check 9 off. R1 deleted that flag and
+tested four renamed spellings of it — which was the wrong shape of test, because the
+bypass that remained needed no flag at all. Modes were sniffed out of `sys.argv` with
+`in`, so `--final-gate --self-test` ran the self-test branch, exited from it, and
+returned 0 with six blocking findings open; the reverse ordering did the same; and
+`--final-gate --definitely-unknown` was accepted because unrecognised arguments were
+silently ignored.
+
+`parse_cli()` is now total: every argument is a known mode or an error, exactly one
+mode may be selected, and combining `--final-gate` with a test mode is a usage error
+raised BEFORE any test executes. `--end-to-end-probe` asserts both the exit code and
+the absence of test output for every combination, against a repository with six open
+gate-blocking findings and against a clear one.
 """
 import csv
 import hashlib
@@ -187,28 +195,81 @@ def summary_problems(overlay_text, accepted_counts, proposed_counts):
 
 FINDINGS_SCHEMA = "open-findings/1"
 
-# P2V-01. There was a `--p2u05-defect-witness` flag here that disabled check 9, so
-# that the end-to-end probe could show the same input still returning exit 0 with the
-# check off. The reasoning was `fold(enforce_basis=False)`; the mistake was the
-# delivery mechanism. `enforce_basis` is a keyword argument on a library function that
-# no command line reaches. This was an argv flag on the gate command itself, which
-# means the correction for P2U-05 shipped with a documented, public way to turn it
-# back off — `13V_ --final-gate --p2u05-defect-witness` and six open blocking findings
-# returned 0. A control that can be waived from the command line is a suggestion.
+# --------------------------------------------------------------------------
+# Strict CLI (P2V-01, then P2W-01)
 #
-# The flag is gone. No argv, no environment variable, and no attribute of this module
-# can skip check 9. Two self-tests hold that line:
-#   * `_witness_source` builds the counterfactual by ELIDING the check from a COPY of
-#     this file in a temp directory, so the defect is still observed rather than
-#     asserted, and the thing that can be turned off is a throwaway copy;
-#   * `--self-test` runs the real command with the deleted flag (and other plausible
-#     disable spellings) and requires exit 1 — the P2V-01 probe as a failing case.
+# R1 deleted a `--p2u05-defect-witness` flag that disabled check 9, and tested four
+# disable SPELLINGS. That was the wrong shape of test: it looked for renamed versions
+# of the flag I had just removed, and the bypass that was actually there did not need
+# a flag at all. `--self-test` was sniffed out of `sys.argv` with `in`, and its branch
+# exited before the repository gate ran — so
+#
+#     13V_ --final-gate --self-test        exit 0, self-test PASS, gate never ran
+#     13V_ --self-test --final-gate        exit 0, the same bypass
+#     13V_ --final-gate --definitely-unknown   exit 0, the unknown flag ignored
+#
+# with six gate-blocking findings open. Membership tests over argv are not a CLI:
+# every unrecognised argument was silently permitted and any two modes could be
+# combined, with whichever branch ran first deciding the exit code.
+#
+# So: four explicit modes, EXACTLY ONE selectable, parsed before anything executes.
+# Unknown arguments are a usage error. `--final-gate` combined with any test mode is
+# a usage error raised before a single test runs — not a test that then passes.
+MODE_STRUCTURAL = "--structural"
+MODE_FINAL_GATE = "--final-gate"
+MODE_SELF_TEST = "--self-test"
+MODE_E2E_PROBE = "--end-to-end-probe"
+
+MODES = (MODE_STRUCTURAL, MODE_FINAL_GATE, MODE_SELF_TEST, MODE_E2E_PROBE)
+TEST_MODES = (MODE_SELF_TEST, MODE_E2E_PROBE)
+DEFAULT_MODE = MODE_STRUCTURAL
+
+USAGE_EXIT = 2          # conventional usage error; never confusable with a gate PASS
+
+USAGE = (
+    "usage: 13V_validate_design_matrix.py [%s]\n"
+    "  exactly one mode; %s is the default when none is given.\n"
+    "  a test mode may not be combined with %s, and unknown arguments are refused."
+    % (" | ".join(MODES), DEFAULT_MODE, MODE_FINAL_GATE))
+
+# Spellings of the R1 flag and its plausible successors. Kept as a regression list:
+# each must now be refused as an UNKNOWN ARGUMENT rather than ignored, which is a
+# stronger property than "does not disable the check".
 DISABLE_SPELLINGS_THAT_MUST_NOT_WORK = (
-    "--p2u05-defect-witness",          # the flag this return deleted
+    "--p2u05-defect-witness",          # the flag R1 deleted
     "--no-final-gate-findings",
     "--skip-open-findings",
     "--disable-check-9",
+    "--definitely-unknown",            # 38A_'s own unknown-argument probe
 )
+
+
+class UsageError(Exception):
+    """A CLI that cannot be resolved to exactly one mode. Never a gate verdict."""
+
+
+def parse_cli(argv):
+    """Resolve argv to exactly one mode, or raise. No side effects, no I/O.
+
+    Deliberately total: every argument is either a known mode or an error. There is
+    no "ignored" outcome, because "ignored" is how `--definitely-unknown` rode along
+    beside `--final-gate` and how a future flag would.
+    """
+    unknown = [a for a in argv if a not in MODES]
+    if unknown:
+        raise UsageError("unknown argument(s): %s" % ", ".join(unknown))
+    selected = [m for m in MODES if m in argv]
+    if len(selected) > 1:
+        if MODE_FINAL_GATE in selected and any(m in selected for m in TEST_MODES):
+            raise UsageError(
+                "%s may not be combined with a test mode (%s) — the repository gate "
+                "and the harness tests are separate runs, and combining them is how "
+                "the gate was bypassed (P2W-01)"
+                % (MODE_FINAL_GATE,
+                   ", ".join(m for m in selected if m in TEST_MODES)))
+        raise UsageError("exactly one mode may be selected; got %s"
+                         % ", ".join(selected))
+    return selected[0] if selected else DEFAULT_MODE
 
 
 def load_findings(path=OPEN_FINDINGS):
@@ -672,46 +733,96 @@ def _probe_e2e():
             print("      %s" % (out.splitlines()[0] if out else "(no output)")[:104])
             if len(out.splitlines()) > 1:
                 print("      %s" % out.splitlines()[1][:104])
-    # ---- P2V-01: no argv may switch check 9 off ------------------------------
+    # ---- P2W-01: strict CLI ---------------------------------------------------
+    # `38A_`'s probes in their exact argv form, against BOTH repositories the
+    # verifier used: one with six gate-blocking findings open, one clear.
+    #
+    # The assertion is not only the exit code. A mode combination has to fail BEFORE
+    # a test runs, so each combined invocation must also produce NO self-test output:
+    # an exit code of 2 accompanied by "13V_ self-test" on stdout would mean the test
+    # ran and the usage error came afterwards, which is not what was required.
     print()
-    print("  P2V-01 — the deleted disable flag, and other plausible spellings, must")
-    print("  NOT switch check 9 off. Each is run against a repository with six open")
-    print("  gate-blocking findings and must still exit 1.")
+    print("  P2W-01 — strict CLI. Exactly one mode; a test mode may not be combined")
+    print("  with %s; unknown arguments are refused. Verified against a repository"
+          % MODE_FINAL_GATE)
+    print("  with six open gate-blocking findings AND against a clear one.")
+    cli_cases = []
+    for flag in DISABLE_SPELLINGS_THAT_MUST_NOT_WORK:
+        cli_cases.append(([MODE_FINAL_GATE, flag], USAGE_EXIT, "unknown argument"))
+    cli_cases += [
+        ([MODE_FINAL_GATE, MODE_SELF_TEST], USAGE_EXIT, "38A_ mode-combination probe"),
+        ([MODE_SELF_TEST, MODE_FINAL_GATE], USAGE_EXIT, "38A_ reverse ordering"),
+        ([MODE_FINAL_GATE, MODE_E2E_PROBE], USAGE_EXIT, "gate + the other test mode"),
+        ([MODE_SELF_TEST, MODE_E2E_PROBE], USAGE_EXIT, "two test modes"),
+        ([MODE_STRUCTURAL, MODE_FINAL_GATE], USAGE_EXIT, "two repository modes"),
+        (["--Final-Gate"], USAGE_EXIT, "case-variant of a real mode"),
+        (["--final-gate=1"], USAGE_EXIT, "value-attached form"),
+    ]
     with tempfile.TemporaryDirectory() as tmp:
-        work = os.path.join(tmp, "repo")
-        os.makedirs(work)
-        _build_synthetic_repo(work, blocking, True)
-        for flag in DISABLE_SPELLINGS_THAT_MUST_NOT_WORK:
-            proc = subprocess.run([sys.executable, me, "--final-gate", flag],
-                                  cwd=work, capture_output=True, text=True)
-            out = (proc.stdout + proc.stderr).strip()
-            ok = proc.returncode == 1 and "block the design gate globally" in out
+        repos = {}
+        for label, doc in (("open-findings", blocking), ("clear", clear)):
+            work = os.path.join(tmp, label)
+            os.makedirs(work)
+            _build_synthetic_repo(work, doc, True)
+            repos[label] = work
+
+        print("    %-40s %-14s %-6s %s"
+              % ("ARGV", "REPO", "EXIT", "TEST OUTPUT LEAKED?"))
+        for argv, want_code, why in cli_cases:
+            for label, work in sorted(repos.items()):
+                proc = subprocess.run([sys.executable, me] + argv, cwd=work,
+                                      capture_output=True, text=True)
+                leaked = "13V_ self-test" in proc.stdout or \
+                         "end-to-end probe" in proc.stdout
+                ok = proc.returncode == want_code and not leaked
+                ok_all = ok_all and ok
+                print("    %-40s %-14s %-6s %s"
+                      % (" ".join(argv)[:40], label, proc.returncode,
+                         ("*** LEAKED ***" if leaked else "no")
+                         + ("" if ok else "   *** WANT EXIT %d ***" % want_code)))
+
+        # The single-mode baselines, so the strictness is not just refusing everything.
+        for argv, label, want_code in (
+                ([MODE_FINAL_GATE], "open-findings", 1),
+                ([MODE_FINAL_GATE], "clear", 0),
+                ([], "clear", 0),                       # no mode -> structural default
+                ([MODE_STRUCTURAL], "open-findings", 0),  # structural ignores findings
+        ):
+            proc = subprocess.run([sys.executable, me] + argv, cwd=repos[label],
+                                  capture_output=True, text=True)
+            ok = proc.returncode == want_code
             ok_all = ok_all and ok
-            print("    %-34s exit %d (want 1)  %s"
-                  % (flag, proc.returncode, "ok" if ok else "*** DISABLED THE CHECK ***"))
-        # And the flag is not merely ignored — the constant is gone from the source.
-        # The token is assembled at runtime: written as a literal it would appear in
-        # this line and the check would report itself. That is the third self-match
-        # in this file today (the elision anchor matched its own constant, twice), so
-        # it is worth naming: a source check whose own text satisfies the pattern it
-        # searches for is not a check.
+            print("    %-40s %-14s %-6s %s"
+                  % (" ".join(argv) or "(no arguments)", label, proc.returncode,
+                     "ok" if ok else "*** WANT EXIT %d ***" % want_code))
+
+        # And the R1 flag is not merely refused — the constant is gone from the
+        # source. The token is assembled at runtime: written as a literal it would
+        # appear in this line and the check would report itself.
         removed_constant = "P2U05_" + "WITNESS_FLAG"
-        src = open(me, encoding="utf-8").read()
-        gone = removed_constant not in src
+        gone = removed_constant not in open(me, encoding="utf-8").read()
         ok_all = ok_all and gone
-        print("    %-34s %s" % ("flag constant gone from the source",
+        print("    %-40s %s" % ("R1 flag constant gone from the source",
                                 "ok" if gone else "*** STILL PRESENT ***"))
 
-    print("END-TO-END PROBE %s — %d gate cases + %d disable-spelling cases"
-          % ("PASS" if ok_all else "FAIL", len(probes),
-             len(DISABLE_SPELLINGS_THAT_MUST_NOT_WORK)))
+    print("END-TO-END PROBE %s — %d gate cases + %d CLI cases"
+          % ("PASS" if ok_all else "FAIL", len(probes), len(cli_cases) * 2 + 4))
     return 0 if ok_all else 1
 
 
-if "--self-test" in sys.argv[1:]:
-    rc = _self_test()
-    print()
-    sys.exit(rc or _probe_e2e())
+# P2W-01 — the mode is resolved FIRST, before any suite runs and before the register
+# is opened. A usage error exits here, so `--final-gate --self-test` can never reach
+# a test that would then report PASS.
+try:
+    MODE = parse_cli(sys.argv[1:])
+except UsageError as _exc:
+    sys.stderr.write("13V_: %s\n%s\n" % (_exc, USAGE))
+    sys.exit(USAGE_EXIT)
+
+if MODE == MODE_SELF_TEST:
+    sys.exit(_self_test())
+if MODE == MODE_E2E_PROBE:
+    sys.exit(_probe_e2e())
 
 failures = []
 
@@ -826,7 +937,7 @@ for _msg in summary_problems(open(OVERLAY, encoding="utf-8").read(),
 # --- P2T-05 check 8 (row traceability) + P2U-05 check 9 (global gate) ---
 _findings = load_findings()
 
-if "--final-gate" in sys.argv[1:]:
+if MODE == MODE_FINAL_GATE:
     # Check 9 FIRST and with no matrix input at all: the rows cannot influence it,
     # which is the whole of the P2U-05 correction.
     for _msg in global_finding_problems(_findings):
@@ -847,7 +958,7 @@ if failures:
         print(f"  ... and {len(failures)-40} more")
     sys.exit(1)
 
-mode = "final-gate" if "--final-gate" in sys.argv[1:] else "structural"
+mode = MODE.lstrip("-")
 from collections import Counter
 cnt = Counter(status_by_id[r] for r in order)
 print(f"PASS ({mode}) — 133 rows in both matrices, text hashes bound to the exact register/plan texts, "
