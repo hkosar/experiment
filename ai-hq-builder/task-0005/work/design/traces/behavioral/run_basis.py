@@ -216,8 +216,35 @@ GOOD_RECORD = extb.ExternalRecord(
     content_hash=_h("kill-cmd-77"),
     verification_receipt=extb.receipt_reference_for(GOOD_RECEIPT))
 
-# What a consuming event must declare to use GOOD_RECORD as evidence (P2X-02).
-CONSUMING_PURPOSES = ("kill-command-delivery",)
+# ---- P2Y-01: the governed purpose mapping, policy-plane data ------------------
+# Authored by a POLICY authority — a third actor, distinct from both the manifest
+# source and the receipt authority. The consuming event declares only the four keys.
+POLICY_AUTHORITY = "governance-policy-plane"
+POLICY_VERSION = "P1"
+
+CONTRACT_KILL = extb.ActionEvidenceContract(
+    contract_id="AEC-kill-01", action_class="kill-command",
+    scope="business", policy_version=POLICY_VERSION, risk_class="consequential",
+    allowed_purposes=("kill-command-delivery",))
+# The verifier's action class, governed and DELIBERATELY not permitting display
+# evidence. This is the row that decides the negative probe.
+CONTRACT_DELETE = extb.ActionEvidenceContract(
+    contract_id="AEC-delete-01", action_class="delete-production-data",
+    scope="business", policy_version=POLICY_VERSION, risk_class="consequential",
+    allowed_purposes=("destructive-action-authorization",))
+CONTRACT_DISPLAY = extb.ActionEvidenceContract(
+    contract_id="AEC-display-01", action_class="render-digest",
+    scope="business", policy_version=POLICY_VERSION, risk_class="record-only",
+    allowed_purposes=("display-monthly-digest",))
+
+EVIDENCE_POLICY = extb.EvidencePolicy(
+    authority_id=POLICY_AUTHORITY, policy_version=POLICY_VERSION,
+    contracts=(CONTRACT_KILL, CONTRACT_DELETE, CONTRACT_DISPLAY)).bound()
+
+# What a consuming event declares ABOUT ITSELF to use GOOD_RECORD as evidence.
+KILL_CONTEXT = extb.ActionContext(
+    action_class="kill-command", scope="business",
+    policy_version=POLICY_VERSION, risk_class="consequential")
 
 # The verifier's P2W-02 probe, in its exact shape: an attestation that is real,
 # registered and bound, but names a DIFFERENT subject.
@@ -473,6 +500,23 @@ FORGED_HASH_MANIFEST = _manifest(
 
 NO_REGISTRY_DIGEST_MANIFEST = _manifest(receipt_registry_digest="").bound()
 
+# P2Y-01 — a policy written by the party whose evidence it governs.
+SELF_AUTHORED_POLICY = extb.EvidencePolicy(
+    authority_id=MANIFEST_SOURCE, policy_version=POLICY_VERSION,
+    contracts=(CONTRACT_KILL,)).bound()
+UNBOUND_POLICY = extb.EvidencePolicy(
+    authority_id=POLICY_AUTHORITY, policy_version=POLICY_VERSION,
+    contracts=(CONTRACT_KILL,))
+# A policy holding two contracts for one key.
+AMBIGUOUS_POLICY = extb.EvidencePolicy(
+    authority_id=POLICY_AUTHORITY, policy_version=POLICY_VERSION,
+    contracts=(CONTRACT_KILL,
+               extb.ActionEvidenceContract(
+                   contract_id="AEC-kill-02", action_class="kill-command",
+                   scope="business", policy_version=POLICY_VERSION,
+                   risk_class="consequential",
+                   allowed_purposes=("anything-goes",)))).bound()
+
 GOOD_REF = extb.reference_for(GOOD_RECORD)
 
 # name -> (description, external_basis refs, manifest, registry, expected substring)
@@ -723,12 +767,6 @@ EXTERNAL_CASES: List[Tuple[str, str, Tuple[str, ...], object, object, str]] = [
         "is not evidence for a materially different one",
     ),
     (
-        "consuming-event-declares-no-required-purpose",
-        "an event with an external basis and no stated evidence requirement",
-        (extb.reference_for(DISPLAY_RECORD),), DISPLAY_MANIFEST, DISPLAY_REGISTRY,
-        "declares no required receipt purpose",
-    ),
-    (
         "receipt-authority-version-skewed-from-its-registry",
         "the verifier's P2X-02 second probe: `receipt-object-v999` inside an "
         "`auth-v4` registry",
@@ -747,6 +785,50 @@ EXTERNAL_CASES: List[Tuple[str, str, Tuple[str, ...], object, object, str]] = [
         "the manifest declares no registry content identity at all",
         (GOOD_REF,), NO_REGISTRY_DIGEST_MANIFEST, REGISTRY,
         "declares no receipt_registry_digest",
+    ),
+    # ---- P2Y-01: the governed purpose mapping ---------------------------------
+    (
+        "consuming-event-declares-no-action-context",
+        "an event with an external basis that says nothing about itself",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "declares no action class",
+    ),
+    (
+        "action-class-the-policy-does-not-govern",
+        "an action class the governed mapping holds no contract for",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "holds no contract for",
+    ),
+    (
+        "event-names-a-contract-that-does-not-govern-it",
+        "the producer names a permissive contract instead of the one its own keys "
+        "resolve to",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "cannot select the contract that governs it",
+    ),
+    (
+        "no-evidence-policy-supplied",
+        "an external basis in use with no policy plane in the fold input",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "no action-evidence policy was supplied",
+    ),
+    (
+        "evidence-policy-authored-by-the-manifest-source",
+        "the evidence rule is written by the party whose evidence it governs",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "is not governed",
+    ),
+    (
+        "evidence-policy-unbound",
+        "a policy with no declared digest",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "evidence policy declares no digest",
+    ),
+    (
+        "evidence-policy-ambiguous-for-one-key",
+        "two contracts for one (action class, scope, policy version, risk class)",
+        (GOOD_REF,), MANIFEST, REGISTRY,
+        "more than one contract for",
     ),
     (
         "envelope-unapproved-digest-algorithm",
@@ -837,38 +919,72 @@ def _p2v_declared_digest(manifest) -> str:
 # P2X-02 — what the CONSUMING event declares, per case. Everything not listed uses
 # `CONSUMING_PURPOSES`, so the pre-existing cases keep testing what they were written
 # to test. These two are the verifier's probe and its undeclared-consumer companion.
-CASE_PURPOSES: Dict[str, Tuple[str, ...]] = {
-    "receipt-purpose-does-not-match-the-consuming-action":
-        ("delete-production-data",),
-    "consuming-event-declares-no-required-purpose": (),
+# P2Y-01 — the ACTION CONTEXT each case's consuming event declares. Everything not
+# listed uses `KILL_CONTEXT`.
+CASE_CONTEXTS: Dict[str, object] = {
+    # The verifier's exact P2Y-01 probe: a destructive action whose producer would
+    # like a display receipt to satisfy it. Under R3 the event simply declared
+    # `display-monthly-digest` as its requirement and the display receipt matched.
+    # It now declares only that it IS a delete-production-data action, and the
+    # governed contract for that class permits `destructive-action-authorization`.
+    "receipt-purpose-does-not-match-the-consuming-action": extb.ActionContext(
+        action_class="delete-production-data", scope="business",
+        policy_version=POLICY_VERSION, risk_class="consequential"),
+    # An event that declares nothing about itself.
+    "consuming-event-declares-no-action-context": None,
+    # An action class the policy plane does not govern at all.
+    "action-class-the-policy-does-not-govern": extb.ActionContext(
+        action_class="undeclared-action", scope="business",
+        policy_version=POLICY_VERSION, risk_class="consequential"),
+    # An event naming a permissive contract that does not govern its own keys.
+    "event-names-a-contract-that-does-not-govern-it": extb.ActionContext(
+        action_class="delete-production-data", scope="business",
+        policy_version=POLICY_VERSION, risk_class="consequential",
+        declared_contract_id="AEC-display-01"),
+}
+
+
+# P2Y-01 — the policy each case is resolved against. Everything not listed uses the
+# governed `EVIDENCE_POLICY`.
+CASE_POLICIES: Dict[str, object] = {
+    "no-evidence-policy-supplied": None,
+    "evidence-policy-authored-by-the-manifest-source": SELF_AUTHORED_POLICY,
+    "evidence-policy-unbound": UNBOUND_POLICY,
+    "evidence-policy-ambiguous-for-one-key": AMBIGUOUS_POLICY,
 }
 
 
 def _external_events(refs: Tuple[str, ...],
-                     purposes: Tuple[str, ...] = CONSUMING_PURPOSES) -> List[Event]:
+                     context=KILL_CONTEXT) -> List[Event]:
     """The verifier's exact shape: one non-genesis DecisionEvent, no `caused_by`.
 
-    P2X-02: the consumer declares what the attestation must be FOR. Defaulting to
-    `CONSUMING_PURPOSES` keeps every pre-existing case testing what it was written to
-    test; the purpose-mismatch and undeclared-purpose cases pass their own tuples.
+    P2Y-01: the event declares FACTS ABOUT ITSELF (action class, scope, policy
+    version, risk class). It no longer states what evidence it requires — that comes
+    from the governed mapping. Defaulting to `KILL_CONTEXT` keeps every pre-existing
+    case testing what it was written to test.
     """
     return [Event(event_id="decision-ext", event_type="DecisionEvent",
                   partition="business", object_key="case", store_seq=1,
-                  external_basis=refs, required_receipt_purposes=purposes)]
+                  external_basis=refs, action_context=context)]
 
 
 def external_basis_cases() -> List[Dict[str, object]]:
     rows: List[Dict[str, object]] = []
     for name, description, refs, manifest, registry, expect in EXTERNAL_CASES:
-        events = _external_events(refs, CASE_PURPOSES.get(name, CONSUMING_PURPOSES))
+        events = _external_events(
+            refs, CASE_CONTEXTS.get(name, KILL_CONTEXT)
+            if name in CASE_CONTEXTS else KILL_CONTEXT)
         problems = validate_basis(events, external_manifest=manifest,
-                                  receipt_registry=registry)
+                                  receipt_registry=registry,
+                                  evidence_policy=CASE_POLICIES.get(name,
+                                                                    EVIDENCE_POLICY))
         detected = any(expect in p for p in problems)
 
         refused = False
         try:
             fold(events, shape="S1", case_id="extb-" + name,
-                 external_manifest=manifest, receipt_registry=registry)
+                 external_manifest=manifest, receipt_registry=registry,
+                 evidence_policy=CASE_POLICIES.get(name, EVIDENCE_POLICY))
         except FoldError:
             refused = True
 
@@ -947,7 +1063,8 @@ def r1_contract_witnesses() -> Dict[str, object]:
     ):
         r1 = _p2v_era_accepts(ref, manifest, None)
         now = validate_basis(_external_events((ref,)), external_manifest=manifest,
-                             receipt_registry=REGISTRY)
+                             receipt_registry=REGISTRY,
+                             evidence_policy=EVIDENCE_POLICY)
         rows.append({"probe": name, "description": description, "reference": ref,
                      "r1_contract_accepted": r1, "problems_now": now,
                      "refused_now": bool(now),
@@ -1010,7 +1127,7 @@ def r2_contract_witnesses() -> Dict[str, object]:
             REGISTRY_WITH_LATE.snapshot_id == REGISTRY_WITHOUT_LATE.snapshot_id,
         "problems_now": validate_basis(
             _external_events((LATE_REF,)), external_manifest=LATE_MANIFEST,
-            receipt_registry=REGISTRY_WITH_LATE),
+            receipt_registry=REGISTRY_WITH_LATE, evidence_policy=EVIDENCE_POLICY),
     })
 
     # P2X-02a — purpose. R2 required only that it was nonempty.
@@ -1023,8 +1140,10 @@ def r2_contract_witnesses() -> Dict[str, object]:
         "consuming_action_class": "delete-production-data",
         "problems_now": validate_basis(
             _external_events((extb.reference_for(DISPLAY_RECORD),),
-                             ("delete-production-data",)),
-            external_manifest=DISPLAY_MANIFEST, receipt_registry=DISPLAY_REGISTRY),
+                             CASE_CONTEXTS[
+                                 "receipt-purpose-does-not-match-the-consuming-action"]),
+            external_manifest=DISPLAY_MANIFEST, receipt_registry=DISPLAY_REGISTRY,
+            evidence_policy=EVIDENCE_POLICY),
     })
 
     # P2X-02b — authority-version skew. R2 compared the receipt only to the
@@ -1041,7 +1160,8 @@ def r2_contract_witnesses() -> Dict[str, object]:
         "receipt_authority_version": SKEW_RECEIPT.authority_version,
         "problems_now": validate_basis(
             _external_events((extb.reference_for(SKEW_RECORD),)),
-            external_manifest=SKEW_MANIFEST, receipt_registry=SKEW_REGISTRY),
+            external_manifest=SKEW_MANIFEST, receipt_registry=SKEW_REGISTRY,
+            evidence_policy=EVIDENCE_POLICY),
     })
 
     for row in rows:
@@ -1149,12 +1269,14 @@ def external_basis_positive() -> Dict[str, object]:
     """
     events = _external_events((GOOD_REF,))
     problems = validate_basis(events, external_manifest=MANIFEST,
-                              receipt_registry=REGISTRY)
+                              receipt_registry=REGISTRY,
+                              evidence_policy=EVIDENCE_POLICY)
     folded = None
     error = None
     try:
         st = fold(events, shape="S1", case_id="extb-positive",
-                  external_manifest=MANIFEST, receipt_registry=REGISTRY)
+                  external_manifest=MANIFEST, receipt_registry=REGISTRY,
+                  evidence_policy=EVIDENCE_POLICY)
         folded = {"order": list(st.order),
                   "causal_violations": list(st.causal_violations),
                   "canonical_records": len(st.canonical)}
@@ -1170,13 +1292,21 @@ def external_basis_positive() -> Dict[str, object]:
         "attestation": {"receipt_id": GOOD_RECEIPT.receipt_id,
                         "subject_ref": GOOD_RECEIPT.subject_ref,
                         "purpose": GOOD_RECEIPT.purpose},
+        "governed_contract": {
+            "contract_id": CONTRACT_KILL.contract_id,
+            "keys": list(CONTRACT_KILL.key),
+            "allowed_purposes": list(CONTRACT_KILL.allowed_purposes),
+            "policy_authority": EVIDENCE_POLICY.authority_id},
+        "three_distinct_authorities": len({MANIFEST.source_id, REGISTRY.authority_id,
+                                           EVIDENCE_POLICY.authority_id}) == 3,
         "authorities_are_distinct": MANIFEST.source_id != REGISTRY.authority_id,
         "problems": problems,
         "folded": folded,
         "error": error,
         "resolved_and_folded": not problems and folded is not None
         and not folded["causal_violations"]
-        and MANIFEST.source_id != REGISTRY.authority_id,
+        and len({MANIFEST.source_id, REGISTRY.authority_id,
+                 EVIDENCE_POLICY.authority_id}) == 3,
     }
 
 

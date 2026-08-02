@@ -89,6 +89,9 @@ APPROVED_CANONICALIZATIONS: Tuple[str, ...] = (CANONICALIZATION_VERSION,)
 REGISTRY_SCHEMA = "receipt-registry/1"
 APPROVED_REGISTRY_SCHEMAS: Tuple[str, ...] = (REGISTRY_SCHEMA,)
 
+EVIDENCE_POLICY_SCHEMA = "action-evidence-policy/1"
+APPROVED_EVIDENCE_POLICY_SCHEMAS: Tuple[str, ...] = (EVIDENCE_POLICY_SCHEMA,)
+
 RECORD_IDENTITY_RULE = "store:object_id unique within the manifest"
 APPROVED_RECORD_IDENTITY_RULES: Tuple[str, ...] = (RECORD_IDENTITY_RULE,)
 
@@ -251,6 +254,136 @@ class Receipt:
                        purpose=self.purpose,
                        authority_version=self.authority_version,
                        content_hash=self.row_digest())
+
+
+# --------------------------------------------------------------------------
+# The action-evidence contract (P2Y-01)
+#
+# R3 let the CONSUMING EVENT declare `required_receipt_purposes`, and the verifier
+# pointed out what that means: the comparison worked, and the action chose the value
+# it was compared against. A `delete-production-data` ActionRequest declaring
+# `display-monthly-digest` as its requirement was satisfied by a display receipt with
+# `basis problems: []`. Two self-consistent declarations by one producer are not a
+# governed contract — which is the same substitution as every finding before it, one
+# more layer up: the event named its requirement instead of being subject to one.
+#
+# `46_` §3, ratified by Fable as a design ruling, states the contract: valid evidence
+# purposes are determined by an independently governed mapping keyed by action class,
+# scope, policy version and risk/data class. The event declares FACTS ABOUT ITSELF —
+# what class of action it is, in what scope, under which policy version, at what risk
+# class — and the policy plane decides what evidence that combination requires. The
+# event may carry the resolved contract id, and if it does it must match the one the
+# lookup finds; it cannot select a different contract and it cannot invent purposes.
+# --------------------------------------------------------------------------
+
+@dataclass(frozen=True)
+class ActionEvidenceContract:
+    """One governed row: which evidence purposes an action class may be grounded by."""
+
+    contract_id: str
+    action_class: str
+    scope: str
+    policy_version: str
+    risk_class: str
+    allowed_purposes: Tuple[str, ...] = ()
+
+    @property
+    def key(self) -> Tuple[str, str, str, str]:
+        return (self.action_class, self.scope, self.policy_version, self.risk_class)
+
+    def as_row(self) -> Dict[str, object]:
+        return {"contract_id": self.contract_id, "action_class": self.action_class,
+                "scope": self.scope, "policy_version": self.policy_version,
+                "risk_class": self.risk_class,
+                "allowed_purposes": sorted(self.allowed_purposes)}
+
+
+@dataclass(frozen=True)
+class EvidencePolicy:
+    """The policy-plane artifact holding the contracts. Independently bound.
+
+    Authored by `authority_id`, which must differ from the manifest's `source_id` for
+    the same reason the receipt registry must: an evidence rule written by the party
+    whose evidence it governs is not a governed rule.
+    """
+
+    schema_version: str = EVIDENCE_POLICY_SCHEMA
+    authority_id: str = ""
+    policy_version: str = ""
+    contracts: Tuple[ActionEvidenceContract, ...] = ()
+    declared_digest: Optional[str] = None
+
+    def computed_digest(self) -> str:
+        return _digest({
+            "schema_version": self.schema_version,
+            "authority_id": self.authority_id,
+            "policy_version": self.policy_version,
+            "contracts": [c.as_row() for c in
+                          sorted(self.contracts, key=lambda c: c.contract_id)],
+        })
+
+    def bound(self) -> "EvidencePolicy":
+        return EvidencePolicy(schema_version=self.schema_version,
+                              authority_id=self.authority_id,
+                              policy_version=self.policy_version,
+                              contracts=self.contracts,
+                              declared_digest=self.computed_digest())
+
+    def lookup(self, action_class: str, scope: str, policy_version: str,
+               risk_class: str) -> Optional[ActionEvidenceContract]:
+        want = (action_class, scope, policy_version, risk_class)
+        for contract in self.contracts:
+            if contract.key == want:
+                return contract
+        return None
+
+    def duplicate_keys(self) -> List[str]:
+        seen: Dict[Tuple[str, str, str, str], int] = {}
+        for c in self.contracts:
+            seen[c.key] = seen.get(c.key, 0) + 1
+        return sorted("/".join(k) for k, n in seen.items() if n > 1)
+
+    def integrity_problems(self) -> List[str]:
+        problems: List[str] = []
+        if self.schema_version not in APPROVED_EVIDENCE_POLICY_SCHEMAS:
+            problems.append(
+                "evidence policy declares schema %r; approved schemas are %s"
+                % (self.schema_version, list(APPROVED_EVIDENCE_POLICY_SCHEMAS)))
+        for name in ("authority_id", "policy_version"):
+            if not str(getattr(self, name) or "").strip():
+                problems.append("evidence policy declares no %s" % name)
+        for key in self.duplicate_keys():
+            problems.append(
+                "evidence policy carries more than one contract for %s — which one "
+                "governs would depend on tuple order (P2Y-01)" % key)
+        for c in self.contracts:
+            if not str(c.contract_id or "").strip():
+                problems.append("evidence policy holds a contract with no contract_id")
+        if self.declared_digest is None:
+            problems.append(
+                "evidence policy declares no digest — an unbound policy is a "
+                "suggestion, not an authority")
+        elif self.computed_digest() != self.declared_digest:
+            problems.append(
+                "evidence policy digest mismatch: declared %s, contents hash to %s"
+                % (self.declared_digest[:16], self.computed_digest()[:16]))
+        return problems
+
+
+@dataclass(frozen=True)
+class ActionContext:
+    """What the consuming event declares ABOUT ITSELF (P2Y-01).
+
+    Facts, not requirements. `declared_contract_id` is the resolved contract the
+    producer believes governs it — optional, and checked against the lookup rather
+    than trusted, so naming a permissive contract does not select one.
+    """
+
+    action_class: str = ""
+    scope: str = ""
+    policy_version: str = ""
+    risk_class: str = ""
+    declared_contract_id: str = ""
 
 
 def reference_for(record: ExternalRecord) -> str:
@@ -666,6 +799,50 @@ def required_control_coverage() -> List[str]:
 # Resolution
 # --------------------------------------------------------------------------
 
+def governed_purposes(context: Optional[ActionContext],
+                      policy: Optional[EvidencePolicy],
+                      manifest: Optional[ExternalManifest]
+                      ) -> Tuple[Tuple[str, ...], List[str]]:
+    """Resolve the purposes the POLICY PLANE allows for this action (P2Y-01).
+
+    Returns (allowed_purposes, problems). The event supplies only the four keys; the
+    values come from the governed mapping. Every step fails closed, because the
+    finding is precisely that a permissive default lets the action pick its own rule.
+    """
+    if policy is None:
+        return (), ["no action-evidence policy was supplied with the fold input — "
+                    "the purposes an action may be grounded by are policy-plane data, "
+                    "and their absence is not permission (P2Y-01)"]
+    problems = policy.integrity_problems()
+    if problems:
+        return (), ["action-evidence policy unusable — %s" % p for p in problems]
+    if manifest is not None and policy.authority_id == manifest.source_id:
+        return (), ["the action-evidence policy is authored by %r, which is also the "
+                    "manifest source — an evidence rule written by the party whose "
+                    "evidence it governs is not governed (P2Y-01)" % policy.authority_id]
+    if context is None or not str(context.action_class or "").strip():
+        return (), ["the consuming event declares no action class — the governed "
+                    "mapping is keyed by action class, scope, policy version and risk "
+                    "class, and an event that names none cannot be governed (P2Y-01)"]
+    contract = policy.lookup(context.action_class, context.scope,
+                             context.policy_version, context.risk_class)
+    if contract is None:
+        return (), ["the action-evidence policy holds no contract for "
+                    "(action_class=%r, scope=%r, policy_version=%r, risk_class=%r) — "
+                    "an ungoverned action class cannot be grounded by any evidence "
+                    "(P2Y-01)" % (context.action_class, context.scope,
+                                  context.policy_version, context.risk_class)]
+    declared = str(context.declared_contract_id or "").strip()
+    if declared and declared != contract.contract_id:
+        return (), ["the consuming event names contract %r; the governed mapping for "
+                    "its own keys is %r — an action cannot select the contract that "
+                    "governs it (P2Y-01)" % (declared, contract.contract_id)]
+    if not contract.allowed_purposes:
+        return (), ["contract %r allows no evidence purpose for this action class — "
+                    "nothing can ground it (P2Y-01)" % contract.contract_id]
+    return tuple(contract.allowed_purposes), []
+
+
 def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
                      registry: Optional[ReceiptRegistry],
                      required_purposes: Sequence[str] = ()) -> List[str]:
@@ -777,13 +954,13 @@ def _resolve_receipt(record: ExternalRecord, manifest: ExternalManifest,
     # case this check exists for.
     wanted = [str(p) for p in required_purposes if str(p).strip()]
     if not wanted:
-        return ["record %s resolves an attestation but the consuming event declares "
-                "no required receipt purpose — evidence cannot be matched to a use "
-                "that was never stated (P2X-02)" % record.key]
+        return ["record %s resolves an attestation but no governed evidence purpose "
+                "applies to the consuming action — evidence cannot be matched to a "
+                "use the policy plane does not describe (P2X-02, P2Y-01)" % record.key]
     if receipt.purpose not in wanted:
-        return ["receipt %s attests purpose %r; the consuming event requires one of "
-                "%s — a receipt for one purpose is not evidence for a materially "
-                "different one (P2X-02)"
+        return ["receipt %s attests purpose %r; the governed contract for this "
+                "action permits %s — a receipt for one purpose is not evidence for a "
+                "materially different one (P2X-02, P2Y-01)"
                 % (receipt.receipt_id, receipt.purpose, wanted)]
     return []
 

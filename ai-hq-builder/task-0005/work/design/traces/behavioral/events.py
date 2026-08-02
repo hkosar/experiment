@@ -20,6 +20,8 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Tuple
 
+from external_basis import ActionContext
+
 # --------------------------------------------------------------------------
 # D-B9 P2S-06 — fold phases and store priority
 # --------------------------------------------------------------------------
@@ -132,14 +134,18 @@ class Event:
     # fold treated an unresolvable reference as already satisfied, so an incomplete
     # basis folded silently. Each entry must name a store in `EXTERNAL_BASIS_STORES`.
     external_basis: Tuple[str, ...] = ()
-    # P2X-02 — the CONSUMING evidence contract. An event that depends on an external
-    # basis must state what the attestation has to be FOR. The receipt check used to
-    # require only that a purpose was nonempty, so a `display-monthly-digest` receipt
-    # grounded a `delete-production-data` ActionRequest and the basis validated
-    # clean. Declared here rather than inferred from the event type, because the
-    # requirement is a property of what this event is doing, not of its family; an
-    # event with an external basis and an empty tuple fails closed.
-    required_receipt_purposes: Tuple[str, ...] = ()
+    # P2X-02, then P2Y-01. The consuming evidence contract used to live here as
+    # `required_receipt_purposes` — the event's own statement of what evidence it
+    # needed. The verifier showed what that means: the comparison worked, and the
+    # action chose the value it was compared against. A `delete-production-data`
+    # request declaring `display-monthly-digest` was satisfied by a display receipt.
+    #
+    # The event now declares FACTS ABOUT ITSELF and nothing else. The purposes those
+    # facts entitle it to come from the governed mapping in the policy plane
+    # (`external_basis.EvidencePolicy`), which is authored by someone other than the
+    # manifest source. `declared_contract_id` may name the contract the producer
+    # believes governs it; it is checked against the lookup, never trusted.
+    action_context: Optional["ActionContext"] = None
 
     @property
     def store(self) -> str:

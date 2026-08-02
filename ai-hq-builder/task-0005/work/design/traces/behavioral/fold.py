@@ -92,7 +92,8 @@ class BasisError(FoldError):
 
 def validate_basis(events: Sequence[Event],
                    external_manifest: Optional["external_basis.ExternalManifest"] = None,
-                   receipt_registry: Optional["external_basis.ReceiptRegistry"] = None
+                   receipt_registry: Optional["external_basis.ReceiptRegistry"] = None,
+                   evidence_policy: Optional["external_basis.EvidencePolicy"] = None
                    ) -> List[str]:
     """Check the replay basis is complete and well-formed. Returns problem strings.
 
@@ -149,11 +150,21 @@ def validate_basis(events: Sequence[Event],
                     "basis (P2T-02: an unresolvable reference is incompleteness, not "
                     "satisfaction)" % (e.event_id, ref))
 
+        if e.external_basis:
+            # P2Y-01 — the purposes come from the POLICY PLANE, keyed by what the
+            # event declares about itself. The event's own opinion of what evidence
+            # it needs is not consulted, because that opinion was the finding.
+            allowed, policy_problems = external_basis.governed_purposes(
+                e.action_context, evidence_policy, external_manifest)
+            for problem in policy_problems:
+                problems.append("event %s: %s" % (e.event_id, problem))
+        else:
+            allowed = ()
         for ext in e.external_basis:
             for problem in external_basis.resolve(
                     ext, external_manifest, EXTERNAL_BASIS_STORES,
                     receipt_registry=receipt_registry,
-                    required_purposes=e.required_receipt_purposes):
+                    required_purposes=allowed):
                 problems.append("event %s: %s" % (e.event_id, problem))
 
         if (not e.caused_by and not e.external_basis
@@ -250,7 +261,8 @@ def fold(events: Sequence[Event], shape: str, case_id: str,
          rebuild_projections: bool = True,
          enforce_basis: bool = True,
          external_manifest: Optional["external_basis.ExternalManifest"] = None,
-         receipt_registry: Optional["external_basis.ReceiptRegistry"] = None
+         receipt_registry: Optional["external_basis.ReceiptRegistry"] = None,
+         evidence_policy: Optional["external_basis.EvidencePolicy"] = None
          ) -> FoldedState:
     """Replay the full multi-store basis into folded state for one candidate shape.
 
@@ -277,7 +289,8 @@ def fold(events: Sequence[Event], shape: str, case_id: str,
     """
     if enforce_basis:
         problems = validate_basis(events, external_manifest=external_manifest,
-                                  receipt_registry=receipt_registry)
+                                  receipt_registry=receipt_registry,
+                                  evidence_policy=evidence_policy)
         if problems:
             raise BasisError("incomplete replay basis (%d problem(s)): %s"
                              % (len(problems), "; ".join(problems[:4])))

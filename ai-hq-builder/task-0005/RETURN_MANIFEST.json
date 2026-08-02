@@ -6,10 +6,8 @@
     "outside_writable_area": 0,
     "unchanged": 29
   },
-  "cycle": "R3 (APP-07 rework)",
-  "dispositions": [
-    "42_P2X_Dispositions.md"
-  ],
+  "cycle": "R4 (APP-07 rework \u2014 final design-gate cycle under the 47_ \u00a71 terminal condition)",
+  "dispositions": [],
   "files": [
     {
       "bytes": 56240,
@@ -102,9 +100,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 32560,
+      "bytes": 35059,
       "path": "design/traces/behavioral/README.md",
-      "sha256": "26a1ede35aeb754932bc4ca85a27c288b0d8663d9562d56b9221d135af7a58c1",
+      "sha256": "005afd1da15e6666310497e0f4c7b3b289c52af8eb2203497a98b207c46d22e8",
       "state": "modified"
     },
     {
@@ -120,15 +118,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 11839,
+      "bytes": 12134,
       "path": "design/traces/behavioral/events.py",
-      "sha256": "77df38efd7f9fc00de26589326c8f40715ae8fc1d116b5cf3a21030362163e9c",
+      "sha256": "2b85ea8eb8c5f74ef398e8acd2e518361d1d0a99bb932fc6cb8c6fb06e305fbb",
       "state": "modified"
     },
     {
-      "bytes": 41720,
+      "bytes": 50628,
       "path": "design/traces/behavioral/external_basis.py",
-      "sha256": "73ed03e9d3d05c45d251aeb1f468a945a27e05b110ae25f0d94867c229cff72a",
+      "sha256": "7ca5b1f003947f79ea4edfd395efc2245b5c7f4e6838b4847726894def9a7795",
       "state": "added"
     },
     {
@@ -138,9 +136,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 19316,
+      "bytes": 20099,
       "path": "design/traces/behavioral/fold.py",
-      "sha256": "83e46594861c7c0b2e7dfb562324b85d1fd6924454cccbe4ad100037e9a6ae64",
+      "sha256": "03c8478e95cdf331f8314b3e3bf4979d8309e536f676bdde8e2c2d26eb3a697a",
       "state": "modified"
     },
     {
@@ -174,9 +172,9 @@
       "state": "modified"
     },
     {
-      "bytes": 63128,
+      "bytes": 71826,
       "path": "design/traces/behavioral/out/basis_validation.json",
-      "sha256": "100581db5cd8ab1a0db1efbfda60a842de2f632e9395e851ca70a39ea0373ef9",
+      "sha256": "e042f312a37e328d63fced857f893080b6347ecf1287fa00db88af9e98cbfea7",
       "state": "modified"
     },
     {
@@ -192,9 +190,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 18816,
+      "bytes": 18987,
       "path": "design/traces/behavioral/out/gate_report.json",
-      "sha256": "666bf7c2ab0b816088f21988752524cdd14424f2d807d9fa0488b7d99c76bf48",
+      "sha256": "ea787e016916f3384dcb3a84283ae0b041135117f49476eb3202026f0f521b90",
       "state": "modified"
     },
     {
@@ -210,9 +208,9 @@
       "state": "modified"
     },
     {
-      "bytes": 52923,
+      "bytes": 71631,
       "path": "design/traces/behavioral/out/p2s04_schedule_liveness.json",
-      "sha256": "56a165bdfe8a94e8b4bef6dadb5c3218aa0f8a2b8bbd46361edc7acd1f40e6ae",
+      "sha256": "0e43b525a624eaf19c8f4b138a1c826f88f7e8c575a4f17e9033a1370109a3a3",
       "state": "modified"
     },
     {
@@ -252,9 +250,9 @@
       "state": "modified"
     },
     {
-      "bytes": 66102,
+      "bytes": 72581,
       "path": "design/traces/behavioral/run_basis.py",
-      "sha256": "e053e5710be67da1e3120d4526379f99546d39446e82e5032a97ed16421c56e5",
+      "sha256": "1d855c729ee4a633bb0b4cbc7ada954ecd251b71ac9158a7377d7b834508c73f",
       "state": "modified"
     },
     {
@@ -270,9 +268,9 @@
       "state": "modified"
     },
     {
-      "bytes": 27413,
+      "bytes": 27607,
       "path": "design/traces/behavioral/run_gate.py",
-      "sha256": "f7dbeb5ce199a96591d7edf2841e7631ba69287c7fc1e32b034e3faf243fe422",
+      "sha256": "ccf79b3fb6992c3fa8db1421a9e2dc5a90e01f5a05ebf8a9289dab8237f5ac64",
       "state": "modified"
     },
     {
@@ -282,9 +280,9 @@
       "state": "modified"
     },
     {
-      "bytes": 75834,
+      "bytes": 101697,
       "path": "design/traces/behavioral/run_p2s04.py",
-      "sha256": "f13c7c2ec691cb76415b77af1615851e6243cbe5b8a9b8b4b317c19986a3da6a",
+      "sha256": "8cd1bb58e954a99e0ed99ecef06985ce45e23db9582074515c23e6fa86a11292",
       "state": "modified"
     },
     {
@@ -319,14 +317,16 @@
     }
   ],
   "governing_findings": [
-    "41_ChatGPT_Scoped_Reverification_TASK-0005_R2.md",
-    "41A_ChatGPT_Probe_Evidence_TASK-0005_R2.json"
+    "44_ChatGPT_Scoped_Reverification_TASK-0005_R3.md",
+    "44A_ChatGPT_Probe_Evidence_TASK-0005_R3.json",
+    "46_ChatGPT_Design_Gate_Scope_Ruling_Response.md (\u00a73 contract texts \u2014 adopted verbatim as design rulings by 47_ \u00a72)"
   ],
   "instruction_authority": [
     "34_",
     "37_",
     "40_",
-    "43_TASK-0005_Rework_Packet_R3.md"
+    "43_",
+    "47_Owner_Arbitration_and_TASK-0005_R4_Packet.md"
   ],
   "produced_by": "Builder (Claude Code)",
   "relay_integrity": {
@@ -334,8 +334,31 @@
     "sha256sums_verified": 4
   },
   "returned_to": "Fable (not the verifier)",
+  "snapshot_export_manifest": {
+    "declared_file_count": 49,
+    "files_present": 49,
+    "missing": [],
+    "unexpected": []
+  },
   "source_snapshot_zip_sha256": "06e8bc97c8031724c5e82a29bd777cc691d880a4e3bc320a15780d4285ab79f9",
   "task": "TASK-0005",
+  "verification_summary": {
+    "13V_end_to_end_probe": "PASS \u2014 5 gate cases + 28 CLI cases",
+    "13V_self_test": "PASS \u2014 25 cases",
+    "allowlist_violations": 0,
+    "anticircularity": "4/4 PASS",
+    "determinism": "13/13 outputs byte-identical across two runs",
+    "external_basis_cases": "50/50 closed; 8/8 missing-basis",
+    "gate_criteria": "21/21 PASS",
+    "schedule_behaviors": "17/17 discriminating",
+    "verifier_probes_defeated": "4/4 (44A_)"
+  },
+  "work_items": [
+    "RW-42",
+    "RW-43",
+    "RW-44",
+    "RW-45"
+  ],
   "writable_area": [
     "design/traces/behavioral/**",
     "13V_validate_design_matrix.py"

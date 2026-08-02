@@ -183,10 +183,10 @@
         "eligible_ticks": [],
         "fires_before_anything_is_due": true,
         "journal": [
-          "ScheduleRegistered:ritual.digest@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:ritual.digest@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:ritual.digest@t0(through=1920, version=1)",
           "HorizonRetired:ritual.digest@t936(stale_ticks=41, txn=ritual.digest@t936->v2, version=1)",
-          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.digest@t936->v2, version=2)"
+          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.digest@t936->v2, version=2)"
         ],
         "materialized_by_version": {
           "1": [
@@ -292,10 +292,10 @@
         ],
         "fires_before_anything_is_due": false,
         "journal": [
-          "ScheduleRegistered:ritual.digest@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:ritual.digest@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:ritual.digest@t0(through=1920, version=1)",
           "HorizonRetired:ritual.digest@t936(stale_ticks=41, txn=ritual.digest@t936->v2, version=1)",
-          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.digest@t936->v2, version=2)"
+          "ScheduleChanged:ritual.digest@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.digest@t936->v2, version=2)"
         ],
         "materialized_by_version": {
           "1": [
@@ -362,13 +362,13 @@
         "detected": true,
         "eligible_ticks_after_reentry_attempt": 0,
         "journal": [
-          "ScheduleRegistered:ritual.brief@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:ritual.brief@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:ritual.brief@t0(through=1920, version=1)",
           "HorizonRetired:ritual.brief@t936(stale_ticks=41, txn=ritual.brief@t936->v2, version=1)",
-          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.brief@t936->v2, version=2)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.brief@t936->v2, version=2)",
           "TransitionRefused:ritual.brief@t936(reason=version retired at an earlier change; its horizon has 41 stale tick(s) and cannot answer for the schedule again — use reactivate(), version=1)",
           "HorizonRetired:ritual.brief@t936(stale_ticks=0, txn=ritual.brief@t936->v3, version=2)",
-          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=984, period=24, txn=ritual.brief@t936->v3, version=3)"
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.brief@t936->v3, version=3)"
         ],
         "now": 936,
         "reactivated_eligible_ticks": 0,
@@ -385,13 +385,13 @@
         "detected": false,
         "eligible_ticks_after_reentry_attempt": 41,
         "journal": [
-          "ScheduleRegistered:ritual.brief@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:ritual.brief@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:ritual.brief@t0(through=1920, version=1)",
           "HorizonRetired:ritual.brief@t936(stale_ticks=41, txn=ritual.brief@t936->v2, version=1)",
-          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, period=24, txn=ritual.brief@t936->v2, version=2)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.brief@t936->v2, version=2)",
           "HorizonRetired:ritual.brief@t936(stale_ticks=0, txn=ritual.brief@t936->v1, version=2)",
-          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=960, period=24, txn=ritual.brief@t936->v1, version=1)",
-          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=984, period=24, txn=ritual.brief@t936->v3, version=3)"
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=2, first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.brief@t936->v1, version=1)",
+          "ScheduleChanged:ritual.brief@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=ritual.brief@t936->v3, version=3)"
         ],
         "now": 936,
         "reactivated_eligible_ticks": 0,
@@ -414,7 +414,7 @@
         "detected": true,
         "eligible_stale_ticks": 41,
         "journal": [
-          "ScheduleRegistered:same-version@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:same-version@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:same-version@t0(through=1920, version=1)",
           "TransitionRefused:same-version@t936(reason=version 1 is not above the highest ever used for this schedule (1) — schedule-version identity is minted once and never reused (P2W-04), version=1)"
         ],
@@ -437,9 +437,9 @@
         "detected": false,
         "eligible_stale_ticks": 41,
         "journal": [
-          "ScheduleRegistered:same-version@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:same-version@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:same-version@t0(through=1920, version=1)",
-          "ScheduleChanged:same-version@t936(expected_current_version=1, first_due=965, period=48, txn=same-version@t936->v1, version=1)"
+          "ScheduleChanged:same-version@t936(expected_current_version=1, first_due=965, max_early_ticks=0, max_late_ticks=None, period=48, txn=same-version@t936->v1, version=1)"
         ],
         "mutated_recurrence": [
           965,
@@ -464,7 +464,7 @@
         "detected": true,
         "eligible_stale_ticks": 41,
         "journal": [
-          "ScheduleRegistered:register-bypass@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:register-bypass@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:register-bypass@t0(through=1920, version=1)",
           "TransitionRefused:register-bypass@t936(reason=register() is initial-only: register-bypass already has v1 in force; a change is change_schedule(), which is monotonic and retires what it supersedes, version=2)",
           "TransitionRefused:register-bypass@t936(reason=register() is initial-only: register-bypass already has v1 in force; a change is change_schedule(), which is monotonic and retires what it supersedes, version=1)"
@@ -486,11 +486,11 @@
         "detected": false,
         "eligible_stale_ticks": 41,
         "journal": [
-          "ScheduleRegistered:register-bypass@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:register-bypass@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:register-bypass@t0(through=1920, version=1)",
-          "ScheduleRegistered:register-bypass@t936(first_due=963, period=24, version=2)",
-          "ScheduleRegistered:register-bypass@t936(first_due=960, period=24, version=1)",
-          "ScheduleRegistered:register-bypass@t936(first_due=969, period=72, version=1)"
+          "ScheduleRegistered:register-bypass@t936(first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, version=2)",
+          "ScheduleRegistered:register-bypass@t936(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
+          "ScheduleRegistered:register-bypass@t936(first_due=969, max_early_ticks=0, max_late_ticks=None, period=72, version=1)"
         ],
         "now": 936,
         "recurrence_in_force": [
@@ -514,10 +514,10 @@
         "detected": true,
         "duplicate_accepted": false,
         "journal": [
-          "ScheduleRegistered:monotonic@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:monotonic@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:monotonic@t0(through=1920, version=1)",
           "HorizonRetired:monotonic@t936(stale_ticks=41, txn=monotonic@t936->v5, version=1)",
-          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, period=24, txn=monotonic@t936->v5, version=5)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=monotonic@t936->v5, version=5)",
           "TransitionRefused:monotonic@t936(reason=version 5 is not above the highest ever used for this schedule (5) — schedule-version identity is minted once and never reused (P2W-04), version=5)",
           "TransitionRefused:monotonic@t936(reason=version 3 is not above the highest ever used for this schedule (5) — schedule-version identity is minted once and never reused (P2W-04), version=3)"
         ],
@@ -535,13 +535,13 @@
         "detected": false,
         "duplicate_accepted": true,
         "journal": [
-          "ScheduleRegistered:monotonic@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:monotonic@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:monotonic@t0(through=1920, version=1)",
           "HorizonRetired:monotonic@t936(stale_ticks=41, txn=monotonic@t936->v5, version=1)",
-          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, period=24, txn=monotonic@t936->v5, version=5)",
-          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1008, period=24, txn=monotonic@t936->v5, version=5)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=monotonic@t936->v5, version=5)",
+          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1008, max_early_ticks=0, max_late_ticks=None, period=24, txn=monotonic@t936->v5, version=5)",
           "HorizonRetired:monotonic@t936(stale_ticks=0, txn=monotonic@t936->v3, version=5)",
-          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1032, period=24, txn=monotonic@t936->v3, version=3)"
+          "ScheduleChanged:monotonic@t936(expected_current_version=5, first_due=1032, max_early_ticks=0, max_late_ticks=None, period=24, txn=monotonic@t936->v3, version=3)"
         ],
         "lower_accepted": true,
         "now": 936,
@@ -563,10 +563,10 @@
         "detected": true,
         "eligible_stale_ticks": 0,
         "journal": [
-          "ScheduleRegistered:restart@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:restart@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:restart@t0(through=1920, version=1)",
           "HorizonRetired:restart@t936(stale_ticks=41, txn=restart@t936->v2, version=1)",
-          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, period=24, txn=restart@t936->v2, version=2)",
+          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=restart@t936->v2, version=2)",
           "TransitionRefused:restart@t936(reason=version retired at an earlier change; its horizon has 41 stale tick(s) and cannot answer for the schedule again — use reactivate(), version=1)"
         ],
         "journal_entries_persisted": 4,
@@ -591,12 +591,12 @@
         "detected": false,
         "eligible_stale_ticks": 41,
         "journal": [
-          "ScheduleRegistered:restart@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:restart@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:restart@t0(through=1920, version=1)",
           "HorizonRetired:restart@t936(stale_ticks=41, txn=restart@t936->v2, version=1)",
-          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, period=24, txn=restart@t936->v2, version=2)",
+          "ScheduleChanged:restart@t936(expected_current_version=1, first_due=963, max_early_ticks=0, max_late_ticks=None, period=24, txn=restart@t936->v2, version=2)",
           "HorizonRetired:restart@t936(stale_ticks=0, txn=restart@t936->v1, version=2)",
-          "ScheduleChanged:restart@t936(expected_current_version=2, first_due=960, period=24, txn=restart@t936->v1, version=1)"
+          "ScheduleChanged:restart@t936(expected_current_version=2, first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, txn=restart@t936->v1, version=1)"
         ],
         "journal_entries_persisted": 4,
         "now": 936,
@@ -621,10 +621,10 @@
         "detected": true,
         "first_accepted": true,
         "journal": [
-          "ScheduleRegistered:concurrent@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:concurrent@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:concurrent@t0(through=1920, version=1)",
           "HorizonRetired:concurrent@t936(stale_ticks=41, txn=concurrent@t936->v2, version=1)",
-          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, period=24, txn=concurrent@t936->v2, version=2)",
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=concurrent@t936->v2, version=2)",
           "TransitionRefused:concurrent@t936(reason=concurrent change: caller expected v1 in force, found v2, version=3)"
         ],
         "now": 936,
@@ -638,12 +638,12 @@
         "detected": false,
         "first_accepted": true,
         "journal": [
-          "ScheduleRegistered:concurrent@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:concurrent@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonExtended:concurrent@t0(through=1920, version=1)",
           "HorizonRetired:concurrent@t936(stale_ticks=41, txn=concurrent@t936->v2, version=1)",
-          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, period=24, txn=concurrent@t936->v2, version=2)",
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=concurrent@t936->v2, version=2)",
           "HorizonRetired:concurrent@t936(stale_ticks=0, txn=concurrent@t936->v3, version=2)",
-          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=1008, period=24, txn=concurrent@t936->v3, version=3)"
+          "ScheduleChanged:concurrent@t936(expected_current_version=1, first_due=1008, max_early_ticks=0, max_late_ticks=None, period=24, txn=concurrent@t936->v3, version=3)"
         ],
         "now": 936,
         "observed_version": 1,
@@ -1638,9 +1638,9 @@
         "change_with_stale_expectation_landed": false,
         "detected": true,
         "journal": [
-          "ScheduleRegistered:mandatory-cas@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:mandatory-cas@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v2, version=1)",
-          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, period=24, txn=mandatory-cas@t936->v2, version=2)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=mandatory-cas@t936->v2, version=2)",
           "TransitionRefused:mandatory-cas@t936(reason=change_schedule() requires expected_current_version: a compare-and-swap a caller can decline is not a concurrency control, and omission is a usage error rather than an unconditional update (P2X-03), version=3)",
           "TransitionRefused:mandatory-cas@t936(reason=concurrent change: caller expected v99 in force, found v2, version=4)"
         ],
@@ -1655,13 +1655,13 @@
         "change_with_stale_expectation_landed": true,
         "detected": false,
         "journal": [
-          "ScheduleRegistered:mandatory-cas@t0(first_due=960, period=24, version=1)",
+          "ScheduleRegistered:mandatory-cas@t0(first_due=960, max_early_ticks=0, max_late_ticks=None, period=24, version=1)",
           "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v2, version=1)",
-          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, period=24, txn=mandatory-cas@t936->v2, version=2)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=1, first_due=984, max_early_ticks=0, max_late_ticks=None, period=24, txn=mandatory-cas@t936->v2, version=2)",
           "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v3, version=2)",
-          "ScheduleChanged:mandatory-cas@t936(expected_current_version=None, first_due=1008, period=24, txn=mandatory-cas@t936->v3, version=3)",
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=None, first_due=1008, max_early_ticks=0, max_late_ticks=None, period=24, txn=mandatory-cas@t936->v3, version=3)",
           "HorizonRetired:mandatory-cas@t936(stale_ticks=0, txn=mandatory-cas@t936->v4, version=3)",
-          "ScheduleChanged:mandatory-cas@t936(expected_current_version=99, first_due=1032, period=24, txn=mandatory-cas@t936->v4, version=4)"
+          "ScheduleChanged:mandatory-cas@t936(expected_current_version=99, first_due=1032, max_early_ticks=0, max_late_ticks=None, period=24, txn=mandatory-cas@t936->v4, version=4)"
         ],
         "now": 936,
         "version_in_force": 4
@@ -1678,9 +1678,9 @@
         "current_version": 2,
         "detected": true,
         "journal": [
-          "ScheduleRegistered:stale-receipt@t0(first_due=10, period=100, version=1)",
+          "ScheduleRegistered:stale-receipt@t0(first_due=10, max_early_ticks=0, max_late_ticks=None, period=100, version=1)",
           "HorizonRetired:stale-receipt@t5(stale_ticks=0, txn=stale-receipt@t5->v2, version=1)",
-          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, period=100, txn=stale-receipt@t5->v2, version=2)",
+          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, max_early_ticks=0, max_late_ticks=None, period=100, txn=stale-receipt@t5->v2, version=2)",
           "TransitionRefused:stale-receipt@t10(reason=RunStarted receipt from RETIRED v1 — a superseded scheduler instance cannot answer for the schedule (P2X-04), version=1)",
           "RunStarted:stale-receipt@t10(occurrence=10, version=2)"
         ],
@@ -1697,9 +1697,9 @@
         "current_version": 2,
         "detected": false,
         "journal": [
-          "ScheduleRegistered:stale-receipt@t0(first_due=10, period=100, version=1)",
+          "ScheduleRegistered:stale-receipt@t0(first_due=10, max_early_ticks=0, max_late_ticks=None, period=100, version=1)",
           "HorizonRetired:stale-receipt@t5(stale_ticks=0, txn=stale-receipt@t5->v2, version=1)",
-          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, period=100, txn=stale-receipt@t5->v2, version=2)",
+          "ScheduleChanged:stale-receipt@t5(expected_current_version=1, first_due=10, max_early_ticks=0, max_late_ticks=None, period=100, txn=stale-receipt@t5->v2, version=2)",
           "RunStarted:stale-receipt@t10(occurrence=10, version=1)",
           "RunStarted:stale-receipt@t10(occurrence=10, version=2)"
         ],
@@ -1726,7 +1726,7 @@
           },
           {
             "history": "incomplete-transaction",
-            "reason": "journal replay refused (2 problem(s)): journal[1] retires incomplete v1 while it is in force and its transaction adopts no successor (P2X-05); transac",
+            "reason": "journal replay refused (2 problem(s)): transaction 'incomplete@t1->v2' retires 1 version(s) and adopts none — an incomplete transaction cannot be fold",
             "replay_refused": true,
             "state_if_accepted": null
           },
@@ -1838,13 +1838,503 @@
       "discriminates": true,
       "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
       "targeted_defect": "replay folds whatever it is given"
+    },
+    {
+      "behavior": "schedule-transaction-invariants",
+      "clean": {
+        "detected": true,
+        "histories": [
+          {
+            "history": "A-missing-retirement",
+            "reason": "journal replay refused (1 problem(s)): journal[1] adopts sched v2 but its transaction retires none of the superseded version(s) v1 — the retirement set is incomplete (P2Y",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "B-cross-schedule-transaction",
+            "reason": "journal replay refused (3 problem(s)): journal[3] adopts B v2 but its transaction retires none of the superseded version(s) v1 — the retirement set is incomplete (P2Y-02)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "C-change-without-predecessor",
+            "reason": "journal replay refused (1 problem(s)): journal[0] changes new to v1, but the journal has no version in force for that schedule — a change requires an existing predecessor",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "D-two-adoptions-in-one-transaction",
+            "reason": "journal replay refused (2 problem(s)): journal[3] adopts multi v3 but its transaction retires none of the superseded version(s) v2 — the retirement set is incomplete (P2Y",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "E-retirement-of-an-undefined-version",
+            "reason": "journal replay refused (2 problem(s)): journal[1] retires ghost v9, which the journal never defines for that schedule (P2Y-02); journal[2] adopts ghost v2 but its transac",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "F-retirement-with-no-adoption",
+            "reason": "journal replay refused (2 problem(s)): transaction 'asym@t1' retires 1 version(s) and adopts none — an incomplete transaction cannot be folded (P2X-05); final state has a",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "G-empty-transaction-identity",
+            "reason": "journal replay refused (2 problem(s)): journal[1] carries an empty transaction id (P2Y-03); journal[2] carries an empty transaction id (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "H-prohibited-field-for-the-entry-kind",
+            "reason": "journal replay refused (1 problem(s)): journal[1] (HorizonExtended) carries field(s) period that its entry kind does not admit (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          }
+        ],
+        "wellformed_journal_still_replays": true
+      },
+      "clean_detects": true,
+      "contract": "P2Y-02 — the eight logical transaction invariants ratified in `46_` §3: a change needs an in-force predecessor; one transaction, one schedule, one adoption; the retirement set is complete; retirements reference defined versions of the same schedule; identity cannot bridge schedules; no version ends both active and retired",
+      "defect": {
+        "detected": false,
+        "histories": [
+          {
+            "history": "A-missing-retirement",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                11,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "sched": 2
+              }
+            }
+          },
+          {
+            "history": "B-cross-schedule-transaction",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                11,
+                10
+              ],
+              "retired": {
+                "A": [
+                  1
+                ]
+              },
+              "version_in_force": {
+                "A": 1,
+                "B": 2
+              }
+            }
+          },
+          {
+            "history": "C-change-without-predecessor",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "new": 1
+              }
+            }
+          },
+          {
+            "history": "D-two-adoptions-in-one-transaction",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                12,
+                10
+              ],
+              "retired": {
+                "multi": [
+                  1
+                ]
+              },
+              "version_in_force": {
+                "multi": 3
+              }
+            }
+          },
+          {
+            "history": "E-retirement-of-an-undefined-version",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                11,
+                10
+              ],
+              "retired": {
+                "ghost": [
+                  9
+                ]
+              },
+              "version_in_force": {
+                "ghost": 2
+              }
+            }
+          },
+          {
+            "history": "F-retirement-with-no-adoption",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {
+                "asym": [
+                  1
+                ]
+              },
+              "version_in_force": {
+                "asym": 1
+              }
+            }
+          },
+          {
+            "history": "G-empty-transaction-identity",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                11,
+                10
+              ],
+              "retired": {
+                "blank": [
+                  1
+                ]
+              },
+              "version_in_force": {
+                "blank": 2
+              }
+            }
+          },
+          {
+            "history": "H-prohibited-field-for-the-entry-kind",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "prohibited": 1
+              }
+            }
+          }
+        ],
+        "wellformed_journal_still_replays": true
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "replay folds whatever it is given"
+    },
+    {
+      "behavior": "normative-recurrence-schema",
+      "clean": {
+        "detected": true,
+        "histories": [
+          {
+            "history": "first-due-negative",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: first_due -5 is not a non-negative integer logical time (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "first-due-non-integer",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: first_due 'soon' is not a non-negative integer logical time (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "logical-time-non-integer",
+            "reason": "journal replay refused (1 problem(s)): journal[0] has non-integer logical time `at`='later' (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "period-boolean",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: recurrence period True is not a positive integer — a zero period never terminates and a negative on",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "period-negative",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: recurrence period -1 is not a positive integer — a zero period never terminates and a negative one ",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "period-zero",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: recurrence period 0 is not a positive integer — a zero period never terminates and a negative one w",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "version-boolean",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: schedule version True is not a positive integer (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "version-negative",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: schedule version -2 is not a positive integer (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          },
+          {
+            "history": "version-zero",
+            "reason": "journal replay refused (1 problem(s)): journal[0]: schedule version 0 is not a positive integer (P2Y-03)",
+            "replay_refused": true,
+            "state_if_accepted": null
+          }
+        ],
+        "writer_api": [
+          {
+            "definition": "period-zero",
+            "register_accepted": false
+          },
+          {
+            "definition": "period-negative",
+            "register_accepted": false
+          },
+          {
+            "definition": "version-zero",
+            "register_accepted": false
+          },
+          {
+            "definition": "legal",
+            "register_accepted": true
+          }
+        ],
+        "writer_refuses_what_replay_refuses": true
+      },
+      "clean_detects": true,
+      "contract": "P2Y-03 — one recurrence schema shared by admission and replay: positive integer version and period, valid first-due domain, integer non-boolean logical time, and a writer API that refuses exactly what replay refuses",
+      "defect": {
+        "detected": false,
+        "histories": [
+          {
+            "history": "first-due-negative",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                -5,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "first-due-non-integer",
+            "reason": "unhandled ValueError: invalid literal for int() with base 10: 'soon'",
+            "replay_refused": false,
+            "state_if_accepted": null
+          },
+          {
+            "history": "logical-time-non-integer",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "period-boolean",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                1
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "period-negative",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                -1
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "period-zero",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                0
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "version-boolean",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 1
+              }
+            }
+          },
+          {
+            "history": "version-negative",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": -2
+              }
+            }
+          },
+          {
+            "history": "version-zero",
+            "reason": "",
+            "replay_refused": false,
+            "state_if_accepted": {
+              "recurrence": [
+                10,
+                10
+              ],
+              "retired": {},
+              "version_in_force": {
+                "schema": 0
+              }
+            }
+          }
+        ],
+        "writer_api": [
+          {
+            "definition": "period-zero",
+            "register_accepted": false
+          },
+          {
+            "definition": "period-negative",
+            "register_accepted": false
+          },
+          {
+            "definition": "version-zero",
+            "register_accepted": false
+          },
+          {
+            "definition": "legal",
+            "register_accepted": true
+          }
+        ],
+        "writer_refuses_what_replay_refuses": true
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "replay folds whatever it is given"
+    },
+    {
+      "behavior": "occurrence-satisfaction-window",
+      "clean": {
+        "claimed_occurrence": 10,
+        "detected": true,
+        "explicit_early_window_accepted": true,
+        "explicit_early_window_missed_at_11": [],
+        "journal": [
+          "ScheduleRegistered:early@t0(first_due=10, max_early_ticks=0, max_late_ticks=None, period=10, version=1)",
+          "TransitionRefused:early@t0(reason=RunStarted recorded at t0 claims occurrence 10, whose admissible window opens at t10 (max_early_ticks=0) — a run cannot satisfy an occurrence before it exists, and unlimited early execution must be an explicit policy decision (P2Y-04), version=1)"
+        ],
+        "missed_deadlines_at_11": [
+          10
+        ],
+        "occurrence_the_schedule_never_produces_accepted": false,
+        "on_time_missed_at_11": [],
+        "on_time_receipt_accepted": true,
+        "premature_receipt_accepted": false,
+        "recorded_at": 0
+      },
+      "clean_detects": true,
+      "contract": "P2Y-04 — a receipt may satisfy only its own occurrence, inside the window that occurrence admits; unlimited early execution is an explicit policy decision, never the accidental result of accepting any (version, occurrence) pair",
+      "defect": {
+        "claimed_occurrence": 10,
+        "detected": false,
+        "explicit_early_window_accepted": true,
+        "explicit_early_window_missed_at_11": [],
+        "journal": [
+          "ScheduleRegistered:early@t0(first_due=10, max_early_ticks=0, max_late_ticks=None, period=10, version=1)",
+          "RunStarted:early@t0(occurrence=10, version=1)"
+        ],
+        "missed_deadlines_at_11": [],
+        "occurrence_the_schedule_never_produces_accepted": true,
+        "on_time_missed_at_11": [],
+        "on_time_receipt_accepted": true,
+        "premature_receipt_accepted": true,
+        "recorded_at": 0
+      },
+      "defect_misses": true,
+      "discriminates": true,
+      "kind": "HARNESS SELF-TEST (synthetic recurrence spec, not a corpus fixture)",
+      "targeted_defect": "any (version, occurrence) pair satisfies: a t0 receipt pre-satisfies t10"
     }
   ],
   "summary": {
-    "behaviors": 14,
+    "behaviors": 17,
     "clock": "logical ticks only; no wall-clock read anywhere in this suite",
-    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All fourteen behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
-    "discriminating": 14,
+    "corpus_limitation": "No corpus fixture carries a recurring schedule: A14 is a single expired control envelope. All seventeen behaviors have NO fixture-driven coverage and none is claimed — this suite is the only place they are exercised.",
+    "discriminating": 17,
     "not_discriminating": []
   }
 }

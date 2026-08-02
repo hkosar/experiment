@@ -1,0 +1,107 @@
+{
+  "base_commit": "6b6e0b413983c32efc068cb463d71a9f8562e340",
+  "candidate_commit": "8c821cce2249b2ca174eac049a3da3ef4767b888",
+  "candidate_tree": "fff3c8255e6232be370d96409e0273b5c9335f10",
+  "finding_results": {
+    "P2Y-01": "FAIL: consuming event can self-declare display purpose while action class is delete-production-data",
+    "P2Y-02": "FAIL: missing retirement, cross-schedule transaction collision, and change-without-predecessor replay",
+    "P2Y-03": "FAIL: period 0 and period -1 recurrence definitions replay",
+    "P2Y-04": "FAIL: t0 RunStarted can satisfy t10 occurrence and suppress t11 alarm"
+  },
+  "independent_probes": {
+    "journal_change_without_predecessor": {
+      "problems": [],
+      "replay_accepted": true,
+      "version_in_force": 1
+    },
+    "journal_cross_schedule_transaction": {
+      "A_retired_versions": [
+        1
+      ],
+      "A_version_in_force": 1,
+      "B_version_in_force": 2,
+      "problems": [],
+      "replay_accepted": true
+    },
+    "journal_invalid_recurrence_domain": [
+      {
+        "period": 0,
+        "problems": [],
+        "replay_accepted": true
+      },
+      {
+        "period": -1,
+        "problems": [],
+        "replay_accepted": true
+      }
+    ],
+    "journal_missing_retirement": {
+      "problems": [],
+      "replay_accepted": true,
+      "retired_versions": {},
+      "version_in_force": 2
+    },
+    "normal_run_control": {
+      "accepted": true,
+      "missed_at_11": []
+    },
+    "positive_controls": {
+      "manifest_registry_digest_bound": true
+    },
+    "premature_run_receipt": {
+      "claimed_occurrence": 10,
+      "journal": [
+        "ScheduleRegistered:early@t0(first_due=10, period=10, version=1)",
+        "RunStarted:early@t0(occurrence=10, version=1)"
+      ],
+      "missed_deadlines_at_11": [],
+      "receipt_accepted": true,
+      "recorded_at": 0
+    },
+    "purpose_control_mismatch_problems": [
+      "event action-delete2: external basis provider:danger-1@v1#f9b512b17efdacad69bfd5ecc09890e7301383dbfb0c20adf1903f0492c22f40: receipt r-display attests purpose 'display-monthly-digest'; the consuming event requires one of ['delete-production-data'] \u2014 a receipt for one purpose is not evidence for a materially different one (P2X-02)"
+    ],
+    "purpose_self_declaration": {
+      "action_class": "delete-production-data",
+      "action_requests": [
+        "action-delete"
+      ],
+      "basis_problems": [],
+      "event_required_receipt_purposes": [
+        "display-monthly-digest"
+      ],
+      "fold_accepted": true,
+      "receipt_purpose": "display-monthly-digest"
+    }
+  },
+  "packet_integrity": {
+    "accepted_manual_and_register_unchanged": true,
+    "checksums_passed": 49,
+    "checksums_total": 49,
+    "diff_check_passed": true,
+    "export_manifest_passed": 48,
+    "export_manifest_total": 48,
+    "fresh_checkout_clean": true,
+    "git_bundle_fresh_clone": true,
+    "git_fsck_full": true,
+    "phase1_checksums": "24/24",
+    "phase2_checksums": "127/127",
+    "supplied_patch_byte_identical_standard_binary_diff": true,
+    "v12_checksums": "26/26"
+  },
+  "packet_sha256": "085373e40bcb81933f28f3f178f0008567c824c4953d5647c6f1217e070a662b",
+  "review": "TASK-0005 R3 scoped re-verification",
+  "supplied_evidence_reproduction": {
+    "behavioral_gate_passed": true,
+    "behavioral_gate_runs": 2,
+    "design_matrix_e2e_cli_cases_passed": 28,
+    "design_matrix_e2e_gate_cases_passed": 5,
+    "design_matrix_self_tests_passed": 25,
+    "output_files": 13,
+    "outputs_byte_identical": true,
+    "plain_final_gate_exit": 1,
+    "plain_final_gate_open_findings": 6,
+    "shipped_outputs_matched": 13
+  },
+  "verifier": "ChatGPT"
+}

@@ -51,6 +51,7 @@
       "expected_problem": "does not parse",
       "fold_refused": true,
       "problems": [
+        "event decision-1: no action-evidence policy was supplied with the fold input — the purposes an action may be grounded by are policy-plane data, and their absence is not permission (P2Y-01)",
         "event decision-1: external basis 'hearsay:some-id' does not parse as 'store:object-id@version#<64-hex-sha256>' — a store prefix is not a resolvable reference, and an abbreviated hash is not a content identity (P2U-02, P2W-02)"
       ],
       "second_layer_alone": "accepted",
@@ -913,24 +914,7 @@
       "fold_refused": true,
       "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 1ea3ecab2add",
       "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the consuming event requires one of ['delete-production-data'] — a receipt for one purpose is not evidence for a materially different one (P2X-02)"
-      ],
-      "references": [
-        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
-      ],
-      "registry": "authority control-plane-attestation-service@auth-v4, 1 receipt(s), revocation snapshot rev-2026-07-31"
-    },
-    {
-      "accepted_by_the_prefix_check_this_replaces": true,
-      "case": "consuming-event-declares-no-required-purpose",
-      "closed": true,
-      "description": "an event with an external basis and no stated evidence requirement",
-      "detected": true,
-      "expected_problem": "declares no required receipt purpose",
-      "fold_refused": true,
-      "manifest": "available resolver, 1 record(s), snapshot snap-2026-07-31T00:00Z, digest 1ea3ecab2add",
-      "problems": [
-        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but the consuming event declares no required receipt purpose — evidence cannot be matched to a use that was never stated (P2X-02)"
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the governed contract for this action permits ['destructive-action-authorization'] — a receipt for one purpose is not evidence for a materially different one (P2X-02, P2Y-01)"
       ],
       "references": [
         "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
@@ -990,6 +974,132 @@
     },
     {
       "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "consuming-event-declares-no-action-context",
+      "closed": true,
+      "description": "an event with an external basis that says nothing about itself",
+      "detected": true,
+      "expected_problem": "declares no action class",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the consuming event declares no action class — the governed mapping is keyed by action class, scope, policy version and risk class, and an event that names none cannot be governed (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "action-class-the-policy-does-not-govern",
+      "closed": true,
+      "description": "an action class the governed mapping holds no contract for",
+      "detected": true,
+      "expected_problem": "holds no contract for",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the action-evidence policy holds no contract for (action_class='undeclared-action', scope='business', policy_version='P1', risk_class='consequential') — an ungoverned action class cannot be grounded by any evidence (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "event-names-a-contract-that-does-not-govern-it",
+      "closed": true,
+      "description": "the producer names a permissive contract instead of the one its own keys resolve to",
+      "detected": true,
+      "expected_problem": "cannot select the contract that governs it",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the consuming event names contract 'AEC-display-01'; the governed mapping for its own keys is 'AEC-delete-01' — an action cannot select the contract that governs it (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "no-evidence-policy-supplied",
+      "closed": true,
+      "description": "an external basis in use with no policy plane in the fold input",
+      "detected": true,
+      "expected_problem": "no action-evidence policy was supplied",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: no action-evidence policy was supplied with the fold input — the purposes an action may be grounded by are policy-plane data, and their absence is not permission (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "evidence-policy-authored-by-the-manifest-source",
+      "closed": true,
+      "description": "the evidence rule is written by the party whose evidence it governs",
+      "detected": true,
+      "expected_problem": "is not governed",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: the action-evidence policy is authored by 'provider-snapshot-service', which is also the manifest source — an evidence rule written by the party whose evidence it governs is not governed (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "evidence-policy-unbound",
+      "closed": true,
+      "description": "a policy with no declared digest",
+      "detected": true,
+      "expected_problem": "evidence policy declares no digest",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: action-evidence policy unusable — evidence policy declares no digest — an unbound policy is a suggestion, not an authority",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
+      "case": "evidence-policy-ambiguous-for-one-key",
+      "closed": true,
+      "description": "two contracts for one (action class, scope, policy version, risk class)",
+      "detected": true,
+      "expected_problem": "more than one contract for",
+      "fold_refused": true,
+      "manifest": "available resolver, 10 record(s), snapshot snap-2026-07-31T00:00Z, digest dbde12ed9d6a",
+      "problems": [
+        "event decision-ext: action-evidence policy unusable — evidence policy carries more than one contract for kill-command/business/P1/consequential — which one governs would depend on tuple order (P2Y-01)",
+        "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: record control-journal:kill-cmd-77 resolves an attestation but no governed evidence purpose applies to the consuming action — evidence cannot be matched to a use the policy plane does not describe (P2X-02, P2Y-01)"
+      ],
+      "references": [
+        "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82"
+      ],
+      "registry": "authority control-plane-attestation-service@auth-v4, 4 receipt(s), revocation snapshot rev-2026-07-31"
+    },
+    {
+      "accepted_by_the_prefix_check_this_replaces": true,
       "case": "envelope-unapproved-digest-algorithm",
       "closed": true,
       "description": "a manifest declaring an algorithm outside the approved set",
@@ -1021,6 +1131,19 @@
         "decision-ext"
       ]
     },
+    "governed_contract": {
+      "allowed_purposes": [
+        "kill-command-delivery"
+      ],
+      "contract_id": "AEC-kill-01",
+      "keys": [
+        "kill-command",
+        "business",
+        "P1",
+        "consequential"
+      ],
+      "policy_authority": "governance-policy-plane"
+    },
     "manifest_digest": "dbde12ed9d6a30e0d4508b6d12dbddf0d46a1333a2660a402343af4be3c8ad38",
     "manifest_records": [
       "control-journal:kill-cmd-77",
@@ -1039,7 +1162,8 @@
     "reference": "control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82",
     "registry_authority_id": "control-plane-attestation-service",
     "registry_digest": "b8633a02f30d92b4529fe3754919b480e4c682b0752cc5c04bc981394cb3a931",
-    "resolved_and_folded": true
+    "resolved_and_folded": true,
+    "three_distinct_authorities": true
   },
   "external_reference_grammar": "store:object-id@version#<64-hex-sha256>",
   "r1_contract_witnesses": {
@@ -1103,7 +1227,7 @@
         "description": "41A_/receipt_purpose_mismatch: display receipt, delete-production-data consumer",
         "probe": "receipt-purpose-does-not-match-the-consuming-action",
         "problems_now": [
-          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the consuming event requires one of ['delete-production-data'] — a receipt for one purpose is not evidence for a materially different one (P2X-02)"
+          "event decision-ext: external basis control-journal:kill-cmd-77@v3#317d2f5a0fe8053df64a16ee0b09dad0c36e2f4ddf95a153d39c4c1660d1aa82: receipt r-display attests purpose 'display-monthly-digest'; the governed contract for this action permits ['destructive-action-authorization'] — a receipt for one purpose is not evidence for a materially different one (P2X-02, P2Y-01)"
         ],
         "r2_contract_accepted": true,
         "receipt_purpose": "display-monthly-digest",
@@ -1128,9 +1252,9 @@
     "cases": 8,
     "closed": 8,
     "digest_enumeration_guard_discriminates": true,
-    "external_accepted_by_the_prefix_check_this_replaces": 43,
-    "external_cases": 44,
-    "external_closed": 44,
+    "external_accepted_by_the_prefix_check_this_replaces": 49,
+    "external_cases": 50,
+    "external_closed": 50,
     "external_open": [],
     "external_positive_resolves": true,
     "open": [],

@@ -377,7 +377,7 @@ def main(argv: List[str]) -> int:
             - len(basis["summary"]["r2_contract_witnesses_not_witnessing"]),
             len(basis["r2_contract_witnesses"]["probes"]))),
         ("19 P2S-04 schedule-liveness behaviors demonstrated (incl. the P2U-03, "
-         "P2V-04, P2W-04 and P2X-03/04/05 probes)",
+         "P2V-04, P2W-04, P2X and P2Y-02/03/04 probes)",
          sched["summary"]["discriminating"] == sched["summary"]["behaviors"],
          "%d/%d behaviors discriminate under their targeted defect "
          "(scheduler death before registration; horizon exhaustion; atomic "
@@ -388,7 +388,9 @@ def main(argv: List[str]) -> int:
          "changes, replay determinism from the durable journal; and the three P2X "
          "cases — mandatory compare-and-swap, run receipts bound to their version, "
          "and journal replay refusing contradictory, orphaned, incomplete, "
-         "out-of-order and unknown-kind histories)"
+         "out-of-order and unknown-kind histories; and the three P2Y cases — the "
+         "eight ratified transaction invariants, one recurrence schema shared by "
+         "admission and replay, and the occurrence-satisfaction window)"
          % (sched["summary"]["discriminating"], sched["summary"]["behaviors"])),
     ]
 

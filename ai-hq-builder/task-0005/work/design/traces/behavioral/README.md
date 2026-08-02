@@ -34,7 +34,8 @@ python3 run_p2s04.py                # P2T-03 — schedule-liveness suite (harnes
                                     # P2U-03 version-bound horizons; P2V-04 permanent retirement;
                                     # P2W-04 durable monotonic identity via a control journal;
                                     # P2X-03/04/05 mandatory CAS, version-bound run receipts,
-                                    # journal-replay transition invariants
+                                    # journal-replay transition invariants; P2Y-02/03/04 the eight
+                                    # transaction invariants, one recurrence schema, occurrence window
 ```
 
 Two more validators live one level up, outside this directory:
@@ -101,7 +102,7 @@ hits rather than false positives.
 | `oracle_schema.py` | typed schema for all four expected dimensions + the fail-closed coverage floor | oracle |
 | `engine_core.py` | envelope authority (D-B2 §3), policy composition (D-B8 P2G-10), tier function (D-B6 §2.2) | engine |
 | `events.py` | event taxonomy, store-ownership matrix, ordering keys/phases (D-B9), the three shapes | engine |
-| `external_basis.py` | reference grammar, canonical versioned manifest envelope, separately bound receipt registry with subject/purpose/authority binding, resolver contract (P2U-02, P2V-02/03, P2W-02/03, P2X-01/02) | engine |
+| `external_basis.py` | reference grammar, canonical versioned manifest envelope, separately bound receipt registry, governed action-evidence policy, resolver contract (P2U-02, P2V-02/03, P2W-02/03, P2X-01/02, P2Y-01) | engine |
 | `fold.py` | deterministic causal-topological replay fold (D-B9 P2S-06) | engine |
 | `scenarios.py` | 27 input-side stimulus encodings | engine |
 | `simulate.py` | orchestration; E2E-1 normalizers; seeded-defect switches | engine |
@@ -268,6 +269,37 @@ add no mechanism, so it is listed rather than re-driven.
   the specific sub-Needs-Owner band is not, per the `27_` ruling), and 7 have no
   same-kind alternative anywhere in a 27-row corpus. An undeclared value-blind pair
   fails the run, and so does a coarsened declaration that has stopped being true.
+- **Evidence purposes are policy-plane data, not the action's own opinion (P2Y-01).**
+  R3 let the consuming event declare `required_receipt_purposes`. The comparison
+  worked — and the action chose the value it was compared against, so a
+  `delete-production-data` request declaring `display-monthly-digest` was satisfied
+  by a display receipt. Per `46_` §3 (ratified by Fable), an `EvidencePolicy` holds
+  contracts keyed by **action class × scope × policy version × risk class**, authored
+  by a policy authority distinct from both the manifest source and the receipt
+  authority. The event declares only facts about itself; it may name the contract it
+  believes governs it, and that name is checked against the lookup rather than
+  trusted. **Three distinct authorities** now have to agree before external evidence
+  grounds an action.
+- **Eight logical transaction invariants (P2Y-02).** R3's preflight asked whether a
+  `txn` that retired something also adopted something — globally. So a change with no
+  retirement replayed clean, one `txn` string reused across two schedules put a
+  version simultaneously in force and retired, and a `ScheduleChanged` with no
+  predecessor created a schedule through the change path. Everything is
+  schedule-scoped now, and all eight invariants from the ratified list are enforced
+  with a probe each.
+- **One recurrence schema, shared by admission and replay (P2Y-03).** `period=0` and
+  `period=-1` were admitted as durable definitions — a zero period never terminates
+  and a negative one walks backwards. `recurrence_problems()` is called by
+  `register()`, by `change_schedule()` and by `journal_problems()`, so a journal
+  cannot represent a state the governed API would refuse. `bool` is explicitly not an
+  integer here, because in Python it otherwise is.
+- **A receipt may satisfy only its own occurrence (P2Y-04).** A `RunStarted` recorded
+  at t0 claiming occurrence t10 permanently suppressed the t11 alarm. A receipt must
+  name an occurrence the recurrence actually produces, and its execution time must
+  fall inside that occurrence's admissible window. `max_early_ticks` defaults to
+  **0** — no early execution — so unlimited early running has to be an explicit
+  schedule policy rather than the accidental result of accepting any pair. The window
+  is journalled, so it survives a fold.
 - **The manifest binds the registry's CONTENT, not its labels (P2X-01).** R2 bound
   the receipt authority id, its version and a snapshot label — three values an author
   chooses. Two separately valid, separately bound registries could carry the same
@@ -454,7 +486,7 @@ the runner fails if any mutation witnesses no predicate and no judge check.
 | `out/anticircularity.json` | the three-way boundary proof |
 | `out/oracle_mutations.json` | P2T-01/P2U-01 — verifier probes defeated, sentinel + contradictory + same-kind corruption per fixture-dimension pair, and the restored-defect witness |
 | `out/basis_validation.json` | P2T-02 missing-basis cases with defect witnesses; P2U-02/P2V/P2W/P2X external-basis resolution cases + the independently attested positive case + the enumeration guards + the R1- and R2-contract witnesses |
-| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04/P2X — the fourteen schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
+| `out/p2s04_schedule_liveness.json` | P2T-03/P2U-03/P2V-04/P2W-04/P2X/P2Y — the seventeen schedule-liveness behaviors, their targeted defects, and the control journal each was folded from |
 | `out/gate_report.json` | acceptance-criteria table |
 
 ## Scope and limits
