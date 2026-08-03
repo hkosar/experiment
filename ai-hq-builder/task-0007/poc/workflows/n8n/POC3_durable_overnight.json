@@ -1,0 +1,238 @@
+{
+  "name": "POC3 — Durable Overnight Workflow (Business partition only)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "nightly-schedule",
+      "name": "Nightly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "SCHEDULE. The provider HOSTS the schedule; the authoritative versioned schedule spec lives in the AI OS journal (04_ §7 exit strategy).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/run-started",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $execution.id, occurrence: $now.toISO(), schedule_id:'poc3-nightly'}) }}"
+      },
+      "id": "announce-run-start-to-ai-os",
+      "name": "Announce Run Start To AI OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "D-EC_ §4. The run announces its OCCURRENCE. Receipt-occurrence temporal validity is judged by the AI OS, not asserted by the provider.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.stage_endpoint }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start To AI OS').item.json.run_id, stage:1}) }}",
+        "options": {
+          "retry": {
+            "retry": {
+              "maxTries": 3,
+              "waitBetweenTries": 5000
+            }
+          },
+          "timeout": 30000
+        }
+      },
+      "id": "bounded-stage",
+      "name": "Bounded Stage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "STAGE + TRANSPORT RETRY. Provider-level retry is the commodity being measured (04_ §2). Semantic idempotency stays with the AI OS.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/checkpoint",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start To AI OS').item.json.run_id, stage:1, state: $json}) }}"
+      },
+      "id": "checkpoint",
+      "name": "Checkpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "CHECKPOINT. Written to the AI OS, not to provider storage — the provider does not own state (05_ §2).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.side_effect_certain }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "side-effect-certain?",
+      "name": "Side Effect Certain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        880,
+        300
+      ],
+      "notes": "UNCERTAINTY GATE. ACT-01: uncertain outcomes halt automatic retry and raise for reconciliation rather than re-firing.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/reconcile",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start To AI OS').item.json.run_id, evidence: $json}) }}"
+      },
+      "id": "reconcile-uncertain-side-effect",
+      "name": "Reconcile Uncertain Side Effect",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        400
+      ],
+      "notes": "RECONCILIATION. Post-state is checked before any retry decision.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/receipt",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start To AI OS').item.json.run_id, occurrence: $('Announce Run Start To AI OS').item.json.occurrence, provider_result: $json}) }}"
+      },
+      "id": "return-run-receipt",
+      "name": "Return Run Receipt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        300
+      ],
+      "notes": "EVIDENCE. Raw provider result; the wrapper mints the D-EC_ receipt and validates the occurrence window (D-EC_ §4).",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Nightly Schedule": {
+      "main": [
+        [
+          {
+            "node": "Announce Run Start To AI OS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Announce Run Start To AI OS": {
+      "main": [
+        [
+          {
+            "node": "Bounded Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bounded Stage": {
+      "main": [
+        [
+          {
+            "node": "Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checkpoint": {
+      "main": [
+        [
+          {
+            "node": "Side Effect Certain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Side Effect Certain?": {
+      "main": [
+        [
+          {
+            "node": "Return Run Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reconcile Uncertain Side Effect",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reconcile Uncertain Side Effect": {
+      "main": [
+        [
+          {
+            "node": "Return Run Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-3",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}

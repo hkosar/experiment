@@ -1,0 +1,11 @@
+{
+  "check": "D-EC_ receipt conformance",
+  "analysed": [],
+  "status": "NO PROVIDER RESULTS CAPTURED \u2014 the owner session has not run. Every provider's receipt quality is NOT TESTED.",
+  "required_field_count": 16,
+  "ownership": {
+    "provider": 4,
+    "wrapper": 9,
+    "authority": 3
+  }
+}

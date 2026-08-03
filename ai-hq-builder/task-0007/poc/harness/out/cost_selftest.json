@@ -1,0 +1,91 @@
+{
+  "check": "cost-model self-test",
+  "cases": [
+    {
+      "check": "total runs",
+      "got": 651.0,
+      "expected": 651,
+      "ok": true
+    },
+    {
+      "check": "zapier units = runs x steps",
+      "got": 2604.0,
+      "expected": 2604,
+      "ok": true
+    },
+    {
+      "check": "n8n units = runs",
+      "got": 651.0,
+      "expected": 651,
+      "ok": true
+    },
+    {
+      "check": "zapier platform",
+      "got": 26.04,
+      "expected": 26.04,
+      "ok": true
+    },
+    {
+      "check": "n8n platform + host",
+      "got": 132.55,
+      "expected": 132.55,
+      "ok": true
+    },
+    {
+      "check": "zapier attention",
+      "got": 50.0,
+      "expected": 50.0,
+      "ok": true
+    },
+    {
+      "check": "n8n attention",
+      "got": 200.0,
+      "expected": 200.0,
+      "ok": true
+    },
+    {
+      "check": "zapier total",
+      "got": 101.03999999999999,
+      "expected": 101.03999999999999,
+      "ok": true
+    },
+    {
+      "check": "n8n total",
+      "got": 357.55,
+      "expected": 357.55,
+      "ok": true
+    },
+    {
+      "check": "step sensitivity",
+      "got": 4.0,
+      "expected": 4.0,
+      "ok": true
+    },
+    {
+      "check": "crossover steps",
+      "got": 5.0,
+      "expected": 5.0,
+      "ok": true
+    },
+    {
+      "check": "10x scales runs linearly",
+      "got": 6510.0,
+      "expected": 6510,
+      "ok": true
+    },
+    {
+      "check": "10x scales zapier units linearly",
+      "got": 26040.0,
+      "expected": 26040,
+      "ok": true
+    },
+    {
+      "check": "unpriced -> None, not 0",
+      "got": null,
+      "expected": null,
+      "ok": true
+    }
+  ],
+  "passed": 14,
+  "total": 14
+}

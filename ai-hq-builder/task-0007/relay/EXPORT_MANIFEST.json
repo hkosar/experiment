@@ -1,0 +1,53 @@
+{
+  "file_count": 8,
+  "files": [
+    {
+      "bytes": 29119,
+      "path": "00_ChatGPT_Provider_Adoption_Handoff.md",
+      "sha256": "b5775f61763bb6bfa3ff169ff0ff49d4722a537ea539b7b071abddb50d66cc55"
+    },
+    {
+      "bytes": 4689,
+      "path": "01_Fable_Disposition_and_Sequencing_Ruling.md",
+      "sha256": "79a9db9696cd9f3941ec0978957e1f41daead95a8da27f319f9c46a265fd8a75"
+    },
+    {
+      "bytes": 6672,
+      "path": "02_Provider_Adoption_Discovery_Plan.md",
+      "sha256": "35cbe7fc9b8029ef2c38279add6443f7c42973a4e2188fd6e29e9bf08ad1edd1"
+    },
+    {
+      "bytes": 10573,
+      "path": "04_Capability_Inventory_Classification_and_Ownership.md",
+      "sha256": "a81ec215efb1bd46be66160db50713bd7b629e7249e5c987c5e4cab58aecc22f"
+    },
+    {
+      "bytes": 6474,
+      "path": "05_Shortlist_Security_Boundaries_and_Cost_Model.md",
+      "sha256": "ba7e02e14f35951aa5fc5c798163959cfb09241430e4ba7aaea7704df43c373b"
+    },
+    {
+      "bytes": 3908,
+      "path": "06_ChatGPT_D1_D2_Review_PASS.md",
+      "sha256": "ed93de00bb4708fd9f25ab95005153063e9dc2b3df142aff0238e81ce6ad7bfb"
+    },
+    {
+      "bytes": 4659,
+      "path": "07_TASK-0007_Task_Packet_POC_Round.md",
+      "sha256": "46cf6b178ffe6daecb355269f4ed92e8b1f7096cdd7be4bd6b43bb851f572323"
+    },
+    {
+      "bytes": 2102,
+      "path": "D-EC_Evidence_and_Schedule_Contracts.md",
+      "sha256": "92bbc5bcc35f41f344c49e21449391b9221d8f02552283ab7b93dd39ecf3a4f4"
+    }
+  ],
+  "instruction_authority": "07_TASK-0007_Task_Packet_POC_Round.md",
+  "issued_by": "Fable (control plane)",
+  "issued_date": "2026-08-03",
+  "task": "TASK-0007",
+  "validation": "validate 100% before reading anything as authority (H-06)",
+  "writable_area": [
+    "POC workspace of the Builder's choosing \u2014 nothing in the ai-hq repo is writable under this task"
+  ]
+}

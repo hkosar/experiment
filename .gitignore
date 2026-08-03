@@ -1,2 +1,4 @@
 __pycache__/
 *.pyc
+ai-hq-builder/task-0007/poc/harness/node_modules/
+ai-hq-builder/task-0007/poc/n8n-validate/

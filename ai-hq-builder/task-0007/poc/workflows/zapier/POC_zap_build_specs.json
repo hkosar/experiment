@@ -1,0 +1,194 @@
+{
+  "note": "Zapier exposes no public import format for arbitrary Zaps — Zap definitions are not portable artifacts the way n8n workflow JSON is. These specs are therefore BUILD INSTRUCTIONS to be followed in the Zapier editor, and the portability asymmetry is recorded as finding F-1 in FINDINGS.md.",
+  "partition": "business",
+  "status": "NOT BUILT — no Zapier account exists in the Builder environment",
+  "zaps": [
+    {
+      "id": "POC1",
+      "name": "Call Review and Delegation",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Webhooks by Zapier",
+          "event": "Catch Hook",
+          "config": "Business-partition CallRail webhook target",
+          "boundary": "inbound external-untrusted"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Code by Zapier",
+          "event": "Run Javascript",
+          "config": "Apply external-untrusted envelope; emit metadata + restricted_content separately; set content_forwarded flag (B-2 evidence)",
+          "boundary": "envelope BEFORE any classification (packet §3)"
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS wrapper /poc1/review-case",
+          "boundary": "AI OS owns the queue and the classification"
+        },
+        {
+          "n": 4,
+          "type": "Action",
+          "app": "Human in the Loop by Zapier",
+          "event": "Request approval",
+          "config": "Carries the pause only; the card and the decision live on the AI OS surface",
+          "boundary": "packet §3 — provider may carry the pause, never decide it"
+        },
+        {
+          "n": 5,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS wrapper /poc1/verify-decision — returns the authorized ActionRequest or refuses",
+          "boundary": "fail-closed; the approval token is verified, never trusted"
+        },
+        {
+          "n": 6,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "authorized is true",
+          "boundary": "no ActionRequest, no send"
+        },
+        {
+          "n": 7,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "Execute the ActionRequest verbatim at its declared endpoint",
+          "boundary": "execution"
+        },
+        {
+          "n": 8,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS wrapper /poc1/receipt with the raw provider result",
+          "boundary": "the wrapper mints the D-EC_ receipt, not Zapier"
+        }
+      ],
+      "measures": [
+        "connector coverage",
+        "setup time",
+        "human approval support",
+        "response monitoring",
+        "evidence quality",
+        "duplicate-send prevention",
+        "monthly cost at expected volume",
+        "connection-level revocation actually severing access"
+      ]
+    },
+    {
+      "id": "POC2",
+      "name": "Read-Only Email Triage",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Gmail",
+          "event": "New Email",
+          "config": "BUSINESS mailbox only",
+          "boundary": "packet §3 — no Personal-partition data"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Code by Zapier",
+          "event": "Run Javascript",
+          "config": "Apply external-untrusted envelope; links_followed=false; attachments_opened=false",
+          "boundary": "envelope before classification"
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS wrapper /poc2/triage — classification, priority, queue placement",
+          "boundary": "AI OS classifies; Zapier transports"
+        }
+      ],
+      "explicitly_absent": [
+        "no send step",
+        "no reply step",
+        "no label mutation",
+        "no link following"
+      ],
+      "measures": [
+        "trust isolation",
+        "data handling",
+        "classification handoff",
+        "queue update",
+        "mobile visibility",
+        "cost and latency"
+      ]
+    },
+    {
+      "id": "POC3",
+      "name": "Durable Overnight Workflow",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Schedule by Zapier",
+          "event": "Every Day",
+          "config": "03:00 local",
+          "boundary": "provider HOSTS the schedule; the AI OS journal OWNS the spec"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/run-started declaring the occurrence",
+          "boundary": "D-EC_ §4"
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "Bounded stage with Zapier's autoreplay/retry enabled",
+          "boundary": "transport retry is the commodity under test"
+        },
+        {
+          "n": 4,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/checkpoint",
+          "boundary": "checkpoint state lives in the AI OS"
+        },
+        {
+          "n": 5,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "side_effect_certain is true; otherwise branch to reconcile",
+          "boundary": "ACT-01 — uncertain outcomes halt automatic retry"
+        },
+        {
+          "n": 6,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/receipt",
+          "boundary": "wrapper mints the receipt"
+        }
+      ],
+      "induced_failure_required": "kill the run mid-flight between steps 3 and 4 and record the actual retry/replay behaviour — packet §4 forbids simulating this in prose",
+      "measures": [
+        "durability",
+        "retry semantics",
+        "side-effect uncertainty",
+        "checkpoint integration",
+        "watchdog independence",
+        "evidence and replay"
+      ]
+    }
+  ]
+}
