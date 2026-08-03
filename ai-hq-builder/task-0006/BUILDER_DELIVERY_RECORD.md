@@ -1,81 +1,87 @@
-# Builder Delivery Record — TASK-0006 (v1.4 Baseline Integration, Track A)
+# Builder Delivery Record — TASK-0006 closure round C1
 
-**Task:** TASK-0006 — apply `design/D-AM_v14_Amendment_Package.md` to the accepted baseline.
+**Task:** TASK-0006 — closure micro-round per `54_TASK-0006_C1_Closure_Note.md`.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
-**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §7).
-**Instruction authority:** `53_TASK-0006_Task_Packet_v1.4_Integration.md`; change set `design/D-AM_v14_Amendment_Package.md`.
-**Returned to:** **Fable** — this is Fable's integration to verify; the design-gate verifier's role ended with `51_`.
-**Status:** **PARTIAL. Three of the four change-set items applied; one is BLOCKED and returned as a change request. v1.4 is NOT complete and must not be presented for owner acceptance until item 2 lands.**
+**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §6).
+**Instruction authority:** `53_` + `design/D-AM_v14_Amendment_Package.md` + **`54_` (this round)**. Requirement-text source: `13_CP-P2-A_Design_Phase_Change_Plan.md` §5 Part C.
+**Returned to:** **Fable.**
+**Status:** **The change set is complete as a build.** All four D-AM items are applied. Not verified, not released, not owner-accepted — `54_` reserves those.
 
-**Snapshot integrity (H-06):** `EXPORT_MANIFEST.json` validated **11/11 entries — every hash and byte-count matched, 0 mismatched, 0 missing, 0 unexpected files** — before anything was read as authority.
+**Relay integrity (H-06):** `EXPORT_MANIFEST.json` validated **8/8 entries, 0 mismatched, 0 missing, 0 unexpected** before anything was read as authority. The relay's four baseline files are byte-identical to my TASK-0006 return, so the work tree needed no rebase.
 
 ---
 
-## 1. The blocked item, first, because it gates the task
+## 1. C-1 — the blocked item, now applied
 
-**DE-R1..DE-R8 register additions (D-AM §2.1 / packet §1.2) — NOT APPLIED.**
+**Eight new register rows, in both files, texts byte-identical to `13_` §5 Part C.**
 
-Both instruments require the eight new register rows to carry texts **byte-identical to "plan §5"**, and packet §1.2 states that block is *"included in the snapshot."* It is not:
+I extracted the block programmatically and then compared, per row, the shipped cell against the source line — **8/8 byte-identical in the `.md`, 8/8 in the `.csv`, and the two files agree with each other**. No text was retyped.
 
-- `05_Design_Phase_Change_Plan_Proposal.md` has **no §5**. Its sections are the title, "Item 0", "Design scope (complete carried surface)" (a 14-item list), "Out of scope", and "Pipeline".
-- A grep for `DE-R[1-8]` across **every file in the snapshot** returns only *references* to those IDs in prose — no requirement row texts anywhere. `design/D-B6_` line 3 cites the same missing source: *"Authority: proposed DE-R4/DE-R8 (verbatim, plan §5)."*
+| Row | Title as the source gives it | Text length |
+| --- | --- | --- |
+| DE-R1 | identity and deduplication | 1031 |
+| DE-R2 | concurrency and ordering | 948 |
+| DE-R3 | degraded operation | 979 |
+| DE-R4 | tiers and deterministic policy evaluation | 1078 |
+| DE-R5 | attention | 580 |
+| DE-R6 | policy objects and precedence | 1024 |
+| DE-R7 | events, evidence linkage, and replay | 920 |
+| DE-R8 | automatic T2 volume expansion | 1242 |
 
-Authoring the eight texts would be normative discretion, which I do not hold, and packet §2 is explicit: *"If applying D-AM's text literally produces a contradiction with the current repository state … stop and report — do not paper over it with a judgment call."* So I stopped on this item and completed the other three.
+**Status cell, all eight, per the C1 ruling:** `Proposed v1.4 (CP-P2-A; design accepted trail 116) — Accepted on v1.4 owner acceptance`. **CSV audit-disposition column:** `Added by CP-P2-A Part C (verifier replacement texts adopted verbatim, P2A-03..P2A-09)`.
 
-**What Fable needs to supply:** the verifier-confirmed DE-R1..DE-R8 block, or the document that actually contains it. **One conflict to resolve while you are there:** packet §1.2 specifies row status `Amended v1.4 (CP-P2-A; owner acceptance trail 116)`, D-AM §2.1 specifies `Proposed v1.4 → Accepted on v1.4 acceptance`. These differ; I did not pick one.
+**Placement:** in register order, immediately after `DEC-02` and before `EX-01`. Pre-existing row order is unchanged end to end.
 
-## 2. Disposition of the three applied items
+**One rendering decision, stated so it is checkable.** The source line is `> **DE-R1 (identity and deduplication)** — <text>`. The ID becomes the register's ID column, so the cell carries the remainder verbatim: `**(identity and deduplication)** — <text>`. I kept the parenthetical title rather than drop it, because it is information the source block carries and the ID column cannot hold. **If Fable wants the bare text with no lead-in, it is a mechanical strip of the first 8–50 characters of each cell** — say so and I will do it.
 
-| Item | D-AM | What changed | Evidence |
-| --- | --- | --- | --- |
-| **Item 0 — standing-role refresh** | §1 | GOV-01 replaced with §1.1's verbatim text in register `.md` line 72 and `.csv` line 61; seven current-facing "Opus 4.8" → "Opus 5" substitutions at the exact lines §1.3 names; each of the three locations tagged; ADR-019 amendment note appended with the original row byte-intact | Full diffs in the zip. Every one of the eight Manual anchors D-AM §1.4 declares was found exactly where declared — 189, 190, 192, 1017, 1018, 1020, 1534, 1796 |
-| **Decision Engine chapter** | §2.2 | New **Manual §22**, placed after §21.3 and before Appendix A, carrying the committed design set **by reference** — no design text inlined. Records status and authority, states the design documents win where they differ, closes the §19.2 forward reference, and repeats that the gate proved the provider-neutral core without certifying production readiness | §22.2 table |
-| **Change log + WF-09** | §2.3, §2.4 | `07c_Change_Log_v1.3_to_v1.4.md` authored to the N-03 pattern located in `07b_` (header successor-identity paragraph, status paragraph, process/authority/scope block, Added/Amended/arithmetic/Preserved/regression-matrix sections). WF-09's PROVISIONAL marker resolved per `D-B6_` §2.4 in both register files | `07c_`; WF-09 row diff |
+**WF-09 harmonization applied** in both files: `Amended v1.1; Amended v1.4 (CP-P2-A; design accepted trail 116 — final on v1.4 owner acceptance)`.
 
-## 3. Three defects found in the instructions, reported rather than absorbed
+## 2. C-2 through C-5
 
-**(a) D-AM §1.3's section labels are wrong; its line numbers are right.** It calls the first table "§12.1 mapping table (lines 189, 190, 192)" and the second "§12.1.1 role table (lines 1017, 1018, 1020)". Lines 189/190/192 are under **§3.2 Current AI and development workflow**; lines 1017/1018/1020 are under **§12.1 Role-based lifecycle**. §12.1.1 exists but begins at line 1026, *after* the rows in question. The line numbers and the target string are unambiguous, so the substitutions are safe — but I tagged and cited the **corrected** sections rather than write wrong section numbers into the accepted Manual.
+| Item | Disposition | What I did |
+| --- | --- | --- |
+| **C-2** section labels | Ratified, no action | Nothing. The Manual continues to carry the true section identities (§3.2, §12.1, §20A.1); `D-AM_` stays byte-intact as a historical instrument |
+| **C-3** D-B12 | One sentence into §22.1 | Inserted **verbatim**, once, at the end of §22.1's third paragraph — the paragraph that already scopes what the gate did and did not do, which is where a gate-evidence pointer belongs |
+| **C-4** filenames | Applied | All thirteen document-ID citations in §22.2 replaced with the C1 filenames (`D-B6_` already carried its full name). **No new section numbers** — §22.2's lead-in now says so explicitly. **I re-checked all 14 names against `design_directory_listing.txt` in the relay: 14/14 present.** Given that an earlier draft of that list had four wrong names, I did not take it on trust |
+| **C-5** ADR-019 placement | Ratified, no action | Nothing moved |
 
-**(b) D-AM §2.2's document list omits D-B12**, while packet §1.3 says "D-B2 through D-B14". D-AM's enumeration runs B2, B3, B4, B5, B6, B7, B8, B9, B10, B11, B13, B14 — twelve documents. Packet §1 says apply D-AM exactly, so §22 follows D-AM's list. **Fable to confirm whether D-B12 exists and belongs.**
+## 3. Change log
 
-**(c) Exact file names and section numbers could not be cited for twelve of the fourteen design documents.** Packet §1.3 asks for "file names and section numbers." Only `D-AM_v14_Amendment_Package.md` and `D-B6_Tier_Policy_Function_and_Autonomy.md` are in the snapshot. §22 therefore cites `D-B6_` by full file name with **real** section numbers (§2.4, §3, §4, all verified against the file) and everything else by document ID with D-AM's own subject phrase. I did not guess a filename or a section number for a document I cannot read.
+`07c_` now reads as a completed build: the status paragraph drops the incompleteness caveat and records that the texts arrived via the C1 relay; the "Not applied" section becomes **"Added — DE-R1..DE-R8 requirement rows"**; the arithmetic table reads **125 → 133** with 8 new IDs; the process line records the verify-and-unblock round; and "Open against this log" lists the four items as **closed by `54_`**, with the remaining path stated as Fable verification → owner v1.4 acceptance → receipt-commit restamp of the eight proposed status cells.
 
-## 4. The one interpretive call I made, disclosed
+Two internal citations inside `07c_` were stale after the edits and were harmonized: the WF-09 bullet now quotes the ruled status form, and the §22 bullet now lists the fourteen filenames instead of document IDs.
 
-**The ADR-019 amendment note is placed after the ADR table, not "immediately after the ADR-019 row."** D-AM §1.2 says to append it immediately after the row at line 1796. That row is *inside* a markdown table; a blockquote there splits the table in two and breaks rendering. I placed the note as a tagged blockquote immediately after the last ADR row and before the "End of Version 1.1" marker — following the repo's own precedent that later-version ADR content (ADR-021/022, both v1.3) sits in the ADR area before that marker.
+## 4. Verification
 
-The ADR-019 row is byte-intact, which is what §1.2 protects. **If Fable prefers a different placement it is a one-line move** — I am flagging it rather than letting it pass as if D-AM's literal instruction had been satisfiable.
+- **Register: 133 rows in the `.md` and 133 in the `.csv`**, ID sets identical **and in the same order**; no duplicate IDs; no ID removed; the eight DE-R IDs appear exactly once each; pre-existing row order preserved exactly.
+- **Against the original snapshot:** 125 → 133; the only pre-existing rows that differ are **GOV-01 and WF-09**, as intended across both rounds.
+- **Manual:** the C-3 sentence appears **once, verbatim**. §22.2 cites **14 filenames, all 14 confirmed against the live `design/` listing**; no bare document-ID row remains.
+- **Excluded-path scan re-run:** register `.md` and `.csv` contain **0** occurrences of "Opus 4.8"; the Manual contains **2**, both by design (the preserved ADR-019 row, and the amendment note's own quotation of the prior value). Current-facing occurrences: **0**.
+- **ADR-019 original row byte-intact.**
+- **Allowlist: 3 modified + 1 added, 0 outside.** Read-only inputs **9/9 byte-identical**.
+- **`checksums.sha256` regenerated** over all seven files in the touched directory. Still shipped in the zip root rather than written into `fable/phase1-audit-v1.0/`, because adding a file there would breach the packet §4 allowlist — unchanged reasoning from the first round, and Fable must still regenerate the repo's own file at integration.
+- **`RETURN_MANIFEST.json` self-verified** by re-hashing every entry from the unpacked zip.
 
-## 5. Verification
-
-- **Allowlist: 3 modified + 1 added, 0 outside.** Nothing written outside the four paths packet §4 names.
-- **Read-only inputs: 9/9 byte-identical**, including `D-AM_`, `D-B6_`, `05_`, `52_`, `53_`, and the three prior change logs.
-- **Excluded-path scan (D-AM §1.4), re-run and counted:** `grep -rn "Opus 4.8"` over the whole work tree returns **9 hits in 4 files**. Register `.md` and `.csv`: **0**. Manual: **2**, both by design — the preserved ADR-019 row (line 1835) and the amendment note's own quotation of the prior value (line 1840). The other 5 are in the read-only instruction inputs (`53_`, `D-AM_`), which quote the substitution itself and were not touched. **Current-facing occurrences within the included set: 0**, which is D-AM §1.4's stated acceptance check.
-- **Register integrity:** 125 data rows before and after in both files; MD and CSV ID sets identical; exactly two rows changed (GOV-01, WF-09); the CSV diff is **4 lines — the two changed rows, before and after** — with no requoting or reformatting of the other 123 rows.
-- **`checksums.sha256`** generated over all seven files in the touched directory. **Note:** it is in the zip root, not written into `fable/phase1-audit-v1.0/`, because adding a file there would breach the packet §4 allowlist. The repo's existing `checksums.sha256` was not in the snapshot, so this is a fresh computation over the touched directory, not a regeneration of the repo's own file — Fable must regenerate that at integration.
-- **`RETURN_MANIFEST.json`** self-verified: every entry re-hashed from the unpacked zip before relay.
-
-## 6. Falsifier element (APP-06 / CPB-14, reflexive)
+## 5. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | The DE-R texts are genuinely absent | **Me, about where to look.** I searched every file in the snapshot for `DE-R[1-8]` and read `05_` end to end. If the block lives in a document Fable holds but did not ship, the finding is a packaging error, not a missing artifact — and the fix is the same: ship it. If it is in the snapshot in a form my grep would miss (an image, a differently-spelled ID), I am wrong and the item is unblocked. | **Blocking; falsifiable by producing the block** |
-| 2 | Item 0 is complete | **The excluded-path classification.** I applied exactly the eight anchors D-AM §1.4 declares and no others. If a current-facing "Opus 4.8" exists in a file **outside this snapshot**, Item 0 is incomplete and my scan could not have seen it — my grep covers 12 files; D-AM §1.4 says **26 files** contain the string repo-wide. The other 14 are outside the snapshot and I cannot confirm their classification, only trust it. | **Verified within the snapshot; unverifiable beyond it** |
-| 3 | §22 cites the design set correctly | **Me, about twelve documents I cannot read.** Only `D-B6_`'s citations are checked against the file. The other twelve entries are D-AM's own subject phrases attached to D-AM's own document IDs — accurate by construction, but if D-AM's list is itself stale (e.g. D-B12, §3b), §22 inherits that. It cites no section number it did not verify. | **Not disconfirmed; inherits D-AM's list** |
-| 4 | The ADR-019 placement is acceptable | **Fable.** It is a deviation from a literal instruction, made for a rendering reason, and it is theirs to accept or move (§4). | **Deviation, disclosed** |
-| 5 | My record matches my files | **Me, and I was — once, caught here.** I first wrote "the CSV diff is 2 lines," a figure measured after the GOV-01 edit and before the WF-09 edit. The end-of-run re-check against the files returned 4 and the record was corrected. Every other number in §5 was produced by a command run against the work tree after the last edit. | **Failed before; one stale figure caught and fixed here** |
-| 6 | v1.4 is not complete | **Nobody — this is the point.** The change log itself says so in its status paragraph, the return manifest carries `v1_4_complete: false`, and this record's header says it. If any downstream document treats v1.4 as complete, it is contradicting three artifacts in this delivery. | **Asserted, deliberately hard to miss** |
+| 1 | The eight texts are byte-identical to `13_` §5 | **The extraction, and it is machine-checked both ways.** I parsed the source block with a regex, wrote the cells from the parse, then re-read the shipped files and compared cell against source line for all eight in both formats. If the regex mis-parsed a line — a stray `—` inside a text, say — the comparison would fail, because it compares against the same source line the parse came from. **The residual risk is a line the regex did not match at all**: I checked the count is exactly 8, which is the number `13_` §5 declares | Not disconfirmed; **count and content both checked** |
+| 2 | The rendering decision is harmless | **Fable.** Keeping `**(title)** — ` as a lead-in is my call, disclosed in §1 with the exact reversal. If the register's convention is bare text, eight cells need a prefix stripped | **Interpretive, disclosed, trivially reversible** |
+| 3 | The 14 filenames are correct | **The relay listing, or my transcription of it.** I compared my citations against `design_directory_listing.txt` set-wise: 14/14 present. If that listing is itself stale relative to the live directory, my citations inherit it — but `54_` states it was read directly from `design/` at C1 issuance, which is the strongest provenance available to me | Not disconfirmed; **provenance is Fable's** |
+| 4 | Nothing else moved | **The allowlist and read-only checks.** 3 modified + 1 added, 0 outside; 9/9 read-only inputs byte-identical; pre-existing register row order preserved | Not disconfirmed |
+| 5 | My record matches my files | **Me, and my checker was wrong this round.** My row-counting regex was `[A-Z]+-[0-9]+`, which does not match the ID form `DE-R1`. It reported **125 rows and zero DE-R rows** on a file that had 133 and all eight. The rows were correct; **the verification was not**. I found it because a second check in the same run — one that matched DE-R rows explicitly — disagreed, and two checks in one report cannot both be right. Corrected pattern, re-ran, 133/133. Had I shipped on the first pattern I would have reported the C-1 item as not landed | **Checker defect caught by cross-checking, not by reading** |
+| 6 | v1.4 is complete as a build | **Nobody, if `54_` is complete** — it names five items and all five are done. But "complete as a build" is not "accepted": Fable verification and the owner v1.4 event both remain, and the eight status cells say `Proposed` until the restamp. The change log and the return manifest both carry that distinction | **Asserted at build scope only** |
 
-## 7. Open items and deviations
+## 6. Open items and deviations
 
-- **Item 2 (DE-R1..R8) blocked** — §1. This is the whole of what stands between this delivery and a complete v1.4.
-- **Three instruction defects** to disposition — §3(a) section labels, §3(b) D-B12, §3(c) missing design files.
-- **One interpretive call** to ratify or reverse — §4.
-- **`checksums.sha256` placement** — §5, allowlist-driven.
-- **No scope deviations.** Nothing written outside the four allowlisted paths. Nothing from Track B was touched; no `13B_` obligation was implemented.
+- **Nothing blocking.** All five C1 items are applied or were no-action by ruling.
+- **One interpretive call to ratify or reverse:** the DE-R cell lead-in — §1.
+- **`checksums.sha256` placement** — §4, allowlist-driven, unchanged from the first round.
+- **No scope deviations.** Nothing written outside the four allowlisted paths. Nothing from Track B was touched.
 - **Branch deviation (unchanged, disclosed):** operator-designated branch.
-- **Recommended reviewer focus:** §1 first, then §3(a) — the section-label shift is the kind of thing that silently propagates a wrong citation into an accepted baseline if the next Builder trusts D-AM's labels instead of its line numbers.
+- **Recommended reviewer focus:** falsifier row 5. The finding of this round is not in the deliverable — it is that a verification regex silently under-reported and was caught only because two checks in the same report contradicted each other.
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). No item is claimed accepted; three items are claimed applied and one is claimed blocked.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The build is claimed complete; no acceptance is claimed.*

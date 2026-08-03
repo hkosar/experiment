@@ -1,4 +1,11 @@
 {
+  "c1_items": {
+    "C-1 DE-R1..R8 register additions": "APPLIED \u2014 8 rows in both files, texts byte-identical to 13_ \u00a75, status per the C1 ruling",
+    "C-2 section labels": "RATIFIED \u2014 no action",
+    "C-3 D-B12 sentence": "APPLIED \u2014 inserted verbatim once into Manual \u00a722.1",
+    "C-4 design filenames": "APPLIED \u2014 13 document-ID citations replaced; all 14 names confirmed against design_directory_listing.txt",
+    "C-5 ADR-019 placement": "RATIFIED \u2014 no action"
+  },
   "counts": {
     "added": 1,
     "files": 13,
@@ -6,7 +13,7 @@
     "outside_writable_area": 0,
     "unchanged": 9
   },
-  "cycle": "TASK-0006 initial delivery \u2014 PARTIAL (3 of 4 change-set items applied)",
+  "cycle": "TASK-0006 closure round C1 \u2014 all four D-AM items applied",
   "files": [
     {
       "bytes": 4873,
@@ -45,21 +52,21 @@
       "state": "unchanged"
     },
     {
-      "bytes": 147260,
+      "bytes": 147896,
       "path": "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
-      "sha256": "2eec94adb7b627653105378b74e4613a0d8ff1705139b9decf79c773d1e02b9a",
+      "sha256": "d84ba034cec5167ec483370f2f55d9e9b92d699bb70b6920514d6c7f8c29fe77",
       "state": "modified"
     },
     {
-      "bytes": 36895,
+      "bytes": 46523,
       "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
-      "sha256": "7223f67bcc935084346085cc8bcf140f7e65d104b41dc2d3ad0a624661f29b3c",
+      "sha256": "2e9349026cc4660b48e516b6a909e111f0a40f6dd147feb3185c0c8582742c10",
       "state": "modified"
     },
     {
-      "bytes": 35533,
+      "bytes": 44505,
       "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
-      "sha256": "3932119be7f48bee348ab28ed7c6e412891c51f5fcc1dc8864bebfd3ed31c27f",
+      "sha256": "3e27a386f50d93c22e6c1442c47333901c40b91acc3ee36ba884eb11476cc057",
       "state": "modified"
     },
     {
@@ -81,46 +88,44 @@
       "state": "unchanged"
     },
     {
-      "bytes": 8275,
+      "bytes": 9946,
       "path": "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md",
-      "sha256": "1bbe42bc48e0f640333018618f71997d5b0454f4da72e7dd5845a1a51fe98ba8",
+      "sha256": "36960d4216b9a6a20cb1b4e2ecd1f99ad08bd6830dc6f1d5bb8ee1c41765a628",
       "state": "added"
     }
   ],
   "governing_change_set": "design/D-AM_v14_Amendment_Package.md",
   "instruction_authority": [
-    "53_TASK-0006_Task_Packet_v1.4_Integration.md"
+    "53_TASK-0006_Task_Packet_v1.4_Integration.md",
+    "54_TASK-0006_C1_Closure_Note.md"
   ],
-  "items": {
-    "change_log_07c": "APPLIED (D-AM \u00a72.3)",
-    "de_r1_r8_register_additions": "NOT APPLIED \u2014 source texts absent from the snapshot; returned to Fable as a change request (D-AM \u00a72.1)",
-    "decision_engine_manual_chapter": "APPLIED as Manual \u00a722, by reference (D-AM \u00a72.2)",
-    "item_0_standing_role_refresh": "APPLIED (D-AM \u00a71)",
-    "wf_09_note": "APPLIED (D-AM \u00a72.4)"
-  },
   "produced_by": "Builder (Claude Code)",
-  "returned_to": "Fable (this is Fable's integration to verify; the design-gate verifier's role ended with 51_)",
-  "snapshot_export_manifest": {
-    "declared_file_count": 11,
-    "entries_verified": 11,
+  "relay_export_manifest": {
+    "declared_file_count": 8,
+    "entries_verified": 8,
     "mismatched": 0,
     "missing": [],
     "unexpected": []
   },
+  "requirement_text_source": "13_CP-P2-A_Design_Phase_Change_Plan.md \u00a75 Part C",
+  "returned_to": "Fable",
   "source_snapshot_zip_sha256": "30f97ea29871647078e54c2e246759f10bf1580d7cf01aa4d4be90f41f6a9132",
   "task": "TASK-0006",
   "verification_summary": {
     "allowlist_violations": 0,
+    "change_set_complete_as_a_build": true,
     "current_facing_opus_4_8_occurrences_remaining": 0,
+    "de_r_texts_byte_identical_to_source": "8/8 in .md, 8/8 in .csv, .md == .csv",
+    "design_filenames_confirmed_against_live_listing": "14/14",
     "excluded_paths_untouched": "9/9 read-only inputs byte-identical",
-    "manual_opus_4_8_occurrences_remaining": "2, both by design (the preserved ADR-019 row and the amendment note's own quotation of the prior value)",
-    "register_md_csv_id_sets_identical": true,
-    "register_rows": "125 before, 125 after (8 DE-R rows pending)",
+    "manual_opus_4_8_occurrences_remaining": "2, both by design",
+    "owner_accepted": false,
+    "register_md_csv_id_sets_identical_and_ordered": true,
+    "register_rows": "125 before, 133 after",
     "rows_amended": [
       "GOV-01",
       "WF-09"
-    ],
-    "v1_4_complete": false
+    ]
   },
   "writable_area": [
     "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",

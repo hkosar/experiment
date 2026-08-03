@@ -1,0 +1,57 @@
+{
+  "file_count": 8,
+  "files": [
+    {
+      "bytes": 57944,
+      "path": "13_CP-P2-A_Design_Phase_Change_Plan.md",
+      "sha256": "e284f357b6a6ae0bd39927cab1190bd3b7a007cb92bcf44891b76c71f030b224"
+    },
+    {
+      "bytes": 4869,
+      "path": "54_TASK-0006_C1_Closure_Note.md",
+      "sha256": "5a1973037b99eab4e5f465b52b335c9c7d605dc1999b79a76aaef5a1a245a50e"
+    },
+    {
+      "bytes": 4862,
+      "path": "design/D-AM_v14_Amendment_Package.md",
+      "sha256": "71316546b4e7dfddedd98fc567b26b29301aa27ce2913521a314c7b800d1c473"
+    },
+    {
+      "bytes": 690,
+      "path": "design_directory_listing.txt",
+      "sha256": "570d914171f89eef44765f10b9eb836c14e97f5f1fbbc781033f39a46b362ba5"
+    },
+    {
+      "bytes": 147260,
+      "path": "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+      "sha256": "2eec94adb7b627653105378b74e4613a0d8ff1705139b9decf79c773d1e02b9a"
+    },
+    {
+      "bytes": 36895,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+      "sha256": "7223f67bcc935084346085cc8bcf140f7e65d104b41dc2d3ad0a624661f29b3c"
+    },
+    {
+      "bytes": 35533,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+      "sha256": "3932119be7f48bee348ab28ed7c6e412891c51f5fcc1dc8864bebfd3ed31c27f"
+    },
+    {
+      "bytes": 8275,
+      "path": "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md",
+      "sha256": "1bbe42bc48e0f640333018618f71997d5b0454f4da72e7dd5845a1a51fe98ba8"
+    }
+  ],
+  "instruction_authority": "54_TASK-0006_C1_Closure_Note.md",
+  "issued_by": "Fable (control plane)",
+  "issued_date": "2026-08-03",
+  "note": "Baseline files here are the INTEGRATED post-R0 state (three applied items in). 13_ SS5 is the DE-R source the original snapshot omitted. design_directory_listing.txt is the authoritative filename listing for C-4.",
+  "task": "TASK-0006 closure round C1",
+  "validation": "validate 100% before reading anything as authority (H-06)",
+  "writable_area": [
+    "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+    "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md"
+  ]
+}

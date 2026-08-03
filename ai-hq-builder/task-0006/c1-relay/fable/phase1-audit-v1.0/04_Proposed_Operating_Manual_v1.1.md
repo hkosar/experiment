@@ -1573,28 +1573,28 @@ The Decision Engine design was carried out under change plan CP-P2-A, verified i
 
 The committed design documents are the normative text. Where this chapter and a design document differ, the design document wins. Nothing here re-decides anything settled at trail entry 116, and this chapter creates no requirement of its own: the accepted requirements are DE-R1 through DE-R8 in `05_Requirements_Register_v1.1`.
 
-The design gate proved the **provider-neutral core**. It did not certify production readiness, and it did not perform the build work enumerated in `13B_Build_Gate_Obligations_Register.md`, which remains open as Track B. The design-gate test record is D-B12_Design_Gate_Test_Report.md; the gate-closure verdict is preserved as 51_ChatGPT_Gate_Closure_Verdict_Packet10.md (decision trail entries 114–116).
+The design gate proved the **provider-neutral core**. It did not certify production readiness, and it did not perform the build work enumerated in `13B_Build_Gate_Obligations_Register.md`, which remains open as Track B.
 
 ## 22.2 The committed design set
 
-Each entry below is the document of record for its subject. File names are as they stand in the `design/` directory. Section numbers are cited only where the file was read directly.
+Each entry below is the document of record for its subject. Cited by document ID as the amendment package enumerates them.
 
 | Document | Subject |
 | --- | --- |
-| `D-B2_Field_Authority_Contract.md` | Field-authority contract |
-| `D-B3_Identity_and_Deduplication.md` | Identity and deduplication |
-| `D-B4_Concurrency_and_Ordering.md` | Concurrency boundaries |
-| `D-B5_Degraded_Operation_Matrix.md` | Degraded-operation matrix |
+| D-B2 | Field-authority contract |
+| D-B3 | Identity and deduplication |
+| D-B4 | Concurrency boundaries |
+| D-B5 | Degraded-operation matrix |
 | `D-B6_Tier_Policy_Function_and_Autonomy.md` | Tier/policy function and autonomy caps — including §2.4 WF-09 dimension coverage, §3 the OD-2 starting-autonomy policy objects, and §4 the DE-R8 cap-policy parameter set |
-| `D-B7_Attention_and_Quiet_Hours.md` | Attention and quiet hours |
-| `D-B8_Policy_Objects_and_Precedence.md` | Policy objects and the precedence composite, as selected at the gate |
-| `D-B9_Event_Model_and_Replay.md` | Event model and replay |
-| `D-B10_Partitioned_Queues.md` | Partitioned queues |
-| `D-B11_Ritual_Integration.md` | Rituals |
-| `D-B13_INT01_Card_and_Owner_Templates.md` | Owner surfaces |
-| `D-B14_Operational_DB_Schema.md` | Schema |
-| `D-EC_Evidence_and_Schedule_Contracts.md` | Evidence contracts |
-| `D-ODP_Owner_Decision_Package.md` | Owner decision package — the destination for design values flagged for owner ratification at activation (see `D-B6_` §4) |
+| D-B7 | Attention and quiet hours |
+| D-B8 | Policy objects and the precedence composite, as selected at the gate |
+| D-B9 | Event model and replay |
+| D-B10 | Partitioned queues |
+| D-B11 | Rituals |
+| D-B13 | Owner surfaces |
+| D-B14 | Schema |
+| D-EC_ | Evidence contracts |
+| D-ODP_ | Owner decision package — the destination for design values flagged for owner ratification at activation (see `D-B6_` §4) |
 
 ## 22.3 What the design settles
 
