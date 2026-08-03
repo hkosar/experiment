@@ -1,0 +1,71 @@
+{
+  "file_count": 11,
+  "files": [
+    {
+      "bytes": 4873,
+      "path": "05_Design_Phase_Change_Plan_Proposal.md",
+      "sha256": "deb372f4822c69a29308c25b1ffd9b322e8a40e523bee7c1a3805b15a6268700"
+    },
+    {
+      "bytes": 4174,
+      "path": "52_v1.4_Proposed_Build_Change_Plan.md",
+      "sha256": "26c90bf97c8594d235ef7ad6c73bb8355cfd4ca81ec4d999789baf63794a7f11"
+    },
+    {
+      "bytes": 4068,
+      "path": "53_TASK-0006_Task_Packet_v1.4_Integration.md",
+      "sha256": "75d5e35f2275d1c924096ea96cb5a24028bdb2fc3f82832fa5b8684f9f630d06"
+    },
+    {
+      "bytes": 4862,
+      "path": "design/D-AM_v14_Amendment_Package.md",
+      "sha256": "71316546b4e7dfddedd98fc567b26b29301aa27ce2913521a314c7b800d1c473"
+    },
+    {
+      "bytes": 19741,
+      "path": "design/D-B6_Tier_Policy_Function_and_Autonomy.md",
+      "sha256": "868db8d24a9257f032f23c0f753e0b58fb43dbf218a5d237a62133825b6380a5"
+    },
+    {
+      "bytes": 143623,
+      "path": "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+      "sha256": "30b020c5724308373c289c28c030c48e8cbdb6d317062dea0e9197a69219f867"
+    },
+    {
+      "bytes": 36253,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+      "sha256": "8fb88b6b6bd762029703f24a8a0bbb5f61284f58a9c3a9eceb69c5c010ffb24c"
+    },
+    {
+      "bytes": 34891,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+      "sha256": "972be5cad10061e66b855425e97de44edc196d845a57710aa36f407fdcc95046"
+    },
+    {
+      "bytes": 5793,
+      "path": "fable/phase1-audit-v1.0/07_Change_Log_v1.0_to_v1.1.md",
+      "sha256": "df6d01ec2a1f909fa96ef49489d901068a70a8206787ab4902a7304d4923d41d"
+    },
+    {
+      "bytes": 7429,
+      "path": "fable/phase1-audit-v1.0/07a_Change_Log_v1.1_to_v1.2.md",
+      "sha256": "e4455202ec22bba6fb07fc1c58ee25faca299c4437b61a52a3ab6454c929b7bc"
+    },
+    {
+      "bytes": 9231,
+      "path": "fable/phase1-audit-v1.0/07b_Change_Log_v1.2_to_v1.3.md",
+      "sha256": "f605be54586bc03074298f03f3d5916dd716a288a69b8a1a63a59cfcd184df16"
+    }
+  ],
+  "instruction_authority": "53_TASK-0006_Task_Packet_v1.4_Integration.md",
+  "issued_by": "Fable (control plane)",
+  "issued_date": "2026-08-02",
+  "task": "TASK-0006",
+  "validation": "validate 100% of entries before reading anything as authority (H-06)",
+  "writable_area": [
+    "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+    "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md"
+  ]
+}

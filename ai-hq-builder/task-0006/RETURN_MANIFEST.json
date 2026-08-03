@@ -1,0 +1,131 @@
+{
+  "counts": {
+    "added": 1,
+    "files": 13,
+    "modified": 3,
+    "outside_writable_area": 0,
+    "unchanged": 9
+  },
+  "cycle": "TASK-0006 initial delivery \u2014 PARTIAL (3 of 4 change-set items applied)",
+  "files": [
+    {
+      "bytes": 4873,
+      "path": "05_Design_Phase_Change_Plan_Proposal.md",
+      "sha256": "deb372f4822c69a29308c25b1ffd9b322e8a40e523bee7c1a3805b15a6268700",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 4174,
+      "path": "52_v1.4_Proposed_Build_Change_Plan.md",
+      "sha256": "26c90bf97c8594d235ef7ad6c73bb8355cfd4ca81ec4d999789baf63794a7f11",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 4068,
+      "path": "53_TASK-0006_Task_Packet_v1.4_Integration.md",
+      "sha256": "75d5e35f2275d1c924096ea96cb5a24028bdb2fc3f82832fa5b8684f9f630d06",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 2609,
+      "path": "EXPORT_MANIFEST.json",
+      "sha256": "73ffc8ce461bc68476e9c73e52ba2dbb5a68156be1b8ffc20803b139ad5959a6",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 4862,
+      "path": "design/D-AM_v14_Amendment_Package.md",
+      "sha256": "71316546b4e7dfddedd98fc567b26b29301aa27ce2913521a314c7b800d1c473",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 19741,
+      "path": "design/D-B6_Tier_Policy_Function_and_Autonomy.md",
+      "sha256": "868db8d24a9257f032f23c0f753e0b58fb43dbf218a5d237a62133825b6380a5",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 147260,
+      "path": "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+      "sha256": "2eec94adb7b627653105378b74e4613a0d8ff1705139b9decf79c773d1e02b9a",
+      "state": "modified"
+    },
+    {
+      "bytes": 36895,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+      "sha256": "7223f67bcc935084346085cc8bcf140f7e65d104b41dc2d3ad0a624661f29b3c",
+      "state": "modified"
+    },
+    {
+      "bytes": 35533,
+      "path": "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+      "sha256": "3932119be7f48bee348ab28ed7c6e412891c51f5fcc1dc8864bebfd3ed31c27f",
+      "state": "modified"
+    },
+    {
+      "bytes": 5793,
+      "path": "fable/phase1-audit-v1.0/07_Change_Log_v1.0_to_v1.1.md",
+      "sha256": "df6d01ec2a1f909fa96ef49489d901068a70a8206787ab4902a7304d4923d41d",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 7429,
+      "path": "fable/phase1-audit-v1.0/07a_Change_Log_v1.1_to_v1.2.md",
+      "sha256": "e4455202ec22bba6fb07fc1c58ee25faca299c4437b61a52a3ab6454c929b7bc",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 9231,
+      "path": "fable/phase1-audit-v1.0/07b_Change_Log_v1.2_to_v1.3.md",
+      "sha256": "f605be54586bc03074298f03f3d5916dd716a288a69b8a1a63a59cfcd184df16",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 8275,
+      "path": "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md",
+      "sha256": "1bbe42bc48e0f640333018618f71997d5b0454f4da72e7dd5845a1a51fe98ba8",
+      "state": "added"
+    }
+  ],
+  "governing_change_set": "design/D-AM_v14_Amendment_Package.md",
+  "instruction_authority": [
+    "53_TASK-0006_Task_Packet_v1.4_Integration.md"
+  ],
+  "items": {
+    "change_log_07c": "APPLIED (D-AM \u00a72.3)",
+    "de_r1_r8_register_additions": "NOT APPLIED \u2014 source texts absent from the snapshot; returned to Fable as a change request (D-AM \u00a72.1)",
+    "decision_engine_manual_chapter": "APPLIED as Manual \u00a722, by reference (D-AM \u00a72.2)",
+    "item_0_standing_role_refresh": "APPLIED (D-AM \u00a71)",
+    "wf_09_note": "APPLIED (D-AM \u00a72.4)"
+  },
+  "produced_by": "Builder (Claude Code)",
+  "returned_to": "Fable (this is Fable's integration to verify; the design-gate verifier's role ended with 51_)",
+  "snapshot_export_manifest": {
+    "declared_file_count": 11,
+    "entries_verified": 11,
+    "mismatched": 0,
+    "missing": [],
+    "unexpected": []
+  },
+  "source_snapshot_zip_sha256": "30f97ea29871647078e54c2e246759f10bf1580d7cf01aa4d4be90f41f6a9132",
+  "task": "TASK-0006",
+  "verification_summary": {
+    "allowlist_violations": 0,
+    "current_facing_opus_4_8_occurrences_remaining": 0,
+    "excluded_paths_untouched": "9/9 read-only inputs byte-identical",
+    "manual_opus_4_8_occurrences_remaining": "2, both by design (the preserved ADR-019 row and the amendment note's own quotation of the prior value)",
+    "register_md_csv_id_sets_identical": true,
+    "register_rows": "125 before, 125 after (8 DE-R rows pending)",
+    "rows_amended": [
+      "GOV-01",
+      "WF-09"
+    ],
+    "v1_4_complete": false
+  },
+  "writable_area": [
+    "fable/phase1-audit-v1.0/04_Proposed_Operating_Manual_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.md",
+    "fable/phase1-audit-v1.0/05_Requirements_Register_v1.1.csv",
+    "fable/phase1-audit-v1.0/07c_Change_Log_v1.3_to_v1.4.md"
+  ]
+}
