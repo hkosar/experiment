@@ -1,541 +1,465 @@
 {
   "cases": [
     {
-      "actual_status": 403,
-      "case": "no token presented",
-      "expected_status": 403,
+      "actual": 200,
+      "block": null,
+      "case": "R1P-04 setup: a case opens on a complete identity tuple",
+      "expected": 200,
       "note": null,
-      "ok": true,
-      "reason": "no resume token was presented"
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "forged token",
-      "expected_status": 403,
+      "actual": "duplicate-suppressed",
+      "block": "R1P-04",
+      "case": "(1) same artifact+task+transition -> suppressed, prior receipt returned",
+      "expected": "duplicate-suppressed",
       "note": null,
-      "ok": true,
-      "reason": "resume token is not one this service minted"
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "empty-string token",
-      "expected_status": 403,
+      "actual": "case-opened",
+      "block": "R1P-04",
+      "case": "(2) same artifact, DIFFERENT task -> processed independently",
+      "expected": "a new token",
       "note": null,
-      "ok": true,
-      "reason": "no resume token was presented"
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "non-string token",
-      "expected_status": 403,
+      "actual": "rejected-unauthorized-target",
+      "block": "R1P-04",
+      "case": "(3) same task+artifact, unauthorized target -> REJECT",
+      "expected": "rejected-unauthorized-target",
       "note": null,
-      "ok": true,
-      "reason": "no resume token was presented"
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "open a review case (control)",
-      "expected_status": 200,
+      "actual": "403/rejected-unauthorized-target vs 200/duplicate-suppressed",
+      "block": "R1P-04",
+      "case": "(3) ...and it is DISTINGUISHABLE from duplicate-success",
+      "expected": "different outcome + status",
+      "note": "the distinction is the whole test",
+      "ok": true
+    },
+    {
+      "actual": "resume token has already been used — rep",
+      "block": "R1P-04",
+      "case": "(4) replayed owner decision token -> no second relay",
+      "expected": "token refused",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": "absent",
-      "case": "review-case does NOT hand the provider a case id",
-      "expected_status": "absent",
-      "note": "the provider carries the token and nothing else",
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": 403,
-      "case": "valid token, but no owner decision exists yet",
-      "expected_status": 403,
-      "note": "a valid token proves the pause was carried, not that anything was approved",
-      "ok": true,
-      "reason": "no owner decision exists for this case; a valid token proves the pause was carried, not that anything was approved. The token is still valid — poll again once the owner has decided"
-    },
-    {
-      "actual_status": 200,
-      "case": "owner decides AFTER the early poll",
-      "expected_status": 200,
+      "actual": "True/True",
+      "block": "R1P-04",
+      "case": "(4) ...and a replayed capability returns the prior receipt, not a second side effect",
+      "expected": "replayed + no_second_side_effect",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "SAME token authorizes after the decision",
-      "expected_status": 200,
-      "note": "an early poll must not spend the owner's token",
-      "ok": true,
-      "reason": null
+      "actual": 2,
+      "block": "R1P-04",
+      "case": "(4) ...while attempts stay separately countable from deliveries",
+      "expected": "attempt 2",
+      "note": "how often a provider retries is a provider-discriminating measure",
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "and only then is it spent",
-      "expected_status": 403,
+      "actual": false,
+      "block": "R1P-04",
+      "case": "(5) an uncertain result is reported uncertain, not assumed certain",
+      "expected": false,
       "note": null,
-      "ok": true,
-      "reason": "resume token has already been used — replay refused"
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "provider cannot list cases without the key",
-      "expected_status": 403,
-      "note": "so it cannot even learn which case id to address",
-      "ok": true,
-      "reason": "owner-surface key missing or wrong"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider self-approves with no owner key",
-      "expected_status": 403,
-      "note": "reaching 127.0.0.1 is not evidence that the owner decided",
-      "ok": true,
-      "reason": "owner-surface key missing or wrong; a decision must come from the owner surface, and reaching this port is not evidence that it did (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider guesses a wrong owner key",
-      "expected_status": 403,
+      "actual": false,
+      "block": "R1P-04",
+      "case": "(5) reconcile runs before any second side effect and states what it actually checked",
+      "expected": "external_post_state_checked False",
       "note": null,
-      "ok": true,
-      "reason": "owner-surface key missing or wrong; a decision must come from the owner surface, and reaching this port is not evidence that it did (08_ §R1)"
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "and the case is therefore still undecided",
-      "expected_status": 403,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "direct relay-sink call without a capability -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": "no owner decision exists for this case; a valid token proves the pause was carried, not that anything was approved. The token is still valid — poll again once the owner has decided"
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "the owner, holding the key, can decide (control)",
-      "expected_status": 200,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered action id -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "and only then does it authorize (control)",
-      "expected_status": 200,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered case -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "open a second review case (control)",
-      "expected_status": 200,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered payload -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "owner records the decision on the owner surface",
-      "expected_status": 200,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered capability -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "token + owner decision -> authorized (control)",
-      "expected_status": 200,
+      "actual": 403,
+      "block": "12_§5",
+      "case": "expired capability -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "REPLAY the same token -> refused",
-      "expected_status": 403,
-      "note": "single-use; the second relay must not happen",
-      "ok": true,
-      "reason": "resume token has already been used — replay refused"
+      "actual": "absent",
+      "block": "12_§5",
+      "case": "resume token under arbitrary/unicode-confusable keys is absent from every capture",
+      "expected": "absent",
+      "note": "SEC-R1-02: R1 wrote an unrecognised key verbatim",
+      "ok": true
     },
     {
-      "actual_status": 403,
-      "case": "provider supplies 'decision' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'decision'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'approved' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'approved'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'authorized' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'authorized'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'owner_decision' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'owner_decision'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'verdict' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'verdict'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'Approved' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'Approved'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'APPROVED' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'APPROVED'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'approve' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'approve'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'result' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'result'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'status' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'status'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'decisоn' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'decisоn'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 403,
-      "case": "provider supplies 'target_endpoint' alongside a VALID token",
-      "expected_status": 403,
-      "note": "refused before the token is even consumed",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'target_endpoint'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": 200,
-      "case": "after those refusals the token is still unused (control)",
-      "expected_status": 200,
-      "note": "a refused provider-decision attempt must not burn the owner's token",
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": 400,
-      "case": "provider tries to open a case carrying a decision",
-      "expected_status": 400,
+      "actual": 409,
+      "block": "12_§5",
+      "case": "a second owner decision -> refused",
+      "expected": 409,
       "note": null,
-      "ok": true,
-      "reason": "request carries decision field(s) approved — an approval outcome may not arrive from the provider side; the provider carries an opaque token only (08_ §R1, finding F-3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "triage with no envelope",
-      "expected_status": 400,
+      "actual": "500 / decisions=0",
+      "block": "12_§5",
+      "case": "capture failure during a decision -> the decision does not survive",
+      "expected": "500 and no decision",
       "note": null,
-      "ok": true,
-      "reason": "envelope declares trust None; inbound external content must carry 'external-untrusted' before classification (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "triage with a wrong trust class",
-      "expected_status": 400,
+      "actual": "500 then 200",
+      "block": "13_§4",
+      "case": "a token-spend capture failure leaves the token UNSPENT",
+      "expected": "refused then authorized",
+      "note": "FAB-04: a consumed single-use token cannot be un-consumed",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (truthy list) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (string) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (int) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (bool) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "browser-simple POST without the provider credential -> refused",
+      "expected": 403,
       "note": null,
-      "ok": true,
-      "reason": "envelope declares trust 'trusted'; inbound external content must carry 'external-untrusted' before classification (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "personal partition refused",
-      "expected_status": 400,
+      "actual": [
+        "review-case",
+        "verify-pending"
+      ],
+      "block": "13_§4",
+      "case": "mandatory refusal 1 (the pause, nothing approved) writes a capture",
+      "expected": "verify-pending present",
+      "note": "FAB-01: R1 evidenced nothing on this path",
+      "ok": true
+    },
+    {
+      "actual": [
+        "auth-refused",
+        "review-case",
+        "verify-pending"
+      ],
+      "block": "13_§4",
+      "case": "mandatory refusal 2 (no owner authority) writes a capture",
+      "expected": "auth-refused present",
       "note": null,
-      "ok": true,
-      "reason": "payload declares partition 'personal'; no Personal-partition route exists in this service and no non-business partition is accepted (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "payload with no partition refused",
-      "expected_status": 400,
+      "actual": "absent",
+      "block": "13_§4",
+      "case": "...and the refusal capture never contains key material",
+      "expected": "absent",
       "note": null,
-      "ok": true,
-      "reason": "payload declares no partition; this round is business-only (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "review-case with a personal partition refused",
-      "expected_status": 400,
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "every capture carries a stub-minted timestamp",
+      "expected": "recorded_at on all",
+      "note": "FAB-09: R1 discarded its own opened_at and decision time",
+      "ok": true
+    },
+    {
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "every capture carries candidate, run_instance, route and authored_by",
+      "expected": "all four on all",
       "note": null,
-      "ok": true,
-      "reason": "payload declares partition 'personal'; no Personal-partition route exists in this service and no non-business partition is accepted (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "clean triage (control)",
-      "expected_status": 200,
+      "actual": "{'n8n'} / {'zapier'}",
+      "block": "13_§4",
+      "case": "two candidates produce separately attributable corpora",
+      "expected": "{'n8n'} / {'zapier'}",
+      "note": "FAB-02: R1 hardcoded candidate='stub' at all 15 call sites",
+      "ok": true
+    },
+    {
+      "actual": "2 files, 2 instances",
+      "block": "13_§4",
+      "case": "a restart does not overwrite the prior run's captures",
+      "expected": "both runs present",
+      "note": "FAB-03: R1's counter restarted at 0001 and the runbook is deterministic, so a repeat run REPRODUCED earlier filenames",
+      "ok": true
+    },
+    {
+      "actual": "attestation-service/auth-v4/42",
+      "block": "13_§4",
+      "case": "authority_id / authority_version / tokens_used survive redaction intact",
+      "expected": "unchanged",
+      "note": "FAB-05: R1 replaced these with a constant the harness scored PRESENT",
+      "ok": true
+    },
+    {
+      "actual": "redacted",
+      "block": "13_§4",
+      "case": "a live token under a benign key does NOT survive redaction",
+      "expected": "redacted",
+      "note": "SEC-R1-02, and the concatenated case too",
+      "ok": true
+    },
+    {
+      "actual": "dict",
+      "block": "13_§4",
+      "case": "a withheld value becomes a structured marker, never a bare constant",
+      "expected": "__withheld__ with name/type/bytes/digest",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "malformed envelope (str) refuses, not crashes",
-      "expected_status": 400,
+      "actual": "0 accepting: []",
+      "block": "13_§4",
+      "case": "a provider-authored decision field is refused on EVERY persisting route",
+      "expected": "0 accepting",
+      "note": "FAB-06: R1 wired the check to 3 of 13 routes",
+      "ok": true
+    },
+    {
+      "actual": "409 / True / True",
+      "block": "13_§4",
+      "case": "a duplicate run declaration preserves the prior record",
+      "expected": "409, start and checkpoints intact",
+      "note": "FAB-07: R1 assigned rather than inserted-if-absent, so the replay after the MANDATED mid-flight kill erased the measurement",
+      "ok": true
+    },
+    {
+      "actual": "run-",
+      "block": "13_§4",
+      "case": "...and the run identity is stub-minted, not provider-chosen",
+      "expected": "stub-minted",
       "note": null,
-      "ok": true,
-      "reason": "payload declares no partition; this round is business-only (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "malformed envelope (list) refuses, not crashes",
-      "expected_status": 400,
+      "actual": "False",
+      "block": "13_§4",
+      "case": "the reconcile path does not assert an unperformed check",
+      "expected": "no ACT-01 claim, explicit not-checked",
+      "note": "FAB-08: R1 returned side_effect_certain True citing ACT-01 having checked nothing",
+      "ok": true
+    },
+    {
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "triage does not assert provider conduct it cannot observe",
+      "expected": "no links_followed/actions_taken claim",
       "note": null,
-      "ok": true,
-      "reason": "payload declares no partition; this round is business-only (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "malformed envelope (int) refuses, not crashes",
-      "expected_status": 400,
+      "actual": "5 parsed, 0 tmp",
+      "block": "13_§4",
+      "case": "every capture is complete JSON and no temp file survives",
+      "expected": "0 tmp, all parse",
+      "note": "FAB-10: the MANDATED mid-flight kill could leave torn JSON",
+      "ok": true
+    },
+    {
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 no envelope -> refused",
+      "expected": 400,
       "note": null,
-      "ok": true,
-      "reason": "payload declares no partition; this round is business-only (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "malformed envelope (NoneType) refuses, not crashes",
-      "expected_status": 400,
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 wrong trust -> refused",
+      "expected": 400,
       "note": null,
-      "ok": true,
-      "reason": "payload declares no partition; this round is business-only (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "partition as a list refuses",
-      "expected_status": 400,
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 personal partition -> refused",
+      "expected": 400,
       "note": null,
-      "ok": true,
-      "reason": "partition must be a string"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "zero-width-space partition refuses",
-      "expected_status": 400,
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 malformed envelope -> refused",
+      "expected": 400,
       "note": null,
-      "ok": true,
-      "reason": "payload declares partition 'business\\u200b'; no Personal-partition route exists in this service and no non-business partition is accepted (packet §3)"
+      "ok": true
     },
     {
-      "actual_status": 400,
-      "case": "top-level partition cannot override a personal envelope",
-      "expected_status": 400,
-      "note": null,
-      "ok": true,
-      "reason": "payload declares partition 'personal'; no Personal-partition route exists in this service and no non-business partition is accepted (packet §3)"
-    },
-    {
-      "actual_status": 404,
+      "actual": 404,
+      "block": null,
       "case": "no Personal route exists at all",
-      "expected_status": 404,
+      "expected": 404,
       "note": null,
-      "ok": true,
-      "reason": "no such route on this stub"
+      "ok": true
     },
     {
-      "actual_status": 404,
-      "case": "unknown route refused",
-      "expected_status": 404,
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "negative Content-Length -> prompt refusal",
+      "expected": "400",
       "note": null,
-      "ok": true,
-      "reason": "no such route on this stub"
+      "ok": true
     },
     {
-      "actual_status": 404,
-      "case": "checkpoint for an unannounced run",
-      "expected_status": 404,
+      "actual": "501",
+      "block": "12_§5-live",
+      "case": "unsupported transfer encoding -> refused",
+      "expected": "501",
       "note": null,
-      "ok": true,
-      "reason": "checkpoint for an unannounced run"
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "run-started (control)",
-      "expected_status": 200,
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "conflicting Content-Length headers -> refused",
+      "expected": "400",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "checkpoint reports the side effect UNCERTAIN",
-      "expected_status": 200,
-      "note": "so the reconcile branch is exercised, not left inert",
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": "false",
-      "case": "checkpoint sets side_effect_certain=false",
-      "expected_status": "false",
+      "actual": "415",
+      "block": "12_§5-live",
+      "case": "browser-simple POST (no JSON content type) -> refused",
+      "expected": "415",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "reconcile (control)",
-      "expected_status": 200,
+      "actual": "5.0s",
+      "block": "12_§5-live",
+      "case": "slow-body (declared length, nothing sent) -> bounded by the socket timeout",
+      "expected": "< 30s",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "run receipt (control)",
-      "expected_status": 200,
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "deeply malformed JSON -> structured refusal",
+      "expected": "400",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": 200,
-      "case": "case opened with secret-shaped content (control)",
-      "expected_status": 200,
+      "actual": 200,
+      "block": "12_§5-live",
+      "case": "...and the service is still healthy afterwards",
+      "expected": "200",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": "none",
-      "case": "no secret-shaped material in any capture record",
-      "expected_status": "none",
+      "actual": "absent",
+      "block": "12_§5-live",
+      "case": "a secret in the PATH is absent from the log",
+      "expected": "absent",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": "true",
-      "case": "redaction actually fired (proves the check is not vacuous)",
-      "expected_status": "true",
+      "actual": "no curl",
+      "block": "12_§5-live",
+      "case": "the startup banner prints no copyable command containing the key",
+      "expected": "no curl line",
       "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     },
     {
-      "actual_status": "true",
-      "case": "capture records carry synthetic: true",
-      "expected_status": "true",
+      "actual": 0,
+      "block": "12_§5-live",
+      "case": "...and no request line is logged at all",
+      "expected": "none",
       "note": null,
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": "{\"api_key\": \"[REDACTED:key-name]\", \"password\": \"[REDACTED:ke",
-      "case": "structured secret FIELDS are redacted by key name",
-      "expected_status": "redacted",
-      "note": null,
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": "distinct",
-      "case": "repeated captures of the same step do not overwrite",
-      "expected_status": "distinct paths",
-      "note": null,
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": 403,
-      "case": "provider tries to redirect the approved action",
-      "expected_status": 403,
-      "note": "the owner decided WHAT; the target is not the provider's to choose",
-      "ok": true,
-      "reason": "verify-decision accepts only a resume token; the request also carried 'target_endpoint'. An authorization the owner made is not open to provider input (08_ §R1)"
-    },
-    {
-      "actual_status": "http://127.0.0.1:8787/sink",
-      "case": "the authorized endpoint comes from the AI OS side",
-      "expected_status": "http://127.0.0.1:8787/sink",
-      "note": null,
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": "present",
-      "case": "owner decisions and rejections both write captures",
-      "expected_status": "both present",
-      "note": null,
-      "ok": true,
-      "reason": null
-    },
-    {
-      "actual_status": 400,
-      "case": "non-string case_id refuses instead of crashing",
-      "expected_status": 400,
-      "note": null,
-      "ok": true,
-      "reason": "case_id must be a string"
-    },
-    {
-      "actual_status": "None",
-      "case": "capture path traversal refused",
-      "expected_status": "None",
-      "note": null,
-      "ok": true,
-      "reason": null
+      "ok": true
     }
   ],
-  "check": "POC wrapper stub self-test",
-  "mandatory_refusals": [
-    "missing / forged / replayed resume token",
-    "approval decision arriving from the provider side",
-    "a decision recorded on the owner surface by anything that merely reached the port (the owner key closes this)"
-  ],
-  "passed": 66,
+  "check": "POC wrapper stub self-test (R2 contract)",
+  "contract": "14_ §2 C-1..C-19; tests per 14_ §3",
+  "passed": 56,
   "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use",
-  "total": 66
+  "total": 56,
+  "unfixed_behaviour_demonstration": "r1_witnesses.py (pinned R1 build)"
 }

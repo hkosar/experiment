@@ -1,0 +1,2 @@
+candidate,poc,step_no,step_description,owner_action_required,started_at,finished_at,elapsed_seconds,friction_notes,blocked
+# one row per step the OWNER had to perform personally; packet §4 requires every such step with its time

@@ -4,6 +4,8 @@
 
 **Who does what.** You create every account, grant every credential, and click every OAuth consent — personally, on your screen. The Builder never holds, requests, or receives a password, token, or API key. If any step in any runbook seems to ask you to send a secret somewhere, **stop** — that is a defect in the runbook, not an instruction to follow.
 
+**What this round tests.** The Release-1 App-Building Management Platform workload, per the owner ruling in `09_`: POC-1 is the **Builder-return pipeline**, POC-2 is **idea capture and staging**, POC-3 is the **durable nightly integrity sweep**. The Release-2 call-review and email-triage scenarios are parked, not deleted.
+
 **What this session is for.** Producing numbers. Packet `07_` §4: *"the deliverable is numbers plus observations, not impressions."* Everything in `data/measurements.template.json` currently reads `NOT TESTED`. The session's job is to replace those with measured values and evidence references. A measure you could not run stays `NOT TESTED` — that is a result, and a truthful one.
 
 ---
@@ -16,15 +18,16 @@
 | You have a throwaway-eligible mindset about everything built here | Packet §6: nothing built here becomes load-bearing without a Track B packet |
 | A timer you can start and stop per step | Setup wall-clock and owner-friction minutes are themselves measures |
 | `data/owner_friction_log.template.csv` open | One row per step **you** had to perform, with its time |
-| **The wrapper stub running** — `cd poc/stub && python3 stub_server.py --port 8787`, then `curl -s http://127.0.0.1:8787/health` | The three workflows call it. Without it only POC-2's provider half can run. Python 3 stdlib only; no install, no database. It is **throwaway evidence apparatus**, not the AI OS wrapper |
+| **The wrapper stub running, with the candidate named** — `cd poc/stub && python3 stub_server.py --candidate n8n --port 8787`, then `curl -s http://127.0.0.1:8787/health` | The three workflows call it. `--candidate` is **required**: it keeps n8n's and Zapier's evidence separately attributable, and a defaulted value would silently merge the two corpora the round exists to compare. Restart it with `--candidate zapier` when you switch |
+| **Both keys read into shell variables** — `read -rs OWNER_KEY`, `read -rs PROVIDER_KEY` | The stub prints them at startup as bare values. **Never paste either into a command line**; the owner key never goes near a provider, and the provider credential carries no owner authority |
 
 **Cost exposure.** Both candidates have free tiers adequate for this round. If any step asks for a paid plan before a POC can complete, stop and record it — "the free tier cannot express this flow" is a genuine economics finding, not an obstacle to work around by spending.
 
 ## 1. Order of work, and why this order
 
-1. **n8n first, POC-2 first.** n8n self-hosted is the slower setup and POC-2 is read-only — so the first thing you do is the lowest-risk flow on the higher-effort candidate. If self-hosting is going to be painful, you learn it early, on a flow that cannot touch anything.
-2. **Then Zapier POC-2.** Same flow, other candidate — the first genuine like-for-like comparison.
-3. **Then POC-1 on both.** This one sends something. It also carries the revocation test, which is the only place a kill/revoke measure exists (packet §3).
+1. **n8n first, POC-2 first.** n8n self-hosted is the slower setup and POC-2 takes no external action — so the first thing you do is the lowest-risk flow on the higher-effort candidate. If self-hosting is going to be painful, you learn it early, on a flow that cannot touch anything.
+2. **Then Zapier POC-2.** Same flow, other candidate — the first genuine like-for-like comparison. **Restart the stub with `--candidate zapier`** so the two corpora stay separate.
+3. **Then POC-1 on both.** This one relays something. It carries the duplicate/replay/unauthorized-target tests and the revocation test.
 4. **Then POC-3 on both.** This one needs an overnight window and a deliberate mid-flight kill.
 5. **POC-4 only if needed.** Packet §1: run it only if tool-scoping/revocation is still undiscriminated after POC-1..3. **State the decision either way** — "we did not run POC-4 because X" is a required output, not an omission.
 
@@ -32,7 +35,7 @@
 
 1. **Approval authority never moves to the provider.** Both fabrics have a human-in-the-loop feature. It may carry the *pause*. The decision is made on your AI OS/Discord surface and verified by the wrapper before anything is sent. If you find yourself approving something inside Zapier's or n8n's own UI and that approval directly causes the send, the flow is wired wrong — record it and fix the wiring.
    **In this round the owner surface is the stub:** record each POC-1 decision with
-   `curl -s -X POST http://127.0.0.1:8787/owner/decide -H "X-Owner-Key: <the key the stub printed at startup>" -H 'Content-Type: application/json' -d '{"case_id":"<from POST /owner/cases>","decision":"accept"}'` — the provider never learns the case id, so you list your own pending cases first.
+   `curl -s -X POST http://127.0.0.1:8787/owner/decide -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' -d '{"case_id":"<from POST /owner/cases>","decision":"accept"}'` — the provider never learns the case id, so you list your own pending cases first (`POST /owner/cases`, same header, `Content-Type` required on both). **Your first decision on a case is terminal**; a second is refused and recorded.
    **The owner-surface key never goes into a provider.** It is what makes "the owner decided"
    a checked fact rather than "something reached the port" — keep it in your terminal.
    The provider carries only an opaque token; the stub refuses an approval outcome that arrives from the provider side, and refuses a token that is missing, forged, or replayed. Provoking one of those refusals on purpose is a legitimate thing to record.

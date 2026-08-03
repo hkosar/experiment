@@ -1,26 +1,26 @@
 {
   "baseline": {
-    "relay_poc_matches_accepted_R0_return": "36/36 byte-identical"
+    "relay_poc_matches_accepted_R1_return": "40/40 byte-identical"
   },
-  "change_request": "Zapier MCP tools are now live in the Builder session; unused this round, and their use in the owner session is a scope decision for Fable",
   "counts": {
-    "added": 4,
-    "files": 40,
-    "modified": 3,
-    "unchanged": 33
+    "added": 6,
+    "files": 43,
+    "modified": 13,
+    "removed": 3,
+    "unchanged": 24
   },
-  "cycle": "supplemental round R1 \u2014 POC wrapper stub",
+  "cycle": "round R2 \u2014 stub rework (security + evidence integrity) and the Release-1 scenario re-aim",
   "files": [
     {
-      "bytes": 7533,
+      "bytes": 8982,
       "path": "FINDINGS.md",
-      "sha256": "c52e6e31bbae88700d8f96e1cf9635e479aaf08b2b89ecf1c60651ee9e73151c",
-      "state": "unchanged"
+      "sha256": "7c128df63bb40d6d89ec824994add5c293beb812fe6a8b9b886b6a8a494b8135",
+      "state": "modified"
     },
     {
-      "bytes": 4107,
+      "bytes": 4973,
       "path": "README.md",
-      "sha256": "2c49215b030ce13eeca7a173f33ac11d0675b34aa2c1ca10e015cb01d533341a",
+      "sha256": "2dd512e1bd44c36e8820998070ca48adf3f17bd4ac9b28b301abf687a3ceecb3",
       "state": "modified"
     },
     {
@@ -54,16 +54,16 @@
       "state": "unchanged"
     },
     {
-      "bytes": 555,
+      "bytes": 561,
       "path": "harness/out/boundary.json",
-      "sha256": "50a13a922d8a4138bd9fb5d4e26346fd86427b1adcefefb0f4b4283a79745bae",
-      "state": "unchanged"
+      "sha256": "17de40127d2c9a853851a703728427ede57a47b07c873527849656534766701a",
+      "state": "modified"
     },
     {
-      "bytes": 175,
+      "bytes": 181,
       "path": "harness/out/boundary.log",
-      "sha256": "b677090d772957cba8d9b74a8b9ff441ff6db51d8c475795d3d9a7e457f12c86",
-      "state": "unchanged"
+      "sha256": "6fccba9058671057f9e6e8195dd3f51c10e406a12f2f383dd477f4df41a0239a",
+      "state": "modified"
     },
     {
       "bytes": 1302,
@@ -138,16 +138,16 @@
       "state": "unchanged"
     },
     {
-      "bytes": 859,
+      "bytes": 865,
       "path": "harness/out/structural.json",
-      "sha256": "10b155e59e08e54f16ff3015a0ca235ec753e67a20b3d84844d7b777d0c3f907",
-      "state": "unchanged"
+      "sha256": "af57d656c45bcd4ec29f0c91479c453b84b55c67e0588bdfda23fcabfc541f27",
+      "state": "modified"
     },
     {
-      "bytes": 313,
+      "bytes": 319,
       "path": "harness/out/structural.log",
-      "sha256": "1152e74d5db975e593cf1e0bb25f5538ed3e0d24455aac74ffd76066d253d536",
-      "state": "unchanged"
+      "sha256": "1a0253c09dd9806eae0b33115ae94749c792c49d01d0faf08f407a519997ead8",
+      "state": "modified"
     },
     {
       "bytes": 1312,
@@ -186,150 +186,248 @@
       "state": "unchanged"
     },
     {
-      "bytes": 6765,
+      "bytes": 7669,
       "path": "runbooks/RUNBOOK-n8n.md",
-      "sha256": "66ef172dd6203b3808fb762a9803c614b45cfceadca7177a2cb8f2a7eaa829d2",
+      "sha256": "e5075a63c62eef069d37ced80134538d6b76584f1583b049d1bc468e45ba23ab",
       "state": "modified"
     },
     {
-      "bytes": 6856,
+      "bytes": 7781,
       "path": "runbooks/RUNBOOK-owner-session.md",
-      "sha256": "db68185aab230daac61b2cce8d35fe43baa0f6d2163e1fcf9c246b3bfcafd67a",
+      "sha256": "8d3b76e5b92bdf0f0d9f60265f721898e0877c86f5b82d584ee2edeafdba07b8",
       "state": "modified"
     },
     {
-      "bytes": 3370,
+      "bytes": 5003,
       "path": "runbooks/RUNBOOK-zapier.md",
-      "sha256": "482e40437401be07e4dd79436a73258be16ccde574949e536e459bba9c592cb9",
-      "state": "unchanged"
+      "sha256": "9936960d1fb94ad0b828e418f48393520e9695f98e0a1630d6175c1d46dc4c30",
+      "state": "modified"
     },
     {
       "bytes": 19,
       "path": "stub/.gitignore",
       "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 5816,
+      "path": "stub/out/r1_witnesses.json",
+      "sha256": "ec3a7d3fb1e71dee2771b2b090f5f5e811ffdc50ebacbef663507eff53d67dd2",
       "state": "added"
     },
     {
-      "bytes": 18387,
+      "bytes": 13395,
       "path": "stub/out/stub_selftest.json",
-      "sha256": "04486fd48ccd21d16cda3b48727fbd2b8eb199e97837bfe2bc660e636223adee",
-      "state": "added"
-    },
-    {
-      "bytes": 21182,
-      "path": "stub/selftest_stub.py",
-      "sha256": "f74d816e4c8c07533659bf2e916a5a3a4816d640decbbf8732d4a39450106562",
-      "state": "added"
+      "sha256": "e55c78089afe4cd09a42c4b5fad951b7b73e2b3c558566da10ecb24435e5e5df",
+      "state": "modified"
     },
     {
       "bytes": 30488,
-      "path": "stub/stub_server.py",
+      "path": "stub/r1_reference/stub_server_r1.py",
       "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
       "state": "added"
     },
     {
-      "bytes": 8052,
-      "path": "workflows/n8n/POC1_call_review_delegation.json",
-      "sha256": "9fc1c0a75a28efaf383377a72fd4a654c3c67489d09c55b305c7402a703f1cb8",
-      "state": "unchanged"
+      "bytes": 13704,
+      "path": "stub/r1_witnesses.py",
+      "sha256": "a30f788cfcd7b7d18e18b05a7eab237c9b14e132ce59de5f3a8d3a9c9983ea7a",
+      "state": "added"
     },
     {
-      "bytes": 4193,
-      "path": "workflows/n8n/POC2_email_triage_readonly.json",
-      "sha256": "d68a71deb7c37b738747efd9e888bb203381342ee1d455da4df8e18f89262c49",
-      "state": "unchanged"
+      "bytes": 27430,
+      "path": "stub/selftest_stub.py",
+      "sha256": "09b6067ee362c6d62d57ec0475c6415b921af07cccd20e6ecc7b3c52bbd5f050",
+      "state": "modified"
     },
     {
-      "bytes": 6378,
-      "path": "workflows/n8n/POC3_durable_overnight.json",
-      "sha256": "4d1e07b7d0694ab8217d1e29b6468a42c70bfc35a64b6d8734612abd5ceaa77c",
-      "state": "unchanged"
+      "bytes": 63912,
+      "path": "stub/stub_server.py",
+      "sha256": "a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9",
+      "state": "modified"
     },
     {
-      "bytes": 6442,
+      "bytes": 12493,
+      "path": "workflows/n8n/POC1_builder_return_pipeline.json",
+      "sha256": "a0f6999ed687f237ee56607ebae260023701f6b7af160926cf53c99039f90a27",
+      "state": "added"
+    },
+    {
+      "bytes": 5160,
+      "path": "workflows/n8n/POC2_idea_capture_staging.json",
+      "sha256": "329c3de9bd1a4d2ca6a8605dcf2afa5d7aa20ef823d171b601c090d6ba75eb74",
+      "state": "added"
+    },
+    {
+      "bytes": 8275,
+      "path": "workflows/n8n/POC3_durable_integrity_sweep.json",
+      "sha256": "a2d19709062f70fd621472dc7789cb5a4f24fd8d97e85524fd1014fe340aedc8",
+      "state": "added"
+    },
+    {
+      "bytes": 9373,
       "path": "workflows/zapier/POC_zap_build_specs.json",
-      "sha256": "6c63a029502642c0c893aed6ea57c532d2203c6278f4d40a57c9b458d21015a3",
-      "state": "unchanged"
+      "sha256": "5e05701dfbacb11e38fdbf3bb07f5125bff40a7a06510c1851c15e2050076d7f",
+      "state": "modified"
     }
   ],
-  "instruction_authority": [
-    "08_TASK-0007_R1_Wrapper_Stub_Packet.md"
+  "governing_inputs": [
+    "13_Fable_Dispositions_TASK-0007_R1_Security_Review.md",
+    "12_ChatGPT_Independent_Security_Review_TASK-0007_R1_Stub.md",
+    "12A_ChatGPT_Security_Probe_Evidence_TASK-0007_R1.json",
+    "09_Release_1_Definition_and_POC_Reaim.md \u00a72"
   ],
-  "outside_allowlist": [],
+  "instruction_authority": [
+    "14_TASK-0007_R2_Task_Packet_Stub_Rework_and_Release1_Reaim.md"
+  ],
   "poc_round_status": {
     "every_measure": "NOT TESTED",
     "oauth_grants_made": 0,
     "providers_contacted": 0,
-    "run": false,
-    "zapier_mcp_tools_used": false
+    "run": false
   },
   "produced_by": "Builder (Claude Code)",
-  "relay_export_manifest": {
-    "declared_file_count": 41,
-    "entries_verified": 41,
+  "relay_integrity": {
     "mismatched": 0,
-    "missing": [],
-    "unexpected": []
+    "sha256sums_total": 48,
+    "sha256sums_verified": 48
   },
-  "returned_to": "Fable",
-  "scenario_context_read_not_acted_on": [
-    "09_Release_1_Definition_and_POC_Reaim.md",
-    "10_ChatGPT_Scoped_Verifier_Ack_Release1_POC_Reaim.md"
-  ],
-  "stub": {
-    "adversarial_review": {
-      "attackers_launched": 6,
-      "attackers_reported_before_the_run_was_stopped": 2,
-      "defects_fixed": 8,
-      "defects_found": 8,
-      "recorded_failed_attacks": 20,
-      "regression_cases_added": 27,
-      "run_stopped_because": "the fixes had superseded the code the remaining four were testing",
-      "unreported_lenses_re_run_by_the_builder_against_the_fixed_stub": [
-        "envelope",
-        "partition"
-      ]
-    },
-    "endpoints_called_by_workflows": 9,
-    "endpoints_missing": 0,
-    "file": "stub/stub_server.py",
-    "lines": 653,
-    "mandatory_refusals_demonstrated": [
-      "missing / forged / replayed resume token",
-      "approval decision arriving from the provider side (now an allowlist: token only)",
-      "a decision recorded on the owner surface by anything that merely reached the port"
+  "release1_reaim": {
+    "nodes": [
+      11,
+      4,
+      7
     ],
-    "orphaned_routes": 0,
-    "routes": 13,
+    "note": "Release-2 scenarios are parked in 00_ \u00a710 and 09_ \u00a72, not lost",
+    "replaced_release2_workflow_files": [
+      "POC1_call_review_delegation.json",
+      "POC2_email_triage_readonly.json",
+      "POC3_durable_overnight.json"
+    ],
+    "runbooks_updated": 3,
+    "workflows": [
+      "POC1_builder_return_pipeline.json",
+      "POC2_idea_capture_staging.json",
+      "POC3_durable_integrity_sweep.json"
+    ],
+    "zapier_specs_reaimed": true
+  },
+  "removed": [
+    "workflows/n8n/POC1_call_review_delegation.json",
+    "workflows/n8n/POC3_durable_overnight.json",
+    "workflows/n8n/POC2_email_triage_readonly.json"
+  ],
+  "reported_contract_tensions": [
+    "harness/** is outside the allowlist but \u00a75 requires the structural harness re-run, which rewrites harness/out/. Four OUTPUT files changed; no harness CODE file changed (all six hash-identical to the relay).",
+    "secret scan: 2 hits, neither a credential and neither in a file this round may edit \u2014 harness/check_boundaries.py's R0 fixture, and the pinned R1 reference which must stay byte-identical for the witness pin to hold."
+  ],
+  "returned_to": "Fable",
+  "stub": {
+    "contract_items_implemented": [
+      "C-1",
+      "C-2",
+      "C-3",
+      "C-4",
+      "C-5",
+      "C-6",
+      "C-7",
+      "C-8",
+      "C-9",
+      "C-10",
+      "C-11",
+      "C-12",
+      "C-13",
+      "C-14",
+      "C-15",
+      "C-16",
+      "C-17",
+      "C-18",
+      "C-19"
+    ],
+    "evidence_findings_corrected": [
+      "FAB-01",
+      "FAB-02",
+      "FAB-03",
+      "FAB-04",
+      "FAB-05",
+      "FAB-06",
+      "FAB-07",
+      "FAB-08",
+      "FAB-09",
+      "FAB-10",
+      "FAB-11",
+      "FAB-12",
+      "FAB-13",
+      "FAB-14",
+      "FAB-15",
+      "FAB-16",
+      "FAB-17"
+    ],
+    "file": "stub/stub_server.py",
+    "lines": 1324,
+    "r1_witnesses": {
+      "findings_witnessed": [
+        "SEC-R1-01",
+        "SEC-R1-02",
+        "SEC-R1-03",
+        "SEC-R1-06",
+        "FAB-01",
+        "FAB-02",
+        "FAB-05",
+        "FAB-06",
+        "FAB-07",
+        "FAB-08",
+        "FAB-09",
+        "FAB-13",
+        "FAB-14",
+        "FAB-15"
+      ],
+      "matches_the_target_the_verifier_reviewed": true,
+      "method": "probes run against the pinned R1 build, not a reconstruction and not a defect switch",
+      "pinned_sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
+      "reproduced": 21,
+      "total": 21
+    },
+    "routes": 14,
     "runtime": "Python 3 standard library only",
-    "self_test_cases": 66,
+    "security_findings_corrected": [
+      "SEC-R1-01",
+      "SEC-R1-02",
+      "SEC-R1-03",
+      "SEC-R1-04",
+      "SEC-R1-05",
+      "SEC-R1-06",
+      "SEC-R1-07",
+      "SEC-R1-08",
+      "DOC-01"
+    ],
+    "self_test_blocks": {
+      "12_\u00a75": 14,
+      "12_\u00a75-live": 10,
+      "13_\u00a74": 17,
+      "R1P-04": 9,
+      "boundary": 6
+    },
+    "self_test_cases": 56,
     "third_party_imports": 0,
-    "throwaway_markers": [
-      "module header",
-      "/health body",
-      "X-Throwaway response header",
-      "every capture record",
-      "README section",
-      "runbook"
-    ]
+    "throwaway_markers_kept": true
   },
   "task": "TASK-0007",
   "verification_summary": {
     "harness": "PASS \u2014 structural 3/3, boundary clean 3/3, 39 harness self-test cases",
-    "live_http_end_to_end": "token pattern exercised over real HTTP: early poll pending, owner decision, authorized, replay refused, provider-decision refused",
+    "node_types_and_parameters": "NOT TESTED \u2014 n8n-nodes-base still blocked by the egress proxy; closes at import time on the owner's host",
     "pyflakes": "clean",
-    "secret_scan": "1 hit \u2014 a synthetic fixture in harness/check_boundaries.py, an R0-accepted file outside this round's allowlist; nothing this round wrote scans dirty",
-    "stub_self_test": "66/66"
-  },
-  "workflow_corrections": {
-    "made": 0,
-    "note": "none were needed; all three workflow JSONs are byte-identical to the accepted R0 return"
+    "r1_witnesses": "21/21",
+    "stub_self_test": "56/56",
+    "workflow_endpoints_resolving": "9/9"
   },
   "writable_area": [
     "poc/stub/**",
-    "poc/workflows/n8n/*.json (corrections only)",
-    "poc/runbooks/RUNBOOK-n8n.md",
-    "poc/runbooks/RUNBOOK-owner-session.md",
-    "poc/README.md"
+    "poc/workflows/n8n/*.json",
+    "poc/workflows/zapier/POC_zap_build_specs.json",
+    "poc/runbooks/*.md",
+    "poc/README.md",
+    "poc/FINDINGS.md",
+    "poc/data/captures/README.md",
+    "poc/data/measurements.template.json"
   ]
 }

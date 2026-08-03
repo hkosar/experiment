@@ -1,0 +1,4 @@
+  [CLEAN] POC1_call_review_delegation.json
+  [CLEAN] POC2_email_triage_readonly.json
+  [CLEAN] POC3_durable_overnight.json
+BOUNDARY CHECK CLEAN (runtime behaviour NOT TESTED)

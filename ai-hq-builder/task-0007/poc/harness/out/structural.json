@@ -5,27 +5,27 @@
   "node_types_and_parameters": "NOT TESTED — n8n-nodes-base blocked by egress proxy (403)",
   "workflows": [
     {
-      "file": "POC1_call_review_delegation.json",
+      "file": "POC1_builder_return_pipeline.json",
       "ok": true,
-      "nodes": 9,
+      "nodes": 11,
       "triggers": [
-        "Call Event Webhook"
+        "Builder Return Webhook"
       ],
-      "connections": 7,
+      "connections": 8,
       "problems": []
     },
     {
-      "file": "POC2_email_triage_readonly.json",
+      "file": "POC2_idea_capture_staging.json",
       "ok": true,
       "nodes": 4,
       "triggers": [
-        "Gmail Trigger (Business)"
+        "Idea Intake Webhook"
       ],
       "connections": 3,
       "problems": []
     },
     {
-      "file": "POC3_durable_overnight.json",
+      "file": "POC3_durable_integrity_sweep.json",
       "ok": true,
       "nodes": 7,
       "triggers": [

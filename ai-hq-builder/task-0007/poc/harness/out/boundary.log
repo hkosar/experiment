@@ -1,4 +1,4 @@
-  [CLEAN] POC1_call_review_delegation.json
-  [CLEAN] POC2_email_triage_readonly.json
-  [CLEAN] POC3_durable_overnight.json
+  [CLEAN] POC1_builder_return_pipeline.json
+  [CLEAN] POC2_idea_capture_staging.json
+  [CLEAN] POC3_durable_integrity_sweep.json
 BOUNDARY CHECK CLEAN (runtime behaviour NOT TESTED)

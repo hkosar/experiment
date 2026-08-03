@@ -4,17 +4,17 @@
   "runtime_boundary_behaviour": "NOT TESTED \u2014 measured in the owner session",
   "workflows": [
     {
-      "file": "POC1_call_review_delegation.json",
+      "file": "POC1_builder_return_pipeline.json",
       "clean": true,
       "violations": []
     },
     {
-      "file": "POC2_email_triage_readonly.json",
+      "file": "POC2_idea_capture_staging.json",
       "clean": true,
       "violations": []
     },
     {
-      "file": "POC3_durable_overnight.json",
+      "file": "POC3_durable_integrity_sweep.json",
       "clean": true,
       "violations": []
     }

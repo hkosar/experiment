@@ -1,0 +1,23 @@
+{
+  "check": "05_ \u00a72 / packet \u00a73 boundary compliance",
+  "scope": "authored workflow definitions only",
+  "runtime_boundary_behaviour": "NOT TESTED \u2014 measured in the owner session",
+  "workflows": [
+    {
+      "file": "POC1_call_review_delegation.json",
+      "clean": true,
+      "violations": []
+    },
+    {
+      "file": "POC2_email_triage_readonly.json",
+      "clean": true,
+      "violations": []
+    },
+    {
+      "file": "POC3_durable_overnight.json",
+      "clean": true,
+      "violations": []
+    }
+  ],
+  "all_clean": true
+}

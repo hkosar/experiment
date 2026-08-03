@@ -30,33 +30,42 @@ Time each step into `data/owner_friction_log.template.csv`. "Owner action" marks
 ## Part B2 — start the wrapper stub (before any workflow runs)
 
 The three workflows call an AI OS wrapper. For the POC round that is a **throwaway stub**
-shipped in `poc/stub/` — it is evidence apparatus, not the AI OS wrapper, and it must not
+shipped in `poc/stub/` — evidence apparatus, not the AI OS wrapper, and it must not
 survive into production use.
 
 | # | Step | Owner action? | Record |
 | --- | --- | --- | --- |
-| B2.1 | From `poc/stub/`, run `python3 stub_server.py --port 8787`. Python 3 standard library only — no install, no database, no Docker required | No | That it started; the port if you changed it |
-| B2.2 | Confirm it is live: `curl -s http://127.0.0.1:8787/health` — expect `"ok": true` and the throwaway marker | No | — |
-| B2.3 | In n8n, set the environment variable `AIOS_WRAPPER_BASE=http://127.0.0.1:8787` (Settings → Variables, or `-e AIOS_WRAPPER_BASE=...` on the `docker run`). If n8n runs in Docker and the stub runs on the host, use `http://host.docker.internal:8787` instead | No | Which base URL worked — **this is itself a finding about self-hosted networking friction** |
+| B2.1 | From `poc/stub/`, run `python3 stub_server.py --candidate n8n --port 8787`. Python 3 standard library only — no install, no database, no Docker. **`--candidate` is required**: it namespaces this candidate's evidence so n8n's and Zapier's corpora stay separately attributable | No | That it started; the port if you changed it |
+| B2.2 | Confirm it is live: `curl -s http://127.0.0.1:8787/health` — expect `"ok": true`, `"candidate": "n8n"`, and a `run_instance` | No | The `run_instance` — it appears in every capture filename from this run |
+| B2.3 | Read the two keys into shell variables **without pasting them into a command**: `read -rs OWNER_KEY` then paste, Enter; `read -rs PROVIDER_KEY` then paste, Enter. The stub prints both at startup as bare values | **Yes** | That you did not put either key into a command line or into n8n's UI |
+| B2.4 | In n8n set `AIOS_WRAPPER_BASE=http://127.0.0.1:8787` and `AIOS_PROVIDER_KEY=<the provider credential>` (Settings → Variables, or `-e` on the `docker run`). If n8n runs in Docker and the stub runs on the host, use `http://host.docker.internal:8787` **and start the stub with `--advertise http://host.docker.internal:8787`** so the endpoints it hands back resolve from inside the container | No | Which base URL worked — **itself a finding about self-hosted networking friction** |
 
-**The owner decision surface, and the key that protects it.** The stub stands in for the
-Discord/AI OS card at `POST /owner/decide`. At startup it prints an **owner-surface key**
-with a ready-made curl command. During POC-1 you record each decision **there**, not inside n8n.
-The provider is never told the case id, so you list your own pending cases:
-
-    curl -s -X POST http://127.0.0.1:8787/owner/cases -H "X-Owner-Key: <key>" -d '{}'
-    curl -s -X POST http://127.0.0.1:8787/owner/decide -H "X-Owner-Key: <key>" \
-         -H 'Content-Type: application/json' \
-         -d '{"case_id":"<from the list above>","decision":"accept"}'
-
-The key matters: without it, anything that can reach `127.0.0.1:8787` — including n8n's own
-HTTP node on the same host — could record a decision and approve its own case. **Do not put
-the key into n8n, Zapier, or any workflow.** Keep it in your terminal.
+> **The provider credential is not the owner key.** `AIOS_PROVIDER_KEY` goes into n8n; it
+> lets the workflows call the provider-facing routes and confers **no** owner authority.
+> `OWNER_KEY` never leaves your terminal.
 
 **Do not redirect the stub's stderr to a shared or checked-in file** — the startup banner
-contains the key. Run it in a terminal you can see, which is what the runbook assumes.
+contains both keys. Run it in a terminal you can see.
 
-Run `python3 selftest_stub.py` once before the session if you want to see the refusals fire.
+**The owner decision surface.** The stub stands in for the Discord/AI OS card. The provider
+never learns the case id, so you list your own pending cases:
+
+    curl -s -X POST http://127.0.0.1:8787/owner/cases \
+         -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' -d '{}'
+
+    curl -s -X POST http://127.0.0.1:8787/owner/decide \
+         -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' \
+         -d '{"case_id":"<from the list above>","decision":"accept"}'
+
+Both calls send `Content-Type: application/json` — the stub refuses anything else, and the
+R1 runbook's `/owner/cases` line omitted it, which would have broken step one.
+
+**The first decision is terminal.** A second decision on the same case is refused 409 and
+recorded. That is deliberate: a reject silently overwritten by an accept would mint a relay
+for a case you rejected.
+
+Run `python3 selftest_stub.py` once before the session if you want to watch the refusals
+fire, and `python3 r1_witnesses.py` to see the same probes against the superseded build.
 
 ## Part C — connect accounts (owner only)
 

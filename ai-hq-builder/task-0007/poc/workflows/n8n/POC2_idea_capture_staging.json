@@ -1,0 +1,131 @@
+{
+  "name": "POC2 — Idea capture and staging, two envelope cases (Release 1)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "poc2-idea",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "id": "idea-intake-webhook",
+      "name": "Idea Intake Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. Business partition only. Carries either an owner-authored idea (Case A) or an imported/forwarded note (Case B) — 09_ §2 R1P-02.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// R1P-02: owner AUTHORSHIP and external CONTENT are two trust cases and\n// must not share one class. Case A carries owner instruction authority;\n// Case B carries NONE and may inform classification only.\n// Embedded external content inside a Case A idea is classified separately.\nreturn items.map(i => {\n  const ownerAuthored = i.json.origin === 'owner' && Boolean(i.json.owner_authenticated);\n  return { json: {\n    envelope: { trust: 'external-untrusted', partition: 'business',\n                source: ownerAuthored ? 'owner-surface' : 'import',\n                received_at: new Date().toISOString(),\n                links_followed: false, attachments_opened: false },\n    origin: ownerAuthored ? 'owner' : 'external',\n    // embedded external material inside an owner-authored idea keeps its\n    // own class — quoting something does not authorise it\n    embedded_external_present: Boolean(i.json.quoted_content),\n    metadata: { subject: i.json.subject, project: i.json.project ?? null },\n    restricted_content: { body: i.json.body ?? null },\n    content_forwarded: Boolean(i.json.body)\n  } };\n});"
+      },
+      "id": "classify-envelope---case-a-or-b",
+      "name": "Classify Envelope — Case A or B",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY + R1P-02. The two cases are separated HERE, before anything classifies. Case B never acquires instruction authority.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc2/triage",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "ai-os---classify-and-stage",
+      "name": "AI OS — Classify and Stage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. new-topic vs existing-project-addition, the staged record, and the instruction-authority verdict are all AI OS outputs. The wrapper returns `instruction_authority: none` for Case B — the POC's proof that external content informs classification WITHOUT acquiring authority.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// The R1P-02 proof obligation, asserted rather than assumed. A future edit\n// that let an external note carry instruction authority fails here.\nfor (const i of items) {\n  const origin = i.json.origin, auth = i.json.instruction_authority;\n  if (origin === 'external' && auth !== 'none') {\n    throw new Error('R1P-02 violated: external origin acquired authority ' + auth);\n  }\n  if ((i.json.actions_taken || []).length) {\n    throw new Error('POC-2 takes no external action');\n  }\n}\nreturn items;"
+      },
+      "id": "assert-no-authority-escalation",
+      "name": "Assert No Authority Escalation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "ASSERTION. No external action, no link followed, no authority escalation.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Idea Intake Webhook": {
+      "main": [
+        [
+          {
+            "node": "Classify Envelope — Case A or B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Classify Envelope — Case A or B": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Classify and Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Classify and Stage": {
+      "main": [
+        [
+          {
+            "node": "Assert No Authority Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-2",
+    "scenario": "Idea capture and staging (09_ §2 R1P-02)",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}

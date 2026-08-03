@@ -1,126 +1,120 @@
-# Builder Delivery Record — TASK-0007 supplemental round R1 (the POC wrapper stub)
+# Builder Delivery Record — TASK-0007 Round R2 (stub rework + Release-1 re-aim)
 
-**Task:** TASK-0007 R1 — build the throwaway wrapper stub the three workflows already call.
+**Task:** TASK-0007 R2 — security and evidence-integrity rework of the POC wrapper stub, merged with the Release-1 scenario re-aim.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
-**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §8).
-**Instruction authority:** `08_TASK-0007_R1_Wrapper_Stub_Packet.md`. Scenario context read but **not acted on**: `09_` and `10_` — see §2.
+**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §9).
+**Instruction authority:** `14_TASK-0007_R2_Task_Packet_Stub_Rework_and_Release1_Reaim.md`, whose §2 contract governs where it disagrees with any earlier document. `13_` read first, as instructed.
 **Returned to:** **Fable.**
-**Status:** **Stub complete, adversarially reviewed, and self-tested at 66 cases. No POC has been run; no provider was contacted.**
+**Status:** **Rework complete and self-tested. No POC has been run; no provider was contacted.**
 
-**Snapshot integrity (H-06):** `EXPORT_MANIFEST.json` validated **41/41 entries, 0 mismatched, 0 missing, 0 unexpected** before anything was read as authority. The relay's `poc/` copy is **byte-identical to the accepted R0 return, 36/36**, so the work tree is the accepted baseline rather than my own copy of it.
+**Snapshot integrity (H-06):** `SHA256SUMS.txt` validated **48/48 OK, 0 mismatched** before anything was read as authority. The relay's `poc/` copy is **byte-identical to the accepted R1 return, 40/40**.
 
 ---
 
-## 1. What was built
+## 1. What changed, in one paragraph
 
-A single-file service, `poc/stub/stub_server.py` — **653 lines, Python standard library only, zero third-party imports** (verified by AST scan). Starts with one command, no database, no Docker:
+The stub is rebuilt against `14_` §2's corrected contract: **1,324 lines, Python standard library only, zero third-party imports, 14 routes.** The POC-1 side effect moved from an unguarded `/sink` to `/relay/deliver` behind a single-use capability bound to the action id, case, resolved target and payload digest; POC-3 got its own retry-tolerant `/stage/deliver`. Owner decisions are terminal and atomic. Every capture is written — temp file, flush, fsync, atomic rename — **before** the state it records is committed, carries a stub-minted timestamp, candidate, run instance, route and `authored_by`, and cannot overwrite a prior run. Boundary checks moved to dispatch. The three workflows and the Zapier specs are re-aimed to `09_` §2's Release-1 scenarios.
 
-```
-cd poc/stub && python3 stub_server.py --port 8787
-curl -s http://127.0.0.1:8787/health
-python3 selftest_stub.py            # 66 cases
-```
+**Self-test: 56/56.** **R1 witnesses: 21/21** reproduced against the pinned R1 artifact.
 
-**THROWAWAY marker** in the module header, in `/health`'s response body, in an `X-Throwaway` response header on every request, in every capture record it writes, and in the README section. It states plainly that it is not the AI OS wrapper, earns no Track B credit, and must not survive into production — and names the four things it deliberately lacks that `13B_` requires of the real wrapper (authentication, cryptography, persistence, clock authority).
+## 2. How "demonstrated failing against the unfixed behaviour" is met
 
-**Every endpoint the shipped workflows call resolves.** Checked mechanically rather than by eye: the workflow JSON references **9 wrapper paths**, the stub exposes those 9 plus `/health`, `/owner/cases`, `/owner/decide` and `/sink` (**13** total) — **0 called-but-missing, 0 orphaned routes**. The Zapier build spec's 7 paths are a subset.
+`14_` §3 requires it and R1 met it with defect probes. **I did not use defect switches** — a switch that can turn a control off is itself a finding (P2V-01), and R2 is a round about not shipping controls that can be reached around.
 
-## 2. Scope — what I did not do, and why
+Instead `stub/r1_witnesses.py` runs the probes **against the superseded build itself**, held byte-identical at `stub/r1_reference/stub_server_r1.py`. Its **SHA-256 is checked at run time against `ecdaae67…76328ac`** — the fingerprint `13_`'s chain-of-custody table records for the target the verifier reviewed — and the witness run **refuses to continue** if it does not match. So the "unfixed behaviour" shown is the artifact the review actually examined, not a reconstruction of it.
 
-`09_` re-aims the D3 scenarios to the Release 1 App-Building Management Platform, and `10_` returns **PASS WITH CHANGES**. Both are explicit that this does not touch R1:
+**21/21 witnesses reproduce**, covering SEC-R1-01, -02, -03, -06 and FAB-01, -02, -05, -06, -07, -08, -09, -13, -14, -15. A sample of what R1 actually did, quoted from `out/r1_witnesses.json`:
 
-- `09_` §4: *"TASK-0007 **R1 (wrapper stub) continues unchanged** — its endpoints are scenario-agnostic by design."*
-- `10_` gate state: `TASK-0007 R1 generic stub: MAY CONTINUE` · `TASK-0007 R2 scenario work: BLOCKED UNTIL CORRECTIONS` · `Provider POC execution: BLOCKED UNTIL CORRECTIONS`.
+- `POST /sink {"anything": "at all"}` → **200 `delivered: true`** — the represented side effect, with no capability, no case, no authorization.
+- A **reject overwritten by an accept**, then `verify-decision` → **`authorized: true`**: an ActionRequest minted for a case the owner had rejected.
+- `redact({"opaque": <live token>})` → **the token, verbatim**; and `authority_id`/`authority_version`/`tokens_used` → **`[REDACTED:key-name]`**, a bare constant the harness scores PRESENT.
+- The pending branch and the owner-key refusal → **captures 1 → 1**: no record of either.
+- **7 routes** accepted a provider-authored `decision` field.
+- A duplicate run declaration → **checkpoints 1 → 0, `started_at` changed, status 200**.
+- `reconcile` on a run that does not exist → **200, `side_effect_certain: true`, citing ACT-01**.
+- `metadata: []` → **200** while `metadata: [1]` → **AttributeError**, which is precisely `13_` VC-01's point: a test written to the review's literal repro passes against unfixed code.
 
-So I built the stub scenario-neutral and **did not re-aim any workflow, runbook scenario, or the cost model** — that is R2, and it is blocked. The stub's endpoints carry no scenario assumption: `/poc1/review-case` takes an enveloped payload with metadata and returns a token; nothing in it knows or cares whether the artifact is a call transcript or a Builder return.
+## 3. Security corrections — `SEC-R1-01..08`, `DOC-01`
 
-**Zapier MCP tools appeared in this session.** I did not use them. Running any provider POC is blocked by `10_`, and the sequencing in `08_` puts the owner session after Fable's verification of this round. I also did not call the read-only connection-listing tools: that would be contacting a provider and reading the owner's account outside an authorized session. **Flagged as a change request in §7** because it materially changes what the owner session may need.
+| ID | Correction | Witness / test |
+| --- | --- | --- |
+| **SEC-R1-01** | `/sink` is gone. The POC-1 side effect is `/relay/deliver`, gated on a single-use capability bound to action id, case, resolved endpoint and canonical payload digest, with a short TTL. Implemented **per `13_` VC-03, not per `12_`'s literal text**: POC-3's staging is a separate retry-tolerant path with no capability, because a blanket single-use rule would fail the round's own mandated mid-flight kill and mis-score the provider retry POC-3 exists to measure | direct call, altered action/case/payload/capability, expired capability — all refused; replay returns the prior receipt |
+| **SEC-R1-02** | Redaction gained **exact-value scrubbing**: live token and key values are compared, **including as substrings**, by constant-time comparison before anything reaches a log or capture. Corrected **jointly** with FAB-05, which pulls the other way | live token under `opaque`, `note`, `ｔｏｋｅｎ`, `tоken` and a 40-char key — absent from every capture |
+| **SEC-R1-03** | The first valid owner decision is **terminal**; a second is a captured 409. Decision lookup and token consumption happen in **one critical section** against an immutable record — R1 read `STORE.decisions` unlocked and locked only for the spend | second decision → 409 |
+| **SEC-R1-04** | Capture-before-commit everywhere, **including the token-spend path** (FAB-04) | capture failure during a decision → neither decision nor authorization survives; capture failure at spend → **token still unspent**, and the next verify succeeds |
+| **SEC-R1-05** | Logging emits a **route-matched constant plus the status and nothing else**, per `13_` VC-04 — `log_message`, `log_request` and `log_error` are all silenced, so neither a secret in the path, nor a query string, nor a malformed request line reaches stderr | secret in the path, in a query, and in a garbage request line — absent from the captured stderr |
+| **SEC-R1-06** | Handler-level exception boundary returning a structured refusal with no traceback; nested types validated before use; **the test uses a truthy non-dict**, per `13_` VC-01 | truthy list/str/int/bool metadata → no crash; deeply malformed JSON → 400, service still healthy |
+| **SEC-R1-07** | `Content-Length` bounded `0 ≤ n ≤ MAX_BODY`; negative refused; conflicting duplicate headers refused; non-identity transfer encodings refused; **socket timeout** added, which is what actually closes connect-and-send-nothing | all four, over real sockets |
+| **SEC-R1-08** | `application/json` required, and a **per-process provider credential** on every provider-facing route, distinct from the owner key and conferring no owner authority. **Paired with the runbook correction** `13_` §2.2 names | browser-simple POST → 415; missing provider credential → 403 |
+| **DOC-01** | The banner prints the keys as **bare values with no copyable command**, and **all three runbook sites** moved to `read -rs` shell variables — `13_` §2.2 is right that fixing only the banner would close the finding falsely | banner contains no `curl`; no request line logged at all |
 
-## 3. The two mandatory refusals, shown failing
+## 4. Evidence integrity — `FAB-01..17`
 
-`08_` §R1 names two refusals that must ship demonstrated. Both do, in `poc/stub/out/stub_selftest.json`:
+| ID | Correction |
+| --- | --- |
+| **FAB-01** | Every refusal path captures, including the pending branch, the owner-key refusal and the boundary 400s. Key material is never recorded — the capture says a decision was *attempted without owner authority*, not what was presented |
+| **FAB-02** | `--candidate` is **required and name-validated**; the service refuses to start without it. It threads into every path and every record body |
+| **FAB-03** | A per-process `run_instance` in every filename, files created **`O_EXCL`**, never truncating |
+| **FAB-04** | The authorization capture lands before the token is spent |
+| **FAB-05** | Key-name matching is now **whole-segment**, with an explicit non-secret allowlist covering the D-EC_ REQUIRED names, `tokens_used` and `session_id`. A withheld value is a **structured marker** (name, type, bytes, digest), never a bare constant |
+| **FAB-06** | The provider-decision refusal and the partition/envelope checks run **at dispatch**, with a commented exemption list. Verified across **all 11 persisting routes** |
+| **FAB-07** | Run identity is **stub-minted**; a duplicate declaration is a captured 409 preserving the prior `started_at` and checkpoint count. Provider correlation is a separate, provider-marked field that anchors nothing |
+| **FAB-08** | `reconcile` reports exactly what it compared and states plainly `external_post_state_checked: false`; the ACT-01 citation is removed. `triage` no longer asserts `links_followed`/`actions_taken` — provider conduct is measured at the provider |
+| **FAB-09** | Every capture carries `recorded_at` plus a note that it is a local wall clock with **no authority** |
+| **FAB-10** | Atomic writes; no `.tmp` survives; every capture parses |
+| **FAB-11** | POC-3 stage posts file under **POC3** |
+| **FAB-12** | Endpoints derive from the **bound port**, with `--advertise` for the container case. No second literal |
+| **FAB-13** | `_ct_eq` handles non-ASCII rather than raising before a verdict |
+| **FAB-14** | The extra-fields refusal records the **count**, never the rejected key names |
+| **FAB-15** | The five-component identity tuple, all required, malformed → captured 400; the idempotency key derives from all five and **travels in the ActionRequest payload to the target** |
+| **FAB-16** | `/health` no longer exposes `captures_written` |
+| **FAB-17** | Token lookup is a dict hit; `receipts` is a bounded count; case/receipt/run/capture ceilings added |
 
-**Refusal 1 — missing / forged / replayed resume token.** Seven cases: no token, forged token, empty string, non-string (object) token, a valid token with no owner decision yet, the replay after a legitimate use, and a token from a different case. All refused with distinct reasons.
+## 5. Release-1 re-aim (work item D)
 
-**Refusal 2 — an approval decision arriving from the provider side.** Twelve field spellings — the five obvious ones plus `Approved`, `APPROVED`, `approve`, `result`, `status`, a Cyrillic-homoglyph `decisоn`, and `target_endpoint` — each rejected **while accompanying an otherwise-valid token**, plus the same rejection at case-open time. This is now an **allowlist** (`token` and nothing else), which is why the homoglyph and casing variants an attacker used to slip past a name check are all refused. The check runs **before** the token is examined, and a control case proves the refused attempt **did not burn the owner's token** — a refusal that consumed the token would be a denial-of-service on the owner's own approval. **And the decision must reach the owner surface through the owner key**, which is §4a #1.
+The three n8n workflows are replaced with `09_` §2's scenarios — **POC-1 Builder-return pipeline** (11 nodes: envelope + five-component identity binding with the digest **computed here rather than trusted**, duplicate/rejection branch, pause, token-only verify, capability relay, receipt), **POC-2 idea capture and staging** (Case A owner-authored vs Case B imported, with an assertion node that fails if external origin ever acquires instruction authority), **POC-3 nightly integrity sweep** (stub-minted run id, retry-tolerant stage, checkpoint, reconcile). Every provider-facing HTTP node carries `X-Provider-Key` and `Content-Type` — **6/6, 1/1 and 5/5**.
 
-The rest of the 66: envelope required before classification (missing envelope, wrong trust class, envelope-without-partition); partition control (personal refused at both entry points, absent partition refused); **no Personal route exists at all** (404, and the route table is enumerated in the self-test rather than asserted); POC-3 flow including a checkpoint for an unannounced run; secret redaction with a **non-vacuity check** that the redactor actually fired; `synthetic: true` on capture records; capture path-traversal refusal; and the eight §4a regressions.
+The Zapier build specs are re-aimed to the same three scenarios and carry the R1P-05 artifact-handling measures. All three runbooks updated, including both `13_` §2.2 corrections.
 
-## 4. The defect the live path caught that the unit path did not
+**Reported, not absorbed:** the three R0 workflow files are **replaced, not edited in place** — their Release-2 scenarios live on in `00_` §10 and `09_` §2's parking statement, so nothing is lost, but the file names change and I am flagging it rather than letting a diff look like deletion.
 
-I ran the self-test first — 36/36 — and then ran the server over real HTTP with curl. **The live run failed.**
+## 6. Two places the contract could not be satisfied as written — reported per `14_` §5
 
-The original `consume_token` marked a token consumed at *validation* time. So a provider polling `/poc1/verify-decision` before the owner had decided — which is the normal shape of a paused flow — **burned the token**, and the owner's subsequent approval could never be relayed. The whole POC-1 flow was broken in the one way that matters.
+**(a) `harness/**` is excluded from the allowlist, but §5 requires the structural harness re-run — and running it rewrites `harness/out/`.** Four output files changed: `structural.json`, `structural.log`, `boundary.json`, `boundary.log`. **No harness code file changed** — verified by hash against the relay for all six. I shipped the regenerated outputs because reverting them would ship evidence naming workflow files that no longer exist, which is worse than the tension. **If Fable wants `harness/out/` reverted, it is a copy of four files** — but then the shipped structural report describes the R0 workflows.
 
-The self-test missed it because it used *two different cases* for "valid token, no decision yet" and "token + decision → authorized". A real provider polls **the same token twice**.
+**(b) The secret scan returns 2 hits, neither mine to fix and neither a credential.** `harness/check_boundaries.py` carries the synthetic `"Authorization: Bearer abc"` fixture flagged at R1 — still outside the allowlist. `stub/r1_reference/stub_server_r1.py` carries `password: hunter2` in a docstring example; that file **must stay byte-identical** to the reviewed target or the witness pin fails by design. Everything R2 wrote scans clean.
 
-Fixed by splitting `peek_token` (validate, do not consume) from `spend_token` (consume, only once the case is terminally decided either way), and **the missing regression is now a self-test case**: same token, polled before the decision → pending; owner decides; same token → authorized; again → replay refused. Live HTTP confirms the same sequence.
+## 7. Verification
 
-It is a finding about my own verification rather than about the code: **a unit test I wrote passed a contract my code did not honour, because I had unconsciously written the test to the shape my code produced rather than the shape a provider produces.** §4a is the larger version of the same lesson.
-
-## 4a. The adversarial pass, and the eight further defects it found
-
-The two mandatory refusals are exactly the kind of control that passes its own self-test and fails a real attacker, so I ran independent attackers against the stub — each on one lens, each told to attack only the six properties `08_` specifies and to ignore production hardening the packet excludes.
-
-**Two attackers reported before I stopped the run**; I stopped it because my fixes had changed the code out from under the remaining four, so their results would have been against a superseded target. **I then ran the unreported lenses (envelope, partition) against the fixed stub myself**, and found one more defect doing so. I am stating that plainly rather than implying six independent attackers cleared this build.
-
-| # | Defect | Found by | Severity as judged against `08_` |
-| --- | --- | --- | --- |
-| 1 | **The provider can self-approve.** Nothing distinguished the owner's request to `/owner/decide` from the provider's. The provider opened a case, approved it itself, and walked away with an authorized ActionRequest — mandatory refusal 2 defeated **through the owner door while the field-name check passed the whole time** | me, then independently by attacker 1 | the finding of the round |
-| 2 | `/poc1/review-case` handed the provider the `case_id` — the one value `/owner/decide` keys on. The provider was given the address of the door it should not find | attacker 1 | root cause of #1 |
-| 3 | **`redact()` could not fire on structured JSON.** Once JSON is decoded, `{"api_key": "..."}` contains no string a value-shape regex can match, so credential *fields* — including a live resume token — persisted verbatim into capture records | attacker 2 (certain) | property 5 broken |
-| 4 | **The provider chose the destination of the owner-approved action.** `target_endpoint` in the verify request became the ActionRequest's endpoint, so the provider could redirect an action the owner approved | attacker 2 (certain) | property 2 broken in substance |
-| 5 | Capture records used a fixed filename per step and **silently overwrote**, so a session with many runs would ship only the last of each kind — evidence loss disguised as evidence | attacker 2 (certain) | property 6 broken |
-| 6 | **Rejections and owner decisions wrote no capture at all**, so the POC-1 rejection path would leave no record | attacker 2 (certain) | property 6 broken |
-| 7 | `/owner/decide` **crashed** with an unhandled `TypeError` on a non-hashable `case_id` — no HTTP response from the one endpoint whose failure mode must be a refusal. Crashing is not failing closed | attacker 2 (speculative — confirmed real) | fail-closed posture |
-| 8 | A **non-dict `envelope` crashed** the partition check with `AttributeError` — the same fail-closed failure as #7, in a different handler | me, attacking the fixed stub on the unreported envelope lens | fail-closed posture |
-
-**All eight are fixed, and every one has a regression case**: the self-test grew **39 → 66 cases**. The fixes worth naming:
-
-- **A per-process owner key**, printed at startup, never given to a provider, required by `/owner/decide`. It makes "the owner decided" a *checked* fact rather than "something reached the port."
-- **`/owner/cases`**, so the owner lists their own pending work instead of being told the case id by the provider — closing #2 at its root rather than only at the door.
-- **`verify-decision` became an allowlist**: only `token` is accepted, anything else refused. That subsumes the decision-field denylist for every casing, unicode, and nesting variant attacker 1 slipped past it with — and it is what closes #4.
-- **Key-name redaction alongside value-shape redaction**, because neither alone catches both free-text and structured secrets.
-
-**What the attackers tried and could not break** is also evidence: 20 recorded failed attacks across token forgery, truncation/extension, case and whitespace and unicode variants, type confusion, key-name confusion, a 25-trial concurrent double-spend race against the `peek`/`spend` split, and replay in every ordering.
-
-## 5. Verification
-
-- **Stub self-test: 66/66 cases**, including both mandatory refusals, the §4 regression, and a case for every one of the eight §4a defects.
-- **Live HTTP end-to-end**, not just the dispatch function: health, case open, early poll (pending), owner decision on the owner surface, authorized ActionRequest, replay refused, provider-supplied decision refused.
-- **Harness re-run: PASS** — structural validation 3/3, boundary check clean 3/3, and **39 harness self-test cases** (10 + 9 + 14 + 6) on top of the stub's own 39.
-- **Workflow definitions: UNCHANGED, all three byte-identical to the accepted R0 return.** `08_` permits corrections if pointing the flows at a real stub surfaces them; **none were needed**, because the stub was written to the paths the workflows already declare. Falsifier row 2 of the R0 record — "node types and parameters are NOT TESTED" — is therefore **still open**, and is closed at import time on the owner's host, not here.
-- **Stdlib-only confirmed by AST scan** of both stub files: zero third-party imports. **pyflakes clean.**
-- **Secret scan over the whole return payload: 1 hit, and it is not mine to fix.** Eight credential-shaped patterns over every file. The single match is the literal `"Authorization: Bearer abc"` inside `poc/harness/check_boundaries.py` — a **synthetic fixture in that checker's own self-test**, in a file accepted at R0 and **outside this round's allowlist**, so I did not touch it. It is not a credential. My own new files scan clean: the stub self-test's probe values are assembled at runtime precisely so that no credential-shaped literal enters the payload from anything I wrote this round. Offered as a one-line cleanup whenever `harness/` is next writable.
-- **Allowlist: everything written is inside `poc/stub/**`, `poc/runbooks/RUNBOOK-n8n.md`, `poc/runbooks/RUNBOOK-owner-session.md`, `poc/README.md`.** No workflow JSON changed. No ai-hq file outside `poc/` touched.
+- **Stub self-test 56/56**: R1P-04 9 · `12_` §5 14 · `13_` §4 17 · boundary 6 · **live-HTTP transport 10**.
+- **R1 witnesses 21/21**, pin verified against the reviewed target's SHA-256.
+- **Harness PASS**: structural 3/3 on the re-aimed workflows, boundary clean 3/3, 39 harness self-test cases.
+- **All 9 workflow-declared endpoints resolve**; the relay and stage targets are server-supplied by design.
+- **Stdlib-only** across all three stub files (AST scan). **pyflakes clean.**
+- **Allowlist:** 13 modified + 6 added + 3 replaced; the only paths outside are the four `harness/out/` artifacts in §6(a).
 - **`RETURN_MANIFEST.json`** self-verified by re-hashing every entry from the unpacked zip.
 
-## 6. Falsifier element (APP-06 / CPB-14, reflexive)
+## 8. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | The two mandatory refusals hold | **An attacker, and one already did.** My first version relied on a field-name *denylist*, and I wrote in this row's first draft that it was "defence in depth" behind the token+owner-decision join. **That was wrong, and the attackers proved it**: the join itself was defeatable, because nothing stopped the provider recording the owner's decision (§4a #1). The denylist is now an allowlist and the owner surface is key-protected. What remains unproven: the owner key is a shared secret over plain HTTP on loopback — anything that can read the operator's terminal or the process environment has it. For a throwaway stub on the owner's own host that is the right level; it is not authentication | **Attacked, broken, fixed, re-attacked** |
-| 2 | The workflow definitions are still sound | **Unchanged and still unproven at the same point.** No correction was needed, so R0's falsifier row 2 is inherited verbatim: node types and parameters remain NOT TESTED because `n8n-nodes-base` is still blocked here. I did not close that gap and do not claim to | **Open, inherited** |
-| 3 | The stub cannot be mistaken for production | **Whoever deploys it anyway.** Six independent markers say throwaway (header, `/health`, response header, captures, README, runbook). None of them *prevents* deployment — no technical control stops someone running it behind a real hostname. Marking is the strongest thing an evidence stub can do; it is not an enforcement | **Marked, not enforced** |
-| 4 | The POC round is still un-run | **Nobody — deliberately.** No account was created, no OAuth grant made, no provider API contacted, and the Zapier MCP tools now in this session were left unused. Every measure in `data/` remains NOT TESTED | Not disconfirmed |
-| 5 | My record matches my code | **Me, twice over this round.** §4: 36/36 green on a contract the code broke, caught only by running real HTTP. §4a row 1 of this table: I asserted a control was sound in a draft of this very record, and an independent attacker refuted it within the hour. **Both failures were in my verification, not my implementation** — the code did what I told it; my tests and my prose agreed with each other and with nothing else. Every count in §5 was produced by a command run after the last edit | **Failed twice here, both caught before shipping** |
-| 6 | Nothing outside the allowlist moved | **The diff.** Three workflow JSONs verified byte-identical to the accepted return; changes confined to the four allowlisted paths plus the new `poc/stub/**` | Not disconfirmed |
+| 1 | The corrected contract is implemented | **An independent reviewer, again.** R1 shipped with 66 green self-test cases, two mandatory refusals working, and my own adversarial pass behind it — and an independent review still found a gate-blocking bypass, because everyone had tested the guarded endpoints and nobody had asked whether the guarded thing was reachable another way. **I have no basis to believe R2 is different in kind**, only that this round's brief was wide enough to name what R1's missed. `14_` §6 sends it back to ChatGPT; that is the right disposition and I am not pre-empting it | **Built to spec; independent verification pending** |
+| 2 | The witnesses prove the unfixed behaviour | **The pin, and it is checked.** If `r1_reference/stub_server_r1.py` were a variant, the witnesses would describe a build nobody reviewed — so the run verifies its SHA-256 against `13_`'s recorded fingerprint and refuses to continue on mismatch. What the witnesses do **not** prove is that R2's fixes are complete: they show 21 specific behaviours changed, not that no twenty-second exists | Not disconfirmed; **scope stated** |
+| 3 | Redaction is now correct in both directions | **Me, about the allowlist.** The two directions genuinely pull against each other, exactly as `13_` warns. I protected the D-EC_ REQUIRED names, `tokens_used` and `session_id` by name — **a field the harness needs that I did not enumerate would still be destroyed**, and the structured marker means the loss would at least be visible rather than scored PRESENT. That is a real improvement and not a proof | **Improved; enumeration is mine and could be short** |
+| 4 | Capture-before-commit holds everywhere | **The ordering.** Tested at the two sites `13_` names — the decision path and the token-spend path — by forcing `write_capture` to raise. Other handlers follow the same shape by construction, and construction is not a test. `14_` C-6 also warns that a generic exception boundary added *before* this fix makes the failure quieter rather than safer; the boundary went in **after**, and the two capture-failure tests are what says so | Not disconfirmed; **two sites tested, others by construction** |
+| 5 | My record matches my code | **Me.** Every figure in §7 was produced by a command run after the last edit. The one number I want checked hardest is "56/56", because a self-test I wrote passing a contract I also wrote is the weakest evidence in this package — which is why §2 exists and why `14_` §6 sends the result to an independent reviewer | **Self-authored; independently unverified** |
+| 6 | The re-aimed workflows express `09_` §2 | **The n8n importer, still.** Structural validation and boundary checks pass, but node types and parameters remain **NOT TESTED** — `n8n-nodes-base` is still blocked by this environment's proxy. This is R0's falsifier row 2, inherited unchanged for the third round, and it closes at import time on the owner's host | **Open, inherited** |
 
-## 7. Change request to Fable
+## 9. Open items and deviations
 
-**Zapier MCP tools are now live in the Builder session.** That was not true when `07_`/`08_` were written, and it changes the shape of the owner session: some of what the runbooks ask the owner to do by hand in the Zapier UI could instead be driven through MCP with the owner's connections. It also raises a governance question worth settling before the session rather than during it — **an MCP-driven action is still a provider action, and `05_` §2's boundary matrix applies to it unchanged.**
-
-I did not use them, did not enumerate the owner's connections, and did not verify what they can do. **If Fable wants the session to use them, that is a scope decision plus probably a runbook revision** — and it belongs in the same round as the R2 re-aim rather than being improvised on the day.
-
-## 8. Open items and deviations
-
-- **R2 re-aim not started** — blocked by `10_`, correctly, and not attempted.
-- **Zapier MCP availability** — §7, raised not acted on.
-- **R0 falsifier row 2 still open** — node types/parameters NOT TESTED; closes at import time on the owner's host.
-- **No scope deviations.** Nothing outside the `08_` allowlist. No POC run, no provider contacted, no `13B_` obligation implemented, no provider ranked.
+- **Contract tensions reported, not absorbed** — §6(a) `harness/out/`, §6(b) the two secret-shaped fixtures.
+- **Workflow files replaced rather than renamed in place** — §5.
+- **R0 falsifier row 2 still open** — node types/parameters NOT TESTED.
+- **No POC run, no provider contacted.** The Zapier MCP tools that appeared last round are gone from this session; they were unused then and are unavailable now.
+- **No scope deviations.** Nothing outside the `14_` §4 allowlist except §6(a). No `13B_` obligation implemented. No provider selected or ranked. Every THROWAWAY marker kept, and the header still names the four things the real wrapper needs that this deliberately lacks.
 - **Branch deviation (unchanged, disclosed):** operator-designated branch.
-- **Recommended reviewer focus:** §4 — the token-lifecycle defect is the kind that a green self-test hides, and the fix is small enough to check in a minute.
+- **Recommended reviewer focus:** §2 first — the witness method is what makes the rest checkable. Then §6(a), which needs a ruling.
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The stub is claimed complete and self-tested; no POC is claimed run and no provider capability is claimed.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The rework is claimed complete against `14_` §2; no POC is claimed run, and no security property is claimed independently verified.*

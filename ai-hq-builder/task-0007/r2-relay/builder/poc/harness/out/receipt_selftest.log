@@ -1,0 +1,7 @@
+  [ok  ] rich result still flags authority fields
+  [ok  ] aliases resolve to DERIVABLE
+  [ok  ] wrapper-owned occurrence is not satisfiable by a bare result
+  [ok  ] empty result -> every field synthesized
+  [ok  ] ownership totals sum to the field count
+  [ok  ] empty-string and null count as absent
+RECEIPT CONFORMANCE SELF-TEST PASS — 6/6

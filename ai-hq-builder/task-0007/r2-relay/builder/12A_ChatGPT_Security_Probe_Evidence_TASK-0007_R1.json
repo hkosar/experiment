@@ -1,0 +1,158 @@
+{
+  "failed": 9,
+  "packet_zip_sha256": "c973cbcf88f185bcfcc3c1833272d3025c1027453548ffc68d40d516baaf316e",
+  "passed": 5,
+  "probe_count": 14,
+  "results": [
+    {
+      "actual": 403,
+      "expected": 403,
+      "note": null,
+      "ok": true,
+      "probe": "mandatory missing token refusal",
+      "severity": null
+    },
+    {
+      "actual": 403,
+      "expected": 403,
+      "note": null,
+      "ok": true,
+      "probe": "mandatory forged token refusal",
+      "severity": null
+    },
+    {
+      "actual": 403,
+      "expected": 403,
+      "note": null,
+      "ok": true,
+      "probe": "provider cannot self approve without owner key",
+      "severity": null
+    },
+    {
+      "actual": {
+        "first": 200,
+        "second": 403
+      },
+      "expected": {
+        "first": 200,
+        "second": 403
+      },
+      "note": null,
+      "ok": true,
+      "probe": "mandatory replay refusal",
+      "severity": null
+    },
+    {
+      "actual": {
+        "authorized_count": 1,
+        "refused_count": 49
+      },
+      "expected": {
+        "authorized_count": 1
+      },
+      "note": null,
+      "ok": true,
+      "probe": "concurrent token double-spend",
+      "severity": null
+    },
+    {
+      "actual": {
+        "body": {
+          "delivered": true,
+          "sink": "local throwaway"
+        },
+        "status": 200
+      },
+      "expected": 403,
+      "note": "The sink accepts arbitrary direct calls, so the provider can bypass owner approval and token verification entirely.",
+      "ok": false,
+      "probe": "provider cannot invoke the side-effect sink without an authorized ActionRequest",
+      "severity": "CRITICAL"
+    },
+    {
+      "actual": true,
+      "expected": false,
+      "note": "The redactor recognizes key names and selected value shapes, but a real resume token under a generic key remains verbatim.",
+      "ok": false,
+      "probe": "live resume token under benign key is not persisted",
+      "severity": "HIGH"
+    },
+    {
+      "actual": {
+        "authorized": true,
+        "first_status": 200,
+        "record": "reject",
+        "second_status": 200
+      },
+      "expected": {
+        "record": "accept",
+        "second_decision": "refused"
+      },
+      "note": "The action can be authorized, then the same case can be rewritten to rejected, leaving contradictory evidence.",
+      "ok": false,
+      "probe": "terminal decision cannot be overwritten after authorization",
+      "severity": "HIGH"
+    },
+    {
+      "actual": {
+        "authorized": true,
+        "exception": "NotADirectoryError",
+        "verify_status": 200
+      },
+      "expected": {
+        "authorized": false,
+        "exception": null
+      },
+      "note": "Decision state is committed before capture write; a filesystem error aborts the response but authorization remains live.",
+      "ok": false,
+      "probe": "capture failure cannot leave an uncaptured authorized decision",
+      "severity": "HIGH"
+    },
+    {
+      "actual": {
+        "exception": "AttributeError",
+        "status": null
+      },
+      "expected": 400,
+      "note": null,
+      "ok": false,
+      "probe": "non-object metadata fails closed",
+      "severity": "MEDIUM"
+    },
+    {
+      "actual": 200,
+      "expected": 415,
+      "note": "Without content-type/origin/session checks, a malicious page can create cases and captures on localhost even though it cannot read the token.",
+      "ok": false,
+      "probe": "provider endpoint rejects browser-simple text/plain POST",
+      "severity": "MEDIUM"
+    },
+    {
+      "actual": {
+        "exception": "RemoteDisconnected"
+      },
+      "expected": 400,
+      "note": null,
+      "ok": false,
+      "probe": "malformed metadata receives structured HTTP refusal",
+      "severity": "MEDIUM"
+    },
+    {
+      "actual": "TIMEOUT_NO_RESPONSE",
+      "expected": true,
+      "note": "read(-1) waits for EOF, enabling thread exhaustion by local clients.",
+      "ok": false,
+      "probe": "negative Content-Length rejected promptly",
+      "severity": "MEDIUM"
+    },
+    {
+      "actual": true,
+      "expected": false,
+      "note": "BaseHTTPRequestHandler logs the full request target; query parameters named token/owner_key are not structurally redacted.",
+      "ok": false,
+      "probe": "query-string secret is redacted from HTTP log",
+      "severity": "HIGH"
+    }
+  ],
+  "source_sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac"
+}

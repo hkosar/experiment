@@ -1,5 +1,20 @@
 # TASK-0007 — findings produced by building the apparatus
 
+> **R2 note.** F-1..F-6 below were produced at R0 and still stand. What R2 added is
+> not a new finding about the providers but a finding about the apparatus: an
+> independent security review (`12_`) returned FAIL with eight findings, and Fable's
+> disposition (`13_`) added seventeen more, **most of them evidence-integrity defects
+> rather than security defects**. The corpus the round exists to produce would have
+> been unattributable between candidates (FAB-02), self-overwriting (FAB-03), and
+> silent on the two properties the POC exists to demonstrate (FAB-01). All are
+> corrected in the R2 build; `stub/r1_witnesses.py` reproduces each against the
+> pinned R1 artifact. **The scenarios are also re-aimed** to `09_` §2's Release-1
+> workload — POC-1 is the Builder-return pipeline, POC-2 idea capture and staging,
+> POC-3 the nightly integrity sweep. The Release-2 call and email scenarios are
+> parked, not deleted.
+>
+> **F-2 is the one to carry forward into D4/D5** — it is unchanged and unaffected.
+
 **Read the status line first: the POC round has NOT been run.** No Zapier account exists, no n8n host exists, no OAuth grant has been made, no provider has been contacted, and no measurement in `data/measurements.template.json` has a value. Everything below was produced by *authoring* the deliverables, not by running them — and each finding says which.
 
 Packet `07_` §4 applies to the Builder: *"Every claim of the form 'provider X supports Y' must carry a demonstrated instance or be marked NOT TESTED."* Nothing here claims a provider supports anything.
@@ -41,6 +56,12 @@ Packet §3 says a provider human-in-loop feature "may carry the pause, never dec
 **Consequence for the session:** if either candidate's HIL feature cannot be configured to carry a pause without also carrying the decision — for example if its approval outcome is what routes the branch — then that candidate cannot express POC-1 as specified. The Zapier runbook makes that an explicit stop-and-record point.
 
 **What is NOT established:** whether either product actually permits this shape. NOT TESTED.
+
+**R2 strengthened this.** The pause now carries only an opaque token; the owner surface is
+key-protected; the provider never learns the case id; and `/poc1/verify-decision` is an
+allowlist that accepts the token and nothing else. An independent reviewer defeated the R1
+version of this control by having the provider record the decision through the *owner* door
+— see `r1_witnesses.py` finding SEC-R1-03 and the Delivery Record.
 
 ## F-4 — the boundary constraints are machine-checkable, and now are
 
