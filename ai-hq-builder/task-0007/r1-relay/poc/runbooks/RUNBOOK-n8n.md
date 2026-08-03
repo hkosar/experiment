@@ -27,37 +27,6 @@ Time each step into `data/owner_friction_log.template.csv`. "Owner action" marks
 | 7 | Repeat for `POC1_call_review_delegation.json` and `POC3_durable_overnight.json` | No | Same |
 | 8 | For each flagged node, correct it in the editor and **export the corrected workflow back over the file** | No | What had to change — this is capability evidence about how faithfully a definition survives round-tripping (portability axis) |
 
-## Part B2 — start the wrapper stub (before any workflow runs)
-
-The three workflows call an AI OS wrapper. For the POC round that is a **throwaway stub**
-shipped in `poc/stub/` — it is evidence apparatus, not the AI OS wrapper, and it must not
-survive into production use.
-
-| # | Step | Owner action? | Record |
-| --- | --- | --- | --- |
-| B2.1 | From `poc/stub/`, run `python3 stub_server.py --port 8787`. Python 3 standard library only — no install, no database, no Docker required | No | That it started; the port if you changed it |
-| B2.2 | Confirm it is live: `curl -s http://127.0.0.1:8787/health` — expect `"ok": true` and the throwaway marker | No | — |
-| B2.3 | In n8n, set the environment variable `AIOS_WRAPPER_BASE=http://127.0.0.1:8787` (Settings → Variables, or `-e AIOS_WRAPPER_BASE=...` on the `docker run`). If n8n runs in Docker and the stub runs on the host, use `http://host.docker.internal:8787` instead | No | Which base URL worked — **this is itself a finding about self-hosted networking friction** |
-
-**The owner decision surface, and the key that protects it.** The stub stands in for the
-Discord/AI OS card at `POST /owner/decide`. At startup it prints an **owner-surface key**
-with a ready-made curl command. During POC-1 you record each decision **there**, not inside n8n.
-The provider is never told the case id, so you list your own pending cases:
-
-    curl -s -X POST http://127.0.0.1:8787/owner/cases -H "X-Owner-Key: <key>" -d '{}'
-    curl -s -X POST http://127.0.0.1:8787/owner/decide -H "X-Owner-Key: <key>" \
-         -H 'Content-Type: application/json' \
-         -d '{"case_id":"<from the list above>","decision":"accept"}'
-
-The key matters: without it, anything that can reach `127.0.0.1:8787` — including n8n's own
-HTTP node on the same host — could record a decision and approve its own case. **Do not put
-the key into n8n, Zapier, or any workflow.** Keep it in your terminal.
-
-**Do not redirect the stub's stderr to a shared or checked-in file** — the startup banner
-contains the key. Run it in a terminal you can see, which is what the runbook assumes.
-
-Run `python3 selftest_stub.py` once before the session if you want to see the refusals fire.
-
 ## Part C — connect accounts (owner only)
 
 | # | Step | Owner action? | Expected friction | Record |

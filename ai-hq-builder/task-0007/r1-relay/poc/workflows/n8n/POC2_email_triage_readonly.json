@@ -1,0 +1,126 @@
+{
+  "name": "POC2 — Read-Only Email Triage (Business partition only)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "simple": false,
+        "filters": {
+          "labelIds": [
+            "INBOX"
+          ]
+        }
+      },
+      "id": "gmail-trigger-(business)",
+      "name": "Gmail Trigger (Business)",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. Business mailbox ONLY. packet §3: no Personal-partition data enters any provider in this round.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// READ-ONLY POC. No link is followed, no body is fetched beyond what the\n// trigger already returned, and no action is emitted anywhere downstream.\nreturn items.map(i => ({ json: {\n  envelope: { trust:'external-untrusted', partition:'business',\n              source:'gmail', received_at:new Date().toISOString(),\n              links_followed:false, attachments_opened:false },\n  metadata: { message_id:i.json.id, thread_id:i.json.threadId,\n              from:i.json.from, subject:i.json.subject,\n              received:i.json.date, size:i.json.sizeEstimate },\n  restricted_content: { snippet:i.json.snippet ?? null },\n  content_forwarded: Boolean(i.json.snippet)\n} }));"
+      },
+      "id": "apply-external-untrusted-envelope",
+      "name": "Apply External-Untrusted Envelope",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY. Envelope before classification; links never followed (00_ §10 POC-2).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc2/triage",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}"
+      },
+      "id": "ai-os-—-classify-and-queue",
+      "name": "AI OS — Classify and Queue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. Work/personal classification, priority and effort recommendation, and Business/Personal queue placement are AI OS decisions. The provider transports; it does not classify.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// POC-2 is read-only by contract. This node exists so that a future edit\n// adding a send step fails an explicit assertion rather than passing quietly.\nconst forbidden = ['send','reply','forward','delete','archive','label.add'];\nfor (const i of items) {\n  const acts = i.json.actions_taken ?? [];\n  const bad = acts.filter(a => forbidden.includes(a));\n  if (bad.length) throw new Error('POC-2 read-only violated: ' + bad.join(','));\n}\nreturn items;"
+      },
+      "id": "no-action-emitted-(assert)",
+      "name": "No Action Emitted (assert)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "ASSERTION. Read-only is enforced in the definition, not just intended.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Gmail Trigger (Business)": {
+      "main": [
+        [
+          {
+            "node": "Apply External-Untrusted Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply External-Untrusted Envelope": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Classify and Queue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Classify and Queue": {
+      "main": [
+        [
+          {
+            "node": "No Action Emitted (assert)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-2",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}

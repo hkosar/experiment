@@ -1,0 +1,710 @@
+{
+  "task": "TASK-0007",
+  "round": "D3 POC",
+  "partition": "business",
+  "status": "NOT RUN — no provider account exists, no owner session has taken place. Every value below is NOT TESTED. Per packet §4, a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+  "candidates": {
+    "zapier": {
+      "account_exists": false,
+      "host": null,
+      "pocs": {
+        "POC1": {
+          "status": "NOT RUN",
+          "measures": {
+            "connector_coverage": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "human_approval_support": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "response_monitoring": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "evidence_quality": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "duplicate_send_prevention": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "monthly_cost_at_expected_volume": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "connection_revocation_severs_access": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "revocation_time_to_effect_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        },
+        "POC2": {
+          "status": "NOT RUN",
+          "measures": {
+            "trust_isolation": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "data_handling": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "classification_handoff": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "queue_update": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "mobile_visibility": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "cost_per_1000_messages": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "end_to_end_latency_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        },
+        "POC3": {
+          "status": "NOT RUN",
+          "measures": {
+            "durability_across_induced_kill": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "retry_semantics": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "side_effect_uncertainty_handling": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "checkpoint_integration": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "watchdog_independence": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "evidence_and_replay": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "missed_run_detected": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "time_to_missed_run_alert_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        }
+      },
+      "axes_02_4": {
+        "capability_connectors": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_triggers": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_hil": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_branching": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_custom_code": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_mcp": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_credentials": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_partition_support": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_audit": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_revocation": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "reliability_retry": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "reliability_idempotency": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "economics_billing_unit": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "operations_setup_effort": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        }
+      }
+    },
+    "n8n": {
+      "account_exists": false,
+      "host": null,
+      "pocs": {
+        "POC1": {
+          "status": "NOT RUN",
+          "measures": {
+            "connector_coverage": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "human_approval_support": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "response_monitoring": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "evidence_quality": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "duplicate_send_prevention": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "monthly_cost_at_expected_volume": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "connection_revocation_severs_access": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "revocation_time_to_effect_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        },
+        "POC2": {
+          "status": "NOT RUN",
+          "measures": {
+            "trust_isolation": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "data_handling": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "classification_handoff": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "queue_update": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "mobile_visibility": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "cost_per_1000_messages": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "end_to_end_latency_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        },
+        "POC3": {
+          "status": "NOT RUN",
+          "measures": {
+            "durability_across_induced_kill": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "retry_semantics": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "side_effect_uncertainty_handling": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "checkpoint_integration": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "watchdog_independence": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "evidence_and_replay": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "missed_run_detected": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "time_to_missed_run_alert_seconds": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "setup_wall_clock_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_step_count": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "owner_friction_total_minutes": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "actual_cost_incurred": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            },
+            "billing_units_consumed": {
+              "value": null,
+              "unit": null,
+              "status": "NOT TESTED",
+              "evidence_ref": null,
+              "observed_at": null
+            }
+          },
+          "incidents": [],
+          "provider_result_captures": []
+        }
+      },
+      "axes_02_4": {
+        "capability_connectors": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_triggers": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_hil": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_branching": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_custom_code": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "capability_mcp": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_credentials": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_partition_support": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_audit": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "governance_revocation": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "reliability_retry": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "reliability_idempotency": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "economics_billing_unit": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        },
+        "operations_setup_effort": {
+          "note": null,
+          "status": "NO EVIDENCE THIS ROUND"
+        }
+      }
+    }
+  }
+}

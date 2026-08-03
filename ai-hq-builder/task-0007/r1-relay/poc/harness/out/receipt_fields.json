@@ -1,0 +1,96 @@
+{
+  "contract": "D-EC_Evidence_and_Schedule_Contracts.md",
+  "required_fields": {
+    "receipt_id": {
+      "basis": "D-EC_ \u00a71 receipt identity",
+      "owner": "provider"
+    },
+    "subject_ref": {
+      "basis": "D-EC_ \u00a71 the receipt names its subject",
+      "owner": "provider"
+    },
+    "executed_at": {
+      "basis": "D-EC_ \u00a74 occurrence temporal validity",
+      "owner": "provider"
+    },
+    "occurrence": {
+      "basis": "D-EC_ \u00a74 receipt satisfies only its own occurrence",
+      "owner": "wrapper"
+    },
+    "schedule_version": {
+      "basis": "D-EC_ \u00a74 version-bound run receipts",
+      "owner": "wrapper"
+    },
+    "purpose": {
+      "basis": "D-EC_ \u00a71 evidence purpose",
+      "owner": "authority"
+    },
+    "authority_id": {
+      "basis": "D-EC_ \u00a71 receipt authority, distinct from evidence source",
+      "owner": "authority"
+    },
+    "authority_version": {
+      "basis": "D-EC_ \u00a71 bound authority version",
+      "owner": "authority"
+    },
+    "content_hash": {
+      "basis": "D-EC_ \u00a71 canonical row digest; a self-declared identity is not an identity",
+      "owner": "wrapper"
+    },
+    "action_request_id": {
+      "basis": "05_ \u00a72 every consequential action crosses as an ActionRequest",
+      "owner": "wrapper"
+    },
+    "action_class": {
+      "basis": "D-EC_ \u00a71 contract key",
+      "owner": "wrapper"
+    },
+    "scope": {
+      "basis": "D-EC_ \u00a71 contract key",
+      "owner": "wrapper"
+    },
+    "policy_version": {
+      "basis": "D-EC_ \u00a71 contract key; one artifact, one version",
+      "owner": "wrapper"
+    },
+    "risk_class": {
+      "basis": "D-EC_ \u00a71 contract key",
+      "owner": "wrapper"
+    },
+    "idempotency_key": {
+      "basis": "ACT-01 / 04_ \u00a72 semantic idempotency stays with the AI OS",
+      "owner": "wrapper"
+    },
+    "side_effect_status": {
+      "basis": "ACT-01 uncertain outcomes halt automatic retry",
+      "owner": "provider"
+    }
+  },
+  "aliases": {
+    "receipt_id": [
+      "id",
+      "execution_id",
+      "executionId",
+      "run_id",
+      "task_id"
+    ],
+    "executed_at": [
+      "finished_at",
+      "finishedAt",
+      "stoppedAt",
+      "timestamp",
+      "completed_at"
+    ],
+    "subject_ref": [
+      "resource",
+      "target",
+      "object_id",
+      "url"
+    ],
+    "side_effect_status": [
+      "status",
+      "state",
+      "result"
+    ]
+  }
+}

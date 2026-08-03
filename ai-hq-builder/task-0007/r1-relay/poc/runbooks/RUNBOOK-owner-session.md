@@ -16,7 +16,6 @@
 | You have a throwaway-eligible mindset about everything built here | Packet §6: nothing built here becomes load-bearing without a Track B packet |
 | A timer you can start and stop per step | Setup wall-clock and owner-friction minutes are themselves measures |
 | `data/owner_friction_log.template.csv` open | One row per step **you** had to perform, with its time |
-| **The wrapper stub running** — `cd poc/stub && python3 stub_server.py --port 8787`, then `curl -s http://127.0.0.1:8787/health` | The three workflows call it. Without it only POC-2's provider half can run. Python 3 stdlib only; no install, no database. It is **throwaway evidence apparatus**, not the AI OS wrapper |
 
 **Cost exposure.** Both candidates have free tiers adequate for this round. If any step asks for a paid plan before a POC can complete, stop and record it — "the free tier cannot express this flow" is a genuine economics finding, not an obstacle to work around by spending.
 
@@ -31,11 +30,6 @@
 ## 2. The three rules that override convenience
 
 1. **Approval authority never moves to the provider.** Both fabrics have a human-in-the-loop feature. It may carry the *pause*. The decision is made on your AI OS/Discord surface and verified by the wrapper before anything is sent. If you find yourself approving something inside Zapier's or n8n's own UI and that approval directly causes the send, the flow is wired wrong — record it and fix the wiring.
-   **In this round the owner surface is the stub:** record each POC-1 decision with
-   `curl -s -X POST http://127.0.0.1:8787/owner/decide -H "X-Owner-Key: <the key the stub printed at startup>" -H 'Content-Type: application/json' -d '{"case_id":"<from POST /owner/cases>","decision":"accept"}'` — the provider never learns the case id, so you list your own pending cases first.
-   **The owner-surface key never goes into a provider.** It is what makes "the owner decided"
-   a checked fact rather than "something reached the port" — keep it in your terminal.
-   The provider carries only an opaque token; the stub refuses an approval outcome that arrives from the provider side, and refuses a token that is missing, forged, or replayed. Provoking one of those refusals on purpose is a legitimate thing to record.
 2. **The provider never receives the rulebook.** No policy artifacts, no evidence contracts, no journal contents, no step-up secrets. Workflow payloads and OAuth-scoped access only.
 3. **Content minimisation is measured, not assumed.** Where a metadata path suffices, use it. Where raw content must flow to make the flow work at all, **say so and log it** — packet §3 says that observation is itself B-2-relevant evidence. Do not quietly widen the data path to make a step succeed.
 

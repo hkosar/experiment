@@ -1,0 +1,4 @@
+  [PASS] POC1_call_review_delegation.json  9 nodes, trigger(s): Call Event Webhook
+  [PASS] POC2_email_triage_readonly.json  4 nodes, trigger(s): Gmail Trigger (Business)
+  [PASS] POC3_durable_overnight.json  7 nodes, trigger(s): Nightly Schedule
+STRUCTURAL VALIDATION PASS (node types and parameters NOT TESTED)

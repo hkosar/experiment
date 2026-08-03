@@ -1,254 +1,335 @@
 {
-  "change_request": "wrapper endpoint stubs are an unnamed dependency of the owner session (Delivery Record \u00a76)",
+  "baseline": {
+    "relay_poc_matches_accepted_R0_return": "36/36 byte-identical"
+  },
+  "change_request": "Zapier MCP tools are now live in the Builder session; unused this round, and their use in the owner session is a scope decision for Fable",
   "counts": {
-    "files": 36
+    "added": 4,
+    "files": 40,
+    "modified": 3,
+    "unchanged": 33
   },
-  "cycle": "D3 POC round \u2014 APPARATUS DELIVERED, MEASUREMENT ROUND NOT RUN",
-  "deliverables": {
-    "cost_model": "ARITHMETIC COMPLETE, ALL RATES UNMEASURED",
-    "measurement_data": "TEMPLATES ONLY \u2014 all NOT TESTED",
-    "measurement_harnesses": "COMPLETE \u2014 4 checkers, 39 self-test cases",
-    "n8n_workflow_exports": "COMPLETE \u2014 3 importable JSON definitions, structurally validated",
-    "poc4": "NOT RUN \u2014 trigger condition cannot be evaluated until POC-1..3 run",
-    "runbooks": "COMPLETE \u2014 owner-session script + one per candidate",
-    "zapier_workflow_exports": "BUILD SPECS ONLY \u2014 Zapier has no public import format (finding F-1)"
-  },
+  "cycle": "supplemental round R1 \u2014 POC wrapper stub",
   "files": [
     {
       "bytes": 7533,
       "path": "FINDINGS.md",
-      "sha256": "c52e6e31bbae88700d8f96e1cf9635e479aaf08b2b89ecf1c60651ee9e73151c"
+      "sha256": "c52e6e31bbae88700d8f96e1cf9635e479aaf08b2b89ecf1c60651ee9e73151c",
+      "state": "unchanged"
     },
     {
-      "bytes": 2344,
+      "bytes": 4107,
       "path": "README.md",
-      "sha256": "c55b18340b632057706c93c685d6b138bc0b4983d7e813c9ed8993fd420eb555"
+      "sha256": "2c49215b030ce13eeca7a173f33ac11d0675b34aa2c1ca10e015cb01d533341a",
+      "state": "modified"
     },
     {
       "bytes": 539,
       "path": "data/captures/README.md",
-      "sha256": "7e73f6f7ebd26d406912584f710654f78bb89025a56dd72157ee430a84112974"
+      "sha256": "7e73f6f7ebd26d406912584f710654f78bb89025a56dd72157ee430a84112974",
+      "state": "unchanged"
     },
     {
       "bytes": 21551,
       "path": "data/measurements.template.json",
-      "sha256": "99c7aa0f65073ba694754fc07a87d79ae69ccb6bc16c3c76de4dd7e6906e96c1"
+      "sha256": "99c7aa0f65073ba694754fc07a87d79ae69ccb6bc16c3c76de4dd7e6906e96c1",
+      "state": "unchanged"
     },
     {
       "bytes": 229,
       "path": "data/owner_friction_log.template.csv",
-      "sha256": "2fcc9de7dbf29328050231e22e3036bf6c923932c2486f40d6eccab4e7cfeff0"
+      "sha256": "2fcc9de7dbf29328050231e22e3036bf6c923932c2486f40d6eccab4e7cfeff0",
+      "state": "unchanged"
     },
     {
       "bytes": 9944,
       "path": "harness/check_boundaries.py",
-      "sha256": "a6a7c0fa0deb087cb8ac05dd1be9c07a54753afa7dc52a391d0867eb192ff63b"
+      "sha256": "a6a7c0fa0deb087cb8ac05dd1be9c07a54753afa7dc52a391d0867eb192ff63b",
+      "state": "unchanged"
     },
     {
       "bytes": 11884,
       "path": "harness/cost_model.py",
-      "sha256": "c450736fd2d939aebe7857f3a8a4790b3a62639835da9398f40534595beef088"
+      "sha256": "c450736fd2d939aebe7857f3a8a4790b3a62639835da9398f40534595beef088",
+      "state": "unchanged"
     },
     {
       "bytes": 555,
       "path": "harness/out/boundary.json",
-      "sha256": "50a13a922d8a4138bd9fb5d4e26346fd86427b1adcefefb0f4b4283a79745bae"
+      "sha256": "50a13a922d8a4138bd9fb5d4e26346fd86427b1adcefefb0f4b4283a79745bae",
+      "state": "unchanged"
     },
     {
       "bytes": 175,
       "path": "harness/out/boundary.log",
-      "sha256": "b677090d772957cba8d9b74a8b9ff441ff6db51d8c475795d3d9a7e457f12c86"
+      "sha256": "b677090d772957cba8d9b74a8b9ff441ff6db51d8c475795d3d9a7e457f12c86",
+      "state": "unchanged"
     },
     {
       "bytes": 1302,
       "path": "harness/out/boundary_selftest.json",
-      "sha256": "e9ecd7c80d913dee6a998124e977be11e5e180904743ffc2112f797d0ffd3a48"
+      "sha256": "e9ecd7c80d913dee6a998124e977be11e5e180904743ffc2112f797d0ffd3a48",
+      "state": "unchanged"
     },
     {
       "bytes": 376,
       "path": "harness/out/boundary_selftest.log",
-      "sha256": "43beb8e7c3a4a9505744cc27750f8c99f1a2dc39a824d71384e31053de51c7b1"
+      "sha256": "43beb8e7c3a4a9505744cc27750f8c99f1a2dc39a824d71384e31053de51c7b1",
+      "state": "unchanged"
     },
     {
       "bytes": 6026,
       "path": "harness/out/cost_model.json",
-      "sha256": "5ee4f5b7340c6d84b5c5d73138281ceb201e286c590e8b969a8777572df69a40"
+      "sha256": "5ee4f5b7340c6d84b5c5d73138281ceb201e286c590e8b969a8777572df69a40",
+      "state": "unchanged"
     },
     {
       "bytes": 131,
       "path": "harness/out/cost_model.log",
-      "sha256": "5bf89548559ee57b714e6ccb1d5b2c720055de8ab0e4d50dfadeba4ce83a8549"
+      "sha256": "5bf89548559ee57b714e6ccb1d5b2c720055de8ab0e4d50dfadeba4ce83a8549",
+      "state": "unchanged"
     },
     {
       "bytes": 1665,
       "path": "harness/out/cost_selftest.json",
-      "sha256": "19017ad13615cb6c0b2f06c636acf7d37057a11910e350ff748fdaaee6bb9fc1"
+      "sha256": "19017ad13615cb6c0b2f06c636acf7d37057a11910e350ff748fdaaee6bb9fc1",
+      "state": "unchanged"
     },
     {
       "bytes": 817,
       "path": "harness/out/cost_selftest.log",
-      "sha256": "60973378039f1692c9ab666c49dbe18bf40309a3df0327f43f6c41cf803c2373"
+      "sha256": "60973378039f1692c9ab666c49dbe18bf40309a3df0327f43f6c41cf803c2373",
+      "state": "unchanged"
     },
     {
       "bytes": 299,
       "path": "harness/out/receipt.json",
-      "sha256": "d0b5a16eabd168d366109fbb94c539e3fc15575786ea831b023c7beef49c9e5d"
+      "sha256": "d0b5a16eabd168d366109fbb94c539e3fc15575786ea831b023c7beef49c9e5d",
+      "state": "unchanged"
     },
     {
       "bytes": 59,
       "path": "harness/out/receipt.log",
-      "sha256": "4097cbc06ce38ea8025e8b0e5bec282db3ba8383d14fc1ad67d1f26599d81486"
+      "sha256": "4097cbc06ce38ea8025e8b0e5bec282db3ba8383d14fc1ad67d1f26599d81486",
+      "state": "unchanged"
     },
     {
       "bytes": 2428,
       "path": "harness/out/receipt_fields.json",
-      "sha256": "c3756150addffd06cc98cfe4afe2091cca44eaabb764f54d7ff2c4744dd95e96"
+      "sha256": "c3756150addffd06cc98cfe4afe2091cca44eaabb764f54d7ff2c4744dd95e96",
+      "state": "unchanged"
     },
     {
       "bytes": 0,
       "path": "harness/out/receipt_fields.log",
-      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "state": "unchanged"
     },
     {
       "bytes": 624,
       "path": "harness/out/receipt_selftest.json",
-      "sha256": "f49c16bc29f9e80784803ddec67843e31aca19b2fe42821b7c19ed6c14147eb3"
+      "sha256": "f49c16bc29f9e80784803ddec67843e31aca19b2fe42821b7c19ed6c14147eb3",
+      "state": "unchanged"
     },
     {
       "bytes": 346,
       "path": "harness/out/receipt_selftest.log",
-      "sha256": "9d8247b8af7348487f9258b94f4e7631ea9ceb38a99ade6e26bcf3421b0e44ba"
+      "sha256": "9d8247b8af7348487f9258b94f4e7631ea9ceb38a99ade6e26bcf3421b0e44ba",
+      "state": "unchanged"
     },
     {
       "bytes": 859,
       "path": "harness/out/structural.json",
-      "sha256": "10b155e59e08e54f16ff3015a0ca235ec753e67a20b3d84844d7b777d0c3f907"
+      "sha256": "10b155e59e08e54f16ff3015a0ca235ec753e67a20b3d84844d7b777d0c3f907",
+      "state": "unchanged"
     },
     {
       "bytes": 313,
       "path": "harness/out/structural.log",
-      "sha256": "1152e74d5db975e593cf1e0bb25f5538ed3e0d24455aac74ffd76066d253d536"
+      "sha256": "1152e74d5db975e593cf1e0bb25f5538ed3e0d24455aac74ffd76066d253d536",
+      "state": "unchanged"
     },
     {
       "bytes": 1312,
       "path": "harness/out/validator_selftest.json",
-      "sha256": "83423183937cea3809189647070b798725612f4137a905fd3c3735025fffac54"
+      "sha256": "83423183937cea3809189647070b798725612f4137a905fd3c3735025fffac54",
+      "state": "unchanged"
     },
     {
       "bytes": 665,
       "path": "harness/out/validator_selftest.log",
-      "sha256": "5d43ec6482b6fda5d0cb069f417349fb1cf77b11adfccf34286d1f6123c00fe9"
+      "sha256": "5d43ec6482b6fda5d0cb069f417349fb1cf77b11adfccf34286d1f6123c00fe9",
+      "state": "unchanged"
     },
     {
       "bytes": 9020,
       "path": "harness/receipt_conformance.py",
-      "sha256": "dc93cdf769ec436899c37691aafe39bdd71e7645ab2a8d24119723e7144d1002"
+      "sha256": "dc93cdf769ec436899c37691aafe39bdd71e7645ab2a8d24119723e7144d1002",
+      "state": "unchanged"
     },
     {
       "bytes": 1993,
       "path": "harness/run_all.sh",
-      "sha256": "07ea1343a89a4f4509056cf145de669b31dd3b2dc3afe9fe211ebc2ab0464893"
+      "sha256": "07ea1343a89a4f4509056cf145de669b31dd3b2dc3afe9fe211ebc2ab0464893",
+      "state": "unchanged"
     },
     {
       "bytes": 3383,
       "path": "harness/selftest_validator.mjs",
-      "sha256": "fdcf6bbfa57ed38548aed6fb8820f29aeb6961bea530805247e44060051351e0"
+      "sha256": "fdcf6bbfa57ed38548aed6fb8820f29aeb6961bea530805247e44060051351e0",
+      "state": "unchanged"
     },
     {
       "bytes": 5856,
       "path": "harness/validate_n8n_workflows.mjs",
-      "sha256": "33a6e3a22d9b8f65ed53f9f270a0fcd0ff4df7d34f26cae501042a8ba5a5b4aa"
+      "sha256": "33a6e3a22d9b8f65ed53f9f270a0fcd0ff4df7d34f26cae501042a8ba5a5b4aa",
+      "state": "unchanged"
     },
     {
-      "bytes": 4552,
+      "bytes": 6765,
       "path": "runbooks/RUNBOOK-n8n.md",
-      "sha256": "b64bb0451cd1c151bc6810d2127ecc0720c49c3a6e8f83f07aea6547c8d544f9"
+      "sha256": "66ef172dd6203b3808fb762a9803c614b45cfceadca7177a2cb8f2a7eaa829d2",
+      "state": "modified"
     },
     {
-      "bytes": 5717,
+      "bytes": 6856,
       "path": "runbooks/RUNBOOK-owner-session.md",
-      "sha256": "a697d01fd6218ef4e611b599294efd8c74085836958c87f464736b922bc890cd"
+      "sha256": "db68185aab230daac61b2cce8d35fe43baa0f6d2163e1fcf9c246b3bfcafd67a",
+      "state": "modified"
     },
     {
       "bytes": 3370,
       "path": "runbooks/RUNBOOK-zapier.md",
-      "sha256": "482e40437401be07e4dd79436a73258be16ccde574949e536e459bba9c592cb9"
+      "sha256": "482e40437401be07e4dd79436a73258be16ccde574949e536e459bba9c592cb9",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 19,
+      "path": "stub/.gitignore",
+      "sha256": "862263fa1f46c20f0d1e4dac5ffcc75abd55c08211b2c3864c5f8764b9d87793",
+      "state": "added"
+    },
+    {
+      "bytes": 18387,
+      "path": "stub/out/stub_selftest.json",
+      "sha256": "04486fd48ccd21d16cda3b48727fbd2b8eb199e97837bfe2bc660e636223adee",
+      "state": "added"
+    },
+    {
+      "bytes": 21182,
+      "path": "stub/selftest_stub.py",
+      "sha256": "f74d816e4c8c07533659bf2e916a5a3a4816d640decbbf8732d4a39450106562",
+      "state": "added"
+    },
+    {
+      "bytes": 30488,
+      "path": "stub/stub_server.py",
+      "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
+      "state": "added"
     },
     {
       "bytes": 8052,
       "path": "workflows/n8n/POC1_call_review_delegation.json",
-      "sha256": "9fc1c0a75a28efaf383377a72fd4a654c3c67489d09c55b305c7402a703f1cb8"
+      "sha256": "9fc1c0a75a28efaf383377a72fd4a654c3c67489d09c55b305c7402a703f1cb8",
+      "state": "unchanged"
     },
     {
       "bytes": 4193,
       "path": "workflows/n8n/POC2_email_triage_readonly.json",
-      "sha256": "d68a71deb7c37b738747efd9e888bb203381342ee1d455da4df8e18f89262c49"
+      "sha256": "d68a71deb7c37b738747efd9e888bb203381342ee1d455da4df8e18f89262c49",
+      "state": "unchanged"
     },
     {
       "bytes": 6378,
       "path": "workflows/n8n/POC3_durable_overnight.json",
-      "sha256": "4d1e07b7d0694ab8217d1e29b6468a42c70bfc35a64b6d8734612abd5ceaa77c"
+      "sha256": "4d1e07b7d0694ab8217d1e29b6468a42c70bfc35a64b6d8734612abd5ceaa77c",
+      "state": "unchanged"
     },
     {
       "bytes": 6442,
       "path": "workflows/zapier/POC_zap_build_specs.json",
-      "sha256": "6c63a029502642c0c893aed6ea57c532d2203c6278f4d40a57c9b458d21015a3"
+      "sha256": "6c63a029502642c0c893aed6ea57c532d2203c6278f4d40a57c9b458d21015a3",
+      "state": "unchanged"
     }
   ],
-  "findings": [
-    "F-1 Zapier has no public import format",
-    "F-2 a provider can supply only 4 of 16 D-EC_ receipt fields",
-    "F-3 approval-authority constraint shapes the POC-1 flow",
-    "F-4 boundary constraints are machine-checkable and now are",
-    "F-5 the cost crossover reduces to one unmeasured number",
-    "F-6 the Builder environment cannot validate n8n node types"
-  ],
-  "governing_documents": [
-    "01_ \u00a72 sequencing ruling",
-    "05_ \u00a72 boundary matrix",
-    "05_ \u00a73 cost frame",
-    "00_ \u00a710 POC flows and measure lists",
-    "D-EC_Evidence_and_Schedule_Contracts.md"
-  ],
   "instruction_authority": [
-    "07_TASK-0007_Task_Packet_POC_Round.md"
+    "08_TASK-0007_R1_Wrapper_Stub_Packet.md"
   ],
+  "outside_allowlist": [],
   "poc_round_status": {
     "every_measure": "NOT TESTED",
-    "measures_with_values": 0,
-    "n8n_host_exists": false,
     "oauth_grants_made": 0,
     "providers_contacted": 0,
     "run": false,
-    "zapier_account_exists": false
+    "zapier_mcp_tools_used": false
   },
   "produced_by": "Builder (Claude Code)",
   "relay_export_manifest": {
-    "declared_file_count": 8,
-    "entries_verified": 8,
+    "declared_file_count": 41,
+    "entries_verified": 41,
     "mismatched": 0,
     "missing": [],
     "unexpected": []
   },
   "returned_to": "Fable",
-  "source_relay_zip_sha256": "see 07_ relay; manifest validated 8/8 before reading anything as authority",
+  "scenario_context_read_not_acted_on": [
+    "09_Release_1_Definition_and_POC_Reaim.md",
+    "10_ChatGPT_Scoped_Verifier_Ack_Release1_POC_Reaim.md"
+  ],
+  "stub": {
+    "adversarial_review": {
+      "attackers_launched": 6,
+      "attackers_reported_before_the_run_was_stopped": 2,
+      "defects_fixed": 8,
+      "defects_found": 8,
+      "recorded_failed_attacks": 20,
+      "regression_cases_added": 27,
+      "run_stopped_because": "the fixes had superseded the code the remaining four were testing",
+      "unreported_lenses_re_run_by_the_builder_against_the_fixed_stub": [
+        "envelope",
+        "partition"
+      ]
+    },
+    "endpoints_called_by_workflows": 9,
+    "endpoints_missing": 0,
+    "file": "stub/stub_server.py",
+    "lines": 653,
+    "mandatory_refusals_demonstrated": [
+      "missing / forged / replayed resume token",
+      "approval decision arriving from the provider side (now an allowlist: token only)",
+      "a decision recorded on the owner surface by anything that merely reached the port"
+    ],
+    "orphaned_routes": 0,
+    "routes": 13,
+    "runtime": "Python 3 standard library only",
+    "self_test_cases": 66,
+    "third_party_imports": 0,
+    "throwaway_markers": [
+      "module header",
+      "/health body",
+      "X-Throwaway response header",
+      "every capture record",
+      "README section",
+      "runbook"
+    ]
+  },
   "task": "TASK-0007",
   "verification_summary": {
-    "ai_hq_files_touched": 0,
-    "boundary_compliance": "3/3 clean",
-    "harness": "PASS, re-run from a clean copy of the return payload",
-    "providers_contacted": 0,
-    "secret_scan": "0 hits across 7 credential-shaped patterns",
-    "self_test_cases": {
-      "boundary": 9,
-      "cost_model": 14,
-      "receipt_conformance": 6,
-      "structural": 10,
-      "total": 39
-    },
-    "structural_validation": "3/3 workflows"
+    "harness": "PASS \u2014 structural 3/3, boundary clean 3/3, 39 harness self-test cases",
+    "live_http_end_to_end": "token pattern exercised over real HTTP: early poll pending, owner decision, authorized, replay refused, provider-decision refused",
+    "pyflakes": "clean",
+    "secret_scan": "1 hit \u2014 a synthetic fixture in harness/check_boundaries.py, an R0-accepted file outside this round's allowlist; nothing this round wrote scans dirty",
+    "stub_self_test": "66/66"
+  },
+  "workflow_corrections": {
+    "made": 0,
+    "note": "none were needed; all three workflow JSONs are byte-identical to the accepted R0 return"
   },
   "writable_area": [
-    "POC workspace only \u2014 nothing in the ai-hq repo is writable under this task"
+    "poc/stub/**",
+    "poc/workflows/n8n/*.json (corrections only)",
+    "poc/runbooks/RUNBOOK-n8n.md",
+    "poc/runbooks/RUNBOOK-owner-session.md",
+    "poc/README.md"
   ]
 }

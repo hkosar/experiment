@@ -1,0 +1,39 @@
+{
+  "check": "n8n workflow structural validation",
+  "library": "n8n-workflow",
+  "node_type_registry_available": false,
+  "node_types_and_parameters": "NOT TESTED — n8n-nodes-base blocked by egress proxy (403)",
+  "workflows": [
+    {
+      "file": "POC1_call_review_delegation.json",
+      "ok": true,
+      "nodes": 9,
+      "triggers": [
+        "Call Event Webhook"
+      ],
+      "connections": 7,
+      "problems": []
+    },
+    {
+      "file": "POC2_email_triage_readonly.json",
+      "ok": true,
+      "nodes": 4,
+      "triggers": [
+        "Gmail Trigger (Business)"
+      ],
+      "connections": 3,
+      "problems": []
+    },
+    {
+      "file": "POC3_durable_overnight.json",
+      "ok": true,
+      "nodes": 7,
+      "triggers": [
+        "Nightly Schedule"
+      ],
+      "connections": 6,
+      "problems": []
+    }
+  ],
+  "all_ok": true
+}

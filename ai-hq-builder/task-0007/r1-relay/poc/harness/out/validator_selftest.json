@@ -1,0 +1,67 @@
+{
+  "check": "validator self-test",
+  "cases": [
+    {
+      "case": "well-formed control",
+      "expected": "accept",
+      "actual": "accept",
+      "ok": true
+    },
+    {
+      "case": "malformed JSON",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "no trigger",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "duplicate node names",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "duplicate node ids",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "connection to a nonexistent node",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "connection from a nonexistent node",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "orphaned node",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "node missing a required field",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    },
+    {
+      "case": "malformed position",
+      "expected": "reject",
+      "actual": "reject",
+      "ok": true
+    }
+  ],
+  "passed": 10,
+  "total": 10
+}

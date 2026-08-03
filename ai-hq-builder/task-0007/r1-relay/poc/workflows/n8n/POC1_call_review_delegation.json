@@ -1,0 +1,272 @@
+{
+  "name": "POC1 — Call Review and Delegation (Business partition only)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "poc1-call-event",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "id": "call-event-webhook",
+      "name": "Call Event Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. Call/transcript event from CallRail. Business partition only (05_ §2). Payload is treated as EXTERNAL-UNTRUSTED until the envelope node.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// packet §3: external-untrusted envelope BEFORE any model classification.\n// Metadata path first (05_ §2 minimisation): forward identifiers and\n// timings; carry transcript text only in `restricted_content`, which the\n// wrapper decides whether to expose to a model.\nreturn items.map(i => ({ json: {\n  envelope: { trust: 'external-untrusted', partition: 'business',\n              source: 'callrail', received_at: new Date().toISOString() },\n  metadata: { call_id: i.json.call_id, from: i.json.from_masked,\n              duration_s: i.json.duration, started_at: i.json.started_at },\n  restricted_content: { transcript: i.json.transcript ?? null },\n  content_forwarded: Boolean(i.json.transcript)  // B-2 evidence: logged\n} }));"
+      },
+      "id": "apply-external-untrusted-envelope",
+      "name": "Apply External-Untrusted Envelope",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY. Envelope applied before any classification. `content_forwarded` is the B-2 observation the packet §3 asks to be logged.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/review-case",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true
+            }
+          }
+        }
+      },
+      "id": "ai-os-—-open-review-case",
+      "name": "AI OS — Open Review Case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. The AI OS opens the review case and owns the queue. n8n does not classify, decide, or store state (05_ §2: providers never hold the rulebook).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "resume": "webhook"
+      },
+      "id": "wait-for-owner-decision",
+      "name": "Wait for Owner Decision",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "TRANSPORT ONLY. The provider carries the pause; the DECISION is made on the AI OS/Discord card and posted back to this resume URL as an opaque token. packet §3: 'a provider human-in-loop feature may carry the pause, never decide it.'",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/verify-decision",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({token: $json.token, call_id: $json.metadata?.call_id}) }}"
+      },
+      "id": "verify-decision-token-with-ai-os",
+      "name": "Verify Decision Token With AI OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        880,
+        300
+      ],
+      "notes": "AUTHORITY. The resume token proves nothing by itself. The AI OS validates it and returns the authorized ActionRequest, or refuses. Fail-closed.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.authorized }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "authorized?",
+      "name": "Authorized?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        300
+      ],
+      "notes": "GATE. No ActionRequest, no send.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.action_request.endpoint }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json.action_request.payload) }}"
+      },
+      "id": "send-assignment",
+      "name": "Send Assignment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        200
+      ],
+      "notes": "EXECUTION. Provider executes the AI-OS-authored ActionRequest verbatim. Idempotency key travels inside the ActionRequest (event identity is core, 04_ §2).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/receipt",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({provider_result: $json, action_request_id: $('Verify Decision Token With AI OS').item.json.action_request?.id}) }}"
+      },
+      "id": "return-receipt-to-ai-os",
+      "name": "Return Receipt To AI OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        200
+      ],
+      "notes": "EVIDENCE. Raw provider result only. The wrapper transforms it into a D-EC_-conformant receipt; the provider never mints the receipt.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/refusal",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({reason: $json.reason ?? 'not authorized'}) }}"
+      },
+      "id": "record-refusal",
+      "name": "Record Refusal",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        400
+      ],
+      "notes": "FAIL-CLOSED path. A refusal is recorded, never silently dropped.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Call Event Webhook": {
+      "main": [
+        [
+          {
+            "node": "Apply External-Untrusted Envelope",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply External-Untrusted Envelope": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Open Review Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Open Review Case": {
+      "main": [
+        [
+          {
+            "node": "Wait for Owner Decision",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Owner Decision": {
+      "main": [
+        [
+          {
+            "node": "Verify Decision Token With AI OS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Decision Token With AI OS": {
+      "main": [
+        [
+          {
+            "node": "Authorized?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Authorized?": {
+      "main": [
+        [
+          {
+            "node": "Send Assignment",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Record Refusal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Assignment": {
+      "main": [
+        [
+          {
+            "node": "Return Receipt To AI OS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-1",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}
