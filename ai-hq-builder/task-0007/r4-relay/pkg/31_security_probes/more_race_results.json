@@ -1,0 +1,34 @@
+{
+  "registration_race": {
+    "identity_index": 1,
+    "outcomes": [
+      "registered",
+      "registered"
+    ],
+    "refs": [
+      "reg-mk8e9Kqmg-HD4t3J0C8C5hczpsUsPnEZ",
+      "reg-r0eMwEtu8lYw1vKE5qCukXdfUfiqJLGl"
+    ],
+    "registrations": 2,
+    "statuses": [
+      200,
+      200
+    ]
+  },
+  "run_declaration_race": {
+    "declaration_index": 1,
+    "outcomes": [
+      "run-started",
+      "run-started"
+    ],
+    "run_ids": [
+      "run-349888df412f",
+      "run-f2824a0afc1f"
+    ],
+    "runs": 2,
+    "statuses": [
+      200,
+      200
+    ]
+  }
+}

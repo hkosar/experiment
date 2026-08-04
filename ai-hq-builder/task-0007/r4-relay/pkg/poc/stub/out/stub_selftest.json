@@ -1,0 +1,465 @@
+{
+  "cases": [
+    {
+      "actual": 200,
+      "block": null,
+      "case": "R1P-04 setup: a case opens on a complete identity tuple",
+      "expected": 200,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "duplicate-suppressed",
+      "block": "R1P-04",
+      "case": "(1) same artifact+task+transition -> suppressed, prior receipt returned",
+      "expected": "duplicate-suppressed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "case-opened",
+      "block": "R1P-04",
+      "case": "(2) same artifact, DIFFERENT task -> processed independently",
+      "expected": "a new token",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "rejected-unauthorized-target",
+      "block": "R1P-04",
+      "case": "(3) same task+artifact, unauthorized target -> REJECT",
+      "expected": "rejected-unauthorized-target",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403/rejected-unauthorized-target vs 200/duplicate-suppressed",
+      "block": "R1P-04",
+      "case": "(3) ...and it is DISTINGUISHABLE from duplicate-success",
+      "expected": "different outcome + status",
+      "note": "the distinction is the whole test",
+      "ok": true
+    },
+    {
+      "actual": "resume token has already been used — rep",
+      "block": "R1P-04",
+      "case": "(4) replayed owner decision token -> no second relay",
+      "expected": "token refused",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True/True",
+      "block": "R1P-04",
+      "case": "(4) ...and a replayed capability returns the prior receipt, not a second side effect",
+      "expected": "replayed + no_second_side_effect",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 2,
+      "block": "R1P-04",
+      "case": "(4) ...while attempts stay separately countable from deliveries",
+      "expected": "attempt 2",
+      "note": "how often a provider retries is a provider-discriminating measure",
+      "ok": true
+    },
+    {
+      "actual": false,
+      "block": "R1P-04",
+      "case": "(5) an uncertain result is reported uncertain, not assumed certain",
+      "expected": false,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": false,
+      "block": "R1P-04",
+      "case": "(5) reconcile runs before any second side effect and states what it actually checked",
+      "expected": "external_post_state_checked False",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "direct relay-sink call without a capability -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered action id -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered case -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered payload -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "capability with altered capability -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "expired capability -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "absent",
+      "block": "12_§5",
+      "case": "resume token under arbitrary/unicode-confusable keys is absent from every capture",
+      "expected": "absent",
+      "note": "SEC-R1-02: R1 wrote an unrecognised key verbatim",
+      "ok": true
+    },
+    {
+      "actual": 409,
+      "block": "12_§5",
+      "case": "a second owner decision -> refused",
+      "expected": 409,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "500 / decisions=0",
+      "block": "12_§5",
+      "case": "capture failure during a decision -> the decision does not survive",
+      "expected": "500 and no decision",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "500 then 200",
+      "block": "13_§4",
+      "case": "a token-spend capture failure leaves the token UNSPENT",
+      "expected": "refused then authorized",
+      "note": "FAB-04: a consumed single-use token cannot be un-consumed",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (truthy list) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (string) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (int) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5",
+      "case": "truthy non-dict metadata (bool) -> structured refusal or clean handling",
+      "expected": "no crash",
+      "note": "13_ VC-01: a falsy [] passes against UNFIXED code, so the test must use a truthy value",
+      "ok": true
+    },
+    {
+      "actual": 403,
+      "block": "12_§5",
+      "case": "browser-simple POST without the provider credential -> refused",
+      "expected": 403,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": [
+        "review-case",
+        "verify-pending"
+      ],
+      "block": "13_§4",
+      "case": "mandatory refusal 1 (the pause, nothing approved) writes a capture",
+      "expected": "verify-pending present",
+      "note": "FAB-01: R1 evidenced nothing on this path",
+      "ok": true
+    },
+    {
+      "actual": [
+        "auth-refused",
+        "review-case",
+        "verify-pending"
+      ],
+      "block": "13_§4",
+      "case": "mandatory refusal 2 (no owner authority) writes a capture",
+      "expected": "auth-refused present",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "absent",
+      "block": "13_§4",
+      "case": "...and the refusal capture never contains key material",
+      "expected": "absent",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "every capture carries a stub-minted timestamp",
+      "expected": "recorded_at on all",
+      "note": "FAB-09: R1 discarded its own opened_at and decision time",
+      "ok": true
+    },
+    {
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "every capture carries candidate, run_instance, route and authored_by",
+      "expected": "all four on all",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'n8n'} / {'zapier'}",
+      "block": "13_§4",
+      "case": "two candidates produce separately attributable corpora",
+      "expected": "{'n8n'} / {'zapier'}",
+      "note": "FAB-02: R1 hardcoded candidate='stub' at all 15 call sites",
+      "ok": true
+    },
+    {
+      "actual": "2 files, 2 instances",
+      "block": "13_§4",
+      "case": "a restart does not overwrite the prior run's captures",
+      "expected": "both runs present",
+      "note": "FAB-03: R1's counter restarted at 0001 and the runbook is deterministic, so a repeat run REPRODUCED earlier filenames",
+      "ok": true
+    },
+    {
+      "actual": "attestation-service/auth-v4/42",
+      "block": "13_§4",
+      "case": "authority_id / authority_version / tokens_used survive redaction intact",
+      "expected": "unchanged",
+      "note": "FAB-05: R1 replaced these with a constant the harness scored PRESENT",
+      "ok": true
+    },
+    {
+      "actual": "redacted",
+      "block": "13_§4",
+      "case": "a live token under a benign key does NOT survive redaction",
+      "expected": "redacted",
+      "note": "SEC-R1-02, and the concatenated case too",
+      "ok": true
+    },
+    {
+      "actual": "dict",
+      "block": "13_§4",
+      "case": "a withheld value becomes a structured marker, never a bare constant",
+      "expected": "__withheld__ with name/type/bytes/digest",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0 accepting: []",
+      "block": "13_§4",
+      "case": "a provider-authored decision field is refused on EVERY persisting route",
+      "expected": "0 accepting",
+      "note": "FAB-06: R1 wired the check to 3 of 13 routes",
+      "ok": true
+    },
+    {
+      "actual": "409 / True / True",
+      "block": "13_§4",
+      "case": "a duplicate run declaration preserves the prior record",
+      "expected": "409, start and checkpoints intact",
+      "note": "FAB-07: R1 assigned rather than inserted-if-absent, so the replay after the MANDATED mid-flight kill erased the measurement",
+      "ok": true
+    },
+    {
+      "actual": "run-",
+      "block": "13_§4",
+      "case": "...and the run identity is stub-minted, not provider-chosen",
+      "expected": "stub-minted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "False",
+      "block": "13_§4",
+      "case": "the reconcile path does not assert an unperformed check",
+      "expected": "no ACT-01 claim, explicit not-checked",
+      "note": "FAB-08: R1 returned side_effect_certain True citing ACT-01 having checked nothing",
+      "ok": true
+    },
+    {
+      "actual": "ok",
+      "block": "13_§4",
+      "case": "triage does not assert provider conduct it cannot observe",
+      "expected": "no links_followed/actions_taken claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "5 parsed, 0 tmp",
+      "block": "13_§4",
+      "case": "every capture is complete JSON and no temp file survives",
+      "expected": "0 tmp, all parse",
+      "note": "FAB-10: the MANDATED mid-flight kill could leave torn JSON",
+      "ok": true
+    },
+    {
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 no envelope -> refused",
+      "expected": 400,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 wrong trust -> refused",
+      "expected": 400,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 personal partition -> refused",
+      "expected": 400,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 400,
+      "block": null,
+      "case": "POC-2 malformed envelope -> refused",
+      "expected": 400,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 404,
+      "block": null,
+      "case": "no Personal route exists at all",
+      "expected": 404,
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "negative Content-Length -> prompt refusal",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "501",
+      "block": "12_§5-live",
+      "case": "unsupported transfer encoding -> refused",
+      "expected": "501",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "conflicting Content-Length headers -> refused",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "415",
+      "block": "12_§5-live",
+      "case": "browser-simple POST (no JSON content type) -> refused",
+      "expected": "415",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "5.0s",
+      "block": "12_§5-live",
+      "case": "slow-body (declared length, nothing sent) -> bounded by the socket timeout",
+      "expected": "< 30s",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "12_§5-live",
+      "case": "deeply malformed JSON -> structured refusal",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 200,
+      "block": "12_§5-live",
+      "case": "...and the service is still healthy afterwards",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "absent",
+      "block": "12_§5-live",
+      "case": "a secret in the PATH is absent from the log",
+      "expected": "absent",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "no curl",
+      "block": "12_§5-live",
+      "case": "the startup banner prints no copyable command containing the key",
+      "expected": "no curl line",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": 0,
+      "block": "12_§5-live",
+      "case": "...and no request line is logged at all",
+      "expected": "none",
+      "note": null,
+      "ok": true
+    }
+  ],
+  "check": "POC wrapper stub self-test (R2 contract)",
+  "contract": "14_ §2 C-1..C-19; tests per 14_ §3",
+  "passed": 56,
+  "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use",
+  "total": 56,
+  "unfixed_behaviour_demonstration": "r1_witnesses.py (pinned R1 build)"
+}

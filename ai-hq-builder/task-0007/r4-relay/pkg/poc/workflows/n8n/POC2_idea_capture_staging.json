@@ -1,0 +1,132 @@
+{
+  "name": "POC2 — Idea capture and staging, two envelope cases (Release 1)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "poc2-idea",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "id": "idea-intake-webhook",
+      "name": "Idea Intake Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. Business partition only. Carries either an owner-authored idea (Case A) or an imported/forwarded note (Case B) — 09_ §2 R1P-02.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 25_ A.3 — owner AUTHORSHIP and external CONTENT are two trust cases and must\n// not share one class.\n//\n// What changed at R3, and why it matters: authority no longer derives from any\n// field this workflow can set. Rev 4 let an `origin: 'owner'` flag do it, which\n// meant a provider could author content and have it recorded as the owner's.\n// Authority now derives ONLY from an `idea_ref` the owner minted at\n// /owner/idea, against content the wrapper stored server-side. Anything this\n// workflow sends as `owner_content` is a convenience copy: it must canonicalize\n// to the stored digest or the request is refused, and it NEVER replaces the\n// stored content.\n//\n// Every external item carries its OWN envelope. An item never inherits\n// authority from the enclosing idea — quoting something does not authorise it.\nreturn items.map(i => {\n  const ideaRef = i.json.idea_ref || null;          // owner-minted, or absent\n  const externals = (i.json.external_items || []).map(it => ({\n    envelope: { partition: 'business', trust: 'external-untrusted' },\n    source: it.source || 'unknown',\n    content: it.content\n  }));\n  const out = { external_items: externals };\n  if (ideaRef) {\n    // Case A. The ref is the authority; the copy is only corroborating.\n    out.idea_ref = ideaRef;\n    if (i.json.owner_content) out.owner_content = i.json.owner_content;\n  } else {\n    // Case B. No owner authority at all; the top-level envelope is required.\n    out.envelope = { partition: 'business', trust: 'external-untrusted' };\n  }\n  return { json: out };\n});"
+      },
+      "id": "bind-owner-idea-ref",
+      "name": "Bind Owner Idea Ref — Case A or B",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY + A.3. Case A carries an owner-minted idea_ref and nothing else confers authority; Case B carries none and the top-level external-untrusted envelope is required. Any origin/trust/instruction_authority this workflow sent would be ignored for authority and recorded as provider-supplied.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc2/triage",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "ai-os---classify-and-stage",
+      "name": "AI OS — Classify and Stage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. The wrapper loads the owner content server-side from the idea_ref and triages THAT. A convenience copy that does not canonicalize to the stored owner_content_digest is refused 403; owner_content without a valid idea_ref is refused 403 and is never owner-authored.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// The A.3 proof obligation, asserted rather than assumed. A future edit that\n// let an external item carry instruction authority fails here.\n//\n// The check reads `authority_components`, not a single top-level authority\n// value: 25_ A.3 calls one flattened value for the whole request a defect,\n// because it cannot distinguish owner-authored content from the external\n// material quoted beside it.\nfor (const i of items) {\n  const comps = i.json.authority_components;\n  if (!Array.isArray(comps) || comps.length === 0) {\n    throw new Error('A.3 violated: no per-component authority was recorded');\n  }\n  for (const c of comps) {\n    if (String(c.component).startsWith('external_items')\n        && c.instruction_authority !== 'none') {\n      throw new Error('A.3 violated: an external item acquired authority '\n                      + c.instruction_authority);\n    }\n  }\n  if (i.json.external_action_taken_by_this_service !== false) {\n    throw new Error('POC-2 takes no external action');\n  }\n}\nreturn items;"
+      },
+      "id": "assert-no-authority-escalation",
+      "name": "Assert No Authority Escalation",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "PROOF OBLIGATION. Reads per-component authority; a flattened value would not satisfy it. Also refuses to accept any claim about provider conduct — the wrapper reports provider_conduct as NOT OBSERVED and this node does not convert that into an assertion.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Idea Intake Webhook": {
+      "main": [
+        [
+          {
+            "node": "Bind Owner Idea Ref — Case A or B",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Classify and Stage": {
+      "main": [
+        [
+          {
+            "node": "Assert No Authority Escalation",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Bind Owner Idea Ref — Case A or B": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Classify and Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-2",
+    "scenario": "Idea capture and staging (09_ §2 R1P-02)",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED",
+    "contract": "25_ Revision 5 (§A/§B)"
+  }
+}

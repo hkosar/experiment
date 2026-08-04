@@ -1,0 +1,472 @@
+{
+  "baseline_reproduction": {
+    "measurement_validator": {
+      "passed": 160,
+      "total": 160
+    },
+    "n8n_structural_harness": "NOT_RUN_DEPENDENCY_UNAVAILABLE_DISCLOSED",
+    "pinned_witnesses": {
+      "passed": 34,
+      "total": 34
+    },
+    "r3_selftest": {
+      "passed": 167,
+      "total": 167
+    }
+  },
+  "findings": [
+    {
+      "evidence": {
+        "capability_spend_race": {
+          "delivered": [
+            true,
+            true
+          ],
+          "receipt_ids": [
+            "dlv-13873952e28b",
+            "dlv-bdc18cf9c282"
+          ],
+          "replayed": [
+            false,
+            false
+          ],
+          "statuses": [
+            200,
+            200
+          ],
+          "store_receipt": {
+            "action_request_id": "ar-34d4671f43e6",
+            "case_id": "case-c94c4b367e32",
+            "delivered_attempt": 1,
+            "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+            "receipt_id": "dlv-bdc18cf9c282"
+          }
+        },
+        "registration_race": {
+          "identity_index": 1,
+          "outcomes": [
+            "registered",
+            "registered"
+          ],
+          "refs": [
+            "reg-mk8e9Kqmg-HD4t3J0C8C5hczpsUsPnEZ",
+            "reg-r0eMwEtu8lYw1vKE5qCukXdfUfiqJLGl"
+          ],
+          "registrations": 2,
+          "statuses": [
+            200,
+            200
+          ]
+        },
+        "review_case_race": {
+          "case_count": 2,
+          "outcomes": [
+            "case-opened",
+            "case-opened"
+          ],
+          "statuses": [
+            200,
+            200
+          ],
+          "token_count": 2
+        },
+        "run_declaration_race": {
+          "declaration_index": 1,
+          "outcomes": [
+            "run-started",
+            "run-started"
+          ],
+          "run_ids": [
+            "run-349888df412f",
+            "run-f2824a0afc1f"
+          ],
+          "runs": 2,
+          "statuses": [
+            200,
+            200
+          ]
+        },
+        "token_spend_race": {
+          "action_ids": [
+            "ar-4478a7db7152",
+            "ar-fe1c58cd7863"
+          ],
+          "authorized": [
+            true,
+            true
+          ],
+          "capabilities": [
+            "cap-4jC8l6SJQzrkb6AjU4_H9RNgqAl_ujDd",
+            "cap-ySDs7MivnaoLHZZjlYk8M8eFTcFf9h0A"
+          ],
+          "statuses": [
+            200,
+            200
+          ],
+          "store_capability_count": 2
+        }
+      },
+      "id": "SEC-R3-01",
+      "severity": "Critical",
+      "source_ranges": [
+        "stub_server.py:740-761",
+        "stub_server.py:1039-1084",
+        "stub_server.py:1099-1184",
+        "stub_server.py:1193-1321",
+        "stub_server.py:1621-1661"
+      ],
+      "title": "Authority and idempotency transitions are not linearizable"
+    },
+    {
+      "evidence": {
+        "final_status": "DELIVERED_WITH_RECEIPT",
+        "receipt": {
+          "action_request_id": "ar-5387a0f5826f",
+          "case_id": "case-71ee378f4388",
+          "delivered_attempt": 1,
+          "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+          "receipt_id": "dlv-a92a37038f21"
+        },
+        "relay": [
+          200,
+          {
+            "action_request_status": "DELIVERED_WITH_RECEIPT",
+            "attempt": 1,
+            "delivered": true,
+            "destination_digest_claimed_is_provider_reported": true,
+            "destination_verified": false,
+            "outcome": "delivered",
+            "receipt": {
+              "action_request_id": "ar-5387a0f5826f",
+              "case_id": "case-71ee378f4388",
+              "delivered_attempt": 1,
+              "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+              "receipt_id": "dlv-a92a37038f21"
+            },
+            "replayed": false
+          }
+        ],
+        "revoke": [
+          200,
+          {
+            "action_request_id": "ar-5387a0f5826f",
+            "action_request_status": "REVOKED",
+            "outcome": "revoked"
+          }
+        ]
+      },
+      "id": "SEC-R3-02",
+      "severity": "Critical",
+      "source_ranges": [
+        "stub_server.py:899-921",
+        "stub_server.py:1193-1321"
+      ],
+      "title": "Acknowledged owner revoke can lose to in-flight delivery"
+    },
+    {
+      "evidence": {
+        "false_capability_commit": {
+          "capability_count": 0,
+          "commit_count": 1,
+          "commit_fields": [
+            {
+              "final_status": "MINTED",
+              "outcome": "committed",
+              "phase": "committed",
+              "transition_id": "txn-36c49e6ffba6415a"
+            }
+          ],
+          "outcome": "refused-quota",
+          "status": 429,
+          "token_consumed": false
+        },
+        "false_case_opened": {
+          "captures": [
+            {
+              "fields": {
+                "outcome": "refused",
+                "reason": "forced token ceiling",
+                "refused": true
+              },
+              "step": "review-quota"
+            },
+            {
+              "fields": {
+                "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+                "artifact_id": "art-def7ebdf1e07",
+                "case_id": "case-b24b1b0e36aa",
+                "idempotency_key": "1894d12482a1215be8e237f45001720ab7fa958572ec9b8185442b626924733d",
+                "outcome": "case-opened",
+                "registration_ref": "reg-wrBcMs6YJIR3ghjbx3Vyt4n32bT5e9xM",
+                "submission_epoch": 1,
+                "target_role": "verifier",
+                "task_id": "TASK-1",
+                "transition": "review"
+              },
+              "step": "review-case"
+            }
+          ],
+          "case_count": 0,
+          "outcome": "refused",
+          "status": 429
+        }
+      },
+      "id": "SEC-R3-03",
+      "severity": "High",
+      "source_ranges": [
+        "stub_server.py:1065-1084",
+        "stub_server.py:1156-1184"
+      ],
+      "title": "Evidence can assert transitions that never became effective"
+    },
+    {
+      "evidence": {
+        "expiry": {
+          "expiration_named_captures": [],
+          "final_status": "EXPIRED",
+          "outcome": "refused-terminal",
+          "status": 403,
+          "transition_count_delta": 0
+        },
+        "stage_attempt": {
+          "first": {
+            "attempt_counter_after": 1,
+            "outcome": "capture-failed",
+            "status": 500
+          },
+          "second": {
+            "attempt_counter_after": 2,
+            "outcome": "stage-delivered",
+            "reported_attempt": 2,
+            "status": 200
+          }
+        }
+      },
+      "id": "SEC-R3-04",
+      "severity": "High",
+      "source_ranges": [
+        "stub_server.py:892-896",
+        "stub_server.py:1739-1758"
+      ],
+      "title": "State mutations occur outside prepared/committed transition contract"
+    },
+    {
+      "evidence": {
+        "error": "CaptureError('capture write failed: EIO')",
+        "files_left": [
+          {
+            "path": "captures/capatomic/POC1/atomic-test-20260804T063814-ae16cb9e-0001.json",
+            "size": 0
+          }
+        ],
+        "pool_count": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        }
+      },
+      "id": "SEC-R3-05",
+      "severity": "High",
+      "source_ranges": [
+        "stub_server.py:497-505",
+        "stub_server.py:537-567"
+      ],
+      "title": "Capture writes are not crash-atomic and leak quota on failure"
+    },
+    {
+      "evidence": {
+        "ideas_count_pre": 5000,
+        "poc1_refusal": {
+          "outcome": "recorded",
+          "status": 200
+        },
+        "poc2_triage": {
+          "outcome": "staged",
+          "status": 200
+        },
+        "poc3_receipt": {
+          "outcome": "recorded",
+          "status": 200
+        },
+        "receipt_count_pre": 5000
+      },
+      "id": "SEC-R3-06",
+      "severity": "High",
+      "source_ranges": [
+        "stub_server.py:686-701",
+        "stub_server.py:1800-1855"
+      ],
+      "title": "Route-policy entity quotas are not uniformly enforced"
+    },
+    {
+      "evidence": {
+        "baseline_suite": "167/167 PASS while SEC-R3-01 and SEC-R3-02 remained reproducible"
+      },
+      "id": "SEC-R3-07",
+      "severity": "Medium",
+      "title": "Outcome coverage proves labels, not correct branch semantics"
+    }
+  ],
+  "integrity": {
+    "authority_manifest": {
+      "governing_instruction_count": 1,
+      "passed": 57,
+      "total": 57
+    },
+    "declared_base_tree": "bc940604315f27b6c9cce6fe9a0b42c87d8b758c",
+    "packet_checksums": {
+      "passed": 58,
+      "total": 58
+    },
+    "reconstructed_base_tree": "bc940604315f27b6c9cce6fe9a0b42c87d8b758c"
+  },
+  "positive_controls": {
+    "capability_in_capture_bytes": false,
+    "capability_in_route_logs": false,
+    "disclose_call_sites": [
+      [
+        1088,
+        "return 200, {\"resume_token\": Disclose(token), \"outcome\": \"case-opened\","
+      ],
+      [
+        1188,
+        "\"execution_capability\": Disclose(cap),"
+      ]
+    ],
+    "fake_disclose_shape_effect": {
+      "authority_components": [],
+      "case": "B",
+      "classification": "new-topic",
+      "external_action_taken_by_this_service": false,
+      "note": "authority is recorded per component; a single flattened authority value for the whole request would be a defect",
+      "outcome": "staged",
+      "provider_conduct": "NOT OBSERVED BY THIS SERVICE \u2014 whether the provider followed a link or took an action is measured at the provider, not asserted here",
+      "queue": "business-ideas",
+      "staged": true,
+      "suggested_next": "owner review"
+    },
+    "http_capability_plain_string": true,
+    "http_token_plain_string": true,
+    "provider_reconcile_minted": {
+      "reconciliation_result": "UNCERTAIN",
+      "state_after": "MINTED",
+      "status": 200
+    },
+    "provider_uncertain_receipt": {
+      "route_outcome": "recorded",
+      "state_after": "MINTED",
+      "state_before": "MINTED",
+      "status": 200
+    },
+    "token_in_capture_bytes": false,
+    "token_in_route_logs": false
+  },
+  "probe_artifacts": [
+    {
+      "bytes": 3569,
+      "name": "control_probes.py",
+      "sha256": "27029b607b4a7d42e000d177b0907c636486c30a89a42990a07bf57a1a90eaf6"
+    },
+    {
+      "bytes": 1294,
+      "name": "control_probes_results.json",
+      "sha256": "e1d42cb51c84d4fb7a9f8f16713e5b463f59df1cde190832c403ef70d123397b"
+    },
+    {
+      "bytes": 2213,
+      "name": "http_race_probes.py",
+      "sha256": "4f8cd4211203ad4d79cee0b8444d1281a9edced0cfe0b05892df50554a36d16a"
+    },
+    {
+      "bytes": 186,
+      "name": "http_race_results.json",
+      "sha256": "fcad4e2b990d88266acdab4bdb43efde48609bc46b15df26729a8ca7ffe1efab"
+    },
+    {
+      "bytes": 3537,
+      "name": "http_authority_races.py",
+      "sha256": "ddc46f5d7c6fc2b2a7add5f72ec8a9d718322cfdef590dcf05672663750430d8"
+    },
+    {
+      "bytes": 879,
+      "name": "http_authority_races_results.json",
+      "sha256": "17f41d2a213bbf9ef27dbbf2b59ffc49c3bb7ec91e159ca2627bc401b8e7333f"
+    },
+    {
+      "bytes": 2279,
+      "name": "http_revoke_race.py",
+      "sha256": "2fa47805d3e58b2ef2b1e96cc4a9439ea12f50fc41cbffe50692908697ded2b1"
+    },
+    {
+      "bytes": 1037,
+      "name": "http_revoke_race_results.json",
+      "sha256": "fa3131118ca486456ac6815612a77105cb7aa42125567a6ef01e5545c5c0a976"
+    },
+    {
+      "bytes": 2031,
+      "name": "more_race_probes.py",
+      "sha256": "3d7e0e54a6fb2e78a548b5fe1c8c20d045705986ce667dce17e851c5877d7190"
+    },
+    {
+      "bytes": 565,
+      "name": "more_race_results.json",
+      "sha256": "fdbf7315e13064d6f4cf990341dee08fd932b4994cdc9aee0ed7cd3ce1730a61"
+    },
+    {
+      "bytes": 10636,
+      "name": "security_probes.py",
+      "sha256": "74c509bdad7e440ddcaea6ca6d52b590f9b0ac0fc65f285815b48bf0fe26b345"
+    },
+    {
+      "bytes": 3230,
+      "name": "security_probes_results.json",
+      "sha256": "196230b14b0905255411b140256d004b0d7d3786d88cc3f959591bec4dd5941b"
+    },
+    {
+      "bytes": 1183,
+      "name": "stage_precise_probe.py",
+      "sha256": "db4a335402b5cd95120d5bc58a0f0a574f56b0b0887de305c0dcfb20dd1e9dde"
+    },
+    {
+      "bytes": 234,
+      "name": "stage_precise_results.json",
+      "sha256": "b7f3b9148ded373148113d69d19f88612bd58a6b7c0c5ea550f90f57c414db72"
+    },
+    {
+      "bytes": 1017,
+      "name": "capture_atomicity_probe.py",
+      "sha256": "293956cb890ec772a3adc6c9e799dfb4d55392344ecddf64166477be29da5226"
+    },
+    {
+      "bytes": 290,
+      "name": "capture_atomicity_results.json",
+      "sha256": "a67f679ec4181ebddfae9e8185c8cb7e3ed10435a8bd99b209750dda0a2bb228"
+    },
+    {
+      "bytes": 1325,
+      "name": "quota_enforcement_probe.py",
+      "sha256": "6f6abde46a6162a8eed0d420aeea62e667582a0f749383b0b6ebb717e78b5b92"
+    },
+    {
+      "bytes": 266,
+      "name": "quota_enforcement_results.json",
+      "sha256": "035f195cea6b4d59623847197c467ee5be51ec9fd6750a834ee048150c608657"
+    }
+  ],
+  "requested_surface_results": {
+    "a4_uncertain_amendment": "PASS",
+    "a7_evidence_ordering": "FAIL",
+    "disclose_current_call_sites": "PASS",
+    "outcome_coverage_guard": "INSUFFICIENT_AS_SECURITY_CORRECTNESS_EVIDENCE",
+    "r3_analogue_of_layer_mismatch": "FOUND_CONCURRENT_HTTP_VS_SEQUENTIAL_TEST_LAYER"
+  },
+  "review": {
+    "gate": "owner-poc-session",
+    "gate_state": "BLOCKED",
+    "packet_sha256": "60ae30f709f4f30b7c287329636a4efc73cfecda5ba11245dc4d7eba33d54359",
+    "target": "poc/stub/stub_server.py",
+    "target_sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572",
+    "verdict": "FAIL"
+  },
+  "schema": "chatgpt-security-probe-evidence-v1"
+}

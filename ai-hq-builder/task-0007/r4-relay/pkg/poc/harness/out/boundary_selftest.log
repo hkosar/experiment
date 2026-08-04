@@ -1,0 +1,10 @@
+  [ok  ] clean control
+  [ok  ] personal partition declared
+  [ok  ] policy artifact sent to provider
+  [ok  ] secret material in a definition
+  [ok  ] personal data path
+  [ok  ] classification with no envelope
+  [ok  ] classification before the envelope
+  [ok  ] provider decides the approval
+  [ok  ] journal contents sent to provider
+BOUNDARY SELF-TEST PASS — 9/9 cases

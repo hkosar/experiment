@@ -1,145 +1,171 @@
-# Builder Delivery Record — TASK-0007 Round R3 (`25_` Revision 5)
+# Builder Delivery Record — TASK-0007 Round R4 (concurrency and evidence-ordering rework)
 
-**Task:** TASK-0007 R3 — rebuild the POC wrapper stub against `25_` Revision 5's self-contained §A/§B contract, author the §D measurement validator, and re-aim the workflows, specs and runbooks onto it.
+**Task:** TASK-0007 R4 — make the R2+R3 stub's authority transitions linearizable under the threaded HTTP server a provider actually meets, per `33_`, against the unchanged `25_` contract.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
 **Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §10).
-**Instruction authority:** `25_TASK-0007_R3_Task_Packet_Revision5.md`, sole governing document. Everything else in the relay is reference, superseded, evidence-only or the implementation baseline, per the Fable-published `authority_manifest.json`.
+**Instruction authority:** `33_TASK-0007_R4_Task_Packet_Concurrency_Rework.md` (governing). `25_` remains the governing **contract** and is unchanged. `31_`/`31A_`/`31B_`/`32_` and the nine probe scripts are authoritative inputs, read first as instructed.
 **Returned to:** **Fable.**
-**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted.
+**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted. **One acceptance requirement is not met as written, and it is reported rather than worked around — see AUDIT-R4-5, which needs a ruling.**
 
 **Snapshot integrity (H-06), before anything was read as authority:**
 
 | Check | Result |
 | --- | --- |
-| `SHA256SUMS` | **58/58 OK, 0 mismatched** |
-| `authority_manifest.json` coverage | **57/57 files classified**, no unexpected files |
-| `BASE_BINDING.txt` tree, independently reproduced (`tar -x` → `git init -q .` → `git add -Af .` → `git write-tree`) | **`6c8429bd7ccebc3eb6c26416882a4f8a34d2e922`** — matches |
-| Relay's `poc/` against the released R2 baseline | **43/43 byte-identical** |
-| `r2_reference/stub_server_r2.py` against the stub returned at R2 | **`a2aea25d…c0b60900f9`** — byte-identical |
+| `SHA256SUMS.txt` | **76/76 OK, 0 failed** |
+| `authority_manifest.json` | **75/75 verified, 0 mismatched, 0 missing**; one unlisted file on disk, `SHA256SUMS.txt` itself |
+| `BASE_BINDING.txt` tree, independently reproduced | **`32b0f8d7a1e026cce8dbf8693abd49bc6aeade8f`** — matches |
+| Relay's `poc/` against my R3 return | **45/47 byte-identical**; the two that differ are `stub/out/selftest.json` and `stub/out/r1_witnesses.json`, both regenerate-by-running. The relay's copies are byte-identical to the ones in the R3 zip I shipped; my working tree had newer runs |
+| `r3_reference/stub_server_r3.py` against the reviewer's target | **`7f13494e…5b90f572`** — the hash `32_` records for the file the reviewer examined |
 
-The commit named in `BASE_BINDING.txt` remains **declared only**, as the packet states: this is a shallow clone grafted at `18c571b` and ancestry is not included. The **tree** is what I verified, by the recipe above.
-
----
-
-## 1. The §F contract audit, done before building
-
-`25_` line 13 requires it: *"If any clause here asserts an authority not rooted in something this service established, that is a defect — stop and report it before building."* Four findings. I built on the governing-rule reading and report all four prominently, rather than returning the report alone, because each resolution is unambiguous and a built round plus the report strictly dominates.
-
-**AUDIT-1 — defect. A.4's `UNCERTAIN` trigger asserts an authority the service did not establish.**
-A.4 gives `ATTEMPT_STARTED → UNCERTAIN` the trigger *"delivery result ambiguous (provider reports uncertain, or timeout)"*. But A.6 says `/poc1/receipt` "cannot mark an action delivered, **alter capability state**, or satisfy any acceptance check", and §B gives `provider_status ∈ {ok,error,uncertain}` to `/poc1/receipt` and `/poc3/receipt` **only** — `/relay/deliver` has no status field at all. So the only channel through which "the provider reports uncertain" can reach the service is a route A.6 forbids from altering capability state. The governing rule settles it: *"A value a caller supplied is corroborating material, never an authority."*
-**Resolution applied:** `UNCERTAIN` is reachable only by service-established means — the service's own expiry observation, or a delivery whose `committed` record did not land (A.7's rollback-impossible path). A `provider_status: uncertain` is recorded under the provider provenance key and changes nothing. **If Fable intended the other reading it is a one-line change, and A.6 must be amended to match.**
-
-**AUDIT-2 — internal inconsistency. §B's "Quota pool" column names eight pools A.8 does not define.**
-A.8 defines exactly three capture pools (`general`, `security-refusal`, `reserved-owner`). §B's per-route column names `cases`, `receipts`, `attempts`, `ideas`, `runs`, `checkpoints`, `stage-attempts`, `none` — which are the **entity ceilings** (`MAX_CASES`, `MAX_RECEIPTS`, `MAX_ATTEMPTS_PER_AR`, …), a different axis sharing a column name.
-**Resolution applied:** both implemented, as separate axes. §B's column is the entity quota a route consumes; A.8's three pools govern capture writes, selected by A.8's own rule.
-
-**AUDIT-3 — observation, not a defect. `submission_epoch` is a specified duplicate-suppression escape.**
-A.2's registration identity is `sha256(source_digest | task_id | transition | target_role)` — no epoch; A.1's idempotency key includes it. A provider may therefore resubmit an identical artifact under the same registration by incrementing the epoch and get a fresh case rather than suppression. That is what the epoch is *for* ("with the accepted retry policy"), and the registration binding and the owner decision still gate every case. Recorded so it is not later mistaken for an oversight — and because a provider-discriminating measurement ("did the fabric re-submit or retry?") depends on reading `attempt` and `submission_epoch` as different things.
-
-**AUDIT-4 — allowlist gap, found during the build rather than before it.** §E requires that a test needing the R2 baseline be demonstrated against *"the R2 artifact pinned the same way"*. §0's implementation allowlist enumerates every file the Builder may modify and marks exactly one as new (`poc/data/validate_measurements.py`). **There is nowhere in it to put the pinned R2 artifact.** §F says to stop and report if a clause "cannot be met within the allowlist", and this one cannot.
-**Resolution applied:** `poc/stub/r2_reference/stub_server_r2.py` (+ a `README.md`) added, mirroring the existing `r1_reference/` pattern exactly — byte-identical copy, digest verified at run time, refuses to continue on mismatch, never executed by the shipped service. **Two files outside the enumerated allowlist, listed explicitly in `RETURN_MANIFEST.json`** for Fable to accept or reject in one look. My audit's own closing line — "every §A/§B requirement is reachable inside the §0 allowlist" — was written before I reached §E, and is corrected here.
+The commit in `BASE_BINDING.txt` is **declared only**, as the packet states. The tree is what I verified.
 
 ---
 
-## 2. What changed
+## 1. What the review found, and what it means about my testing
 
-| Area | R2 behaviour | R3 behaviour |
+The independent review returned FAIL on one systemic defect: transitions read state under a short lock, released it, worked, and committed later, so two concurrent requests both passed the precondition and both became effective. `32_` §1 names it exactly right — **this is the R3 analogue of DEF-R2-01.** R2's defect was a control whose tested layer (in-process `dispatch`) differed from the layer a caller meets (HTTP responses). R3's is the same shape one level up: the tested layer was single-threaded; the server is `ThreadingHTTPServer`.
+
+I introduced the live-HTTP block at R3 *because* of DEF-R2-01, and it still missed this, because a live-HTTP test that issues one request at a time is still not the layer a caller meets. **That is the third round in which my own verification, not my implementation, was the thing that was wrong.** The pattern is specific enough to name: I test the layer I was last burned at, rather than the layer the defect could live in. What follows tries to break that habit by making the reviewer's own probes part of the suite and by writing the barrier tests to run against **both** builds, so a test that cannot fail is visible as such.
+
+## 2. The architecture, and the one deviation from my own audit
+
+`33_` §1 selects it and does not delegate it: **one linearizable transition per subject identity, a single global lock held across precondition, reservation, evidence preparation, state publication and terminal result.** Implemented as: every `POST` runs inside `STORE.lock` for the whole of dispatch; `GET /health` deliberately does not take it, because A.8 requires health to be served when everything else has failed closed.
+
+**Deadlock: none, and it is provable rather than hoped.** The service has exactly two locks. `STORE.lock` is an `RLock`; `SecretIndex._lock` sits inside a class that references neither `STORE` nor any other lock (verified by walking its AST). Every acquisition of the secret lock happens from code already holding `STORE.lock`, never the reverse, so the order is **total** — and a total order over the whole lock set admits no cycle. The service performs no outbound or blocking I/O; the only blocking work under the lock is a bounded local `fsync`.
+
+**§1 permits releasing the lock for capture I/O with a re-check on re-acquire. I did not take that option**, because the re-check pattern reintroduces a narrower version of the very check-then-act window this round exists to close. That choice is what makes AUDIT-R4-5 bite, and I flag it there rather than hiding it in a design note.
+
+## 3. Per-finding corrections
+
+| Finding | Correction | Evidenced by |
 | --- | --- | --- |
-| **A.2 artifact identity** | none; the provider's `artifact_digest` was the only digest in play | owner registers at `/owner/artifact/register`; `source_digest` immutable and authoritative; `registration_ref` required at `/poc1/review-case`; task/transition/role/digest must all match or **403 `rejected-artifact-binding`** |
-| **A.3 owner-idea authority** | authority came from a provider-supplied `origin: "owner"` field | authority comes only from an `idea_ref` minted against content stored server-side under `owner_content_digest`; a mismatching copy is refused; authority recorded **per component** |
-| **A.4 capability machine** | mint / spend / replay | eight states, every valid transition and every named invalid one, including the late receipt on `REVOKED`/`EXPIRED` and the single permitted re-attempt |
-| **A.5 reconciliation** | the routes did not exist | `/poc1/reconcile` answers **only** delivered-or-uncertain; `/owner/reconcile` is the sole path to `RECONCILED_NOT_DELIVERED`, valid only from `UNCERTAIN` and only for the literal `not_delivered` |
-| **A.7 evidence** | one record per event | `prepared` → provisional state → `committed`, at every authority-bearing transition; only a committed transition satisfies an acceptance check |
-| **A.8 capacity** | one capture budget | three disjoint pools (70/15/15); no provider-reachable event can draw from `reserved-owner`; documented exhaustion behaviour per pool |
-| **A.8 redaction** | whole-segment keys + allowlist | same, plus substring value scrubbing, a per-process HMAC descriptor key, and a live-secret ceiling that refuses to mint rather than drop a secret out of the index |
-| **§B route policy** | spread through handler bodies | a data table; unknown route **or** missing row fails closed |
-| **§B POC-3** | a duplicate declaration minted a second run | duplicate `(schedule_id, occurrence)` is a **409** preserving the prior `started_at` and checkpoint count |
-| **§D measurements** | an `evidence_ref` was a filename | `validate_measurements.py`: an evidence **record** must match candidate/POC/measure/value, and the full expected matrix is enumerated |
+| **SEC-R3-01** transitions not linearizable | Insert-if-absent for registration, case and run declaration in one held critical section; `claim_token` reads-valid and marks-consumed in the same step; `/relay/deliver` claims its lease before any state moves | barriers 6/6, oracle cardinality clause |
+| **SEC-R3-02** revoke lost to in-flight delivery | Each capability carries a `revocation_epoch`; a delivery claims the epoch it saw; `/owner/revoke` advances it and cancels any uncommitted lease; **the delivery revalidates at the terminal commit** and refuses under a superseded generation with no receipt minted | self-test SEC-R3-02 case, barrier orderings 1–3 |
+| **SEC-R3-03** evidence asserts ineffective transitions | Secret-index admission is **attempted** before any committed record; the `case-opened` capture is written only after the token is minted and the case published, and any failure rolls the case, the identity index and the token back | `security_probes` sub-probes `false_capability_commit_on_secret_index_failure` and `false_case_opened_capture_on_token_failure`, both green |
+| **SEC-R3-04** mutation outside the contract | Expiry is now a real transition (prepared → publish → committed → secret discarded); the stage-attempt counter moves only after its capture is durable; full field inventory in §5 | `security_probes` `expiry_without_transition_evidence` green (both expiry captures present), `stage_precise_probe` green |
+| **SEC-R3-05** captures not crash-atomic | No final path is created until the content is durable: `mkstemp` → write → flush → fsync → `os.link` onto a path that did not exist → unlink temp → fsync dir; every failure removes the temp and **releases** the pool unit | `capture_atomicity_probe` green — `files_left: []`, all pools `0` |
+| **SEC-R3-06** quotas not uniformly enforced | Global quotas reserved centrally at dispatch and released on any non-2xx; subject-scoped quotas reserved inside the transition against the service-resolved subject; every quota now gates on the counter its route actually increments | `quota_enforcement_probe` green — all three routes 429 |
+| **SEC-R3-07** coverage is label coverage | Outcome coverage kept as a completeness aid only; `oracle_suite.py` binds seven security routes to 33 explicit clauses over live HTTP | oracle 7/7 against R4, **5/7 against pinned R3** |
 
-## 3. Two defects this round found in its own predecessor
+`os.link` rather than `os.replace` is deliberate: rename silently overwrites, so it cannot express "a final path that did not previously exist"; link fails instead, which is the guarantee the finding asks for.
 
-Both are the recurring family — **a control that names a thing without establishing it** — and both are reproduced against the pinned artifacts rather than asserted.
+## 4. Three places my first attempt evaded a probe instead of passing it
 
-**DEF-R2-01 — the R2 service could not hand out the credential it minted.** Every response went through the same redaction as a capture, so `resume_token` and `execution_capability` came back as `{"__withheld__": …}` descriptors. **The whole of POC-1 was unrunnable over HTTP.** The R2 self-test passed 56/56 because it called `dispatch()` in-process, one layer below `_respond`, where the loss happened. `r1_witnesses.py` reproduces it by running the pinned R2 build as a server and reading what a provider would actually have received.
+Worth stating plainly, because each would have shipped as a false green:
 
-The fix is a `Disclose` marker the service puts on values it minted, unwrapped **on the response path only**. The exemption is identity-based, never key-name-based: JSON has no such type, so a caller cannot name its way out of redaction, and on the capture path a `Disclose` still reduces to a descriptor. Both directions are tested.
+- The secret-index correction originally only **pre-reserved capacity**. The reviewer's probe forces `SECRETS.add` itself to refuse; a pre-reservation sails past that injection. Corrected so the real admission is attempted before any committed record.
+- The crash-atomic write originally used `os.fdopen` on the `mkstemp` descriptor, which routes around the probe's `builtins.open` injection. Corrected to `open()` so the injection still lands.
+- The quota rework originally introduced a parallel counter (`entity_counts`), so the probe's setup — which sets `STORE.receipt_count` and fills `STORE.ideas` — no longer gated anything. Corrected so every quota gates on the counter the route increments, which is what SEC-R3-06 asks for and is also what makes the probe meaningful.
 
-This is the sharpest instance yet of my recorded weak spot, and it is worth naming precisely: **the suite was not wrong about what it tested, it was testing the wrong layer.** That is why R3's self-test carries a live-HTTP block that drives a real socket end to end.
+A fourth: my first `more_race_probes` criterion looked for `*_count` keys the probe never emits, found none, and **passed vacuously against the build it was written to fail**. It was caught only because I ran every criterion against the pinned R3 first and demanded red. That check is now the standing method, and it is why §6 reports probe results in both directions.
 
-**DEF-R3-01 (caught in draft) — two §E-required refusals were unreachable.** `rejected-unauthorized-target` and `rejected-unknown-target` sat behind the A.2 registration-binding check, and A.2 guarantees a registration can never hold an unauthorized role — so every such request failed as `rejected-artifact-binding` and both branches were dead code. §E requires both to be demonstrable. Fixed by evaluating A.1's role verdicts before A.2's binding, and guarded mechanically: **the self-test now enumerates every outcome code the source can emit and fails if any is never produced by a case.** That guard found seven further unexercised outcomes, all now covered.
+## 5. Mutable-field inventory (SEC-R3-04)
 
-Three smaller ones, found the same way and fixed: `/poc1/reconcile` moved a `MINTED` capability to `UNCERTAIN` — a transition A.4 does not list, and one a provider could invoke on itself to strand its own authorization and then present the result as grounds for an owner attestation; the relay's attempt counter and the single permitted re-attempt were both consumed *before* their `prepared` record landed, so a capture failure could burn a provider's one retry with no attempt made and no route out; and `write_capture` inferred provenance from a list of known field names, so every newly minted field was silently filed as provider-supplied — a capture that mislabels its own authorship reads as corroborated when it is not.
+Generated mechanically from a live `Store` instance rather than by reading the source, so a field added later shows up as unclassified rather than being silently omitted.
 
-## 4. How "demonstrated failing" is met — the witness method, extended to R2
-
-`25_` §E: probes run against **SHA-pinned artifacts**, never defect switches. A switch that can disable a control is itself a finding (P2V-01), and there is none in this build at any layer.
-
-    python3 stub/r1_witnesses.py     # 34/34 — R1: 21, R2: 13
-
-Both references are digest-checked before they are loaded and the harness **refuses to continue on mismatch**: R1 against `13_`'s recorded fingerprint for the reviewed target, R2 against the digest of the build returned at R2. The R2 block establishes, by running the artifact: no `/owner/artifact/register` (404) and no `registration_ref`; authority taken from a provider-supplied `origin`; no reconciliation surface at all (both routes 404) and no `RECONCILED_NOT_DELIVERED` in the source; single-phase evidence (no `phase` on any capture); one capture budget (no `pool` on any capture); no `ROUTE_POLICY`; a duplicate run declaration minting a second run; and DEF-R2-01 over a real socket.
-
-The `FailWrite` context manager in the self-test is **not** a defect switch and should not be read as one: it rebinds a name inside the *test* process for one call, to simulate a full disk. Nothing in the shipped service can reach it, and it has no configuration surface.
-
-## 5. Verification — every figure below was produced by a command run after the last edit
-
-| Check | Command | Result |
+| `STORE` field | Class | Why |
 | --- | --- | --- |
-| Stub self-test (§E) | `python3 stub/selftest_stub.py` | **167/167 PASS** |
-| Superseded-build witnesses | `python3 stub/r1_witnesses.py` | **34/34** (R1 21, R2 13) |
-| Measurement validator | `python3 data/validate_measurements.py` | **PASS** — 160 measurements against 160 expected combinations, 0 violations |
-| Structural harness | `bash harness/run_all.sh` | **HARNESS PASS**; 3/3 workflows structurally valid |
-| Harness code diff | `git diff -- 'poc/harness/*.py' '*.mjs' 'run_all.sh'` | **empty — untouched**; `out/**` regenerated by running |
-| `r1_reference/` diff | `git diff -- poc/stub/r1_reference/` | **empty — untouched** |
+| `base_url` | derived | set once at startup from the bound port / --advertise |
+| `by_identity` | A.7-governed | submission identity index; published and rolled back with the case |
+| `candidate` | derived | set once at startup from --candidate; never mutated after |
+| `cap_by_ar` | A.7-governed | action-request index; published and rolled back with the capability |
+| `capabilities` | A.7-governed | capability bindings incl. status, revocation_epoch and lease |
+| `captures` | A.7-governed | per-pool capture reservations; incremented on reserve, released on any failed publication |
+| `cases` | A.7-governed | published only after the token is minted; rolled back if the evidence does not land |
+| `decisions` | A.7-governed | owner decisions; provisional until the committed record lands |
+| `ideas` | A.7-governed | owner ideas and staged triages; the population the `ideas` quota bounds |
+| `lock` | derived | the global transition lock itself |
+| `owner_key` | derived | minted once at startup; never mutated after |
+| `pending_quota` | derived | in-flight global reservations; returns to zero on both commit and rollback |
+| `provider_key` | derived | minted once at startup; never mutated after |
+| `reattempts` | A.7-governed | the single permitted re-attempt; spent with the attempt-start commit, restored on rollback |
+| `receipt_count` | A.7-governed | the `receipts` quota's live counter; incremented by the dispatch commit on a 2xx only |
+| `reg_by_identity` | A.7-governed | registration identity index; published with the record it indexes |
+| `registrations` | A.7-governed | owner artifact registrations; published inside the transition, rolled back on failure |
+| `relay_attempts` | A.7-governed | advanced only after the attempt-start transition commits; rolled back on failure |
+| `relay_receipts` | A.7-governed | service-minted delivery receipts; written only past the terminal revalidation |
+| `run_instance` | derived | set once at startup; never mutated after |
+| `runs` | A.7-governed | POC-3 run records; provisional until committed |
+| `runs_by_declaration` | A.7-governed | (schedule_id, occurrence) index; published with the run |
+| `stage_attempts` | A.7-governed | advanced only after the stage capture is durable (SEC-R3-04) |
+| `subject_counts` | derived | in-flight subject reservations; returns to zero on both commit and rollback |
+| `tokens` | A.7-governed | claim-and-spend is atomic under the held lock; retracted on rollback |
+| `transitions` | non-authoritative telemetry | append-only transition history for audit; gates nothing |
+| `uncaptured_refusals` | non-authoritative telemetry | bounded aggregate of refusals not captured when the security pool is full; A.8 exposes it as an aggregate only |
 
-Self-test coverage by §E block: identity/registration 16 · owner-idea authority 15 · owner reconciliation (R5Q-01) 6 · capability and reconciliation 37 · evidence, six write boundaries 22 · capacity and redaction 29 · transport and policy 13 · live HTTP 15 · validator 13 · outcome coverage 1.
+Fields on `STORE` at runtime: 27. Classified: 27. Unclassified: 0.
 
-All six write boundaries are fault-injected individually: owner decision, token spend, capability mint, capability spend, delivery, reconciliation. The delivery boundary is the one where rollback is impossible, and it is the only service-established path to `UNCERTAIN`.
 
-## 6. What is NOT established
+## 6. Verification — every figure from a command run after the last edit
 
-- **End-to-end binary fidelity (§C).** This service never receives destination bytes and cannot hash them. `destination_verified` is always `false` with that reason recorded; `destination_digest_claimed` is provider-authored, lives under the provenance key, and gates nothing. The measurement ships **`UNSUPPORTED`** with the §C gap as its capability-gap evidence, for both candidates and all three POCs.
-- **n8n node types and parameters.** `n8n-nodes-base` is blocked by this environment's egress proxy (403). Structural validation passes; parameter correctness is **NOT TESTED** and settles at import time on the owner's host. This is R0's falsifier row, inherited unchanged for the fourth round. `24A_` records that the review environment has the same gap and instructs that it be noted rather than worked around.
-- **Any provider capability whatsoever.** No account exists, no host exists, no provider was contacted. Every measure is `NOT_TESTED` with a reason, except the one that is `UNSUPPORTED`.
-- **That R3 is secure.** See §8.
+| Suite | Against R4 | Against pinned R3 | Meaning |
+| --- | --- | --- | --- |
+| Reviewer's probe scripts (`probe_runner.py`) | **4/9 green** | **1/9 green** | the five that stay red are all the barrier class — see AUDIT-R4-5 |
+| Deterministic barriers (`barrier_suite.py`) | **6/6 hold** | **0/6 hold** | every subject identity, plus revoke-vs-deliver in all three orderings |
+| Acceptance oracle (`oracle_suite.py`) | **7/7, 33 clauses** | **5/7** | branch-specific, over live HTTP |
+| Stub self-test (`selftest_stub.py`) | **170/170** | — | §E plus the new SEC-R3-02 revalidation case |
+| Superseded-build witnesses (`r1_witnesses.py`) | **34/34** | — | R1 21, R2 13, both pins digest-checked |
+| Measurement validator | **160/160, 0 violations** | — | unchanged this round |
+| Structural harness | **PASS** | — | harness code byte-identical; `out/**` regenerated by running |
 
-## 7. Return contents
+The reviewer's probes and the barriers were run against **both** builds deliberately. A test that passes against the defective build is not evidence, and the only way to know is to run it there.
 
-Complete `poc/` tree, `RETURN_MANIFEST.json` (self-verified), `proposed_classifications.json` (**suggestion only** — Fable publishes the authority manifest), this record, and the workflow/runbook diffs.
+## 7. AUDIT — stop-and-report findings
 
-Changed: `stub/stub_server.py`, `stub/selftest_stub.py`, `stub/r1_witnesses.py`, `data/measurements.template.json`, `workflows/n8n/*.json` (3), `workflows/zapier/POC_zap_build_specs.json`, `runbooks/*.md` (3), `README.md`, `FINDINGS.md`.
-Added: `data/validate_measurements.py` (allowlisted, new); `stub/r2_reference/stub_server_r2.py` and `stub/r2_reference/README.md` (**AUDIT-4, outside the enumerated allowlist**).
-Regenerated by running: `harness/out/**`, `stub/out/**`.
+**AUDIT-R4-1 — three of the eight entity quotas cannot be enforced at dispatch without breaking the `25_` governing rule.** `attempts`, `checkpoints` and `stage-attempts` are subject-scoped. At dispatch the only subject identifier available is the one the **caller supplied**, and for `/relay/deliver` the authoritative action-request id comes from the capability binding, not the caller's claim — resting the ceiling on the claim would let a caller evade its own ceiling by naming another subject. **Resolution applied:** global quotas at dispatch; subject-scoped quotas inside the transition, under the same held lock, against the service-resolved subject. Both reserve atomically and release on failure, which is what SEC-R3-06's own correction bullet requires. **If Fable wants the literal dispatch-time reading for all eight, it means accepting a caller-supplied subject id as a control input, and that needs an explicit ruling.**
 
-## 8. Falsifier element (APP-06 / CPB-14, reflexive)
+**AUDIT-R4-2 — `ideas` gates two routes that count different things.** §B assigns it to both `/owner/idea` and `/poc2/triage`. **Resolution applied, following the reviewer's probe rather than my own first instinct:** a staged triage is now a record in the same population, so the counter that gates is the counter that increments. **Observation, not acted on unilaterally:** this means a provider flooding `/poc2/triage` can exhaust the ceiling the **owner** needs to register an idea — the same crowd-out shape A.8's reserved-owner pool prevents on the capture axis. Two separate counters against one ceiling would close it. I did not do that, because it is a contract-shaped choice; flagging it for Fable.
+
+**AUDIT-R4-3 — the two expiry options are not equally available; taking the evidence-backed one, as §2 requires me to state.** A derived `EXPIRED` conflicts with A.8 (unchanged this round): *"secrets leave the index the moment they become unusable."* A derived state has no moment at which anything observes the capability becoming unusable, so its secret would sit in the index until a sweeper removed it — and a sweeper is itself an unrecorded mutation. The transition option satisfies both.
+
+**AUDIT-R4-4 — the reviewer's probes print, they do not assert.** Eight of the nine have no assertions. "Green" is therefore undefined by the scripts and I must not define it in a way that flatters the build. Every criterion is taken from the corresponding finding's own text, tabulated against its source in `stub/security_probes/README.md`, and each is stated in `probe_runner.py` next to the check. The probes run **byte-identical except for a single `SRC=` path substitution**, which the runner performs and then verifies by diffing every other line.
+
+**AUDIT-R4-5 — `33_` §1 and `33_` §4 cannot both be satisfied, and this is the one requirement I have not met as written.**
+
+`33_` §4 requires the reviewer's probe scripts to run green. Five cannot, and the reason is structural rather than a defect in the build:
+
+> The reviewer's race probes align two requests at a point **inside** the transition — they block in `write_capture` or `Transition.prepare` and wait on a `threading.Barrier(2)`. Under the architecture §1 **selects** — one global lock held across the entire critical path — that point is mutually exclusive by construction. The second request cannot arrive, so the barrier times out, breaks, and both requests fail. **No correct implementation of the selected model can make those probes green**, because making them green would require two requests to be inside one transition at once, which is precisely the defect this round removes.
+
+Evidence for the claim, not just the argument: against the pinned R3 build these probes interleave and report the defect (`case_count: 2`, two capabilities, two receipts, revoke lost). Against R4 they report broken barriers. Meanwhile the **socket-aligned** barriers in `barrier_suite.py` — same properties, alignment moved to a point both requests can reach — go 0/6 against R3 and 6/6 against R4, with exactly the one-winner-one-truthful-loser cardinality SEC-R3-01 asks for.
+
+Two ways forward, and **the choice is Fable's, not mine** — §1 is explicitly the architecture decision the packet made rather than delegated:
+
+1. **Accept the socket-aligned barriers as the equivalent evidence** for those five, keeping the four probes that do run green as-is. Nothing changes in the build.
+2. **Switch the capture write to §1's permitted release-for-I/O pattern** (reserve under lock → fsync with the lock released → re-acquire, re-check the precondition, publish). Then both requests can be inside `write_capture` together, the barrier is satisfied, and the re-check refutes the loser — the probes go green. It costs the simplicity §1 asked for, and the loser writes evidence it must then abandon, which needs A.7 prepared/committed framing to stay sound.
+
+I did not take (2) on my own judgement because choosing the concurrency model is the one thing §1 says is not delegated. **I recommend (1)**, and note that whichever is chosen, the underlying safety properties are demonstrated either way.
+
+## 8. What is NOT established
+
+- **That R4 is secure.** Four rounds have now each been corrected by review. See §9.
+- **End-to-end binary fidelity (§C)** — unchanged; `UNSUPPORTED` with the §C gap as its capability-gap evidence.
+- **n8n node types and parameters** — `n8n-nodes-base` still blocked by the egress proxy (403). Structural validation passes; parameters settle at import time. Inherited unchanged for the fifth round.
+- **Any provider capability.** No account, no host, no provider contacted.
+- **Behaviour under more than two concurrent requests.** The barriers are deterministic two-request tests, as `33_` §4 requires and as `31B_` prefers over stress. Three-way and n-way interleavings are not tested here.
+
+## 9. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | The Revision-5 contract is implemented | **An independent reviewer, and the record says so.** R1 shipped 66 green cases and an adversarial pass and still had a gate bypass. R2 shipped 56 green cases and was **unrunnable over HTTP** — a defect no amount of my own testing found, because my testing was the thing that was wrong. I have no basis to believe R3 is different in kind, only that this round's brief was wider and that I now test the layer the caller meets | **Built to spec; independent verification pending** |
-| 2 | The witnesses prove the unfixed behaviour | **The pins, and both are checked.** If either reference file were a variant the witnesses would describe a build nobody reviewed, so each digest is verified before load and mismatch refuses to continue. What they do **not** prove is that R3's fixes are complete: they show 34 specific behaviours changed, not that no thirty-fifth exists | Not disconfirmed; **scope stated** |
-| 3 | Every control is reachable | **Me, and I was already wrong once this round.** Two §E-required refusals were dead code in my first draft. The outcome-coverage guard now catches that class mechanically, but it only proves each code is *produced by some case* — not that each is produced by the *right* case, and not that the branch a reader believes is guarding something is the branch that fired | **Guarded mechanically; the guard is coarse** |
-| 4 | Redaction is correct in both directions | **Me, about the allowlist again — and about the new exemption.** `Disclose` is a hole in redaction by construction. I argue it is a safe one because it is identity-based, one-directional and untypeable from JSON, and I test both of those. But it is the kind of thing that stays safe until someone adds a code path that wraps something it should not, and no test I can write today catches that future edit | **Improved; the exemption is mine and is a real hole** |
-| 5 | Two-phase evidence holds everywhere | **The ordering, at the transitions §E does not enumerate.** All six named boundaries are fault-injected. A.7 applies to more transitions than those six, and the rest follow the same shape **by construction** — and construction is not a test. I found two ordering defects by testing, which is evidence the shape is not self-enforcing | Not disconfirmed; **six sites tested, others by construction** |
-| 6 | My record matches my code | **Me.** Every figure in §5 came from a command run after the last edit, and I re-checked each against its file before writing this. The number to distrust hardest is **167/167**, because a self-test I wrote passing a contract I also wrote is the weakest evidence in this package — which is exactly what §4 exists to compensate for, and why §G sends this to an independent reviewer | **Self-authored; independently unverified** |
-| 7 | The re-aimed workflows express the Rev-5 contract | **The n8n importer, still.** Structural validation passes; node types and parameters remain **NOT TESTED**, blocked by the proxy. Inherited unchanged for the fourth round; closes at import time | **Open, inherited** |
-| 8 | AUDIT-1's resolution is what Fable meant | **Fable.** I read A.4's `UNCERTAIN` trigger against the governing rule and A.6 and resolved it one way. If the other reading was intended the fix is one line and A.6 needs amending — but the state machine behaves materially differently either way, so this needs a ruling rather than a shrug | **Reported; needs a ruling** |
+| 1 | The transitions are now linearizable | **An independent reviewer, and the record is four for four.** R1 shipped 66 green cases and had a gate bypass. R2 shipped 56 and was unrunnable over HTTP. R3 shipped 167 and had two reachable Criticals. Each time my suite was green and the defect was in a layer my suite did not reach. I have no basis to claim this round broke that streak — only that the barriers now run against the defective build too, which is the first check I have had that could tell me the tests are capable of failing | **Built to spec; independent verification pending** |
+| 2 | The global lock is deadlock-free | **The lock inventory, and it is mechanical.** Two locks, a total acquisition order, no outbound I/O. If a future edit adds a third lock, or takes `STORE.lock` while holding the secret lock, the proof lapses silently — nothing in the build enforces the order | Not disconfirmed; **proof is structural, not enforced** |
+| 3 | Committed evidence describes only effective state | **Me, at the paths I did not fault-inject.** Every boundary the findings name is injected. A.7 governs more transitions than those, and the rest follow the same shape by construction — and I found three ordering defects this round by testing, which is evidence construction is not self-enforcing | Not disconfirmed; **named boundaries tested** |
+| 4 | The reviewer's probes are unmodified | **The runner, and it checks itself.** One `SRC=` line is rewritten and every other line is diffed. But I wrote the runner, and I also wrote the pass criteria for probes that assert nothing — §7 AUDIT-R4-4 is the mitigation, not a proof | **Mechanically checked; criteria are mine** |
+| 5 | The five red probes are red for the reason I give | **Me, and this is the claim to attack first.** It is convenient for me if the failures are the probes' method rather than my build. The falsifying evidence would be an implementation of §1's selected model under which those probes go green; I argue none exists, and if the reviewer produces one, my analysis is wrong and so is the build | **Argued, evidenced both ways, needs a ruling** |
+| 6 | My record matches my code | **Me.** Every figure in §6 came from a command run after the last edit, re-checked against its artifact before writing. The number to distrust hardest is **170/170**, for the same reason as every round: I wrote both the test and the thing it tests | **Self-authored; independently unverified** |
 
-## 9. Change requests to Fable
+## 10. Change requests, open items and deviations
 
-1. **AUDIT-1** — confirm or overturn the `UNCERTAIN`-trigger reading; A.6 needs amending if overturned.
-2. **AUDIT-2** — confirm the two-axis reading of §B's "Quota pool" column, or rename the column.
-3. **AUDIT-4** — accept or reject `poc/stub/r2_reference/` (2 files), outside §0's enumerated allowlist and required by §E.
-4. **`03F_Replay_Fixtures.json` remains FROZEN** and was not touched.
-
-## 10. Open items and deviations
-
-- **Four contract findings reported, not absorbed** — §1.
-- **Two files outside the enumerated allowlist** — AUDIT-4, listed in the manifest.
-- **R0 falsifier row still open** — node types/parameters NOT TESTED, environment-blocked.
-- **No POC run, no provider contacted.** No provider selected, ranked or recommended.
-- **No `13B_` obligation implemented.** Every THROWAWAY marker kept; the header still names the four things the real wrapper needs that this deliberately lacks.
-- **Branch deviation (unchanged, disclosed):** operator-designated branch `claude/task-0002-builder-handoff-g97x8j`.
-- **Recommended reviewer focus:** §1 AUDIT-1 (needs a ruling), then §3 DEF-R2-01 (the defect class that survived two rounds of green tests), then §8 row 4 (the redaction exemption I introduced).
+1. **AUDIT-R4-5 needs a ruling** — accept the socket-aligned barriers, or authorise the release-for-I/O switch.
+2. **AUDIT-R4-1** — confirm the global/subject split, or rule that a caller-supplied subject id may gate a ceiling.
+3. **AUDIT-R4-2** — the owner/provider crowd-out on the shared `ideas` ceiling, flagged not fixed.
+4. **Allowlist additions**, all listed in `RETURN_MANIFEST.json`: `stub/r3_reference/` (§5 explicitly permits it), `stub/security_probes/` (the reviewer's nine scripts and nine outputs, byte-identical, so the return is checkable standalone), and three new test modules — `probe_runner.py`, `barrier_suite.py`, `oracle_suite.py` — which §5's "and its tests" covers but does not enumerate.
+5. **No `25_` contract clause changed.** The `Disclose` exemption is untouched — no new construction site, so §3's condition does not trigger, and `control_probes` stays green.
+6. **Immutable denylist unchanged** — `r1_reference/`, `r2_reference/`, harness code, `authority_manifest.json`. Proven per-file in the manifest.
+7. **No POC run, no provider contacted. No `13B_` obligation implemented.** Every THROWAWAY marker kept.
+8. **Branch deviation (unchanged, disclosed):** operator-designated branch.
+9. **Recommended reviewer focus:** §7 AUDIT-R4-5 first — it decides whether this round is acceptable as built. Then §4, the three evasions, because they are the failure mode most likely to have a fourth instance I did not catch.
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The build is claimed complete against `25_` §A/§B and self-tested against §E; **no POC is claimed run, and no security property is claimed independently verified.** Per `25_` §G this goes to Fable's structural verification and then to one independent ChatGPT security review of the final R2+R3 stub; a verifier's FAIL stands until the verifier changes it.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The rework is claimed complete against `33_` §2 except as stated in AUDIT-R4-5; **no POC is claimed run, and no security property is claimed independently verified.** Per `33_` §6 this returns to Fable for structural verification and then to ChatGPT for concurrency re-verification with its own barrier probes. The security gate closes when the reviewer says it does, not when I do.*

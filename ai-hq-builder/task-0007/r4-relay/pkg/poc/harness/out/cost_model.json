@@ -1,0 +1,195 @@
+{
+  "model": "05_ \u00a73 cost & capacity frame, arithmetic form",
+  "business_days_per_month": 21,
+  "variables": {
+    "V1_calls_per_day": {
+      "low": 20,
+      "high": 60,
+      "measured": null,
+      "source": "05_ \u00a73 working estimate \u2014 POC-1 measures"
+    },
+    "V2_emails_per_day": {
+      "low": 50,
+      "high": 150,
+      "measured": null,
+      "source": "05_ \u00a73 working estimate \u2014 POC-2 measures"
+    },
+    "V3_consequential_actions_per_day": {
+      "low": 20,
+      "high": 20,
+      "measured": null,
+      "source": "05_ \u00a73 \u2014 accepted 20/day cap; DE-R8 growth to 5000/day hard max"
+    },
+    "V4_scheduled_runs_per_day": {
+      "low": 5,
+      "high": 20,
+      "measured": null,
+      "source": "05_ \u00a73 working estimate \u2014 POC-3 measures"
+    },
+    "V5_avg_steps_per_workflow": {
+      "low": 5,
+      "high": 15,
+      "measured": null,
+      "source": "05_ \u00a73 working estimate \u2014 drives the Zapier-vs-n8n crossover"
+    }
+  },
+  "rates": {
+    "zapier_price_per_task": {
+      "value": null,
+      "unit": "currency/task",
+      "status": "NOT MEASURED"
+    },
+    "zapier_tasks_per_mcp_call": {
+      "value": 2,
+      "unit": "tasks",
+      "status": "FROM 00_ \u00a717 SNAPSHOT \u2014 revalidate"
+    },
+    "n8n_price_per_execution": {
+      "value": null,
+      "unit": "currency/execution",
+      "status": "NOT MEASURED"
+    },
+    "n8n_self_host_monthly": {
+      "value": null,
+      "unit": "currency/month",
+      "status": "NOT MEASURED \u2014 hardware amortisation + electricity"
+    },
+    "owner_hourly_value": {
+      "value": null,
+      "unit": "currency/hour",
+      "status": "OWNER INPUT"
+    },
+    "owner_maintenance_hours_zapier": {
+      "value": null,
+      "unit": "hours/month",
+      "status": "NOT MEASURED"
+    },
+    "owner_maintenance_hours_n8n": {
+      "value": null,
+      "unit": "hours/month",
+      "status": "NOT MEASURED"
+    },
+    "model_api_monthly": {
+      "value": null,
+      "unit": "currency/month",
+      "status": "NOT MEASURED \u2014 model costs outside the platform"
+    }
+  },
+  "measurement_status": "NO MEASURED INPUT \u2014 every number below is derived from 05_ \u00a73 working estimates and is NOT a measurement",
+  "scenarios": [
+    {
+      "scale": "1x",
+      "bound_used": "low",
+      "runs_per_month": {
+        "POC1_call_review": 420.0,
+        "POC2_email_triage": 1050.0,
+        "POC3_durable_overnight": 105.0
+      },
+      "total_runs_per_month": 1575.0,
+      "avg_steps_per_run": 5.0,
+      "zapier": {
+        "billing_unit": "task (every step meters; an MCP tool call = 2 tasks)",
+        "billed_units_per_month": 7875.0,
+        "platform_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "n8n": {
+        "billing_unit": "execution (one run = one execution regardless of steps)",
+        "billed_units_per_month": 1575.0,
+        "platform_plus_hosting_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "step_sensitivity_ratio": 5.0
+    },
+    {
+      "scale": "1x",
+      "bound_used": "high",
+      "runs_per_month": {
+        "POC1_call_review": 1260.0,
+        "POC2_email_triage": 3150.0,
+        "POC3_durable_overnight": 420.0
+      },
+      "total_runs_per_month": 4830.0,
+      "avg_steps_per_run": 15.0,
+      "zapier": {
+        "billing_unit": "task (every step meters; an MCP tool call = 2 tasks)",
+        "billed_units_per_month": 72450.0,
+        "platform_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "n8n": {
+        "billing_unit": "execution (one run = one execution regardless of steps)",
+        "billed_units_per_month": 4830.0,
+        "platform_plus_hosting_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "step_sensitivity_ratio": 15.0
+    },
+    {
+      "scale": "3x",
+      "bound_used": "high",
+      "runs_per_month": {
+        "POC1_call_review": 3780.0,
+        "POC2_email_triage": 9450.0,
+        "POC3_durable_overnight": 1260.0
+      },
+      "total_runs_per_month": 14490.0,
+      "avg_steps_per_run": 15.0,
+      "zapier": {
+        "billing_unit": "task (every step meters; an MCP tool call = 2 tasks)",
+        "billed_units_per_month": 217350.0,
+        "platform_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "n8n": {
+        "billing_unit": "execution (one run = one execution regardless of steps)",
+        "billed_units_per_month": 14490.0,
+        "platform_plus_hosting_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "step_sensitivity_ratio": 15.0
+    },
+    {
+      "scale": "10x",
+      "bound_used": "high",
+      "runs_per_month": {
+        "POC1_call_review": 12600.0,
+        "POC2_email_triage": 31500.0,
+        "POC3_durable_overnight": 4200.0
+      },
+      "total_runs_per_month": 48300.0,
+      "avg_steps_per_run": 15.0,
+      "zapier": {
+        "billing_unit": "task (every step meters; an MCP tool call = 2 tasks)",
+        "billed_units_per_month": 724500.0,
+        "platform_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "n8n": {
+        "billing_unit": "execution (one run = one execution regardless of steps)",
+        "billed_units_per_month": 48300.0,
+        "platform_plus_hosting_cost": null,
+        "owner_attention_cost": null,
+        "model_api_cost": null,
+        "total_monthly": null
+      },
+      "step_sensitivity_ratio": 15.0
+    }
+  ],
+  "crossover_steps_per_run": null,
+  "crossover_note": "steps/run at which zapier task-billing equals n8n execution-billing, hosting excluded; None until both rates are supplied"
+}

@@ -691,6 +691,46 @@ def block_capability():
           st == 409 and out.get("outcome") == "refused-second-reattempt",
           "409 refused-second-reattempt", (st, out.get("outcome")))
 
+    # SEC-R3-02 — the TERMINAL REVALIDATION branch, tested directly.
+    #
+    # Under `33_` §1's selected architecture a concurrent revoke cannot land
+    # inside a delivery, so this branch is unreachable from two live requests —
+    # the outcome-coverage guard says so, correctly. It is required by SEC-R3-02
+    # and it is defence in depth, so it is exercised here by advancing the
+    # revocation epoch from inside the delivery's own evidence write, which is
+    # the exact window the finding describes.
+    fresh()
+    flow6 = to_capability(task="TASK-REVALIDATE")
+    cap6, ar6 = flow6["capability"], flow6["action_request"]
+    real_write = S.write_capture
+
+    def bump_epoch(route, poc, step, *a, **kw):
+        if step == "prepared-delivery":
+            S.STORE.capabilities[cap6]["revocation_epoch"] += 1
+        return real_write(route, poc, step, *a, **kw)
+
+    S.write_capture = bump_epoch
+    try:
+        st, out = post("/relay/deliver",
+                       {"capability": cap6, "action_request_id": ar6["id"],
+                        "case_id": flow6["case_id"], "payload": ar6["payload"],
+                        "destination_digest_claimed": DIGEST})
+    finally:
+        S.write_capture = real_write
+    check("SEC-R3-02: a revocation landing after the delivery claimed its epoch "
+          "stops the delivery at the terminal commit — no receipt is minted",
+          st == 409 and out.get("outcome") == "refused-revoked-in-flight"
+          and out.get("delivered") is not True
+          and S.STORE.relay_receipts.get(ar6["id"]) is None,
+          "409 refused-revoked-in-flight, no receipt",
+          (st, out.get("outcome"), S.STORE.relay_receipts.get(ar6["id"])))
+    check("...and the subject is REVOKED, not delivered",
+          S.STORE.capabilities[cap6]["status"] == S.REVOKED,
+          S.REVOKED, S.STORE.capabilities[cap6]["status"])
+    check("...and the attempt it claimed was given back",
+          S.STORE.relay_attempts.get(ar6["id"], 0) == 0, 0,
+          S.STORE.relay_attempts.get(ar6["id"]))
+
     # POC-3: a duplicate declaration is a measurement, never an overwrite
     fresh()
     first = post("/poc3/run-started", {"schedule_id": "sched-1",

@@ -1,0 +1,12 @@
+TASK-0007 R4 concurrency rework — base binding
+===============================================
+Base commit : 0675446567648aafa1c2cf271c9637a131834b6e
+Base tree   : 32b0f8d7a1e026cce8dbf8693abd49bc6aeade8f
+
+  Base tree   : INDEPENDENTLY VERIFIABLE from base_snapshot.tar by the recipe below.
+  Base commit : DECLARED ONLY (shallow clone; no ancestry; no clone instruction, none would succeed).
+
+VERIFY THE TREE:
+  mkdir v && tar -xf base_snapshot.tar -C v && cd v
+  git init -q . && git add -Af . && git write-tree
+  # must print: 32b0f8d7a1e026cce8dbf8693abd49bc6aeade8f

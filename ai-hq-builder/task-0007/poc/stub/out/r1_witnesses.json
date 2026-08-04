@@ -37,7 +37,7 @@
       "detail": null,
       "finding": "FAB-15",
       "reproduced": true,
-      "superseded_behaviour": "sha256(case_id | action_class | decision_time) = 2c96ebd884c41052…"
+      "superseded_behaviour": "sha256(case_id | action_class | decision_time) = 33d2da6a4b65d76d…"
     },
     {
       "claim": "R1P-04 tests (1)(2)(3) were UNRUNNABLE against R1",
@@ -51,7 +51,7 @@
       "detail": null,
       "finding": "FAB-15",
       "reproduced": true,
-      "superseded_behaviour": "payload = {\"case_id\": \"case-b688a69c9ed2\"}"
+      "superseded_behaviour": "payload = {\"case_id\": \"case-4804aa2c50df\"}"
     },
     {
       "claim": "R1's /sink produced the represented side effect with no capability, no case and no authorization",
@@ -65,7 +65,7 @@
       "detail": null,
       "finding": "SEC-R1-02",
       "reproduced": true,
-      "superseded_behaviour": "redact({'opaque': <live token>}) -> \"cUdHYMin4Evh_UZpBcA36VQkGz4k9bGgS4JgPsQ"
+      "superseded_behaviour": "redact({'opaque': <live token>}) -> \"9IGqtjwy8DcEHpdO7vpQxsRRSwnXGjC0hzRYfIW"
     },
     {
       "claim": "R1 destroyed authority_id / authority_version / tokens_used",
@@ -191,7 +191,7 @@
       "detail": null,
       "finding": "DEF-R2-01",
       "reproduced": true,
-      "superseded_behaviour": "live POST /poc1/review-case -> resume_token = {\"__withheld__\": \"secret-key-name\", \"bytes\": 43, \"digest\": \"d2942b0f7ec40908068ec2d7d726eb"
+      "superseded_behaviour": "live POST /poc1/review-case -> resume_token = {\"__withheld__\": \"secret-key-name\", \"bytes\": 43, \"digest\": \"a8baa5e39f302ceeed0f76fbb13733"
     },
     {
       "claim": "...and the in-process path returned the token intact, which is why the R2 suite passed 56/56 while the service was unrunnable: that suite called dispatch(), below the response path",
@@ -254,7 +254,7 @@
       "detail": null,
       "finding": "B-POC3",
       "reproduced": true,
-      "superseded_behaviour": "second run-started -> 200, run_id run-1953a560a73b vs run-13bfb8ff8e53, run records now 2"
+      "superseded_behaviour": "second run-started -> 200, run_id run-49e92dd07003 vs run-2bb0729f3c75, run records now 2"
     }
   ]
 }

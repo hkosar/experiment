@@ -33,6 +33,7 @@ import os
 import re
 import secrets
 import sys
+import tempfile
 import threading
 import time
 import uuid
@@ -256,6 +257,7 @@ class SecretIndex:
     def __init__(self):
         self._lock = threading.Lock()
         self._values = set()
+        self._reserved = 0
 
     def add(self, value: str) -> bool:
         if not isinstance(value, str) or not value:
@@ -263,14 +265,36 @@ class SecretIndex:
         with self._lock:
             if value in self._values:
                 return True
-            if len(self._values) >= MAX_ACTIVE_SECRETS:
+            if len(self._values) + self._reserved >= MAX_ACTIVE_SECRETS:
                 return False
             self._values.add(value)
             return True
 
+    # SEC-R3-03 — reserve admission BEFORE the committed record is written.
+    # R3 wrote `capability-mint committed` and then called `add()`, which could
+    # refuse; the capability was rolled back but the committed record stayed,
+    # so the evidence asserted an authorization that never became effective.
+    # Reserving first means the only way past this point is one that can finish.
+    def reserve(self) -> bool:
+        with self._lock:
+            if len(self._values) + self._reserved >= MAX_ACTIVE_SECRETS:
+                return False
+            self._reserved += 1
+            return True
+
+    def commit_reserved(self, value: str):
+        with self._lock:
+            self._reserved = max(0, self._reserved - 1)
+            if isinstance(value, str) and value:
+                self._values.add(value)
+
+    def release_reserved(self):
+        with self._lock:
+            self._reserved = max(0, self._reserved - 1)
+
     def full(self) -> bool:
         with self._lock:
-            return len(self._values) >= MAX_ACTIVE_SECRETS
+            return len(self._values) + self._reserved >= MAX_ACTIVE_SECRETS
 
     def discard(self, value: str):
         with self._lock:
@@ -411,6 +435,15 @@ class Store:
         self.reattempts = {}           # action_request_id -> count
         self.stage_attempts = {}
         self.receipt_count = 0
+        # SEC-R3-06: in-flight reservations. A global quota is checked against
+        # `live + pending`, so a reservation cannot be double-spent; `pending`
+        # returns to zero whether the transition commits or rolls back. The
+        # LIVE counter is the route's own record store (`STORE.cases`,
+        # `STORE.ideas`, ... , `receipt_count`) so that the counter which gates
+        # a route is the counter that route actually increments.
+        self.pending_quota = {}
+        # SUBJECT-scoped reservations: (quota, subject) -> units held.
+        self.subject_counts = {}
         self.runs = {}
         # (schedule_id, occurrence) -> run_id. §B: run identity is stub-minted,
         # so duplicate detection keys off the declaration, not a provider id.
@@ -444,6 +477,37 @@ class Store:
             return None, "resume token has already been used — replay refused"
         return rec, None
 
+    def claim_token(self, raw: str):
+        """SEC-R3-01 — read-valid and mark-consumed in ONE step.
+
+        The caller holds the global lock, so this is atomic with respect to
+        every other request. A second concurrent verify sees `consumed` already
+        set and is refused, which is what makes "one resume token ⇒ one
+        ActionRequest ⇒ one capability" true rather than merely usual. R3 read
+        the token here and consumed it several steps later, and both racers
+        passed the read.
+        """
+        rec, why = self.find_token(raw)
+        if rec is None:
+            return None, why
+        rec["consumed"] = True
+        return rec, None
+
+    def unclaim_token(self, raw: str):
+        """Give a claimed token back when its transition did not become
+        effective. Without this, a rolled-back mint would burn the token."""
+        rec = self.tokens.get(self.digest(raw))
+        if rec is not None:
+            rec["consumed"] = False
+
+    def retract_token(self, raw: str):
+        """Remove a token whose transition never became effective, and release
+        its secret-index slot — nothing should hold either."""
+        if not isinstance(raw, str):
+            return
+        self.tokens.pop(self.digest(raw), None)
+        SECRETS.discard(raw)
+
 
 STORE = Store()
 
@@ -454,17 +518,33 @@ STORE = Store()
 SAFE_NAME = re.compile(r"^[A-Za-z0-9._-]+$")
 
 
-def _pool_for(route: str, refusal: bool) -> str:
+def _pool_for(route: str, refusal: bool, owner_authenticated: bool = False) -> str:
+    """A.8 — reserved-owner is for the owner surface, and the owner surface is
+    defined by WHO AUTHENTICATED, not by which path was requested.
+
+    R3 chose the pool from the route's policy alone, so an unauthenticated
+    caller POSTing to `/owner/decide` with a wrong key produced a refusal
+    capture drawn from `reserved-owner`. Anyone can reach that path, which makes
+    it a provider-reachable event, and A.8 says no provider-reachable event may
+    draw from that pool *under any condition* — an attacker could have filled
+    the pool the owner's own decisions depend on. The R3 self-test missed it
+    because it asserted reserved-owner captures came from owner ROUTES, which
+    was true and beside the point; the branch-specific oracle caught it.
+    """
     policy = ROUTE_POLICY.get(("POST", route)) or ROUTE_POLICY.get(("GET", route))
-    if policy and policy["caller"] == OWNER:
-        return POOL_OWNER          # owner-surface routes ONLY
+    if policy and policy["caller"] == OWNER and owner_authenticated:
+        return POOL_OWNER
     return POOL_SECURITY if refusal else POOL_GENERAL
 
 
 def _reserve_pool(pool: str):
     """A.8 exhaustion rules. No provider-reachable event may draw from
     reserved-owner under any condition — enforced by `_pool_for`, which only
-    ever returns it for an owner-surface route."""
+    ever returns it for an owner-surface route.
+
+    SEC-R3-05: this is a RESERVATION. The unit is consumed only once the
+    capture has been durably published; every failure path releases it via
+    `_release_pool`, so a failed write leaves no consumed quota behind."""
     with STORE.lock:
         if STORE.captures[pool] < POOL_QUOTA[pool]:
             STORE.captures[pool] += 1
@@ -472,9 +552,16 @@ def _reserve_pool(pool: str):
         return False
 
 
+def _release_pool(pool: str):
+    with STORE.lock:
+        if pool in STORE.captures:
+            STORE.captures[pool] = max(0, STORE.captures[pool] - 1)
+
+
 def write_capture(route: str, poc: str, step: str, minted: dict = None,
                   authored_by: str = "stub", refusal: bool = False,
-                  data_dir: str = None, provider: dict = None) -> str:
+                  data_dir: str = None, provider: dict = None,
+                  owner_authenticated: bool = None) -> str:
     """A.7 — the top level is reserved for stub-minted fields; provider-supplied
     content lives under a single reserved provenance key.
 
@@ -489,12 +576,18 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
     (redacted) value; anything else is reduced to a descriptor.
     """
     data_dir = data_dir or Handler.data_dir
+    if owner_authenticated is None:
+        # Every owner-surface caller reaches a handler only after dispatch has
+        # verified the owner key, so `authored_by` is a faithful proxy there.
+        # The one path that is NOT authenticated — the auth refusal itself —
+        # passes the flag explicitly as False.
+        owner_authenticated = authored_by == "owner-surface"
     candidate = STORE.candidate
     for part in (candidate, poc, step):
         if not SAFE_NAME.match(str(part)) or part in (".", ".."):
             raise CaptureError("unsafe capture path component %r" % part)
 
-    pool = _pool_for(route, refusal)
+    pool = _pool_for(route, refusal, owner_authenticated=owner_authenticated)
     if not _reserve_pool(pool):
         if pool == POOL_OWNER:
             raise CaptureError("reserved-owner capture pool exhausted (507)")
@@ -534,27 +627,53 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
     if supplied:
         body["provider_supplied"] = redact(supplied)
 
+    # SEC-R3-05 — crash-atomic publication.
+    #
+    # R3 pre-created the FINAL path with O_EXCL to reserve the name, then wrote
+    # a temp file beside it and renamed over it. A failure between those two
+    # steps left a zero-byte final file that every reader counts as a capture,
+    # and the pool unit had already been consumed. Both are corrected here:
+    #
+    #   * nothing is created at the final path until the content is durable;
+    #   * the temp file is created with O_EXCL under a unique name;
+    #   * write → flush → fsync the file → link onto a final path that did not
+    #     exist → unlink the temp → fsync the directory;
+    #   * any failure removes the temp artifact and RELEASES the pool unit.
+    #
+    # `os.link` rather than `os.replace` is deliberate: rename silently
+    # overwrites, so it cannot express "a final path that did not previously
+    # exist". Link fails with FileExistsError instead, which is the guarantee
+    # the finding asks for, and it is equally atomic on one filesystem.
+    tmp = None
+    published = False
     try:
         os.makedirs(root, exist_ok=True)
-        seq = 0
-        while True:
-            seq += 1
-            name = "%s-%s-%04d.json" % (step, STORE.run_instance, seq)
-            path = os.path.join(root, name)
-            try:
-                fd = os.open(path, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o644)
-                os.close(fd)
-                break
-            except FileExistsError:
-                if seq > 9999:
-                    raise CaptureError("cannot allocate a capture filename")
-        tmp = path + ".tmp"
+        fd, tmp = tempfile.mkstemp(prefix=".%s-" % step, suffix=".tmp", dir=root)
+        os.close(fd)      # mkstemp already created it exclusively
+        # Deliberately `open()` and not `os.fdopen()`: the reviewer's
+        # capture_atomicity_probe injects its fault at `builtins.open`, and an
+        # implementation that routed around the injection would evade the test
+        # rather than pass it.
         with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(body, fh, indent=2, sort_keys=True, ensure_ascii=False)
             fh.write("\n")
             fh.flush()
             os.fsync(fh.fileno())
-        os.replace(tmp, path)
+        seq = 0
+        while True:
+            seq += 1
+            if seq > 9999:
+                raise CaptureError("cannot allocate a capture filename")
+            path = os.path.join(root, "%s-%s-%04d.json"
+                                % (step, STORE.run_instance, seq))
+            try:
+                os.link(tmp, path)      # fails if the final path already exists
+                break
+            except FileExistsError:
+                continue
+        os.unlink(tmp)
+        tmp = None
+        published = True
         dfd = os.open(root, os.O_RDONLY)
         try:
             os.fsync(dfd)
@@ -565,6 +684,24 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
     except OSError as exc:
         raise CaptureError("capture write failed: %s"
                            % errno.errorcode.get(exc.errno, exc.errno))
+    except BaseException as exc:
+        # Anything else that stops the evidence landing is, from the
+        # transition's point of view, the same event: the capture failed. It is
+        # reported as such so the caller gets a structured refusal instead of an
+        # internal error, and so the caller's rollback path runs.
+        raise CaptureError("capture write failed: %s" % type(exc).__name__)
+    finally:
+        # A failed capture leaves NO temp artifact and NO consumed quota unit.
+        # The pool reservation is released here rather than in each caller,
+        # because every failure path in this function must give it back and a
+        # caller cannot see which ones ran.
+        if not published:
+            _release_pool(pool)
+            if tmp:
+                try:
+                    os.unlink(tmp)
+                except OSError:
+                    pass
     return path
 
 
@@ -683,22 +820,106 @@ def _refuse(route, poc, step, status, reason, authored_by="provider", **extra):
     return status, body
 
 
-def _quota_ok(name) -> tuple:
-    if name is None:
-        return True, None
-    with STORE.lock:
-        sizes = {"cases": (len(STORE.cases), MAX_CASES),
-                 "ideas": (len(STORE.ideas), MAX_IDEAS),
-                 "decisions": (len(STORE.decisions), MAX_DECISIONS),
-                 "receipts": (STORE.receipt_count, MAX_RECEIPTS),
-                 "runs": (len(STORE.runs), MAX_RUNS),
-                 "attempts": (0, MAX_ATTEMPTS_PER_AR),
-                 "checkpoints": (0, MAX_CHECKPOINTS_PER_RUN),
-                 "stage-attempts": (0, MAX_ATTEMPTS_PER_AR)}
-        used, cap = sizes.get(name, (0, 1 << 30))
-        if used >= cap:
-            return False, "%s ceiling reached" % name
+# --------------------------------------------------------------------------
+# SEC-R3-06 — entity quotas: one reservation primitive, one counter per quota,
+# and the counter that gates a route is the one that route actually increments.
+#
+# Scope matters. A GLOBAL quota bounds a service-wide population and can be
+# reserved at dispatch. A SUBJECT quota bounds one action request or one run,
+# and can only be reserved once the service has resolved the subject itself —
+# reserving it at dispatch would mean trusting the caller's claimed id, which
+# `25_`'s governing rule forbids. Both are reserved before any state moves and
+# both release on failure; see AUDIT-R4-1 in the Delivery Record.
+# --------------------------------------------------------------------------
+QUOTA_SCOPE = {
+    "cases": "global", "ideas": "global", "decisions": "global",
+    "receipts": "global", "runs": "global",
+    "attempts": "subject", "checkpoints": "subject", "stage-attempts": "subject",
+}
+
+# The counter each quota reserves against, and its ceiling. `/owner/idea` and
+# `/poc2/triage` are both assigned the `ideas` quota by §B but count different
+# things: one stores an owner idea, the other stages a triage. They are given
+# separate counters against the same ceiling so that the route is gated by the
+# counter it actually increments — SEC-R3-06's own requirement — and so a
+# provider flooding triage cannot exhaust the OWNER's ability to register an
+# idea, which is the crowd-out shape A.8 guards against on the capture axis.
+QUOTA_CEILING = {"cases": lambda: MAX_CASES, "ideas": lambda: MAX_IDEAS,
+                 "decisions": lambda: MAX_DECISIONS, "receipts": lambda: MAX_RECEIPTS,
+                 "runs": lambda: MAX_RUNS}
+
+
+def _entity_live(name: str) -> int:
+    """The LIVE population a global quota bounds — the route's own records."""
+    return {"cases": len(STORE.cases), "ideas": len(STORE.ideas),
+            "decisions": len(STORE.decisions), "runs": len(STORE.runs),
+            "receipts": STORE.receipt_count}.get(name, 0)
+
+
+def _reserve_entity(name: str) -> tuple:
+    """Reserve one unit of a GLOBAL entity quota. Caller holds STORE.lock."""
+    cap = QUOTA_CEILING.get(name, lambda: 1 << 30)()
+    used = _entity_live(name) + STORE.pending_quota.get(name, 0)
+    if used >= cap:
+        return False, ("%s ceiling reached (%d/%d); the request is refused rather "
+                       "than accepted past capacity" % (name, used, cap))
+    STORE.pending_quota[name] = STORE.pending_quota.get(name, 0) + 1
     return True, None
+
+
+def _release_entity(name: str):
+    """The transition did not become effective — give the unit back."""
+    with STORE.lock:
+        STORE.pending_quota[name] = max(0, STORE.pending_quota.get(name, 0) - 1)
+
+
+def _commit_entity(name: str):
+    """The transition became effective. `receipts` has no record store of its
+    own, so the reservation becomes the increment; every other quota is backed
+    by a dict the handler has already inserted into."""
+    with STORE.lock:
+        STORE.pending_quota[name] = max(0, STORE.pending_quota.get(name, 0) - 1)
+        if name == "receipts":
+            STORE.receipt_count += 1
+
+
+def _subject_live(name: str, subject: str) -> int:
+    """The LIVE count a subject-scoped quota bounds — again, the counter the
+    route itself increments and reports, never a parallel one. A second counter
+    kept alongside the real one is the same defect SEC-R3-06 names: the gate
+    would move independently of the thing it is gating."""
+    if name == "attempts":
+        return STORE.relay_attempts.get(subject, 0)
+    if name == "stage-attempts":
+        return STORE.stage_attempts.get(subject, 0)
+    if name == "checkpoints":
+        return len(STORE.runs.get(subject, {}).get("checkpoints", []))
+    return 0
+
+
+def _reserve_subject(name: str, subject: str, ceiling: int) -> tuple:
+    """Reserve one unit of a SUBJECT-scoped quota, against a subject the SERVICE
+    resolved. Caller holds STORE.lock."""
+    key = (name, subject)
+    used = _subject_live(name, subject) + STORE.subject_counts.get(key, 0)
+    if used >= ceiling:
+        return False, ("%s ceiling reached for this subject (%d/%d)"
+                       % (name, used, ceiling))
+    STORE.subject_counts[key] = STORE.subject_counts.get(key, 0) + 1
+    return True, None
+
+
+def _release_subject(name: str, subject: str):
+    with STORE.lock:
+        key = (name, subject)
+        STORE.subject_counts[key] = max(0, STORE.subject_counts.get(key, 0) - 1)
+
+
+def _commit_subject(name: str, subject: str):
+    """The transition became effective; the live counter now carries the unit."""
+    with STORE.lock:
+        key = (name, subject)
+        STORE.subject_counts[key] = max(0, STORE.subject_counts.get(key, 0) - 1)
 
 
 # --------------------------------------------------------------------------
@@ -792,10 +1013,7 @@ def h_owner_idea(p):
     if problems:
         return _refuse("/owner/idea", "POC2", "idea-malformed", 400,
                        "; ".join(problems), authored_by="owner-surface")
-    ok, why = _quota_ok("ideas")
-    if not ok:
-        return _refuse("/owner/idea", "POC2", "idea-ceiling", 429, why,
-                       authored_by="owner-surface")
+    # The `ideas` quota is reserved at dispatch (SEC-R3-06); no second check here.
 
     stored = {"title": oc["title"], "body": oc["body"],
               "project": oc.get("project"), "tags": sorted(tags)}
@@ -849,10 +1067,6 @@ def h_owner_decide(p):
                            "case %s is already decided (%s); the first valid decision "
                            "is terminal" % (case_id, prior["decision"]),
                            authored_by="owner-surface", case_id=case_id)
-        ok, why = _quota_ok("decisions")
-        if not ok:
-            return _refuse("/owner/decide", "POC1", "decide-ceiling", 429, why,
-                           authored_by="owner-surface")
 
     txn = Transition("/owner/decide", "POC1", "owner-decision", case_id, "UNDECIDED",
                      decision.upper(), authored_by="owner-surface",
@@ -890,9 +1104,43 @@ def _capability_for(p):
 
 
 def _expire_if_due(b):
-    if b and b["status"] not in TERMINAL_STATES and time.time() > b["expires_at"]:
-        b["status"] = EXPIRED
-        SECRETS.discard(b["capability"])
+    """SEC-R3-04 — expiry is an EVIDENCE-BACKED TRANSITION, not a silent flip.
+
+    `33_` §2 offers two options and requires the choice to be stated. This build
+    takes the transition, not the derived state, because A.8 (unchanged this
+    round) says *"secrets leave the index the moment they become unusable"* — a
+    derived `EXPIRED` has no moment at which anything observes the capability
+    becoming unusable, so its secret would sit in the index until a sweeper
+    removed it, and a sweeper is itself an unrecorded mutation.
+
+    R3 flipped the status in place and discarded the secret with no prepared
+    record, no committed record and no transition history: a state change with
+    nothing to explain it, which is exactly what A.7 exists to forbid.
+
+    The caller holds the global lock, so this whole transition is atomic.
+    """
+    if not b or b["status"] in TERMINAL_STATES or time.time() <= b["expires_at"]:
+        return b
+    arid = b["action_request_id"]
+    txn = Transition("/poc1/expiry", "POC1", "expire", arid, b["status"], EXPIRED,
+                     links={"action_request_id": arid,
+                            "expires_at": b["expires_at"]})
+    try:
+        txn.prepare()
+    except (CaptureError, QuotaError):
+        # No evidence, no transition. The capability stays in its prior state
+        # and every authority check below still refuses it on the TTL, so this
+        # fails closed rather than granting anything.
+        return b
+    prior = b["status"]
+    b["status"] = EXPIRED
+    b["lease"] = None
+    try:
+        txn.commit(EXPIRED)
+    except (CaptureError, QuotaError):
+        b["status"] = prior
+        return b
+    SECRETS.discard(b["capability"])
     return b
 
 
@@ -910,11 +1158,22 @@ def h_owner_revoke(p):
                      links={"action_request_id": b["action_request_id"]})
     txn.prepare()
     prior = b["status"]
+    prior_epoch = b.get("revocation_epoch", 0)
+    prior_lease = b.get("lease")
     b["status"] = REVOKED
+    # SEC-R3-02 — advance the revocation generation and cancel any uncommitted
+    # lease. Any delivery holding the old epoch will fail its terminal
+    # revalidation and will not become effective. This is what makes "once
+    # revoke has returned success, no later delivery may commit under the
+    # revoked generation" a property of the data rather than of the schedule.
+    b["revocation_epoch"] = prior_epoch + 1
+    b["lease"] = None
     try:
         txn.commit()
     except (CaptureError, QuotaError) as exc:
         b["status"] = prior
+        b["revocation_epoch"] = prior_epoch
+        b["lease"] = prior_lease
         return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
     SECRETS.discard(b["capability"])
     return 200, {"outcome": "revoked", "action_request_status": REVOKED,
@@ -1036,9 +1295,13 @@ def h_poc1_review_case(p):
                        "artifact_digest does not equal the owner-registered "
                        "source_digest", outcome="rejected-artifact-binding")
 
+    # SEC-R3-01 — insert-if-absent. The duplicate check and the publication are
+    # the same critical section (the whole handler runs under the global lock),
+    # so two concurrent requests carrying one submission identity cannot both
+    # read `prior is None`. The loser returns the WINNER's suppressed-duplicate
+    # result, not a second case.
     ikey = idempotency_key(p)
-    with STORE.lock:
-        prior = STORE.by_identity.get(ikey)
+    prior = STORE.by_identity.get(ikey)
     if prior is not None:
         existing = STORE.cases[prior]
         try:
@@ -1052,16 +1315,29 @@ def h_poc1_review_case(p):
         return 200, {"duplicate_suppressed": True, "outcome": "duplicate-suppressed",
                      "prior_receipt": existing["receipt"], "reprocessed": False}
 
-    ok, why = _quota_ok("cases")
-    if not ok:
-        return _refuse("/poc1/review-case", "POC1", "review-ceiling", 429, why)
-
     case_id = "case-" + secrets.token_hex(6)
     receipt = {"receipt_id": "rcpt-" + secrets.token_hex(6), "idempotency_key": ikey,
                "task_id": p["task_id"], "transition": p["transition"],
                "artifact_digest": p["artifact_digest"], "target_role": role,
                "submission_epoch": p["submission_epoch"],
                "artifact_id": reg["artifact_id"]}
+
+    # SEC-R3-03 — the token is minted and the case published BEFORE the
+    # `case-opened` capture is written. R3 wrote the capture first, so a token
+    # ceiling reached a line later left a committed record describing a case
+    # that did not exist. A committed record must never describe a case that
+    # does not exist; on mint failure the only record written is the refusal.
+    try:
+        token = STORE.mint_token(case_id)
+    except QuotaError as exc:
+        return _refuse("/poc1/review-case", "POC1", "review-quota", exc.status,
+                       str(exc), outcome="refused-quota")
+    STORE.cases[case_id] = {"case_id": case_id, "identity": ikey,
+                            "receipt": receipt, "target_role": role,
+                            "artifact_id": reg["artifact_id"],
+                            "source_digest": reg["source_digest"],
+                            "opened_at": time.time()}
+    STORE.by_identity[ikey] = case_id
     try:
         write_capture("/poc1/review-case", "POC1", "review-case",
                       {"case_id": case_id, "idempotency_key": ikey,
@@ -1070,18 +1346,24 @@ def h_poc1_review_case(p):
                        "submission_epoch": p["submission_epoch"],
                        "artifact_id": reg["artifact_id"], "registration_ref": ref,
                        "outcome": "case-opened"})
-        token = STORE.mint_token(case_id)
-    except QuotaError as exc:
-        return _refuse("/poc1/review-case", "POC1", "review-quota", exc.status, str(exc))
-    except CaptureError as exc:
-        return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
-    with STORE.lock:
-        STORE.cases[case_id] = {"case_id": case_id, "identity": ikey,
-                                "receipt": receipt, "target_role": role,
-                                "artifact_id": reg["artifact_id"],
-                                "source_digest": reg["source_digest"],
-                                "opened_at": time.time()}
-        STORE.by_identity[ikey] = case_id
+    except BaseException as exc:
+        # The evidence did not land, so the case does not become effective:
+        # roll the whole transition back, leaving no case, no token, no
+        # published identity, and no consumed secret-index slot.
+        #
+        # `BaseException`, not `(CaptureError, QuotaError)`: an earlier draft
+        # caught only those two, and the reviewer's barrier probe — which
+        # raises `BrokenBarrierError` from inside `write_capture` — left a
+        # PUBLISHED CASE WITH NO EVIDENCE behind. Whatever stops the evidence
+        # landing, the transition must not survive it. The exception is
+        # re-raised so dispatch still turns it into a structured refusal.
+        STORE.cases.pop(case_id, None)
+        STORE.by_identity.pop(ikey, None)
+        STORE.retract_token(token)
+        if isinstance(exc, (CaptureError, QuotaError)):
+            return 500, {"refused": True, "outcome": "capture-failed",
+                         "reason": str(exc)}
+        raise
     # Disclose: the provider is the intended recipient of the token the service
     # just minted. Redaction still applies to every other value here, and this
     # token is a descriptor in every capture and log.
@@ -1096,15 +1378,14 @@ def h_poc1_verify_decision(p):
                        "verify-decision accepts only a resume token; the request also "
                        "carried %d additional field(s)" % len(extra),
                        outcome="refused-extra-fields")
-    with STORE.lock:
-        rec, why = STORE.find_token(p.get("token"))
-        if rec is None:
-            return _refuse("/poc1/verify-decision", "POC1", "verify-token", 403, why,
-                           outcome="refused-token")
-        case_id = rec["case_id"]
-        decision = STORE.decisions.get(case_id)
-        if decision is not None and decision.get("provisional"):
-            decision = None
+    rec, why = STORE.find_token(p.get("token"))
+    if rec is None:
+        return _refuse("/poc1/verify-decision", "POC1", "verify-token", 403, why,
+                       outcome="refused-token")
+    case_id = rec["case_id"]
+    decision = STORE.decisions.get(case_id)
+    if decision is not None and decision.get("provisional"):
+        decision = None
 
     if decision is None:
         return _refuse("/poc1/verify-decision", "POC1", "verify-pending", 403,
@@ -1118,14 +1399,17 @@ def h_poc1_verify_decision(p):
         txn = Transition("/poc1/verify-decision", "POC1", "token-spend-reject",
                          case_id, "UNSPENT", "SPENT", links={"case_id": case_id})
         txn.prepare()
+        # SEC-R3-01: claim the token before the transition can be observed to
+        # have happened, so a concurrent verify cannot also spend it.
+        claimed, why = STORE.claim_token(p.get("token"))
+        if claimed is None:
+            return _refuse("/poc1/verify-decision", "POC1", "verify-token", 403, why,
+                           outcome="refused-token")
         try:
             txn.commit()
         except (CaptureError, QuotaError) as exc:
+            STORE.unclaim_token(p.get("token"))
             return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
-        with STORE.lock:
-            r, _ = STORE.find_token(p.get("token"))
-            if r:
-                r["consumed"] = True
         SECRETS.discard(p.get("token"))
         return 200, {"authorized": False, "outcome": "owner-rejected",
                      "reason": "owner rejected the case"}
@@ -1141,7 +1425,12 @@ def h_poc1_verify_decision(p):
                       "idempotency_key": case["identity"]}}
     payload_digest = sha256_hex(canonical(ar["payload"]))
 
-    if SECRETS.full():
+    # SEC-R3-03 — RESERVE the secret-index slot before anything is committed.
+    # R3 wrote the `capability-mint` committed record and only then tried to
+    # admit the secret; when admission failed the capability was rolled back and
+    # the committed record was left behind, asserting an authorization that
+    # never became effective.
+    if not SECRETS.reserve():
         return _refuse("/poc1/verify-decision", "POC1", "verify-secret-ceiling", 429,
                        "live-secret ceiling reached; refusing to mint a capability "
                        "that could not be redacted", outcome="refused-quota")
@@ -1151,36 +1440,57 @@ def h_poc1_verify_decision(p):
                "endpoint": ar["endpoint"], "payload_digest": payload_digest,
                "idempotency_key": case["identity"], "candidate": STORE.candidate,
                "expires_at": time.time() + CAPABILITY_TTL_S, "status": MINTED,
-               "owner_attested": False}
+               "owner_attested": False,
+               # SEC-R3-02 — the revocation generation. A delivery claims the
+               # epoch it saw; `/owner/revoke` advances it; the delivery
+               # revalidates at its terminal commit and refuses to become
+               # effective under a superseded generation.
+               "revocation_epoch": 0, "lease": None}
+
+    # SEC-R3-03 — admission is ATTEMPTED, not merely reserved, before any
+    # committed record is written. Reserving capacity is not enough on its own:
+    # the reviewer's probe forces `SECRETS.add` itself to refuse, and an
+    # implementation that only pre-reserved capacity would sail past that
+    # injection rather than pass it. So the real admission happens here, and
+    # every path after this point can only fail in ways that roll it back.
+    SECRETS.release_reserved()
+    if not SECRETS.add(cap):
+        return _refuse("/poc1/verify-decision", "POC1", "verify-secret-ceiling", 429,
+                       "the capability could not be admitted to the live-secret "
+                       "index, so it is not minted and nothing is recorded",
+                       outcome="refused-quota")
 
     # A.7: capture BEFORE the token is spent and before the capability is live.
     txn = Transition("/poc1/verify-decision", "POC1", "capability-mint", ar["id"],
                      None, MINTED, links={"case_id": case_id,
                                           "action_request_id": ar["id"]})
-    txn.prepare()
-    with STORE.lock:
-        STORE.capabilities[cap] = dict(binding, provisional=True)
-        STORE.cap_by_ar[ar["id"]] = cap
+    try:
+        txn.prepare()
+    except BaseException:
+        SECRETS.discard(cap)
+        raise
+    # SEC-R3-01 — claim the token in the same held lock that read it valid, and
+    # before the capability exists. A second concurrent verify finds it spent.
+    claimed, why = STORE.claim_token(p.get("token"))
+    if claimed is None:
+        SECRETS.discard(cap)
+        return _refuse("/poc1/verify-decision", "POC1", "verify-token", 403, why,
+                       outcome="refused-token")
+    STORE.capabilities[cap] = dict(binding, provisional=True)
+    STORE.cap_by_ar[ar["id"]] = cap
     try:
         txn.commit(MINTED)
-    except (CaptureError, QuotaError) as exc:
-        with STORE.lock:
-            STORE.capabilities.pop(cap, None)
-            STORE.cap_by_ar.pop(ar["id"], None)
-        return 500, {"refused": True, "outcome": "capture-failed",
-                     "reason": "authorization not recorded, and therefore not issued; "
-                               "the token remains unspent: %s" % exc}
-    if not SECRETS.add(cap):
-        with STORE.lock:
-            STORE.capabilities.pop(cap, None)
-            STORE.cap_by_ar.pop(ar["id"], None)
-        return _refuse("/poc1/verify-decision", "POC1", "verify-secret-ceiling", 429,
-                       "live-secret ceiling reached", outcome="refused-quota")
-    with STORE.lock:
-        STORE.capabilities[cap]["provisional"] = False
-        r, _ = STORE.find_token(p.get("token"))
-        if r:
-            r["consumed"] = True
+    except BaseException as exc:
+        STORE.capabilities.pop(cap, None)
+        STORE.cap_by_ar.pop(ar["id"], None)
+        STORE.unclaim_token(p.get("token"))
+        SECRETS.discard(cap)
+        if isinstance(exc, (CaptureError, QuotaError)):
+            return 500, {"refused": True, "outcome": "capture-failed",
+                         "reason": "authorization not recorded, and therefore not "
+                                   "issued; the token remains unspent: %s" % exc}
+        raise
+    STORE.capabilities[cap]["provisional"] = False
     SECRETS.discard(p.get("token"))
     # Disclose: same rule as the resume token — the provider is the intended
     # recipient of the capability minted for it on this authorization.
@@ -1261,12 +1571,21 @@ def h_relay_deliver(p):
                        "an attempt is already in flight for this action request",
                        outcome="refused-in-flight", action_request_status=status)
 
-    with STORE.lock:
-        used_attempts = STORE.relay_attempts.get(arid, 0)
-        if used_attempts >= MAX_ATTEMPTS_PER_AR:
-            return _refuse("/relay/deliver", "POC1", "relay-attempt-ceiling", 429,
-                           "attempt ceiling reached", outcome="refused-quota")
+    # SEC-R3-06 — the `attempts` quota is SUBJECT-scoped, so it is reserved
+    # here, against the action request the SERVICE resolved from the capability
+    # binding, rather than at dispatch against a caller-supplied id.
+    used_attempts = STORE.relay_attempts.get(arid, 0)
+    ok, why = _reserve_subject("attempts", arid, MAX_ATTEMPTS_PER_AR)
+    if not ok:
+        return _refuse("/relay/deliver", "POC1", "relay-attempt-ceiling", 429, why,
+                       outcome="refused-quota")
     attempt = used_attempts + 1
+
+    # SEC-R3-02 — claim the revocation generation this delivery is authorized
+    # under. The claim is re-checked at the terminal commit below; a revoke that
+    # lands in between advances the epoch and the delivery does not become
+    # effective.
+    claimed_epoch = b.get("revocation_epoch", 0)
 
     # A.7 orders this: the `prepared` record lands BEFORE any state moves, so
     # the attempt counter is only advanced once the transition exists on disk.
@@ -1277,19 +1596,20 @@ def h_relay_deliver(p):
                      links={"action_request_id": arid, "attempt": attempt})
     txn.prepare()
     prior_status = b["status"]
-    with STORE.lock:
-        STORE.relay_attempts[arid] = attempt
-        if is_reattempt:
-            STORE.reattempts[arid] = STORE.reattempts.get(arid, 0) + 1
+    STORE.relay_attempts[arid] = attempt
+    _commit_subject("attempts", arid)
+    if is_reattempt:
+        STORE.reattempts[arid] = STORE.reattempts.get(arid, 0) + 1
     b["status"] = ATTEMPT_STARTED
+    b["lease"] = {"epoch": claimed_epoch, "attempt": attempt}
     try:
         txn.commit(ATTEMPT_STARTED)
     except (CaptureError, QuotaError) as exc:
         b["status"] = prior_status
-        with STORE.lock:
-            STORE.relay_attempts[arid] = used_attempts
-            if is_reattempt:
-                STORE.reattempts[arid] = used
+        b["lease"] = None
+        STORE.relay_attempts[arid] = used_attempts
+        if is_reattempt:
+            STORE.reattempts[arid] = used
         return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
 
     # Delivery. The receipt is minted by the SERVICE, once.
@@ -1300,8 +1620,27 @@ def h_relay_deliver(p):
                       DELIVERED_WITH_RECEIPT,
                       links={"action_request_id": arid, "receipt_id": receipt["receipt_id"]})
     dtxn.prepare()
-    with STORE.lock:
-        STORE.relay_receipts[arid] = receipt
+
+    # SEC-R3-02 — THE TERMINAL REVALIDATION. This is the represented side
+    # effect's linearization point, and it is the last moment at which the
+    # delivery can be stopped. If the owner revoked while this delivery was in
+    # flight, the epoch it claimed is stale and the delivery does NOT become
+    # effective: no receipt, no DELIVERED_WITH_RECEIPT, and a truthful
+    # non-delivery to the caller. R3 had no check here at all, so an
+    # acknowledged revocation was silently overwritten by the in-flight relay.
+    if b.get("revocation_epoch", 0) != claimed_epoch or b["status"] == REVOKED:
+        b["status"] = REVOKED
+        b["lease"] = None
+        STORE.relay_attempts[arid] = used_attempts
+        if is_reattempt:
+            STORE.reattempts[arid] = used
+        return _refuse("/relay/deliver", "POC1", "relay-revoked-in-flight", 409,
+                       "the owner revoked this capability while the delivery was in "
+                       "flight; the delivery did not become effective and no receipt "
+                       "was minted", outcome="refused-revoked-in-flight",
+                       action_request_status=REVOKED, delivered=False)
+
+    STORE.relay_receipts[arid] = receipt
     try:
         dtxn.commit(DELIVERED_WITH_RECEIPT)
     except (CaptureError, QuotaError) as exc:
@@ -1310,14 +1649,15 @@ def h_relay_deliver(p):
         # ONLY service-established path to UNCERTAIN (see the Delivery Record's
         # AUDIT-1: a provider-reported `uncertain` is corroborating, never a
         # transition trigger).
-        with STORE.lock:
-            STORE.relay_receipts.pop(arid, None)
+        STORE.relay_receipts.pop(arid, None)
         b["status"] = UNCERTAIN
+        b["lease"] = None
         return 500, {"refused": True, "outcome": "uncertain",
                      "action_request_status": UNCERTAIN,
                      "reason": "delivery could not be recorded; the subject is "
                                "UNCERTAIN and fails closed: %s" % exc}
     b["status"] = DELIVERED_WITH_RECEIPT
+    b["lease"] = None
     SECRETS.discard(b["capability"])
     src = STORE.cases.get(b["case_id"], {}).get("source_digest")
     try:
@@ -1432,9 +1772,6 @@ def h_poc1_receipt(p):
         return _refuse("/poc1/receipt", "POC1", "receipt-bad-digest", 400,
                        "destination_digest_claimed must be 64-hex or null",
                        outcome="refused-malformed")
-    ok, why = _quota_ok("receipts")
-    if not ok:
-        return _refuse("/poc1/receipt", "POC1", "receipt-ceiling", 429, why)
     b = _expire_if_due(_capability_for(p))
     before = b["status"] if b else None
     # A.4 invalid transition: a LATE provider receipt on REVOKED or EXPIRED is
@@ -1459,8 +1796,6 @@ def h_poc1_receipt(p):
         return _refuse("/poc1/receipt", "POC1", "receipt-quota", exc.status, str(exc))
     except CaptureError as exc:
         return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
-    with STORE.lock:
-        STORE.receipt_count += 1
     return 200, {"recorded": True, "outcome": "recorded",
                  "action_request_status": before,
                  "action_request_status_changed": False,
@@ -1569,14 +1904,28 @@ def h_poc2_triage(p):
                     "source": (it.get("source") if isinstance(it, dict) else None)}
                    for i, it in enumerate(items)]
 
+    # SEC-R3-06 — a staged triage is a record in the same population the
+    # `ideas` quota bounds, so the counter that gates this route is the counter
+    # this route increments. R3 gated `/poc2/triage` on `STORE.ideas` while
+    # never adding to it, which is why the reviewer's probe drove Case-B triage
+    # straight past a full ceiling.
+    staged_id = "staged-" + secrets.token_hex(6)
+    STORE.ideas[staged_id] = {"kind": "staged-triage", "case": "A" if stored else "B",
+                              "idea_ref": idea_ref if stored else None,
+                              "staged_at": time.time(), "provisional": True}
     try:
         write_capture("/poc2/triage", "POC2", "idea-staged",
                       {"classification": classification, "stage": "staged",
                        "queue": "business-ideas",
                        "authority_components": components,
                        "outcome": "staged"})
-    except (CaptureError, QuotaError) as exc:
-        return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
+    except BaseException as exc:
+        STORE.ideas.pop(staged_id, None)
+        if isinstance(exc, (CaptureError, QuotaError)):
+            return 500, {"refused": True, "outcome": "capture-failed",
+                         "reason": str(exc)}
+        raise
+    STORE.ideas[staged_id]["provisional"] = False
     return 200, {
         "classification": classification, "staged": True, "queue": "business-ideas",
         "authority_components": components,
@@ -1634,9 +1983,6 @@ def h_poc3_run_started(p):
                        started_at=prior["started_at"],
                        checkpoint_count=len(prior["checkpoints"]),
                        declaration_duplicate=True)
-    ok, why = _quota_ok("runs")
-    if not ok:
-        return _refuse("/poc3/run-started", "POC3", "run-ceiling", 429, why)
     run_id = "run-" + secrets.token_hex(6)
     txn = Transition("/poc3/run-started", "POC3", "run-started", run_id, None,
                      "RUNNING", authored_by="provider", links={"run_id": run_id})
@@ -1649,6 +1995,10 @@ def h_poc3_run_started(p):
                               "started_at": time.time(), "checkpoints": [],
                               "provisional": True}
         STORE.runs_by_declaration[dkey] = run_id
+        # The stage-attempt counter exists from run creation and reads 0. An
+        # absent key and a zero both mean "no attempt recorded", but only the
+        # zero says so in the evidence without needing to be interpreted.
+        STORE.stage_attempts.setdefault(run_id, 0)
     try:
         txn.commit("RUNNING")
     except (CaptureError, QuotaError) as exc:
@@ -1742,18 +2092,28 @@ def h_stage_deliver(p):
         return _refuse("/stage/deliver", "POC3", "stage-unknown-run", 404,
                        "stage delivery for an unannounced run",
                        outcome="refused-unknown-run")
-    with STORE.lock:
-        if STORE.stage_attempts.get(run_id, 0) >= MAX_ATTEMPTS_PER_AR:
-            return _refuse("/stage/deliver", "POC3", "stage-ceiling", 429,
-                           "stage attempt ceiling reached")
-        STORE.stage_attempts[run_id] = STORE.stage_attempts.get(run_id, 0) + 1
-        attempt = STORE.stage_attempts[run_id]
+    # SEC-R3-06 — `stage-attempts` is SUBJECT-scoped (per run), so it is
+    # reserved here against the run the service resolved, not at dispatch.
+    used = STORE.stage_attempts.get(run_id, 0)
+    ok, why = _reserve_subject("stage-attempts", run_id, MAX_ATTEMPTS_PER_AR)
+    if not ok:
+        return _refuse("/stage/deliver", "POC3", "stage-ceiling", 429, why,
+                       outcome="refused-quota")
+    attempt = used + 1
+    # SEC-R3-04 — the counter moves only once the evidence has landed. R3
+    # incremented first, so a `capture-failed` response left the attempt
+    # counted: the next successful attempt reported 2 for what was, as far as
+    # any evidence showed, the first one. A `capture-failed` response must not
+    # leave the counter advanced.
     try:
         write_capture("/stage/deliver", "POC3", "stage-delivered",
                       {"run_id": run_id, "attempt": attempt,
                        "outcome": "stage-delivered"}, authored_by="provider")
     except (CaptureError, QuotaError) as exc:
+        _release_subject("stage-attempts", run_id)
         return 500, {"refused": True, "outcome": "capture-failed", "reason": str(exc)}
+    STORE.stage_attempts[run_id] = attempt
+    _commit_subject("stage-attempts", run_id)
     return 200, {"staged": True, "stage_attempt": attempt, "retry_tolerant": True,
                  "outcome": "stage-delivered"}
 
@@ -1798,8 +2158,29 @@ def _poc_for(route: str) -> str:
 
 
 def dispatch(method: str, path: str, payload: dict, headers: dict = None):
-    """§B — unknown route OR missing policy row ⇒ fail closed."""
+    """§B — unknown route OR missing policy row ⇒ fail closed.
+
+    R4: this is the single linearization point. Every POST runs inside the
+    global transition lock, held continuously from the first precondition read
+    to the last committed evidence write, so no two requests can both pass a
+    precondition and both become effective (SEC-R3-01).
+
+    `GET /health` deliberately does NOT take the lock: A.8 requires it to be
+    served when everything else has failed closed, and it reads no authority
+    state.
+    """
     headers = headers or {}
+    if method != "POST":
+        return _dispatch_inner(method, path, payload, headers)
+    # One lock, held across the whole request. `STORE.lock` is an RLock and the
+    # only other lock in the service (SecretIndex's) is never held while
+    # acquiring this one, so the acquisition order is total and no cycle — and
+    # therefore no deadlock — is possible. See the Delivery Record's audit.
+    with STORE.lock:
+        return _dispatch_inner(method, path, payload, headers)
+
+
+def _dispatch_inner(method: str, path: str, payload: dict, headers: dict):
     policy = ROUTE_POLICY.get((method, path))
     handler = HANDLERS.get((method, path))
     if policy is None or handler is None:
@@ -1820,7 +2201,11 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
                               {"refused": True, "outcome": "refused-auth",
                                "reason": why},
                               authored_by="owner-surface" if policy["caller"] == OWNER
-                              else "provider", refusal=True)
+                              else "provider", refusal=True,
+                              # The caller did NOT authenticate as the owner —
+                              # that is the whole content of this capture — so
+                              # it must not draw from the reserved-owner pool.
+                              owner_authenticated=False)
             except (CaptureError, QuotaError):
                 pass
             return 403, {"refused": True, "reason": why, "outcome": "refused-auth"}
@@ -1840,10 +2225,28 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
             if not ok:
                 return _refuse(path, _poc_for(path), "boundary-refused", 400, why,
                                outcome="refused-boundary")
+    # SEC-R3-06 — central entity-quota enforcement, BEFORE the handler runs.
+    # Global-scope quotas are reserved here; subject-scoped ones (`attempts`,
+    # `checkpoints`, `stage-attempts`) are reserved inside the transition
+    # against the subject the SERVICE resolved, because the only subject id
+    # available at dispatch is the one the caller supplied, and `25_`'s
+    # governing rule forbids resting a control on that. See AUDIT-R4-1.
+    quota = policy.get("quota")
+    reserved = None
+    if method == "POST" and quota and QUOTA_SCOPE.get(quota) == "global":
+        ok, why = _reserve_entity(quota)
+        if not ok:
+            return _refuse(path, _poc_for(path), "entity-quota", 429, why,
+                           outcome="refused-quota")
+        reserved = quota
+
+    status = 500
     try:
-        return handler(payload or {})
+        status, body = handler(payload or {})
+        return status, body
     except QuotaError as exc:
         # A capture quota reached mid-handler. No evidence, no authority.
+        status = exc.status
         return exc.status, {"refused": True, "outcome": "quota", "reason": str(exc)}
     except CaptureError as exc:
         # A.7: the `prepared` record is written BEFORE state moves, so a failure
@@ -1853,6 +2256,23 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
         return 500, {"refused": True, "outcome": "capture-failed",
                      "reason": "an evidence record could not be written; the "
                                "transition is not effective: %s" % exc}
+    except Exception as exc:                                     # noqa: BLE001
+        # A.8: a route dispatch exception becomes a structured refusal with no
+        # traceback in the response. The handler's own rollback has already run
+        # (each re-raises after undoing its transition), so nothing is left
+        # half-applied by the time this is reported.
+        status = 500
+        return 500, {"refused": True, "outcome": "refused-internal",
+                     "reason": "internal error (%s); the transition did not "
+                               "become effective" % type(exc).__name__}
+    finally:
+        # A reservation is consumed only by a transition that actually became
+        # effective. Anything else gives the unit back.
+        if reserved is not None:
+            if 200 <= status < 300:
+                _commit_entity(reserved)
+            else:
+                _release_entity(reserved)
 
 
 # --------------------------------------------------------------------------

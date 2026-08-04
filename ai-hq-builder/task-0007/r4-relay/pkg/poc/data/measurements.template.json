@@ -1,0 +1,1396 @@
+{
+  "candidates": {
+    "n8n": {
+      "account_exists": false,
+      "host": null,
+      "pocs": {
+        "POC1": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "connection_revocation_severs_access": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "connector_coverage": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "duplicate_send_prevention": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "evidence_quality": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "human_approval_support": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "monthly_cost_at_expected_volume": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "n8n",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC1",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "response_monitoring": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "revocation_time_to_effect_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        },
+        "POC2": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "classification_handoff": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "cost_per_1000_messages": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "data_handling": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "end_to_end_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "mobile_visibility": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "n8n",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC2",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "queue_update": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "trust_isolation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        },
+        "POC3": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "checkpoint_integration": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "durability_across_induced_kill": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "evidence_and_replay": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "missed_run_detected": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "n8n",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC3",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_semantics": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "side_effect_uncertainty_handling": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "time_to_missed_run_alert_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "watchdog_independence": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        }
+      }
+    },
+    "zapier": {
+      "account_exists": false,
+      "host": null,
+      "pocs": {
+        "POC1": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "connection_revocation_severs_access": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "connector_coverage": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "duplicate_send_prevention": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "evidence_quality": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "human_approval_support": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "monthly_cost_at_expected_volume": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "zapier",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC1",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "response_monitoring": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "revocation_time_to_effect_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        },
+        "POC2": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "classification_handoff": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "cost_per_1000_messages": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "data_handling": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "end_to_end_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "mobile_visibility": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "zapier",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC2",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "queue_update": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "trust_isolation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        },
+        "POC3": {
+          "measures": {
+            "actual_cost_incurred": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "approval_latency_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "latency is measured from a real owner approval on a real device; no owner session has taken place. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_bytes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_file_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "artifact_source_digest": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "billing_units_consumed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "capture_receipt_completeness": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "completeness is counted against a capture corpus produced by a real run; no run has produced one, so there is nothing to count. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "checkpoint_integration": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "destination_digest_claimed": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "the value is provider-reported and explicitly non-authoritative (§C); the owner session records what the provider claimed, and this apparatus never receives the destination bytes, so it can neither confirm nor deny it. NOT_TESTED until a session supplies the provider's claim.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "durability_across_induced_kill": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "evidence_and_replay": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "failure_or_unsupported_capability_reason": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "missed_run_detected": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "original_vs_reconstituted": {
+              "capability_gap_evidence": {
+                "candidate": "zapier",
+                "capability": "original_vs_reconstituted",
+                "detail": "end-to-end binary fidelity is NOT ESTABLISHED by this apparatus. `25_` §C: the service does not receive destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded. The two earlier tests (\"correct digest, wrong bytes ⇒ relay fails\" and \"altered digest, same bytes ⇒ relay fails\") are withdrawn as unsatisfiable. Comparing the delivered artifact against the owner-registered source_digest is an out-of-band owner-session observation; until a session supplies that evidence this measure is UNSUPPORTED, not merely untested.",
+                "poc": "POC3",
+                "source": "25_ §C (artifact fidelity: what is and is not established)"
+              },
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "this apparatus cannot establish it; see capability_gap_evidence",
+              "status": "UNSUPPORTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "owner_friction_total_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_execution_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_retention_deletion_observation": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "retention and deletion are observed at the provider after a real run and a real deletion request; neither has occurred. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_step_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "provider_task_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_count": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "retry_semantics": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "setup_wall_clock_minutes": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "side_effect_uncertainty_handling": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "time_to_missed_run_alert_seconds": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "uncertain_reconciliation_outcome": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "an uncertain result has to be induced against a live provider before its reconciliation outcome can be recorded; no provider run exists. no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            },
+            "watchdog_independence": {
+              "evidence_ref": null,
+              "observed_at": null,
+              "reason": "no provider account exists, no owner session has taken place, and no provider was contacted — nothing was observed, so there is no value to report. `07_` §4: a claim of the form 'provider X supports Y' without a demonstrated instance is not permitted.",
+              "status": "NOT_TESTED",
+              "unit": null,
+              "value": null
+            }
+          },
+          "status": "NOT RUN"
+        }
+      }
+    }
+  },
+  "evidence_records": {},
+  "partition": "business",
+  "round": "D3 POC (R3)",
+  "schema": {
+    "authority": "25_ §D. An evidence_ref is resolvable only when a RECORD binds it to this exact measurement tuple — a file that merely exists is not evidence of anything.",
+    "evidence_record": "{candidate, poc, measure_id, observed_value, unit, observed_at, collector, artifact_or_capture_hash} and optionally source_path; the first four MUST match the measurement that cites it",
+    "measurement": "{status, value, unit, evidence_ref, observed_at} plus `reason` for NOT_TESTED and `reason` + `capability_gap_evidence` for UNSUPPORTED",
+    "required_measure_family": {
+      "approval_latency_seconds": "approval latency",
+      "artifact_bytes": "artifact bytes",
+      "artifact_file_count": "file count",
+      "artifact_source_digest": "source digest",
+      "capture_receipt_completeness": "capture/receipt completeness",
+      "destination_digest_claimed": "destination digest CLAIMED (non-authoritative, §C)",
+      "failure_or_unsupported_capability_reason": "failure/unsupported-capability reason",
+      "original_vs_reconstituted": "original-vs-reconstituted (UNSUPPORTED by default)",
+      "owner_friction_step_count": "owner-attention steps",
+      "owner_friction_total_minutes": "owner-attention minutes",
+      "provider_execution_count": "provider execution count",
+      "provider_retention_deletion_observation": "provider retention/deletion observation",
+      "provider_step_count": "provider step count",
+      "provider_task_count": "provider task count",
+      "retry_count": "retry count",
+      "uncertain_reconciliation_outcome": "uncertain-result reconciliation outcome"
+    }
+  },
+  "status": "NOT RUN — no provider account exists and no owner session has taken place. Every measure below is NOT_TESTED, except `original_vs_reconstituted`, which is UNSUPPORTED because this apparatus cannot establish it at all (25_ §C). Validate this file with `python3 validate_measurements.py` before and after the owner session; it judges completeness and provenance, never values.",
+  "task": "TASK-0007"
+}

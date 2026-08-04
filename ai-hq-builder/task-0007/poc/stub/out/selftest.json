@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "actual": "{'artifact_id': 'art-e295ec1bc47e', 'registration_ref': 'reg-1_Pe4YqgjOnFhwpbjZW84pSXcIwQy1U4', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "actual": "{'artifact_id': 'art-2ec58c83b1a3', 'registration_ref': 'reg-XKU7KHqmD5GpWYwZCtnyN5Aa3gAfP3uC', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
       "block": "identity and registration (A.1 / A.2)",
       "case": "registration mints an artifact_id and an opaque registration_ref",
       "expected": "art-/reg-",
@@ -9,7 +9,7 @@
       "ok": true
     },
     {
-      "actual": "('art-e295ec1bc47e', 'art-e295ec1bc47e')",
+      "actual": "('art-2ec58c83b1a3', 'art-2ec58c83b1a3')",
       "block": "identity and registration (A.1 / A.2)",
       "case": "re-registering the same identity is idempotent — one record, same refs",
       "expected": "same ids",
@@ -17,7 +17,7 @@
       "ok": true
     },
     {
-      "actual": "art-7643d2d76177",
+      "actual": "art-02fc9e4495bf",
       "block": "identity and registration (A.1 / A.2)",
       "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
       "expected": "different artifact_id",
@@ -481,7 +481,31 @@
       "ok": true
     },
     {
-      "actual": "(409, 'run-e419ae58e802', 1)",
+      "actual": "(409, 'refused-revoked-in-flight', None)",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "SEC-R3-02: a revocation landing after the delivery claimed its epoch stops the delivery at the terminal commit — no receipt is minted",
+      "expected": "409 refused-revoked-in-flight, no receipt",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "REVOKED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and the subject is REVOKED, not delivered",
+      "expected": "REVOKED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and the attempt it claimed was given back",
+      "expected": "0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'run-477a5d2eb61b', 1)",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
       "expected": "409 preserving prior",
@@ -489,7 +513,7 @@
       "ok": true
     },
     {
-      "actual": "run-e419ae58e802",
+      "actual": "run-477a5d2eb61b",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "run identity is stub-minted and the provider correlation value anchors nothing",
       "expected": "stub-minted",
@@ -921,7 +945,7 @@
       "ok": true
     },
     {
-      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'd7735f66e61378d2702d1f583d3aaf49'}",
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'f9651fdf9d8cb4512534a07bd5905d35'}",
       "block": "capacity and redaction (A.8)",
       "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
       "expected": "structured marker",
@@ -929,7 +953,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': 'ff8e193bf096ea1f77ce6ed4cddffb21'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '965145c39328af2c93ebb05573ec6aee'}}",
       "block": "capacity and redaction (A.8)",
       "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
       "expected": "descriptor",
@@ -937,7 +961,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': 'ff8e193bf096ea1f77ce6ed4cddffb21'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '965145c39328af2c93ebb05573ec6aee'}}",
       "block": "capacity and redaction (A.8)",
       "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
       "expected": "descriptor",
@@ -993,7 +1017,7 @@
       "ok": true
     },
     {
-      "actual": "('07d986c7444a', '091333606c86')",
+      "actual": "('6550b609f1a2', '012d9c50aa32')",
       "block": "capacity and redaction (A.8)",
       "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
       "expected": "different",
@@ -1113,7 +1137,7 @@
       "ok": true
     },
     {
-      "actual": "\"2E5Sz7B86jDvqf4VkG-__drkPbWlzN0Ra31JSRsx_O8\"",
+      "actual": "\"AmLIyOYqfLlWisMo4_BmRLj4M1cyLKz1FFW72w37588\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
       "expected": "a usable string",
@@ -1121,7 +1145,7 @@
       "ok": true
     },
     {
-      "actual": "\"cap-MjRfWbL3bh0RJKvHSERFMs4DyTxgerjb\"",
+      "actual": "\"cap-pBPOqFBPHzFIHO6JLDQyd80VmYGD4_AJ\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "...and the execution capability likewise arrives usable",
       "expected": "a usable string",
@@ -1331,14 +1355,14 @@
     {
       "actual": "[]",
       "block": "outcome coverage — no unreachable refusal reasons",
-      "case": "every outcome code the source can emit is produced by some case in this suite (54 declared, 53 exercised, 1 exempt)",
+      "case": "every outcome code the source can emit is produced by some case in this suite (55 declared, 54 exercised, 1 exempt)",
       "expected": "none unreached",
       "note": null,
       "ok": true
     }
   ],
   "check": "R3 stub self-test (25_ §E)",
-  "passed": 167,
-  "total": 167,
+  "passed": 170,
+  "total": 170,
   "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
 }

@@ -1,0 +1,46 @@
+{
+  "capability_spend": {
+    "delivered": [
+      true,
+      true
+    ],
+    "receipt_ids": [
+      "dlv-13873952e28b",
+      "dlv-bdc18cf9c282"
+    ],
+    "replayed": [
+      false,
+      false
+    ],
+    "statuses": [
+      200,
+      200
+    ],
+    "store_receipt": {
+      "action_request_id": "ar-34d4671f43e6",
+      "case_id": "case-c94c4b367e32",
+      "delivered_attempt": 1,
+      "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+      "receipt_id": "dlv-bdc18cf9c282"
+    }
+  },
+  "token_spend": {
+    "action_ids": [
+      "ar-4478a7db7152",
+      "ar-fe1c58cd7863"
+    ],
+    "authorized": [
+      true,
+      true
+    ],
+    "capabilities": [
+      "cap-4jC8l6SJQzrkb6AjU4_H9RNgqAl_ujDd",
+      "cap-ySDs7MivnaoLHZZjlYk8M8eFTcFf9h0A"
+    ],
+    "statuses": [
+      200,
+      200
+    ],
+    "store_capability_count": 2
+  }
+}

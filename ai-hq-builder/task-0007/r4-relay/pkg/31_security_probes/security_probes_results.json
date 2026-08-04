@@ -1,0 +1,137 @@
+{
+  "concurrent_capability_spend": {
+    "attempts": [
+      1,
+      1
+    ],
+    "delivered": [
+      true,
+      true
+    ],
+    "receipt_ids": [
+      "dlv-fb716a5361d2",
+      "dlv-6e04a713b83f"
+    ],
+    "relay_attempts": 1,
+    "replayed": [
+      false,
+      false
+    ],
+    "status": "DELIVERED_WITH_RECEIPT",
+    "statuses": [
+      200,
+      200
+    ],
+    "stored_receipt": {
+      "action_request_id": "ar-1b62c9c8677e",
+      "case_id": "case-ecb70ceefe3b",
+      "delivered_attempt": 1,
+      "idempotency_key": "1894d12482a1215be8e237f45001720ab7fa958572ec9b8185442b626924733d",
+      "receipt_id": "dlv-6e04a713b83f"
+    }
+  },
+  "concurrent_review_case": {
+    "case_count": 2,
+    "case_ids": [
+      "case-4b9c70a0c617",
+      "case-5716ee7eecec"
+    ],
+    "identity_count": 1,
+    "outcomes": [
+      "case-opened",
+      "case-opened"
+    ],
+    "statuses": [
+      200,
+      200
+    ],
+    "token_count": 2,
+    "tokens_case_ids": [
+      "case-4b9c70a0c617",
+      "case-5716ee7eecec"
+    ]
+  },
+  "concurrent_token_spend": {
+    "action_request_ids": [
+      "ar-812f7ddb7e22",
+      "ar-b268bed77fac"
+    ],
+    "authorized": [
+      true,
+      true
+    ],
+    "capability_count": 2,
+    "statuses": [
+      200,
+      200
+    ],
+    "token_consumed": true
+  },
+  "expiry_without_transition_evidence": {
+    "expiration_named_captures": [],
+    "final_status": "EXPIRED",
+    "outcome": "refused-terminal",
+    "status": 403,
+    "transition_count_delta": 0
+  },
+  "false_capability_commit_on_secret_index_failure": {
+    "capability_count": 0,
+    "commit_count": 1,
+    "commit_fields": [
+      {
+        "final_status": "MINTED",
+        "outcome": "committed",
+        "phase": "committed",
+        "transition_id": "txn-36c49e6ffba6415a"
+      }
+    ],
+    "outcome": "refused-quota",
+    "status": 429,
+    "token_consumed": false
+  },
+  "false_case_opened_capture_on_token_failure": {
+    "captures": [
+      {
+        "fields": {
+          "outcome": "refused",
+          "reason": "forced token ceiling",
+          "refused": true
+        },
+        "step": "review-quota"
+      },
+      {
+        "fields": {
+          "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          "artifact_id": "art-def7ebdf1e07",
+          "case_id": "case-b24b1b0e36aa",
+          "idempotency_key": "1894d12482a1215be8e237f45001720ab7fa958572ec9b8185442b626924733d",
+          "outcome": "case-opened",
+          "registration_ref": "reg-wrBcMs6YJIR3ghjbx3Vyt4n32bT5e9xM",
+          "submission_epoch": 1,
+          "target_role": "verifier",
+          "task_id": "TASK-1",
+          "transition": "review"
+        },
+        "step": "review-case"
+      }
+    ],
+    "case_count": 0,
+    "outcome": "refused",
+    "status": 429
+  },
+  "revoke_vs_delivery_race": {
+    "final_capability_status": "DELIVERED_WITH_RECEIPT",
+    "receipt_present": true,
+    "relay_delivered": true,
+    "relay_status": 200,
+    "revoke_outcome": "revoked",
+    "revoke_status": 200
+  },
+  "stage_attempt_mutates_without_capture": {
+    "attempt_after_failure": 2,
+    "first_outcome": "capture-failed",
+    "first_status": 500,
+    "second_attempt": 2,
+    "second_status": 200
+  }
+}

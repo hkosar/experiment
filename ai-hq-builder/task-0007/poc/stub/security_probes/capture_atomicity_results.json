@@ -1,0 +1,14 @@
+{
+  "error": "CaptureError('capture write failed: EIO')",
+  "files_left": [
+    {
+      "path": "captures/capatomic/POC1/atomic-test-20260804T063814-ae16cb9e-0001.json",
+      "size": 0
+    }
+  ],
+  "pool_count": {
+    "general": 1,
+    "reserved-owner": 0,
+    "security-refusal": 0
+  }
+}
