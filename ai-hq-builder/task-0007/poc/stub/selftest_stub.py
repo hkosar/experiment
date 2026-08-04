@@ -1496,6 +1496,40 @@ def block_validator():
 
 
 # --------------------------------------------------------------------------
+# SEC-R4-01 — capture publication (R5)
+# --------------------------------------------------------------------------
+def block_capture_publication():
+    block("capture publication: every post-link boundary (SEC-R4-01)")
+    import hashlib                                               # noqa: PLC0415
+    import capture_fault_suite as CF                             # noqa: PLC0415
+
+    pinned = os.path.join(HERE, "r4_reference", "stub_server_r4.py")
+    digest = hashlib.sha256(open(pinned, "rb").read()).hexdigest()
+    check("the pinned R4 reference is the build the verifier examined",
+          digest == CF.R4_PINNED_SHA256, CF.R4_PINNED_SHA256[:16], digest[:16])
+    if digest != CF.R4_PINNED_SHA256:
+        return
+
+    for row in CF.run(os.path.join(HERE, "stub_server.py")):
+        check("R4-01 %s" % row["boundary"], row["ok"], "holds",
+              row["failed_properties"] or "")
+
+    # The same suite must be RED against the pin, or it proves nothing about
+    # this build. Demonstrated-failing is the standing method, and it is what
+    # caught this file passing vacuously in draft.
+    pinned_rows = CF.run(pinned)
+    faults = [r for r in pinned_rows if not r["boundary"].startswith("CONTROL")]
+    red = [r for r in faults if not r["ok"]]
+    check("...and the same boundaries FAIL against the pinned R4 build "
+          "(%d of %d fault boundaries red)" % (len(red), len(faults)),
+          len(red) >= 3, ">=3 red", [r["boundary"] for r in faults if r["ok"]])
+    control = [r for r in pinned_rows if r["boundary"].startswith("CONTROL")]
+    check("...while the pin's CONTROL still publishes, so the red is the "
+          "defect and not a broken harness",
+          bool(control) and control[0]["ok"], "control holds", "")
+
+
+# --------------------------------------------------------------------------
 # outcome coverage
 # --------------------------------------------------------------------------
 def block_coverage():
@@ -1519,7 +1553,7 @@ def run_self_test() -> int:
     sys.stderr.write("R3 self-test — 25_ §E\n")
     for fn in (block_identity, block_owner_idea, block_owner_reconciliation,
                block_capability, block_evidence, block_capacity, block_policy,
-               block_live_http, block_validator):
+               block_live_http, block_validator, block_capture_publication):
         fn()
     block_coverage()
 

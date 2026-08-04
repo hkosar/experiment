@@ -1,0 +1,8 @@
+  [FAIL] one registration identity -> one record                  {"distinct_registration_refs": 2, "distinct_artifact_ids": 2, "statuses": [200, 200], "outcomes": ["registered", "registered"]}
+  [FAIL] one submission identity -> one case + one token          {"outcomes": ["case-opened", "case-opened"], "distinct_tokens": 2, "cases_for_identity": 2, "statuses": [200, 200]}
+  [FAIL] one resume token -> one ActionRequest + one capability   {"authorized": [true, true], "distinct_capabilities": 2, "distinct_action_requests": 2, "statuses": [200, 200]}
+  [FAIL] one capability -> one delivery receipt                   {"delivered": [true, true], "distinct_receipts": 2, "replayed": [false, false], "statuses": [200, 200]}
+  [FAIL] one schedule occurrence -> one run                       {"distinct_run_ids": 2, "outcomes": ["run-started", "run-started"], "statuses": [200, 200]}
+  [FAIL] revoke vs deliver, all three orderings                   {"revoke_before_deliver": {"revoke_status": 200, "delivered": null, "deliver_status": 403}, "revoke_races_deliver": {"revoke_status": 200, "revoke_outcome": "revoked", "d
+
+0/6 barrier scenarios hold (stub_server_r3.py)

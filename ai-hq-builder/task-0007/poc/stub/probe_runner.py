@@ -73,10 +73,17 @@ def run_probe(name: str, target: str, timeout: int = 180) -> dict:
     probe = os.path.join(PROBE_DIR, name + ".py")
     if not os.path.exists(probe):
         raise ProbeError("probe %s is not present" % name)
-    retargeted = _retarget(probe, target)
-    proc = subprocess.run([sys.executable, retargeted], capture_output=True,
-                          text=True, timeout=timeout,
-                          cwd=os.path.dirname(retargeted))
+    if name in ARGV_PROBES:
+        # No retargeting at all: these take the target as argv[1], so they run
+        # byte-identical with nothing rewritten.
+        argv = [sys.executable, probe, target]
+        cwd = PROBE_DIR
+    else:
+        retargeted = _retarget(probe, target)
+        argv = [sys.executable, retargeted]
+        cwd = os.path.dirname(retargeted)
+    proc = subprocess.run(argv, capture_output=True, text=True, timeout=timeout,
+                          cwd=cwd)
     body = proc.stdout.strip()
     if not body:
         raise ProbeError("%s produced no output (rc=%s): %s"
@@ -287,7 +294,61 @@ def _c_control(r):
     return green and not bad, blob[:220]
 
 
+# --------------------------------------------------------------------------
+# SEC-R4-01 (R5) — the verifier's two capture-publication probes.
+#
+# These take a target path as `sys.argv[1]` rather than a hard-coded `SRC=`
+# line, so they need no retargeting at all and run byte-identical.
+#
+# The criteria come from `38_`'s required correction and `37_` §3, not from me:
+#   * "A capture is not published until the directory fsync has succeeded."
+#   * "Any failure after the link must remove the final path."
+#   * "Any failure after the link must release the reserved quota unit."
+#   * "no success-named record survives a rolled-back transition"
+# --------------------------------------------------------------------------
+def _c_capture_publication(r):
+    standalone = r.get("standalone_directory_fsync", {})
+    committed = r.get("committed_registration_directory_fsync", {})
+
+    # Standalone: the whole capture is rolled back, so nothing survives at all.
+    s_files = standalone.get("records") or []
+    s_pools = standalone.get("pools") or {}
+    s_ok = not s_files and all(v == 0 for v in s_pools.values())
+
+    # Registration: the PREPARED record legitimately survives — A.7 says an
+    # orphan prepared is reported uncertain, never complete, and it published
+    # successfully. What must NOT survive is the COMMITTED record, because the
+    # transition it describes was rolled out of live state. Its quota unit is
+    # likewise legitimately held, so the expected pool reading is 1, not 0.
+    c_records = committed.get("records") or []
+    c_steps = [x.get("step") or "" for x in c_records]
+    c_pools = committed.get("pools") or {}
+    c_ok = (not any(st.startswith("committed-") for st in c_steps)
+            and not any(x.get("phase") == "committed" for x in c_records)
+            and committed.get("registrations") == 0
+            and committed.get("identity_index") == 0
+            and c_pools.get("reserved-owner", 0) <= 1)
+    return s_ok and c_ok, (
+        "standalone: records=%d pools=%s | committed-registration: steps=%s "
+        "registrations=%s pools=%s"
+        % (len(s_files), s_pools, c_steps, committed.get("registrations"), c_pools))
+
+
+def _c_capture_postlink(r):
+    verdicts, detail = {}, []
+    for key in ("link_failure_control", "temp_unlink_after_link_failure",
+                "directory_open_after_link_failure"):
+        d = r.get(key, {})
+        files = d.get("files") or []
+        pools = d.get("pools") or {}
+        verdicts[key] = not files and all(v == 0 for v in pools.values())
+        detail.append("%s: files=%d pools=%s" % (key, len(files), pools))
+    return all(verdicts.values()), " | ".join(detail)
+
+
 CRITERIA = {
+    "chatgpt_capture_publication_fault_probe": ("SEC-R4-01", _c_capture_publication),
+    "chatgpt_capture_postlink_cleanup_probe": ("SEC-R4-01", _c_capture_postlink),
     "http_race_probes": ("SEC-R3-01", _c_http_race),
     "http_authority_races": ("SEC-R3-01", _c_authority),
     "http_revoke_race": ("SEC-R3-02", _c_revoke),
@@ -301,7 +362,14 @@ CRITERIA = {
 
 ORDER = ("http_race_probes", "http_authority_races", "http_revoke_race",
          "more_race_probes", "security_probes", "stage_precise_probe",
-         "capture_atomicity_probe", "quota_enforcement_probe", "control_probes")
+         "capture_atomicity_probe", "quota_enforcement_probe", "control_probes",
+         # R5 — SEC-R4-01
+         "chatgpt_capture_publication_fault_probe",
+         "chatgpt_capture_postlink_cleanup_probe")
+
+# Probes that take the target as an argument instead of a hard-coded SRC= line.
+ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
+                         "chatgpt_capture_postlink_cleanup_probe"))
 
 
 def run_all(target: str, expect_green: bool, emit=None) -> list:

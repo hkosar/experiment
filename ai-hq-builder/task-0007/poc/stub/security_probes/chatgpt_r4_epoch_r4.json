@@ -1,0 +1,33 @@
+{
+  "delivery": [
+    200,
+    {
+      "action_request_status": "DELIVERED_WITH_RECEIPT",
+      "attempt": 1,
+      "delivered": true,
+      "destination_digest_claimed_is_provider_reported": true,
+      "destination_verified": false,
+      "outcome": "delivered",
+      "receipt": {
+        "action_request_id": "ar-48a89ed9cc66",
+        "case_id": "case-c11ba380fbd8",
+        "delivered_attempt": 1,
+        "idempotency_key": "b8c2ec010d6c53303f91d142db68b89bcedbeacef673c2e30935e52f4c7c6867",
+        "receipt_id": "dlv-2c1fc2b22f1f"
+      },
+      "replayed": false
+    }
+  ],
+  "final_status": "DELIVERED_WITH_RECEIPT",
+  "receipt_present": true,
+  "revoke": [
+    409,
+    {
+      "action_request_status": "DELIVERED_WITH_RECEIPT",
+      "outcome": "refused",
+      "reason": "capability is already terminal (DELIVERED_WITH_RECEIPT); no state change",
+      "refused": true
+    }
+  ],
+  "revoke_returned_while_delivery_paused": false
+}

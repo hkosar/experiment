@@ -1,0 +1,9 @@
+  [ok  ] /poc1/review-case — unknown registration         6 clauses
+  [ok  ] /relay/deliver — no capability                   5 clauses
+  [FAIL] /owner/decide — provider credential              5 clauses  FAILED: expected_evidence pool security-refusal, never reserved-owner
+  [ok  ] /poc1/verify-decision — pending                  5 clauses
+  [ok  ] /owner/decide — terminal decision                4 clauses
+  [ok  ] /owner/reconcile — outcome=delivered             4 clauses
+  [FAIL] /poc1/review-case — concurrency cardinality      4 clauses  FAILED: concurrency_cardinality: exactly one case-opened; concurrency_cardinality: the loser is truthfully suppressed; expected_state_delta exactly one case; 
+
+5/7 oracles hold (33 clauses) — stub_server_r3.py

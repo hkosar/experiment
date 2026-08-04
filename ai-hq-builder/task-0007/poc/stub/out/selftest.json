@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "actual": "{'artifact_id': 'art-2ec58c83b1a3', 'registration_ref': 'reg-XKU7KHqmD5GpWYwZCtnyN5Aa3gAfP3uC', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "actual": "{'artifact_id': 'art-a940dc73be90', 'registration_ref': 'reg-Sp7wtAnWbKUjorZEnjRljrk26FNnrNAm', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
       "block": "identity and registration (A.1 / A.2)",
       "case": "registration mints an artifact_id and an opaque registration_ref",
       "expected": "art-/reg-",
@@ -9,7 +9,7 @@
       "ok": true
     },
     {
-      "actual": "('art-2ec58c83b1a3', 'art-2ec58c83b1a3')",
+      "actual": "('art-a940dc73be90', 'art-a940dc73be90')",
       "block": "identity and registration (A.1 / A.2)",
       "case": "re-registering the same identity is idempotent — one record, same refs",
       "expected": "same ids",
@@ -17,7 +17,7 @@
       "ok": true
     },
     {
-      "actual": "art-02fc9e4495bf",
+      "actual": "art-f4b5a64d6ce4",
       "block": "identity and registration (A.1 / A.2)",
       "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
       "expected": "different artifact_id",
@@ -505,7 +505,7 @@
       "ok": true
     },
     {
-      "actual": "(409, 'run-477a5d2eb61b', 1)",
+      "actual": "(409, 'run-3da24294bf9e', 1)",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
       "expected": "409 preserving prior",
@@ -513,7 +513,7 @@
       "ok": true
     },
     {
-      "actual": "run-477a5d2eb61b",
+      "actual": "run-3da24294bf9e",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "run identity is stub-minted and the provider correlation value anchors nothing",
       "expected": "stub-minted",
@@ -945,7 +945,7 @@
       "ok": true
     },
     {
-      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'f9651fdf9d8cb4512534a07bd5905d35'}",
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': '337023eefa7d0a33dcf9eb4cfa828196'}",
       "block": "capacity and redaction (A.8)",
       "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
       "expected": "structured marker",
@@ -953,7 +953,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '965145c39328af2c93ebb05573ec6aee'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '538ceedfd4ab278b1b7a4070c2af4c9b'}}",
       "block": "capacity and redaction (A.8)",
       "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
       "expected": "descriptor",
@@ -961,7 +961,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '965145c39328af2c93ebb05573ec6aee'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '538ceedfd4ab278b1b7a4070c2af4c9b'}}",
       "block": "capacity and redaction (A.8)",
       "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
       "expected": "descriptor",
@@ -1017,7 +1017,7 @@
       "ok": true
     },
     {
-      "actual": "('6550b609f1a2', '012d9c50aa32')",
+      "actual": "('2e455cf79b88', 'f401ac66d4a8')",
       "block": "capacity and redaction (A.8)",
       "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
       "expected": "different",
@@ -1137,7 +1137,7 @@
       "ok": true
     },
     {
-      "actual": "\"AmLIyOYqfLlWisMo4_BmRLj4M1cyLKz1FFW72w37588\"",
+      "actual": "\"aRNd35LumpuIPJmWB6RZ4YPmsa9DDHEiMcebU4uw7ec\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
       "expected": "a usable string",
@@ -1145,7 +1145,7 @@
       "ok": true
     },
     {
-      "actual": "\"cap-pBPOqFBPHzFIHO6JLDQyd80VmYGD4_AJ\"",
+      "actual": "\"cap-rC1pNn9MfD8j_3m5FYmK5MFVRu6kDOrH\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "...and the execution capability likewise arrives usable",
       "expected": "a usable string",
@@ -1353,6 +1353,70 @@
       "ok": true
     },
     {
+      "actual": "2876522bec584678",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "the pinned R4 reference is the build the verifier examined",
+      "expected": "2876522bec584678",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 CONTROL (no fault) — a capture still publishes",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 link failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 temp-unlink failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 directory-open failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 directory-fsync failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['link failure after the link']",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and the same boundaries FAIL against the pinned R4 build (3 of 4 fault boundaries red)",
+      "expected": ">=3 red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...while the pin's CONTROL still publishes, so the red is the defect and not a broken harness",
+      "expected": "control holds",
+      "note": null,
+      "ok": true
+    },
+    {
       "actual": "[]",
       "block": "outcome coverage — no unreachable refusal reasons",
       "case": "every outcome code the source can emit is produced by some case in this suite (55 declared, 54 exercised, 1 exempt)",
@@ -1362,7 +1426,7 @@
     }
   ],
   "check": "R3 stub self-test (25_ §E)",
-  "passed": 170,
-  "total": 170,
+  "passed": 178,
+  "total": 178,
   "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
 }

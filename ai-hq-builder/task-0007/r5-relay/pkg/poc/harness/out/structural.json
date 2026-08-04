@@ -1,0 +1,39 @@
+{
+  "check": "n8n workflow structural validation",
+  "library": "n8n-workflow",
+  "node_type_registry_available": false,
+  "node_types_and_parameters": "NOT TESTED — n8n-nodes-base blocked by egress proxy (403)",
+  "workflows": [
+    {
+      "file": "POC1_builder_return_pipeline.json",
+      "ok": true,
+      "nodes": 11,
+      "triggers": [
+        "Builder Return Webhook"
+      ],
+      "connections": 8,
+      "problems": []
+    },
+    {
+      "file": "POC2_idea_capture_staging.json",
+      "ok": true,
+      "nodes": 4,
+      "triggers": [
+        "Idea Intake Webhook"
+      ],
+      "connections": 3,
+      "problems": []
+    },
+    {
+      "file": "POC3_durable_integrity_sweep.json",
+      "ok": true,
+      "nodes": 7,
+      "triggers": [
+        "Nightly Schedule"
+      ],
+      "connections": 6,
+      "problems": []
+    }
+  ],
+  "all_ok": true
+}

@@ -1,0 +1,44 @@
+{
+  "detail": "token: authorized=[None, None] caps=0 ars=0 store=0 | capability: delivered=[None, None] receipts=[]",
+  "green": false,
+  "raw": {
+    "capability_spend": {
+      "delivered": [
+        null,
+        null
+      ],
+      "receipt_ids": [
+        null,
+        null
+      ],
+      "replayed": [
+        null,
+        null
+      ],
+      "statuses": [
+        500,
+        500
+      ],
+      "store_receipt": null
+    },
+    "token_spend": {
+      "action_ids": [
+        null,
+        null
+      ],
+      "authorized": [
+        null,
+        null
+      ],
+      "capabilities": [
+        null,
+        null
+      ],
+      "statuses": [
+        500,
+        500
+      ],
+      "store_capability_count": 0
+    }
+  }
+}

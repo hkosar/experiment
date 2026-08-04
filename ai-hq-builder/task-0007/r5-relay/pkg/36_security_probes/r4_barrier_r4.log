@@ -1,0 +1,8 @@
+  [ok  ] one registration identity -> one record                  {"distinct_registration_refs": 1, "distinct_artifact_ids": 1, "statuses": [200, 200], "outcomes": ["registered", "already-registered"]}
+  [ok  ] one submission identity -> one case + one token          {"outcomes": ["case-opened", "duplicate-suppressed"], "distinct_tokens": 1, "cases_for_identity": 1, "statuses": [200, 200]}
+  [ok  ] one resume token -> one ActionRequest + one capability   {"authorized": [null, true], "distinct_capabilities": 1, "distinct_action_requests": 1, "statuses": [403, 200]}
+  [ok  ] one capability -> one delivery receipt                   {"delivered": [false, true], "distinct_receipts": 1, "replayed": [true, false], "statuses": [200, 200]}
+  [ok  ] one schedule occurrence -> one run                       {"distinct_run_ids": 1, "outcomes": ["run-started", "duplicate-run-declaration"], "statuses": [200, 409]}
+  [ok  ] revoke vs deliver, all three orderings                   {"revoke_before_deliver": {"revoke_status": 200, "delivered": null, "deliver_status": 403}, "revoke_races_deliver": {"revoke_status": 409, "revoke_outcome": "refused", "d
+
+6/6 barrier scenarios hold (stub_server.py)

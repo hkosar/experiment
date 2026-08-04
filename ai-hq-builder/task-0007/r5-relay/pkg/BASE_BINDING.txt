@@ -1,0 +1,12 @@
+TASK-0007 R5 — base binding
+============================
+Base commit : e38c439fdcdf7d217747f2ee88125406d47dfb58
+Base tree   : 4b0874f66d10c2fda06e5f87024372862397637a
+
+  Tree: INDEPENDENTLY VERIFIABLE from base_snapshot.tar.
+  Commit: DECLARED ONLY (shallow clone; no ancestry; no clone instruction).
+
+VERIFY:
+  mkdir v && tar -xf base_snapshot.tar -C v && cd v
+  git init -q . && git add -Af . && git write-tree
+  # must print: 4b0874f66d10c2fda06e5f87024372862397637a

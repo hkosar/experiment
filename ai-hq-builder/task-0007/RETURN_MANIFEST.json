@@ -1,19 +1,19 @@
 {
   "baseline": {
-    "authority_manifest": "75/75 verified, 0 mismatched",
-    "base_tree_independently_reproduced": "32b0f8d7a1e026cce8dbf8693abd49bc6aeade8f",
-    "compared_against": "r4-relay/pkg/poc (my R3 return, as the relay shipped it)",
-    "pinned_r3_matches_reviewed_target": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572",
-    "snapshot_SHA256SUMS": "76/76 OK"
+    "authority_manifest": "104/104 verified, 0 mismatched",
+    "base_tree_independently_reproduced": "4b0874f66d10c2fda06e5f87024372862397637a",
+    "compared_against": "r5-relay/pkg/poc (my R4 return, as the relay shipped it)",
+    "pinned_r4_matches_reviewed_target": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+    "snapshot_SHA256SUMS": "105/105 OK"
   },
   "counts": {
-    "added": 24,
-    "modified": 4,
+    "added": 20,
+    "modified": 5,
     "removed": 0,
-    "unchanged": 43
+    "unchanged": 66
   },
-  "cycle": "round R4 — concurrency and evidence-ordering rework of the R2+R3 stub",
-  "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json; proposed_classifications.json is a SUGGESTION only.",
+  "cycle": "round R5 — capture-publication correction (SEC-R4-01)",
+  "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json.",
   "files": [
     {
       "bytes": 10775,
@@ -220,35 +220,46 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "New test module: 33_ §4's deterministic two-request barriers, aligned at the socket. See AUDIT-R4-5.",
       "bytes": 14538,
       "path": "stub/barrier_suite.py",
       "sha256": "6e3ab2f89cf6c9147273a4a09515ae95863c49620c6e5a3b0b0e8dbc7dcb0494",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "New test module: 38_'s required fault injection at every post-link boundary.",
+      "bytes": 8531,
+      "path": "stub/capture_fault_suite.py",
+      "sha256": "071c38cb8fd3ebc0a63f595be339c062fdd9323128078b977625fbb2d27a1c73",
       "state": "added"
     },
     {
-      "allowlist_note": "New test module: SEC-R3-07's branch-specific acceptance oracle over live HTTP.",
       "bytes": 12680,
       "path": "stub/oracle_suite.py",
       "sha256": "2c1061e9e5a7c85ac3fe2762738700b17ab9a5bd6465c623e82bb23e84f1c04a",
-      "state": "added"
+      "state": "unchanged"
     },
     {
       "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "291a8a5251658033edb9534a98554cbfec83273012d2a264efc916353294335a",
+      "sha256": "7e1e845f9fe502e30c71ff633f9bb489b5813de0d830e65a4e03276e10de8ff8",
       "state": "modified"
     },
     {
       "bytes": 15682,
       "path": "stub/out/r4_acceptance.json",
       "sha256": "e2eeae6526e87b2e48ff542b2fccba00aac71c31604a9c01a64fcf38fa0ac5f2",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 11276,
+      "path": "stub/out/r5_acceptance.json",
+      "sha256": "11ee2c210102052d70370e5468dc30361e54a495661f66c9050f637b47df58fe",
       "state": "added"
     },
     {
-      "bytes": 49200,
+      "bytes": 51250,
       "path": "stub/out/selftest.json",
-      "sha256": "16f92e5402b37dbd8c8e474b0aa0e46df9046f690d3acdc0bc09d43d436d96d1",
+      "sha256": "4c472e2b1e4657350f77011afa0292ea707b65a3c6541f557bdacc31af1ab66c",
       "state": "modified"
     },
     {
@@ -258,11 +269,11 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "New test module: runs the reviewer's probes unmodified but for one SRC= line, and verifies nothing else changed. 33_ §5 covers 'its tests' without enumerating them.",
-      "bytes": 14977,
+      "allowlist_note": "Existing test module, extended with the two new probes and their criteria.",
+      "bytes": 18422,
       "path": "stub/probe_runner.py",
-      "sha256": "b17952e614f5009a32b6ad348ee6e039f894d8149b9f9a6785178076e9087c1c",
-      "state": "added"
+      "sha256": "8f32353e31f26be8cc5ca091a1e0bbae999314ccd44325e39e99a4740e86aab1",
+      "state": "modified"
     },
     {
       "bytes": 30488,
@@ -289,155 +300,261 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "33_ §5 explicitly permits a new pinned r3_reference/ mirroring the r2_reference/ pattern.",
       "bytes": 96593,
       "path": "stub/r3_reference/stub_server_r3.py",
       "sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "38_ names r4_reference/ as a permitted addition on the established precedent.",
+      "bytes": 665,
+      "path": "stub/r4_reference/README.md",
+      "sha256": "03ac3c8efa4f2d36d2d3479edf349d89fa692a7e10449b731f077fa15b1267c3",
       "state": "added"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
+      "allowlist_note": "38_ names r4_reference/ as a permitted addition on the established precedent.",
+      "bytes": 118995,
+      "path": "stub/r4_reference/stub_server_r4.py",
+      "sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+      "state": "added"
+    },
+    {
       "bytes": 3320,
       "path": "stub/security_probes/README.md",
       "sha256": "3b54cdf9a25696e73ca057604fd12862476d51001dc47cc6dec5ac3a9bef8443",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 1017,
       "path": "stub/security_probes/capture_atomicity_probe.py",
       "sha256": "293956cb890ec772a3adc6c9e799dfb4d55392344ecddf64166477be29da5226",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 290,
       "path": "stub/security_probes/capture_atomicity_results.json",
       "sha256": "a67f679ec4181ebddfae9e8185c8cb7e3ed10435a8bd99b209750dda0a2bb228",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 2860,
+      "path": "stub/security_probes/chatgpt_capture_postlink_cleanup_probe.py",
+      "sha256": "3cb4df24c10390f52c57a2ab04344bb6b631a96b873001835bd55232de518b8d",
       "state": "added"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 1163,
+      "path": "stub/security_probes/chatgpt_capture_postlink_cleanup_r4.json",
+      "sha256": "86612670d727c783dc5468345a1c87821b147ca1758ae75293927ebdcbf39673",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 3403,
+      "path": "stub/security_probes/chatgpt_capture_publication_fault_probe.py",
+      "sha256": "2f37ef5c98144b7f654ca11050b216ecc2e0dbfb449b7138660e9eee21fb506c",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 1658,
+      "path": "stub/security_probes/chatgpt_capture_publication_fault_r3.json",
+      "sha256": "e1e189672496b6d9a27215d76799ff7e8936300711cd296266bc6e9217c3a833",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 1642,
+      "path": "stub/security_probes/chatgpt_capture_publication_fault_r4.json",
+      "sha256": "112820c9a5278d1240f253fc75d5d3391b048c65ec37e4e4b835cd3986995ca0",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 860,
+      "path": "stub/security_probes/chatgpt_r4_epoch_r3.json",
+      "sha256": "1c61cf55e01dda1aed20c2c7bae37c2280d20567d1156314e792c9676f54c1f5",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 945,
+      "path": "stub/security_probes/chatgpt_r4_epoch_r4.json",
+      "sha256": "129cf2fb09d174584bf869ace4728c7b4e908770ba92273c4beff6191e18314c",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 730,
+      "path": "stub/security_probes/chatgpt_r4_legacy_http_authority_races.json",
+      "sha256": "cb3f6a0fecd898805ea7f831cccbb79c5510d3b2f9fc0fd4fced68e652bb427a",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 334,
+      "path": "stub/security_probes/chatgpt_r4_legacy_http_race_probes.json",
+      "sha256": "d0552d512ae8877ad454307512d7dc21e2aa51e06a5d595b79fc092ce9b46606",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 1303,
+      "path": "stub/security_probes/chatgpt_r4_legacy_http_revoke_race.json",
+      "sha256": "5685110e5a8bdbc188216a3fa49961aa85f6c64c86ec2edeadcd36a98a4aa0ca",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 3083,
+      "path": "stub/security_probes/chatgpt_r4_legacy_nonrace_results.json",
+      "sha256": "6cf7d2899d1ecead53d78b1af47f15999f0c4420985070df8346a7fb79349115",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 2440,
+      "path": "stub/security_probes/chatgpt_r4_nway_r4.json",
+      "sha256": "628dffdae60ecdec157f23816d6419be5d4048f2113c4d600c88eff3ff685b6f",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 6712,
+      "path": "stub/security_probes/chatgpt_r4_prelock_r3.json",
+      "sha256": "4a02c85f4348c63a2d8414231f26c9cc1459effdc743c34ad05fc48c7e56837d",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
+      "bytes": 6790,
+      "path": "stub/security_probes/chatgpt_r4_prelock_r4.json",
+      "sha256": "158544c957e4a9744ba9740e3b4751744092bad9f427ccc525892a3a61463bcd",
+      "state": "added"
+    },
+    {
       "bytes": 3569,
       "path": "stub/security_probes/control_probes.py",
       "sha256": "27029b607b4a7d42e000d177b0907c636486c30a89a42990a07bf57a1a90eaf6",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 1294,
       "path": "stub/security_probes/control_probes_results.json",
       "sha256": "e1d42cb51c84d4fb7a9f8f16713e5b463f59df1cde190832c403ef70d123397b",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 3537,
       "path": "stub/security_probes/http_authority_races.py",
       "sha256": "ddc46f5d7c6fc2b2a7add5f72ec8a9d718322cfdef590dcf05672663750430d8",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 879,
       "path": "stub/security_probes/http_authority_races_results.json",
       "sha256": "17f41d2a213bbf9ef27dbbf2b59ffc49c3bb7ec91e159ca2627bc401b8e7333f",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 2213,
       "path": "stub/security_probes/http_race_probes.py",
       "sha256": "4f8cd4211203ad4d79cee0b8444d1281a9edced0cfe0b05892df50554a36d16a",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 186,
       "path": "stub/security_probes/http_race_results.json",
       "sha256": "fcad4e2b990d88266acdab4bdb43efde48609bc46b15df26729a8ca7ffe1efab",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 2279,
       "path": "stub/security_probes/http_revoke_race.py",
       "sha256": "2fa47805d3e58b2ef2b1e96cc4a9439ea12f50fc41cbffe50692908697ded2b1",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 1037,
       "path": "stub/security_probes/http_revoke_race_results.json",
       "sha256": "fa3131118ca486456ac6815612a77105cb7aa42125567a6ef01e5545c5c0a976",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "The verifier's probes and outputs, byte-identical. Evidence-only; never executed by the service.",
+      "bytes": 491,
+      "path": "stub/security_probes/legacy_more_race_r4.json",
+      "sha256": "c7c5de770944b70af05890b29ae8e43fd90d9d393fe70233c25f7594f8feb640",
       "state": "added"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
+      "allowlist_note": "The verifier's probes and outputs, byte-identical. Evidence-only; never executed by the service.",
+      "bytes": 2186,
+      "path": "stub/security_probes/legacy_security_probe_r4.json",
+      "sha256": "96ad1787218d888bcdb67fe8d3648ad02104baeaca533db7f52cd11c0663e507",
+      "state": "added"
+    },
+    {
       "bytes": 2031,
       "path": "stub/security_probes/more_race_probes.py",
       "sha256": "3d7e0e54a6fb2e78a548b5fe1c8c20d045705986ce667dce17e851c5877d7190",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 565,
       "path": "stub/security_probes/more_race_results.json",
       "sha256": "fdbf7315e13064d6f4cf990341dee08fd932b4994cdc9aee0ed7cd3ce1730a61",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 1325,
       "path": "stub/security_probes/quota_enforcement_probe.py",
       "sha256": "6f6abde46a6162a8eed0d420aeea62e667582a0f749383b0b6ebb717e78b5b92",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 266,
       "path": "stub/security_probes/quota_enforcement_results.json",
       "sha256": "035f195cea6b4d59623847197c467ee5be51ec9fd6750a834ee048150c608657",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 10636,
       "path": "stub/security_probes/security_probes.py",
       "sha256": "74c509bdad7e440ddcaea6ca6d52b590f9b0ac0fc65f285815b48bf0fe26b345",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 3230,
       "path": "stub/security_probes/security_probes_results.json",
       "sha256": "196230b14b0905255411b140256d004b0d7d3786d88cc3f959591bec4dd5941b",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 1183,
       "path": "stub/security_probes/stage_precise_probe.py",
       "sha256": "db4a335402b5cd95120d5bc58a0f0a574f56b0b0887de305c0dcfb20dd1e9dde",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The reviewer's nine probe scripts and nine recorded outputs, byte-identical to 31_security_probes/ in the relay. Shipped so the claim 'the probes run green' is checkable from the return alone. Evidence-only; never executed by the service.",
       "bytes": 234,
       "path": "stub/security_probes/stage_precise_results.json",
       "sha256": "b7f3b9148ded373148113d69d19f88612bd58a6b7c0c5ea550f90f57c414db72",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "bytes": 78980,
+      "bytes": 80839,
       "path": "stub/selftest_stub.py",
-      "sha256": "73f1ece4ca66bde2b1d66f3e850ad65ea7ec8e6c885bea9526088cd39a6ecce2",
+      "sha256": "c4d53d1862308219ec997fc573d4ddb4296e93f5d42e19e1048fec1a6fb8226a",
       "state": "modified"
     },
     {
-      "bytes": 118995,
+      "bytes": 120788,
       "path": "stub/stub_server.py",
-      "sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+      "sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
       "state": "modified"
     },
     {
@@ -465,7 +582,7 @@
       "state": "unchanged"
     }
   ],
-  "governing_contract": "25_ Revision 5 — UNCHANGED this round",
+  "governing_contract": "25_ Revision 5 — UNCHANGED; R4 concurrency architecture accepted and not reopened",
   "immutable_denylist_unchanged": [
     {
       "byte_identical_to_baseline": true,
@@ -511,33 +628,35 @@
       "byte_identical_to_baseline": true,
       "path": "stub/r2_reference/stub_server_r2.py",
       "sha256": "a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "stub/r3_reference/stub_server_r3.py",
+      "sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572"
     }
   ],
-  "instruction_authority": "33_TASK-0007_R4_Task_Packet_Concurrency_Rework.md",
+  "instruction_authority": "38_TASK-0007_R5_Task_Packet_Capture_Publication_Fix.md",
   "outside_enumerated_allowlist": [
-    "stub/barrier_suite.py",
-    "stub/oracle_suite.py",
+    "stub/capture_fault_suite.py",
     "stub/probe_runner.py",
-    "stub/r3_reference/stub_server_r3.py",
-    "stub/security_probes/README.md",
-    "stub/security_probes/capture_atomicity_probe.py",
-    "stub/security_probes/capture_atomicity_results.json",
-    "stub/security_probes/control_probes.py",
-    "stub/security_probes/control_probes_results.json",
-    "stub/security_probes/http_authority_races.py",
-    "stub/security_probes/http_authority_races_results.json",
-    "stub/security_probes/http_race_probes.py",
-    "stub/security_probes/http_race_results.json",
-    "stub/security_probes/http_revoke_race.py",
-    "stub/security_probes/http_revoke_race_results.json",
-    "stub/security_probes/more_race_probes.py",
-    "stub/security_probes/more_race_results.json",
-    "stub/security_probes/quota_enforcement_probe.py",
-    "stub/security_probes/quota_enforcement_results.json",
-    "stub/security_probes/security_probes.py",
-    "stub/security_probes/security_probes_results.json",
-    "stub/security_probes/stage_precise_probe.py",
-    "stub/security_probes/stage_precise_results.json"
+    "stub/r4_reference/README.md",
+    "stub/r4_reference/stub_server_r4.py",
+    "stub/security_probes/chatgpt_capture_postlink_cleanup_probe.py",
+    "stub/security_probes/chatgpt_capture_postlink_cleanup_r4.json",
+    "stub/security_probes/chatgpt_capture_publication_fault_probe.py",
+    "stub/security_probes/chatgpt_capture_publication_fault_r3.json",
+    "stub/security_probes/chatgpt_capture_publication_fault_r4.json",
+    "stub/security_probes/chatgpt_r4_epoch_r3.json",
+    "stub/security_probes/chatgpt_r4_epoch_r4.json",
+    "stub/security_probes/chatgpt_r4_legacy_http_authority_races.json",
+    "stub/security_probes/chatgpt_r4_legacy_http_race_probes.json",
+    "stub/security_probes/chatgpt_r4_legacy_http_revoke_race.json",
+    "stub/security_probes/chatgpt_r4_legacy_nonrace_results.json",
+    "stub/security_probes/chatgpt_r4_nway_r4.json",
+    "stub/security_probes/chatgpt_r4_prelock_r3.json",
+    "stub/security_probes/chatgpt_r4_prelock_r4.json",
+    "stub/security_probes/legacy_more_race_r4.json",
+    "stub/security_probes/legacy_security_probe_r4.json"
   ],
   "returned_to": "Fable",
   "task": "TASK-0007"

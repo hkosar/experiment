@@ -1,18 +1,18 @@
-# Diffs — TASK-0007 R4
+# Diffs — TASK-0007 R5
 
-Changed files diffed against **the R3 baseline the relay shipped**
-(`r4-relay/pkg/poc/`), verified 45/47 byte-identical to my R3 return before any
+Changed files diffed against **the R4 baseline the relay shipped**
+(`r5-relay/pkg/poc/`), verified 69/71 byte-identical to my R4 return before any
 editing (the two that differ are the regenerate-by-running evidence outputs).
 
-New this round, diffed against `/dev/null`: `stub/probe_runner.py`,
-`stub/barrier_suite.py`, `stub/oracle_suite.py`, `stub/security_probes/README.md`.
+- `stub_stub_server.py.diff` — **the whole of the SEC-R4-01 correction.** One
+  function, `write_capture`: `linked_path` tracked separately, `published` set
+  only after the directory fsync, and the `finally` removing the final path as
+  well as the temp. Nothing else in the service changed.
+- `stub_selftest_stub.py.diff` — the SEC-R4-01 block (8 cases).
+- `stub_probe_runner.py.diff` — the verifier's two new probes and their criteria.
+- `stub_capture_fault_suite.py.diff` — new, diffed against `/dev/null`.
 
-Not diffed, and why:
-
-- `stub/r3_reference/stub_server_r3.py` — a byte-identical copy of the build the
-  reviewer examined (`sha256 7f13494e…5b90f572`, the hash `32_` records). A diff
-  against its own source is empty by construction; verify with `sha256sum`, as
-  `r1_witnesses.py` and `probe_runner.py` both do before loading it.
-- `stub/security_probes/*` — the reviewer's own nine scripts and nine recorded
-  outputs, copied byte-identically from the relay's `31_security_probes/`.
-- `harness/out/**`, `stub/out/**` — regenerate by running.
+Not diffed: `stub/r4_reference/stub_server_r4.py` is a byte-identical copy of the
+R4 build (`sha256 2876522b…22450f79`) — verify with `sha256sum`, as the suites do
+before loading it. `stub/security_probes/chatgpt_*` are the verifier's own files,
+copied byte-identically. `harness/out/**` and `stub/out/**` regenerate by running.

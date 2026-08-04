@@ -1,0 +1,34 @@
+{
+  "registration_race": {
+    "identity_index": 0,
+    "outcomes": [
+      "refused-internal",
+      "refused-internal"
+    ],
+    "refs": [
+      null,
+      null
+    ],
+    "registrations": 0,
+    "statuses": [
+      500,
+      500
+    ]
+  },
+  "run_declaration_race": {
+    "declaration_index": 0,
+    "outcomes": [
+      "refused-internal",
+      "refused-internal"
+    ],
+    "run_ids": [
+      null,
+      null
+    ],
+    "runs": 0,
+    "statuses": [
+      500,
+      500
+    ]
+  }
+}
