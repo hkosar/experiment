@@ -1,0 +1,309 @@
+{
+  "name": "POC3 — Durable nightly integrity sweep (Release 1)",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "cronExpression",
+              "expression": "0 3 * * *"
+            }
+          ]
+        }
+      },
+      "id": "nightly-schedule",
+      "name": "Nightly Schedule",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "The provider HOSTS the schedule; the AI OS journal OWNS the spec.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/run-started",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({schedule_id:'poc3-nightly', occurrence: $now.toISO(), provider_correlation_id: $execution.id}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "announce-run-start",
+      "name": "Announce Run Start",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "C-13. The run id is MINTED BY THE AI OS and returned; n8n's execution id travels as a provider correlation value that anchors nothing. A duplicate declaration is refused 409 and preserves the prior record — which is what makes the mandated mid-flight kill measurable.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.stage_endpoint }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $json.run_id}) }}",
+        "options": {
+          "retry": {
+            "retry": {
+              "maxTries": 3,
+              "waitBetweenTries": 5000
+            }
+          },
+          "timeout": 30000
+        },
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "integrity-sweep-stage",
+      "name": "Integrity Sweep Stage",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "C-4. POC-3's stage target is RETRY-TOLERANT and has no capability — a single-use rule here would fail the round's own mid-flight kill and mis-score a legitimate provider retry, which is what POC-3 measures.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/checkpoint",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start').item.json.run_id, stage:1}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "checkpoint",
+      "name": "Checkpoint",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "Checkpoint state lives in the AI OS ledger — the provider never becomes authoritative for project truth (09_ §2).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.side_effect_certain }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "side-effect-certain?",
+      "name": "Side Effect Certain?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        880,
+        300
+      ],
+      "notes": "ACT-01. Uncertain outcomes reconcile rather than re-fire.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/reconcile",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start').item.json.run_id}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "reconcile",
+      "name": "Reconcile",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        420
+      ],
+      "notes": "The wrapper reports exactly what it checked and states plainly that it has no view of an external system's post-state.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc3/receipt",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({run_id: $('Announce Run Start').item.json.run_id, occurrence: $('Announce Run Start').item.json.occurrence, provider_result: $json}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "report-drift-and-receipt",
+      "name": "Report Drift and Receipt",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        300
+      ],
+      "notes": "EVIDENCE. The wrapper mints the D-EC_ receipt and judges the occurrence window; this records.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Nightly Schedule": {
+      "main": [
+        [
+          {
+            "node": "Announce Run Start",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Announce Run Start": {
+      "main": [
+        [
+          {
+            "node": "Integrity Sweep Stage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Integrity Sweep Stage": {
+      "main": [
+        [
+          {
+            "node": "Checkpoint",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Checkpoint": {
+      "main": [
+        [
+          {
+            "node": "Side Effect Certain?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Side Effect Certain?": {
+      "main": [
+        [
+          {
+            "node": "Report Drift and Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Reconcile",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Reconcile": {
+      "main": [
+        [
+          {
+            "node": "Report Drift and Receipt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-3",
+    "scenario": "Durable nightly integrity sweep (09_ §2)",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}

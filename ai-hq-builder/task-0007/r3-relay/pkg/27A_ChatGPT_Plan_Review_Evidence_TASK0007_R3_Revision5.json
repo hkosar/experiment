@@ -1,0 +1,37 @@
+{
+  "review": "TASK-0007 R3 Revision 5 narrow plan-gate confirmation",
+  "verdict": "PASS_WITH_ONE_PREAUTHORIZED_CONTROL_CLARIFICATION",
+  "uploaded_zip_sha256": "a54b6175ec1ba9edaacaa24ff7ebdedfedd5a4cc47f4eda695f712f28e17a9f7",
+  "integrity": {
+    "sha256sums_passed": 60,
+    "sha256sums_total": 60,
+    "authority_manifest_passed": 59,
+    "authority_manifest_total": 59,
+    "governing_instruction_count": 1,
+    "declared_base_tree": "ef8036d1f6d24671079106375906fec140440c3b",
+    "reconstructed_base_tree": "ef8036d1f6d24671079106375906fec140440c3b",
+    "base_tree_match": true,
+    "tar_members": 325,
+    "unsafe_tar_members": 0
+  },
+  "baseline_reproduction": {
+    "stub_selftest_passed": 56,
+    "stub_selftest_total": 56,
+    "r1_witnesses_passed": 21,
+    "r1_witnesses_total": 21,
+    "n8n_workflow_dependency_available": false,
+    "dependency_limitation_disclosed_by_packet": true
+  },
+  "finding_status": {
+    "R4Q-01": "CLOSED",
+    "R4Q-02": "CLOSED",
+    "R4Q-03": "CLOSED_AFTER_EXACT_R5Q-01_TEXT_CORRECTION",
+    "R4Q-04": "CLOSED",
+    "R5Q-01": "PREAUTHORIZED_TEXT_CORRECTION"
+  },
+  "builder_release": {
+    "authorized": true,
+    "condition": "Fable applies R5Q-01 exactly and regenerates integrity records",
+    "additional_verifier_round_required": false
+  }
+}

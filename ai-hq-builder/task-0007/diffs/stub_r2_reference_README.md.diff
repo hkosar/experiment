@@ -1,0 +1,21 @@
+--- /dev/null	2026-08-04 03:15:13.026141288 +0000
++++ poc/stub/r2_reference/README.md	2026-08-04 04:50:17.882686601 +0000
+@@ -0,0 +1,18 @@
++# Pinned R2 baseline — do not edit
++
++`stub_server_r2.py` is a byte-identical copy of the stub returned at R2
++(`sha256 a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9`).
++
++It exists for one reason: `25_` §E requires that a test needing the R2 baseline
++be demonstrated failing against it, pinned "the same way" as the R1 reference —
++run-time SHA check, refuse to continue on mismatch, never a defect switch.
++
++`r1_witnesses.py` verifies this digest before loading the file. Editing anything
++here makes every R2 witness refuse to run, which is the intent: a witness that
++runs against a reconstruction proves less than one that runs against the
++artifact the reviewer actually saw.
++
++**Allowlist note.** `25_` §0 does not list this path. `25_` §E requires the pin
++and the enumerated allowlist provides nowhere to put it; the Delivery Record
++raises that as AUDIT-4 for Fable to accept or reject. Nothing in this directory
++is executed by the shipped service.

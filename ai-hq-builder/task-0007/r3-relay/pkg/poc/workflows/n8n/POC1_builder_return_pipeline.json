@@ -1,0 +1,410 @@
+{
+  "name": "POC1 — Builder-return pipeline (Release 1, Business partition only)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "poc1-builder-return",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "id": "builder-return-webhook",
+      "name": "Builder Return Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. A Builder return artifact (zip + manifest) arrives. Business partition only (05_ §2). EXTERNAL-UNTRUSTED until the envelope node. 09_ §2: this is the Release-1 workload, not the Release-2 call flow.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 09_ §2 R1P-04 — the identity tuple, all five components. A raw archive\n// hash alone is NOT identity: two tasks may legitimately submit byte-\n// identical artifacts, and one task may resubmit with changed routing.\nconst crypto = require('crypto');\nreturn items.map(i => {\n  const b64 = i.json.artifact_b64 || '';\n  const digest = crypto.createHash('sha256')\n                       .update(Buffer.from(b64, 'base64')).digest('hex');\n  return { json: {\n    envelope: { trust: 'external-untrusted', partition: 'business',\n                source: 'builder-relay', received_at: new Date().toISOString() },\n    // the five components (C-1)\n    task_id: i.json.task_id,\n    transition: i.json.transition,          // e.g. 'builder->fable'\n    artifact_digest: digest,                // computed here, not trusted\n    target_role: i.json.target_role,        // SYMBOLIC role (C-2)\n    submission_epoch: Number(i.json.submission_epoch ?? 1),\n    // R1P-05: artifact-handling measurements the session records\n    artifact_bytes: Buffer.from(b64, 'base64').length,\n    manifest_file_count: (i.json.manifest_files || []).length,\n    content_forwarded: Boolean(b64)\n  } };\n});"
+      },
+      "id": "apply-envelope-and-bind-identity",
+      "name": "Apply Envelope and Bind Identity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY + C-1. The digest is COMPUTED from the artifact here rather than taken from the sender. `target_role` is symbolic; the wrapper resolves it.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/review-case",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "ai-os---open-review-case",
+      "name": "AI OS — Open Review Case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. Returns either a resume token (new case) or a duplicate-suppression result carrying the PRIOR receipt — R1P-04 test (1). An unauthorized target_role is REJECTED here, distinguishably — test (3).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.outcome }}",
+              "operation": "equals",
+              "value2": "case-opened"
+            }
+          ]
+        }
+      },
+      "id": "duplicate-or-rejected?",
+      "name": "Duplicate or Rejected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "R1P-04 (1) and (3) are OBSERVED here: duplicate-suppressed and rejected-unauthorized-target take the false branch and are recorded as distinct outcomes, never as a success.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "resume": "webhook"
+      },
+      "id": "wait-for-owner-decision",
+      "name": "Wait for Owner Decision",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        880,
+        200
+      ],
+      "notes": "TRANSPORT ONLY. The provider carries the pause; the decision is made on the AI OS/Discord card. The provider never learns the case id.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/verify-decision",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({token: $('AI OS — Open Review Case').item.json.resume_token}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "verify-decision-token",
+      "name": "Verify Decision Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        200
+      ],
+      "notes": "AUTHORITY. ONLY the token — the endpoint is an allowlist and refuses any other field. Returns the ActionRequest plus a single-use execution capability, or pending, or a refusal.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.authorized }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "authorized?",
+      "name": "Authorized?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        200
+      ],
+      "notes": "GATE. No capability, no relay.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.action_request.endpoint }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({capability: $json.execution_capability, action_request_id: $json.action_request.id, case_id: $json.action_request.case_id, payload: $json.action_request.payload}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "controlled-relay",
+      "name": "Controlled Relay",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        120
+      ],
+      "notes": "EXECUTION. The endpoint comes from the ActionRequest the AI OS built by resolving the ROLE — never from this workflow. The capability is bound to the action id, case, target and payload digest; a replay returns the prior receipt with no second side effect (R1P-04 test 4).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/receipt",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "return-receipt-to-ai-os",
+      "name": "Return Receipt To AI OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        120
+      ],
+      "notes": "EVIDENCE. Raw provider result only; the wrapper mints the D-EC_ receipt.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/refusal",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({outcome: $json.outcome, reason: $json.reason}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "record-non-relay-outcome",
+      "name": "Record Non-Relay Outcome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        880,
+        420
+      ],
+      "notes": "FAIL-CLOSED. Duplicate suppression, unauthorized target and refusals are all recorded — never silently dropped.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/refusal",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({outcome: $json.outcome, reason: $json.reason}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "record-unauthorized",
+      "name": "Record Unauthorized",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        300
+      ],
+      "notes": "FAIL-CLOSED. Pending and owner-rejected both land here.",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Builder Return Webhook": {
+      "main": [
+        [
+          {
+            "node": "Apply Envelope and Bind Identity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Envelope and Bind Identity": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Open Review Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Open Review Case": {
+      "main": [
+        [
+          {
+            "node": "Duplicate or Rejected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate or Rejected?": {
+      "main": [
+        [
+          {
+            "node": "Wait for Owner Decision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Record Non-Relay Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Owner Decision": {
+      "main": [
+        [
+          {
+            "node": "Verify Decision Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Decision Token": {
+      "main": [
+        [
+          {
+            "node": "Authorized?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Authorized?": {
+      "main": [
+        [
+          {
+            "node": "Controlled Relay",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Record Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlled Relay": {
+      "main": [
+        [
+          {
+            "node": "Return Receipt To AI OS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-1",
+    "scenario": "Builder-return pipeline (09_ §2)",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED"
+  }
+}

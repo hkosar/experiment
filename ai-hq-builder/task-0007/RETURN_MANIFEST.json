@@ -1,26 +1,30 @@
 {
   "baseline": {
-    "relay_poc_matches_accepted_R1_return": "40/40 byte-identical"
+    "authority_manifest_coverage": "57/57 classified, no unexpected files",
+    "base_tree_independently_reproduced": "6c8429bd7ccebc3eb6c26416882a4f8a34d2e922",
+    "compared_against": "r3-relay/pkg/poc (the R2 baseline the relay shipped)",
+    "relay_poc_matched_released_R2_return": "43/43 byte-identical, verified before editing",
+    "snapshot_SHA256SUMS": "58/58 OK, 0 mismatched"
   },
   "counts": {
-    "added": 6,
-    "files": 43,
-    "modified": 13,
-    "removed": 3,
-    "unchanged": 24
+    "added": 4,
+    "modified": 14,
+    "removed": 0,
+    "unchanged": 29
   },
-  "cycle": "round R2 \u2014 stub rework (security + evidence integrity) and the Release-1 scenario re-aim",
+  "cycle": "round R3 — rebuild against 25_ Revision 5 (§A/§B), §D measurement validator, workflow/spec/runbook re-aim",
+  "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json; proposed_classifications.json in this return is a SUGGESTION only.",
   "files": [
     {
-      "bytes": 8982,
+      "bytes": 10775,
       "path": "FINDINGS.md",
-      "sha256": "7c128df63bb40d6d89ec824994add5c293beb812fe6a8b9b886b6a8a494b8135",
+      "sha256": "e8d5ad13c32cb142936c8e5335cb01b063a4468ca9f587700d11f5ea1b42857f",
       "state": "modified"
     },
     {
-      "bytes": 4973,
+      "bytes": 6864,
       "path": "README.md",
-      "sha256": "2dd512e1bd44c36e8820998070ca48adf3f17bd4ac9b28b301abf687a3ceecb3",
+      "sha256": "497710ccf1bc7cd7da9f4926d28384d0d81b52b0b1203ae096f78d930375c371",
       "state": "modified"
     },
     {
@@ -30,16 +34,22 @@
       "state": "unchanged"
     },
     {
-      "bytes": 21551,
+      "bytes": 90718,
       "path": "data/measurements.template.json",
-      "sha256": "99c7aa0f65073ba694754fc07a87d79ae69ccb6bc16c3c76de4dd7e6906e96c1",
-      "state": "unchanged"
+      "sha256": "4f086ad6f22ea7da311177163f183bb8de9d967a746387ba05911ae0420a4e3a",
+      "state": "modified"
     },
     {
       "bytes": 229,
       "path": "data/owner_friction_log.template.csv",
       "sha256": "2fcc9de7dbf29328050231e22e3036bf6c923932c2486f40d6eccab4e7cfeff0",
       "state": "unchanged"
+    },
+    {
+      "bytes": 14827,
+      "path": "data/validate_measurements.py",
+      "sha256": "12eabc7d1994037d35748e4f2e9cb8307a960f69438ce4255f149c32df5cd311",
+      "state": "added"
     },
     {
       "bytes": 9944,
@@ -57,13 +67,13 @@
       "bytes": 561,
       "path": "harness/out/boundary.json",
       "sha256": "17de40127d2c9a853851a703728427ede57a47b07c873527849656534766701a",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 181,
       "path": "harness/out/boundary.log",
       "sha256": "6fccba9058671057f9e6e8195dd3f51c10e406a12f2f383dd477f4df41a0239a",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 1302,
@@ -141,13 +151,13 @@
       "bytes": 865,
       "path": "harness/out/structural.json",
       "sha256": "af57d656c45bcd4ec29f0c91479c453b84b55c67e0588bdfda23fcabfc541f27",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 319,
       "path": "harness/out/structural.log",
       "sha256": "1a0253c09dd9806eae0b33115ae94749c792c49d01d0faf08f407a519997ead8",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 1312,
@@ -186,21 +196,21 @@
       "state": "unchanged"
     },
     {
-      "bytes": 7669,
+      "bytes": 9587,
       "path": "runbooks/RUNBOOK-n8n.md",
-      "sha256": "e5075a63c62eef069d37ced80134538d6b76584f1583b049d1bc468e45ba23ab",
+      "sha256": "90b56651f5fabd4cd1b5551ee791e49df42b95b603c86ce9d0f926cfc78f46ef",
       "state": "modified"
     },
     {
-      "bytes": 7781,
+      "bytes": 11386,
       "path": "runbooks/RUNBOOK-owner-session.md",
-      "sha256": "8d3b76e5b92bdf0f0d9f60265f721898e0877c86f5b82d584ee2edeafdba07b8",
+      "sha256": "d02331efb707de7c9d9e623c4a015e756739fc47330807d69a1c0b2dfded8cb7",
       "state": "modified"
     },
     {
-      "bytes": 5003,
+      "bytes": 5529,
       "path": "runbooks/RUNBOOK-zapier.md",
-      "sha256": "9936960d1fb94ad0b828e418f48393520e9695f98e0a1630d6175c1d46dc4c30",
+      "sha256": "3dec6c529cb8b41dc3590990f1fc536e8d3f91d76ec50258537e6f70accf67cb",
       "state": "modified"
     },
     {
@@ -210,224 +220,129 @@
       "state": "unchanged"
     },
     {
-      "bytes": 5816,
+      "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "ec3a7d3fb1e71dee2771b2b090f5f5e811ffdc50ebacbef663507eff53d67dd2",
+      "sha256": "b17a4e44a3aac7077605fa1f7634a787d079012514d953417807105ab3e99724",
+      "state": "modified"
+    },
+    {
+      "bytes": 48328,
+      "path": "stub/out/selftest.json",
+      "sha256": "c4eef12f949bf3ac2aa8ac3d868b5a242633ae3c0a365dc701c0222a2f287f61",
       "state": "added"
     },
     {
       "bytes": 13395,
       "path": "stub/out/stub_selftest.json",
       "sha256": "e55c78089afe4cd09a42c4b5fad951b7b73e2b3c558566da10ecb24435e5e5df",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 30488,
       "path": "stub/r1_reference/stub_server_r1.py",
       "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "bytes": 13704,
+      "bytes": 25759,
       "path": "stub/r1_witnesses.py",
-      "sha256": "a30f788cfcd7b7d18e18b05a7eab237c9b14e132ce59de5f3a8d3a9c9983ea7a",
-      "state": "added"
-    },
-    {
-      "bytes": 27430,
-      "path": "stub/selftest_stub.py",
-      "sha256": "09b6067ee362c6d62d57ec0475c6415b921af07cccd20e6ecc7b3c52bbd5f050",
+      "sha256": "94e4c49be598d02e34c31881307ea9aab49ed465a043ebd3b3f0933a215382f9",
       "state": "modified"
     },
     {
+      "allowlist": "OUTSIDE the 25_ §0 enumerated implementation allowlist — see the Delivery Record, AUDIT-4 (25_ §E requires the R2 artifact to be pinned and §0 provides nowhere to put it). Accept or reject; nothing here is executed by the service.",
+      "bytes": 972,
+      "path": "stub/r2_reference/README.md",
+      "sha256": "0fa6b19aa305fe309c274a71650f2ba737ec386dc35455d81df9712c7705cd6f",
+      "state": "added"
+    },
+    {
+      "allowlist": "OUTSIDE the 25_ §0 enumerated implementation allowlist — see the Delivery Record, AUDIT-4 (25_ §E requires the R2 artifact to be pinned and §0 provides nowhere to put it). Accept or reject; nothing here is executed by the service.",
       "bytes": 63912,
-      "path": "stub/stub_server.py",
+      "path": "stub/r2_reference/stub_server_r2.py",
       "sha256": "a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9",
+      "state": "added"
+    },
+    {
+      "bytes": 76926,
+      "path": "stub/selftest_stub.py",
+      "sha256": "efb6ab27a629bf2b6f4a09bfe3afacaae1c2204f9910c14fdfa58c2891a86c24",
       "state": "modified"
     },
     {
-      "bytes": 12493,
+      "bytes": 96593,
+      "path": "stub/stub_server.py",
+      "sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572",
+      "state": "modified"
+    },
+    {
+      "bytes": 14552,
       "path": "workflows/n8n/POC1_builder_return_pipeline.json",
-      "sha256": "a0f6999ed687f237ee56607ebae260023701f6b7af160926cf53c99039f90a27",
-      "state": "added"
+      "sha256": "7b4c25d187cc8b3253c82a89b2637e236a5ea36447d07e7e4356867325b75837",
+      "state": "modified"
     },
     {
-      "bytes": 5160,
+      "bytes": 6535,
       "path": "workflows/n8n/POC2_idea_capture_staging.json",
-      "sha256": "329c3de9bd1a4d2ca6a8605dcf2afa5d7aa20ef823d171b601c090d6ba75eb74",
-      "state": "added"
+      "sha256": "161cec97e1671e8fab79d00f6c4cf3548ecb3ef74b2e2df9d455d2f006e96d4c",
+      "state": "modified"
     },
     {
-      "bytes": 8275,
+      "bytes": 9223,
       "path": "workflows/n8n/POC3_durable_integrity_sweep.json",
-      "sha256": "a2d19709062f70fd621472dc7789cb5a4f24fd8d97e85524fd1014fe340aedc8",
-      "state": "added"
+      "sha256": "56553238c254957d2c199c0adc11a4a21e7e6429daedbca8c526f78317fd501d",
+      "state": "modified"
     },
     {
-      "bytes": 9373,
+      "bytes": 12705,
       "path": "workflows/zapier/POC_zap_build_specs.json",
-      "sha256": "5e05701dfbacb11e38fdbf3bb07f5125bff40a7a06510c1851c15e2050076d7f",
+      "sha256": "5d2699d70bb435d96fdabeea8115d5ab500de9fddbc66d933e0a0a3cfff62782",
       "state": "modified"
     }
   ],
-  "governing_inputs": [
-    "13_Fable_Dispositions_TASK-0007_R1_Security_Review.md",
-    "12_ChatGPT_Independent_Security_Review_TASK-0007_R1_Stub.md",
-    "12A_ChatGPT_Security_Probe_Evidence_TASK-0007_R1.json",
-    "09_Release_1_Definition_and_POC_Reaim.md \u00a72"
+  "immutable_denylist_unchanged": [
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/check_boundaries.py",
+      "sha256": "a6a7c0fa0deb087cb8ac05dd1be9c07a54753afa7dc52a391d0867eb192ff63b"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/cost_model.py",
+      "sha256": "c450736fd2d939aebe7857f3a8a4790b3a62639835da9398f40534595beef088"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/receipt_conformance.py",
+      "sha256": "dc93cdf769ec436899c37691aafe39bdd71e7645ab2a8d24119723e7144d1002"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/run_all.sh",
+      "sha256": "07ea1343a89a4f4509056cf145de669b31dd3b2dc3afe9fe211ebc2ab0464893"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/selftest_validator.mjs",
+      "sha256": "fdcf6bbfa57ed38548aed6fb8820f29aeb6961bea530805247e44060051351e0"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "harness/validate_n8n_workflows.mjs",
+      "sha256": "33a6e3a22d9b8f65ed53f9f270a0fcd0ff4df7d34f26cae501042a8ba5a5b4aa"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "stub/r1_reference/stub_server_r1.py",
+      "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac"
+    }
   ],
-  "instruction_authority": [
-    "14_TASK-0007_R2_Task_Packet_Stub_Rework_and_Release1_Reaim.md"
-  ],
-  "poc_round_status": {
-    "every_measure": "NOT TESTED",
-    "oauth_grants_made": 0,
-    "providers_contacted": 0,
-    "run": false
-  },
-  "produced_by": "Builder (Claude Code)",
-  "relay_integrity": {
-    "mismatched": 0,
-    "sha256sums_total": 48,
-    "sha256sums_verified": 48
-  },
-  "release1_reaim": {
-    "nodes": [
-      11,
-      4,
-      7
-    ],
-    "note": "Release-2 scenarios are parked in 00_ \u00a710 and 09_ \u00a72, not lost",
-    "replaced_release2_workflow_files": [
-      "POC1_call_review_delegation.json",
-      "POC2_email_triage_readonly.json",
-      "POC3_durable_overnight.json"
-    ],
-    "runbooks_updated": 3,
-    "workflows": [
-      "POC1_builder_return_pipeline.json",
-      "POC2_idea_capture_staging.json",
-      "POC3_durable_integrity_sweep.json"
-    ],
-    "zapier_specs_reaimed": true
-  },
-  "removed": [
-    "workflows/n8n/POC1_call_review_delegation.json",
-    "workflows/n8n/POC3_durable_overnight.json",
-    "workflows/n8n/POC2_email_triage_readonly.json"
-  ],
-  "reported_contract_tensions": [
-    "harness/** is outside the allowlist but \u00a75 requires the structural harness re-run, which rewrites harness/out/. Four OUTPUT files changed; no harness CODE file changed (all six hash-identical to the relay).",
-    "secret scan: 2 hits, neither a credential and neither in a file this round may edit \u2014 harness/check_boundaries.py's R0 fixture, and the pinned R1 reference which must stay byte-identical for the witness pin to hold."
+  "instruction_authority": "25_TASK-0007_R3_Task_Packet_Revision5.md",
+  "outside_enumerated_allowlist": [
+    "stub/r2_reference/README.md",
+    "stub/r2_reference/stub_server_r2.py"
   ],
   "returned_to": "Fable",
-  "stub": {
-    "contract_items_implemented": [
-      "C-1",
-      "C-2",
-      "C-3",
-      "C-4",
-      "C-5",
-      "C-6",
-      "C-7",
-      "C-8",
-      "C-9",
-      "C-10",
-      "C-11",
-      "C-12",
-      "C-13",
-      "C-14",
-      "C-15",
-      "C-16",
-      "C-17",
-      "C-18",
-      "C-19"
-    ],
-    "evidence_findings_corrected": [
-      "FAB-01",
-      "FAB-02",
-      "FAB-03",
-      "FAB-04",
-      "FAB-05",
-      "FAB-06",
-      "FAB-07",
-      "FAB-08",
-      "FAB-09",
-      "FAB-10",
-      "FAB-11",
-      "FAB-12",
-      "FAB-13",
-      "FAB-14",
-      "FAB-15",
-      "FAB-16",
-      "FAB-17"
-    ],
-    "file": "stub/stub_server.py",
-    "lines": 1324,
-    "r1_witnesses": {
-      "findings_witnessed": [
-        "SEC-R1-01",
-        "SEC-R1-02",
-        "SEC-R1-03",
-        "SEC-R1-06",
-        "FAB-01",
-        "FAB-02",
-        "FAB-05",
-        "FAB-06",
-        "FAB-07",
-        "FAB-08",
-        "FAB-09",
-        "FAB-13",
-        "FAB-14",
-        "FAB-15"
-      ],
-      "matches_the_target_the_verifier_reviewed": true,
-      "method": "probes run against the pinned R1 build, not a reconstruction and not a defect switch",
-      "pinned_sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
-      "reproduced": 21,
-      "total": 21
-    },
-    "routes": 14,
-    "runtime": "Python 3 standard library only",
-    "security_findings_corrected": [
-      "SEC-R1-01",
-      "SEC-R1-02",
-      "SEC-R1-03",
-      "SEC-R1-04",
-      "SEC-R1-05",
-      "SEC-R1-06",
-      "SEC-R1-07",
-      "SEC-R1-08",
-      "DOC-01"
-    ],
-    "self_test_blocks": {
-      "12_\u00a75": 14,
-      "12_\u00a75-live": 10,
-      "13_\u00a74": 17,
-      "R1P-04": 9,
-      "boundary": 6
-    },
-    "self_test_cases": 56,
-    "third_party_imports": 0,
-    "throwaway_markers_kept": true
-  },
   "task": "TASK-0007",
-  "verification_summary": {
-    "harness": "PASS \u2014 structural 3/3, boundary clean 3/3, 39 harness self-test cases",
-    "node_types_and_parameters": "NOT TESTED \u2014 n8n-nodes-base still blocked by the egress proxy; closes at import time on the owner's host",
-    "pyflakes": "clean",
-    "r1_witnesses": "21/21",
-    "stub_self_test": "56/56",
-    "workflow_endpoints_resolving": "9/9"
-  },
-  "writable_area": [
-    "poc/stub/**",
-    "poc/workflows/n8n/*.json",
-    "poc/workflows/zapier/POC_zap_build_specs.json",
-    "poc/runbooks/*.md",
-    "poc/README.md",
-    "poc/FINDINGS.md",
-    "poc/data/captures/README.md",
-    "poc/data/measurements.template.json"
-  ]
+  "verification": {}
 }

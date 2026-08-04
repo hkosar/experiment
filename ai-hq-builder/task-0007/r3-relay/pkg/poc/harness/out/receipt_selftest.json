@@ -1,0 +1,31 @@
+{
+  "check": "receipt-conformance self-test",
+  "cases": [
+    {
+      "case": "rich result still flags authority fields",
+      "ok": true
+    },
+    {
+      "case": "aliases resolve to DERIVABLE",
+      "ok": true
+    },
+    {
+      "case": "wrapper-owned occurrence is not satisfiable by a bare result",
+      "ok": true
+    },
+    {
+      "case": "empty result -> every field synthesized",
+      "ok": true
+    },
+    {
+      "case": "ownership totals sum to the field count",
+      "ok": true
+    },
+    {
+      "case": "empty-string and null count as absent",
+      "ok": true
+    }
+  ],
+  "passed": 6,
+  "total": 6
+}

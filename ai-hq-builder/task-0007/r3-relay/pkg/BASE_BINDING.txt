@@ -1,0 +1,24 @@
+TASK-0007 R3 Revision 5 (R5Q-01 applied) — base binding
+========================================================
+Base commit : 8c8760063d360094404d984f909e93d2de35e612
+Base tree   : 6c8429bd7ccebc3eb6c26416882a4f8a34d2e922
+
+WHAT IS PROVEN, AND WHAT IS NOT
+  Base tree   : INDEPENDENTLY VERIFIABLE from base_snapshot.tar by the recipe below.
+  Base commit : DECLARED ONLY. Not independently verifiable from this export; no
+                ancestry included. The working repository is a SHALLOW CLONE
+                (graft at 18c571b, whose parent ffd5cc6c does not exist locally),
+                so a complete, fsck-clean, freshly clonable bundle cannot be
+                produced from this environment at all. No clone instruction is
+                given, because none would succeed.
+
+NOTE ON THE TREE HASH CHANGING SINCE THE VERIFIER'S CONFIRMATION
+  The verifier reproduced tree ef8036d1f6d24671079106375906fec140440c3b for the
+  pre-correction packet. Applying R5Q-01 necessarily changes the tree. The
+  snapshot CONTRACT and its verification boundary are unchanged, and this
+  snapshot corresponds exactly to the packet being released.
+
+VERIFY THE TREE (no live repository required):
+  mkdir v && tar -xf base_snapshot.tar -C v && cd v
+  git init -q . && git add -Af . && git write-tree
+  # must print: 6c8429bd7ccebc3eb6c26416882a4f8a34d2e922

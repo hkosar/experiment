@@ -23,6 +23,13 @@ Read both keys into shell variables (`read -rs OWNER_KEY`, `read -rs PROVIDER_KE
 than pasting them into commands. **`AIOS_PROVIDER_KEY` goes into the Zap's HTTP steps;
 `OWNER_KEY` never does.**
 
+The owner-surface calls are identical to the n8n runbook's — register the artifact at
+`/owner/artifact/register` before POC-1 can open a case, register the idea at `/owner/idea`
+before POC-2 can treat anything as owner-authored, decide on `/owner/decide`, and resolve an
+ambiguous relay on `/owner/reconcile` (or stop it with `/owner/revoke`). See
+`RUNBOOK-n8n.md` Part B2 for the exact commands; they do not differ by candidate, because
+the owner surface is the stub and the stub does not know which fabric is calling it.
+
 ## Part A — account
 
 | # | Step | Owner action? | Record |

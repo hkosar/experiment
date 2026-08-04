@@ -64,8 +64,39 @@ R1 runbook's `/owner/cases` line omitted it, which would have broken step one.
 recorded. That is deliberate: a reject silently overwritten by an accept would mint a relay
 for a case you rejected.
 
+**Register the artifact first — POC-1 will not open a case without it.** The artifact
+identity is owner-authoritative and immutable once registered; the digest the provider
+supplies later is only ever *checked against* it, never trusted on its own:
+
+    curl -s -X POST http://127.0.0.1:8787/owner/artifact/register \
+         -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' \
+         -d '{"source_digest":"<sha256 of the artifact>","size_bytes":4096,
+              "file_count":12,"task_id":"TASK-0007",
+              "transition":"builder->verifier","target_role":"verifier"}'
+
+Hand the returned `registration_ref` to the workflow with the submission. Re-registering the
+same identity returns the same refs; changing only `target_role` is a **distinct**
+registration rather than a role change on the old one.
+
+**For POC-2, the owner idea is registered the same way.** Authority comes from the ref and
+the content the stub stored, never from a field the workflow sets:
+
+    curl -s -X POST http://127.0.0.1:8787/owner/idea \
+         -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' \
+         -d '{"owner_content":{"title":"...","body":"...","project":null,"tags":[]}}'
+
+If the workflow sends an altered copy of that content, the request is refused — which is
+worth provoking once on purpose, because it is the observation POC-2 exists to make.
+
+**When a relay comes back ambiguous.** `/poc1/reconcile` (provider) answers only *delivered*
+or *uncertain*. Only you can attest non-delivery, on `/owner/reconcile` with
+`{"action_request_id":"…","outcome":"not_delivered","note":"…"}`, and only after actually
+checking the destination; exactly one re-attempt is permitted after that, and a second is
+refused. To stop further action **without** attesting non-delivery, use `/owner/revoke`.
+
 Run `python3 selftest_stub.py` once before the session if you want to watch the refusals
-fire, and `python3 r1_witnesses.py` to see the same probes against the superseded build.
+fire, and `python3 r1_witnesses.py` to see the same probes against the superseded R1 and R2
+builds. Run `python3 ../data/validate_measurements.py` before and after the session.
 
 ## Part C — connect accounts (owner only)
 

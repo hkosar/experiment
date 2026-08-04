@@ -1,0 +1,92 @@
+--- r3-relay/pkg/poc/workflows/n8n/POC2_idea_capture_staging.json	2026-08-04 04:03:53.000000000 +0000
++++ poc/workflows/n8n/POC2_idea_capture_staging.json	2026-08-04 05:10:09.980624250 +0000
+@@ -20,17 +20,17 @@
+     },
+     {
+       "parameters": {
+-        "jsCode": "// R1P-02: owner AUTHORSHIP and external CONTENT are two trust cases and\n// must not share one class. Case A carries owner instruction authority;\n// Case B carries NONE and may inform classification only.\n// Embedded external content inside a Case A idea is classified separately.\nreturn items.map(i => {\n  const ownerAuthored = i.json.origin === 'owner' && Boolean(i.json.owner_authenticated);\n  return { json: {\n    envelope: { trust: 'external-untrusted', partition: 'business',\n                source: ownerAuthored ? 'owner-surface' : 'import',\n                received_at: new Date().toISOString(),\n                links_followed: false, attachments_opened: false },\n    origin: ownerAuthored ? 'owner' : 'external',\n    // embedded external material inside an owner-authored idea keeps its\n    // own class — quoting something does not authorise it\n    embedded_external_present: Boolean(i.json.quoted_content),\n    metadata: { subject: i.json.subject, project: i.json.project ?? null },\n    restricted_content: { body: i.json.body ?? null },\n    content_forwarded: Boolean(i.json.body)\n  } };\n});"
++        "jsCode": "// 25_ A.3 — owner AUTHORSHIP and external CONTENT are two trust cases and must\n// not share one class.\n//\n// What changed at R3, and why it matters: authority no longer derives from any\n// field this workflow can set. Rev 4 let an `origin: 'owner'` flag do it, which\n// meant a provider could author content and have it recorded as the owner's.\n// Authority now derives ONLY from an `idea_ref` the owner minted at\n// /owner/idea, against content the wrapper stored server-side. Anything this\n// workflow sends as `owner_content` is a convenience copy: it must canonicalize\n// to the stored digest or the request is refused, and it NEVER replaces the\n// stored content.\n//\n// Every external item carries its OWN envelope. An item never inherits\n// authority from the enclosing idea — quoting something does not authorise it.\nreturn items.map(i => {\n  const ideaRef = i.json.idea_ref || null;          // owner-minted, or absent\n  const externals = (i.json.external_items || []).map(it => ({\n    envelope: { partition: 'business', trust: 'external-untrusted' },\n    source: it.source || 'unknown',\n    content: it.content\n  }));\n  const out = { external_items: externals };\n  if (ideaRef) {\n    // Case A. The ref is the authority; the copy is only corroborating.\n    out.idea_ref = ideaRef;\n    if (i.json.owner_content) out.owner_content = i.json.owner_content;\n  } else {\n    // Case B. No owner authority at all; the top-level envelope is required.\n    out.envelope = { partition: 'business', trust: 'external-untrusted' };\n  }\n  return { json: out };\n});"
+       },
+-      "id": "classify-envelope---case-a-or-b",
+-      "name": "Classify Envelope — Case A or B",
++      "id": "bind-owner-idea-ref",
++      "name": "Bind Owner Idea Ref — Case A or B",
+       "type": "n8n-nodes-base.code",
+       "typeVersion": 1,
+       "position": [
+         220,
+         300
+       ],
+-      "notes": "BOUNDARY + R1P-02. The two cases are separated HERE, before anything classifies. Case B never acquires instruction authority.",
++      "notes": "BOUNDARY + A.3. Case A carries an owner-minted idea_ref and nothing else confers authority; Case B carries none and the top-level external-untrusted envelope is required. Any origin/trust/instruction_authority this workflow sent would be ignored for authority and recorded as provider-supplied.",
+       "notesInFlow": false
+     },
+     {
+@@ -63,12 +63,12 @@
+         440,
+         300
+       ],
+-      "notes": "AUTHORITY. new-topic vs existing-project-addition, the staged record, and the instruction-authority verdict are all AI OS outputs. The wrapper returns `instruction_authority: none` for Case B — the POC's proof that external content informs classification WITHOUT acquiring authority.",
++      "notes": "AUTHORITY. The wrapper loads the owner content server-side from the idea_ref and triages THAT. A convenience copy that does not canonicalize to the stored owner_content_digest is refused 403; owner_content without a valid idea_ref is refused 403 and is never owner-authored.",
+       "notesInFlow": false
+     },
+     {
+       "parameters": {
+-        "jsCode": "// The R1P-02 proof obligation, asserted rather than assumed. A future edit\n// that let an external note carry instruction authority fails here.\nfor (const i of items) {\n  const origin = i.json.origin, auth = i.json.instruction_authority;\n  if (origin === 'external' && auth !== 'none') {\n    throw new Error('R1P-02 violated: external origin acquired authority ' + auth);\n  }\n  if ((i.json.actions_taken || []).length) {\n    throw new Error('POC-2 takes no external action');\n  }\n}\nreturn items;"
++        "jsCode": "// The A.3 proof obligation, asserted rather than assumed. A future edit that\n// let an external item carry instruction authority fails here.\n//\n// The check reads `authority_components`, not a single top-level authority\n// value: 25_ A.3 calls one flattened value for the whole request a defect,\n// because it cannot distinguish owner-authored content from the external\n// material quoted beside it.\nfor (const i of items) {\n  const comps = i.json.authority_components;\n  if (!Array.isArray(comps) || comps.length === 0) {\n    throw new Error('A.3 violated: no per-component authority was recorded');\n  }\n  for (const c of comps) {\n    if (String(c.component).startsWith('external_items')\n        && c.instruction_authority !== 'none') {\n      throw new Error('A.3 violated: an external item acquired authority '\n                      + c.instruction_authority);\n    }\n  }\n  if (i.json.external_action_taken_by_this_service !== false) {\n    throw new Error('POC-2 takes no external action');\n  }\n}\nreturn items;"
+       },
+       "id": "assert-no-authority-escalation",
+       "name": "Assert No Authority Escalation",
+@@ -78,7 +78,7 @@
+         660,
+         300
+       ],
+-      "notes": "ASSERTION. No external action, no link followed, no authority escalation.",
++      "notes": "PROOF OBLIGATION. Reads per-component authority; a flattened value would not satisfy it. Also refuses to accept any claim about provider conduct — the wrapper reports provider_conduct as NOT OBSERVED and this node does not convert that into an assertion.",
+       "notesInFlow": false
+     }
+   ],
+@@ -87,29 +87,29 @@
+       "main": [
+         [
+           {
+-            "node": "Classify Envelope — Case A or B",
++            "node": "Bind Owner Idea Ref — Case A or B",
+             "type": "main",
+             "index": 0
+           }
+         ]
+       ]
+     },
+-    "Classify Envelope — Case A or B": {
++    "AI OS — Classify and Stage": {
+       "main": [
+         [
+           {
+-            "node": "AI OS — Classify and Stage",
++            "node": "Assert No Authority Escalation",
+             "type": "main",
+             "index": 0
+           }
+         ]
+       ]
+     },
+-    "AI OS — Classify and Stage": {
++    "Bind Owner Idea Ref — Case A or B": {
+       "main": [
+         [
+           {
+-            "node": "Assert No Authority Escalation",
++            "node": "AI OS — Classify and Stage",
+             "type": "main",
+             "index": 0
+           }
+@@ -126,6 +126,7 @@
+     "scenario": "Idea capture and staging (09_ §2 R1P-02)",
+     "partition": "business",
+     "task": "TASK-0007",
+-    "status": "NOT TESTED"
++    "status": "NOT TESTED",
++    "contract": "25_ Revision 5 (§A/§B)"
+   }
+ }

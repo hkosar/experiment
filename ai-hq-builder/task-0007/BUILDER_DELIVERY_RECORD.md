@@ -1,120 +1,145 @@
-# Builder Delivery Record — TASK-0007 Round R2 (stub rework + Release-1 re-aim)
+# Builder Delivery Record — TASK-0007 Round R3 (`25_` Revision 5)
 
-**Task:** TASK-0007 R2 — security and evidence-integrity rework of the POC wrapper stub, merged with the Release-1 scenario re-aim.
+**Task:** TASK-0007 R3 — rebuild the POC wrapper stub against `25_` Revision 5's self-contained §A/§B contract, author the §D measurement validator, and re-aim the workflows, specs and runbooks onto it.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
-**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §9).
-**Instruction authority:** `14_TASK-0007_R2_Task_Packet_Stub_Rework_and_Release1_Reaim.md`, whose §2 contract governs where it disagrees with any earlier document. `13_` read first, as instructed.
+**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §10).
+**Instruction authority:** `25_TASK-0007_R3_Task_Packet_Revision5.md`, sole governing document. Everything else in the relay is reference, superseded, evidence-only or the implementation baseline, per the Fable-published `authority_manifest.json`.
 **Returned to:** **Fable.**
-**Status:** **Rework complete and self-tested. No POC has been run; no provider was contacted.**
+**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted.
 
-**Snapshot integrity (H-06):** `SHA256SUMS.txt` validated **48/48 OK, 0 mismatched** before anything was read as authority. The relay's `poc/` copy is **byte-identical to the accepted R1 return, 40/40**.
+**Snapshot integrity (H-06), before anything was read as authority:**
+
+| Check | Result |
+| --- | --- |
+| `SHA256SUMS` | **58/58 OK, 0 mismatched** |
+| `authority_manifest.json` coverage | **57/57 files classified**, no unexpected files |
+| `BASE_BINDING.txt` tree, independently reproduced (`tar -x` → `git init -q .` → `git add -Af .` → `git write-tree`) | **`6c8429bd7ccebc3eb6c26416882a4f8a34d2e922`** — matches |
+| Relay's `poc/` against the released R2 baseline | **43/43 byte-identical** |
+| `r2_reference/stub_server_r2.py` against the stub returned at R2 | **`a2aea25d…c0b60900f9`** — byte-identical |
+
+The commit named in `BASE_BINDING.txt` remains **declared only**, as the packet states: this is a shallow clone grafted at `18c571b` and ancestry is not included. The **tree** is what I verified, by the recipe above.
 
 ---
 
-## 1. What changed, in one paragraph
+## 1. The §F contract audit, done before building
 
-The stub is rebuilt against `14_` §2's corrected contract: **1,324 lines, Python standard library only, zero third-party imports, 14 routes.** The POC-1 side effect moved from an unguarded `/sink` to `/relay/deliver` behind a single-use capability bound to the action id, case, resolved target and payload digest; POC-3 got its own retry-tolerant `/stage/deliver`. Owner decisions are terminal and atomic. Every capture is written — temp file, flush, fsync, atomic rename — **before** the state it records is committed, carries a stub-minted timestamp, candidate, run instance, route and `authored_by`, and cannot overwrite a prior run. Boundary checks moved to dispatch. The three workflows and the Zapier specs are re-aimed to `09_` §2's Release-1 scenarios.
+`25_` line 13 requires it: *"If any clause here asserts an authority not rooted in something this service established, that is a defect — stop and report it before building."* Four findings. I built on the governing-rule reading and report all four prominently, rather than returning the report alone, because each resolution is unambiguous and a built round plus the report strictly dominates.
 
-**Self-test: 56/56.** **R1 witnesses: 21/21** reproduced against the pinned R1 artifact.
+**AUDIT-1 — defect. A.4's `UNCERTAIN` trigger asserts an authority the service did not establish.**
+A.4 gives `ATTEMPT_STARTED → UNCERTAIN` the trigger *"delivery result ambiguous (provider reports uncertain, or timeout)"*. But A.6 says `/poc1/receipt` "cannot mark an action delivered, **alter capability state**, or satisfy any acceptance check", and §B gives `provider_status ∈ {ok,error,uncertain}` to `/poc1/receipt` and `/poc3/receipt` **only** — `/relay/deliver` has no status field at all. So the only channel through which "the provider reports uncertain" can reach the service is a route A.6 forbids from altering capability state. The governing rule settles it: *"A value a caller supplied is corroborating material, never an authority."*
+**Resolution applied:** `UNCERTAIN` is reachable only by service-established means — the service's own expiry observation, or a delivery whose `committed` record did not land (A.7's rollback-impossible path). A `provider_status: uncertain` is recorded under the provider provenance key and changes nothing. **If Fable intended the other reading it is a one-line change, and A.6 must be amended to match.**
 
-## 2. How "demonstrated failing against the unfixed behaviour" is met
+**AUDIT-2 — internal inconsistency. §B's "Quota pool" column names eight pools A.8 does not define.**
+A.8 defines exactly three capture pools (`general`, `security-refusal`, `reserved-owner`). §B's per-route column names `cases`, `receipts`, `attempts`, `ideas`, `runs`, `checkpoints`, `stage-attempts`, `none` — which are the **entity ceilings** (`MAX_CASES`, `MAX_RECEIPTS`, `MAX_ATTEMPTS_PER_AR`, …), a different axis sharing a column name.
+**Resolution applied:** both implemented, as separate axes. §B's column is the entity quota a route consumes; A.8's three pools govern capture writes, selected by A.8's own rule.
 
-`14_` §3 requires it and R1 met it with defect probes. **I did not use defect switches** — a switch that can turn a control off is itself a finding (P2V-01), and R2 is a round about not shipping controls that can be reached around.
+**AUDIT-3 — observation, not a defect. `submission_epoch` is a specified duplicate-suppression escape.**
+A.2's registration identity is `sha256(source_digest | task_id | transition | target_role)` — no epoch; A.1's idempotency key includes it. A provider may therefore resubmit an identical artifact under the same registration by incrementing the epoch and get a fresh case rather than suppression. That is what the epoch is *for* ("with the accepted retry policy"), and the registration binding and the owner decision still gate every case. Recorded so it is not later mistaken for an oversight — and because a provider-discriminating measurement ("did the fabric re-submit or retry?") depends on reading `attempt` and `submission_epoch` as different things.
 
-Instead `stub/r1_witnesses.py` runs the probes **against the superseded build itself**, held byte-identical at `stub/r1_reference/stub_server_r1.py`. Its **SHA-256 is checked at run time against `ecdaae67…76328ac`** — the fingerprint `13_`'s chain-of-custody table records for the target the verifier reviewed — and the witness run **refuses to continue** if it does not match. So the "unfixed behaviour" shown is the artifact the review actually examined, not a reconstruction of it.
+**AUDIT-4 — allowlist gap, found during the build rather than before it.** §E requires that a test needing the R2 baseline be demonstrated against *"the R2 artifact pinned the same way"*. §0's implementation allowlist enumerates every file the Builder may modify and marks exactly one as new (`poc/data/validate_measurements.py`). **There is nowhere in it to put the pinned R2 artifact.** §F says to stop and report if a clause "cannot be met within the allowlist", and this one cannot.
+**Resolution applied:** `poc/stub/r2_reference/stub_server_r2.py` (+ a `README.md`) added, mirroring the existing `r1_reference/` pattern exactly — byte-identical copy, digest verified at run time, refuses to continue on mismatch, never executed by the shipped service. **Two files outside the enumerated allowlist, listed explicitly in `RETURN_MANIFEST.json`** for Fable to accept or reject in one look. My audit's own closing line — "every §A/§B requirement is reachable inside the §0 allowlist" — was written before I reached §E, and is corrected here.
 
-**21/21 witnesses reproduce**, covering SEC-R1-01, -02, -03, -06 and FAB-01, -02, -05, -06, -07, -08, -09, -13, -14, -15. A sample of what R1 actually did, quoted from `out/r1_witnesses.json`:
+---
 
-- `POST /sink {"anything": "at all"}` → **200 `delivered: true`** — the represented side effect, with no capability, no case, no authorization.
-- A **reject overwritten by an accept**, then `verify-decision` → **`authorized: true`**: an ActionRequest minted for a case the owner had rejected.
-- `redact({"opaque": <live token>})` → **the token, verbatim**; and `authority_id`/`authority_version`/`tokens_used` → **`[REDACTED:key-name]`**, a bare constant the harness scores PRESENT.
-- The pending branch and the owner-key refusal → **captures 1 → 1**: no record of either.
-- **7 routes** accepted a provider-authored `decision` field.
-- A duplicate run declaration → **checkpoints 1 → 0, `started_at` changed, status 200**.
-- `reconcile` on a run that does not exist → **200, `side_effect_certain: true`, citing ACT-01**.
-- `metadata: []` → **200** while `metadata: [1]` → **AttributeError**, which is precisely `13_` VC-01's point: a test written to the review's literal repro passes against unfixed code.
+## 2. What changed
 
-## 3. Security corrections — `SEC-R1-01..08`, `DOC-01`
-
-| ID | Correction | Witness / test |
+| Area | R2 behaviour | R3 behaviour |
 | --- | --- | --- |
-| **SEC-R1-01** | `/sink` is gone. The POC-1 side effect is `/relay/deliver`, gated on a single-use capability bound to action id, case, resolved endpoint and canonical payload digest, with a short TTL. Implemented **per `13_` VC-03, not per `12_`'s literal text**: POC-3's staging is a separate retry-tolerant path with no capability, because a blanket single-use rule would fail the round's own mandated mid-flight kill and mis-score the provider retry POC-3 exists to measure | direct call, altered action/case/payload/capability, expired capability — all refused; replay returns the prior receipt |
-| **SEC-R1-02** | Redaction gained **exact-value scrubbing**: live token and key values are compared, **including as substrings**, by constant-time comparison before anything reaches a log or capture. Corrected **jointly** with FAB-05, which pulls the other way | live token under `opaque`, `note`, `ｔｏｋｅｎ`, `tоken` and a 40-char key — absent from every capture |
-| **SEC-R1-03** | The first valid owner decision is **terminal**; a second is a captured 409. Decision lookup and token consumption happen in **one critical section** against an immutable record — R1 read `STORE.decisions` unlocked and locked only for the spend | second decision → 409 |
-| **SEC-R1-04** | Capture-before-commit everywhere, **including the token-spend path** (FAB-04) | capture failure during a decision → neither decision nor authorization survives; capture failure at spend → **token still unspent**, and the next verify succeeds |
-| **SEC-R1-05** | Logging emits a **route-matched constant plus the status and nothing else**, per `13_` VC-04 — `log_message`, `log_request` and `log_error` are all silenced, so neither a secret in the path, nor a query string, nor a malformed request line reaches stderr | secret in the path, in a query, and in a garbage request line — absent from the captured stderr |
-| **SEC-R1-06** | Handler-level exception boundary returning a structured refusal with no traceback; nested types validated before use; **the test uses a truthy non-dict**, per `13_` VC-01 | truthy list/str/int/bool metadata → no crash; deeply malformed JSON → 400, service still healthy |
-| **SEC-R1-07** | `Content-Length` bounded `0 ≤ n ≤ MAX_BODY`; negative refused; conflicting duplicate headers refused; non-identity transfer encodings refused; **socket timeout** added, which is what actually closes connect-and-send-nothing | all four, over real sockets |
-| **SEC-R1-08** | `application/json` required, and a **per-process provider credential** on every provider-facing route, distinct from the owner key and conferring no owner authority. **Paired with the runbook correction** `13_` §2.2 names | browser-simple POST → 415; missing provider credential → 403 |
-| **DOC-01** | The banner prints the keys as **bare values with no copyable command**, and **all three runbook sites** moved to `read -rs` shell variables — `13_` §2.2 is right that fixing only the banner would close the finding falsely | banner contains no `curl`; no request line logged at all |
+| **A.2 artifact identity** | none; the provider's `artifact_digest` was the only digest in play | owner registers at `/owner/artifact/register`; `source_digest` immutable and authoritative; `registration_ref` required at `/poc1/review-case`; task/transition/role/digest must all match or **403 `rejected-artifact-binding`** |
+| **A.3 owner-idea authority** | authority came from a provider-supplied `origin: "owner"` field | authority comes only from an `idea_ref` minted against content stored server-side under `owner_content_digest`; a mismatching copy is refused; authority recorded **per component** |
+| **A.4 capability machine** | mint / spend / replay | eight states, every valid transition and every named invalid one, including the late receipt on `REVOKED`/`EXPIRED` and the single permitted re-attempt |
+| **A.5 reconciliation** | the routes did not exist | `/poc1/reconcile` answers **only** delivered-or-uncertain; `/owner/reconcile` is the sole path to `RECONCILED_NOT_DELIVERED`, valid only from `UNCERTAIN` and only for the literal `not_delivered` |
+| **A.7 evidence** | one record per event | `prepared` → provisional state → `committed`, at every authority-bearing transition; only a committed transition satisfies an acceptance check |
+| **A.8 capacity** | one capture budget | three disjoint pools (70/15/15); no provider-reachable event can draw from `reserved-owner`; documented exhaustion behaviour per pool |
+| **A.8 redaction** | whole-segment keys + allowlist | same, plus substring value scrubbing, a per-process HMAC descriptor key, and a live-secret ceiling that refuses to mint rather than drop a secret out of the index |
+| **§B route policy** | spread through handler bodies | a data table; unknown route **or** missing row fails closed |
+| **§B POC-3** | a duplicate declaration minted a second run | duplicate `(schedule_id, occurrence)` is a **409** preserving the prior `started_at` and checkpoint count |
+| **§D measurements** | an `evidence_ref` was a filename | `validate_measurements.py`: an evidence **record** must match candidate/POC/measure/value, and the full expected matrix is enumerated |
 
-## 4. Evidence integrity — `FAB-01..17`
+## 3. Two defects this round found in its own predecessor
 
-| ID | Correction |
-| --- | --- |
-| **FAB-01** | Every refusal path captures, including the pending branch, the owner-key refusal and the boundary 400s. Key material is never recorded — the capture says a decision was *attempted without owner authority*, not what was presented |
-| **FAB-02** | `--candidate` is **required and name-validated**; the service refuses to start without it. It threads into every path and every record body |
-| **FAB-03** | A per-process `run_instance` in every filename, files created **`O_EXCL`**, never truncating |
-| **FAB-04** | The authorization capture lands before the token is spent |
-| **FAB-05** | Key-name matching is now **whole-segment**, with an explicit non-secret allowlist covering the D-EC_ REQUIRED names, `tokens_used` and `session_id`. A withheld value is a **structured marker** (name, type, bytes, digest), never a bare constant |
-| **FAB-06** | The provider-decision refusal and the partition/envelope checks run **at dispatch**, with a commented exemption list. Verified across **all 11 persisting routes** |
-| **FAB-07** | Run identity is **stub-minted**; a duplicate declaration is a captured 409 preserving the prior `started_at` and checkpoint count. Provider correlation is a separate, provider-marked field that anchors nothing |
-| **FAB-08** | `reconcile` reports exactly what it compared and states plainly `external_post_state_checked: false`; the ACT-01 citation is removed. `triage` no longer asserts `links_followed`/`actions_taken` — provider conduct is measured at the provider |
-| **FAB-09** | Every capture carries `recorded_at` plus a note that it is a local wall clock with **no authority** |
-| **FAB-10** | Atomic writes; no `.tmp` survives; every capture parses |
-| **FAB-11** | POC-3 stage posts file under **POC3** |
-| **FAB-12** | Endpoints derive from the **bound port**, with `--advertise` for the container case. No second literal |
-| **FAB-13** | `_ct_eq` handles non-ASCII rather than raising before a verdict |
-| **FAB-14** | The extra-fields refusal records the **count**, never the rejected key names |
-| **FAB-15** | The five-component identity tuple, all required, malformed → captured 400; the idempotency key derives from all five and **travels in the ActionRequest payload to the target** |
-| **FAB-16** | `/health` no longer exposes `captures_written` |
-| **FAB-17** | Token lookup is a dict hit; `receipts` is a bounded count; case/receipt/run/capture ceilings added |
+Both are the recurring family — **a control that names a thing without establishing it** — and both are reproduced against the pinned artifacts rather than asserted.
 
-## 5. Release-1 re-aim (work item D)
+**DEF-R2-01 — the R2 service could not hand out the credential it minted.** Every response went through the same redaction as a capture, so `resume_token` and `execution_capability` came back as `{"__withheld__": …}` descriptors. **The whole of POC-1 was unrunnable over HTTP.** The R2 self-test passed 56/56 because it called `dispatch()` in-process, one layer below `_respond`, where the loss happened. `r1_witnesses.py` reproduces it by running the pinned R2 build as a server and reading what a provider would actually have received.
 
-The three n8n workflows are replaced with `09_` §2's scenarios — **POC-1 Builder-return pipeline** (11 nodes: envelope + five-component identity binding with the digest **computed here rather than trusted**, duplicate/rejection branch, pause, token-only verify, capability relay, receipt), **POC-2 idea capture and staging** (Case A owner-authored vs Case B imported, with an assertion node that fails if external origin ever acquires instruction authority), **POC-3 nightly integrity sweep** (stub-minted run id, retry-tolerant stage, checkpoint, reconcile). Every provider-facing HTTP node carries `X-Provider-Key` and `Content-Type` — **6/6, 1/1 and 5/5**.
+The fix is a `Disclose` marker the service puts on values it minted, unwrapped **on the response path only**. The exemption is identity-based, never key-name-based: JSON has no such type, so a caller cannot name its way out of redaction, and on the capture path a `Disclose` still reduces to a descriptor. Both directions are tested.
 
-The Zapier build specs are re-aimed to the same three scenarios and carry the R1P-05 artifact-handling measures. All three runbooks updated, including both `13_` §2.2 corrections.
+This is the sharpest instance yet of my recorded weak spot, and it is worth naming precisely: **the suite was not wrong about what it tested, it was testing the wrong layer.** That is why R3's self-test carries a live-HTTP block that drives a real socket end to end.
 
-**Reported, not absorbed:** the three R0 workflow files are **replaced, not edited in place** — their Release-2 scenarios live on in `00_` §10 and `09_` §2's parking statement, so nothing is lost, but the file names change and I am flagging it rather than letting a diff look like deletion.
+**DEF-R3-01 (caught in draft) — two §E-required refusals were unreachable.** `rejected-unauthorized-target` and `rejected-unknown-target` sat behind the A.2 registration-binding check, and A.2 guarantees a registration can never hold an unauthorized role — so every such request failed as `rejected-artifact-binding` and both branches were dead code. §E requires both to be demonstrable. Fixed by evaluating A.1's role verdicts before A.2's binding, and guarded mechanically: **the self-test now enumerates every outcome code the source can emit and fails if any is never produced by a case.** That guard found seven further unexercised outcomes, all now covered.
 
-## 6. Two places the contract could not be satisfied as written — reported per `14_` §5
+Three smaller ones, found the same way and fixed: `/poc1/reconcile` moved a `MINTED` capability to `UNCERTAIN` — a transition A.4 does not list, and one a provider could invoke on itself to strand its own authorization and then present the result as grounds for an owner attestation; the relay's attempt counter and the single permitted re-attempt were both consumed *before* their `prepared` record landed, so a capture failure could burn a provider's one retry with no attempt made and no route out; and `write_capture` inferred provenance from a list of known field names, so every newly minted field was silently filed as provider-supplied — a capture that mislabels its own authorship reads as corroborated when it is not.
 
-**(a) `harness/**` is excluded from the allowlist, but §5 requires the structural harness re-run — and running it rewrites `harness/out/`.** Four output files changed: `structural.json`, `structural.log`, `boundary.json`, `boundary.log`. **No harness code file changed** — verified by hash against the relay for all six. I shipped the regenerated outputs because reverting them would ship evidence naming workflow files that no longer exist, which is worse than the tension. **If Fable wants `harness/out/` reverted, it is a copy of four files** — but then the shipped structural report describes the R0 workflows.
+## 4. How "demonstrated failing" is met — the witness method, extended to R2
 
-**(b) The secret scan returns 2 hits, neither mine to fix and neither a credential.** `harness/check_boundaries.py` carries the synthetic `"Authorization: Bearer abc"` fixture flagged at R1 — still outside the allowlist. `stub/r1_reference/stub_server_r1.py` carries `password: hunter2` in a docstring example; that file **must stay byte-identical** to the reviewed target or the witness pin fails by design. Everything R2 wrote scans clean.
+`25_` §E: probes run against **SHA-pinned artifacts**, never defect switches. A switch that can disable a control is itself a finding (P2V-01), and there is none in this build at any layer.
 
-## 7. Verification
+    python3 stub/r1_witnesses.py     # 34/34 — R1: 21, R2: 13
 
-- **Stub self-test 56/56**: R1P-04 9 · `12_` §5 14 · `13_` §4 17 · boundary 6 · **live-HTTP transport 10**.
-- **R1 witnesses 21/21**, pin verified against the reviewed target's SHA-256.
-- **Harness PASS**: structural 3/3 on the re-aimed workflows, boundary clean 3/3, 39 harness self-test cases.
-- **All 9 workflow-declared endpoints resolve**; the relay and stage targets are server-supplied by design.
-- **Stdlib-only** across all three stub files (AST scan). **pyflakes clean.**
-- **Allowlist:** 13 modified + 6 added + 3 replaced; the only paths outside are the four `harness/out/` artifacts in §6(a).
-- **`RETURN_MANIFEST.json`** self-verified by re-hashing every entry from the unpacked zip.
+Both references are digest-checked before they are loaded and the harness **refuses to continue on mismatch**: R1 against `13_`'s recorded fingerprint for the reviewed target, R2 against the digest of the build returned at R2. The R2 block establishes, by running the artifact: no `/owner/artifact/register` (404) and no `registration_ref`; authority taken from a provider-supplied `origin`; no reconciliation surface at all (both routes 404) and no `RECONCILED_NOT_DELIVERED` in the source; single-phase evidence (no `phase` on any capture); one capture budget (no `pool` on any capture); no `ROUTE_POLICY`; a duplicate run declaration minting a second run; and DEF-R2-01 over a real socket.
+
+The `FailWrite` context manager in the self-test is **not** a defect switch and should not be read as one: it rebinds a name inside the *test* process for one call, to simulate a full disk. Nothing in the shipped service can reach it, and it has no configuration surface.
+
+## 5. Verification — every figure below was produced by a command run after the last edit
+
+| Check | Command | Result |
+| --- | --- | --- |
+| Stub self-test (§E) | `python3 stub/selftest_stub.py` | **167/167 PASS** |
+| Superseded-build witnesses | `python3 stub/r1_witnesses.py` | **34/34** (R1 21, R2 13) |
+| Measurement validator | `python3 data/validate_measurements.py` | **PASS** — 160 measurements against 160 expected combinations, 0 violations |
+| Structural harness | `bash harness/run_all.sh` | **HARNESS PASS**; 3/3 workflows structurally valid |
+| Harness code diff | `git diff -- 'poc/harness/*.py' '*.mjs' 'run_all.sh'` | **empty — untouched**; `out/**` regenerated by running |
+| `r1_reference/` diff | `git diff -- poc/stub/r1_reference/` | **empty — untouched** |
+
+Self-test coverage by §E block: identity/registration 16 · owner-idea authority 15 · owner reconciliation (R5Q-01) 6 · capability and reconciliation 37 · evidence, six write boundaries 22 · capacity and redaction 29 · transport and policy 13 · live HTTP 15 · validator 13 · outcome coverage 1.
+
+All six write boundaries are fault-injected individually: owner decision, token spend, capability mint, capability spend, delivery, reconciliation. The delivery boundary is the one where rollback is impossible, and it is the only service-established path to `UNCERTAIN`.
+
+## 6. What is NOT established
+
+- **End-to-end binary fidelity (§C).** This service never receives destination bytes and cannot hash them. `destination_verified` is always `false` with that reason recorded; `destination_digest_claimed` is provider-authored, lives under the provenance key, and gates nothing. The measurement ships **`UNSUPPORTED`** with the §C gap as its capability-gap evidence, for both candidates and all three POCs.
+- **n8n node types and parameters.** `n8n-nodes-base` is blocked by this environment's egress proxy (403). Structural validation passes; parameter correctness is **NOT TESTED** and settles at import time on the owner's host. This is R0's falsifier row, inherited unchanged for the fourth round. `24A_` records that the review environment has the same gap and instructs that it be noted rather than worked around.
+- **Any provider capability whatsoever.** No account exists, no host exists, no provider was contacted. Every measure is `NOT_TESTED` with a reason, except the one that is `UNSUPPORTED`.
+- **That R3 is secure.** See §8.
+
+## 7. Return contents
+
+Complete `poc/` tree, `RETURN_MANIFEST.json` (self-verified), `proposed_classifications.json` (**suggestion only** — Fable publishes the authority manifest), this record, and the workflow/runbook diffs.
+
+Changed: `stub/stub_server.py`, `stub/selftest_stub.py`, `stub/r1_witnesses.py`, `data/measurements.template.json`, `workflows/n8n/*.json` (3), `workflows/zapier/POC_zap_build_specs.json`, `runbooks/*.md` (3), `README.md`, `FINDINGS.md`.
+Added: `data/validate_measurements.py` (allowlisted, new); `stub/r2_reference/stub_server_r2.py` and `stub/r2_reference/README.md` (**AUDIT-4, outside the enumerated allowlist**).
+Regenerated by running: `harness/out/**`, `stub/out/**`.
 
 ## 8. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | The corrected contract is implemented | **An independent reviewer, again.** R1 shipped with 66 green self-test cases, two mandatory refusals working, and my own adversarial pass behind it — and an independent review still found a gate-blocking bypass, because everyone had tested the guarded endpoints and nobody had asked whether the guarded thing was reachable another way. **I have no basis to believe R2 is different in kind**, only that this round's brief was wide enough to name what R1's missed. `14_` §6 sends it back to ChatGPT; that is the right disposition and I am not pre-empting it | **Built to spec; independent verification pending** |
-| 2 | The witnesses prove the unfixed behaviour | **The pin, and it is checked.** If `r1_reference/stub_server_r1.py` were a variant, the witnesses would describe a build nobody reviewed — so the run verifies its SHA-256 against `13_`'s recorded fingerprint and refuses to continue on mismatch. What the witnesses do **not** prove is that R2's fixes are complete: they show 21 specific behaviours changed, not that no twenty-second exists | Not disconfirmed; **scope stated** |
-| 3 | Redaction is now correct in both directions | **Me, about the allowlist.** The two directions genuinely pull against each other, exactly as `13_` warns. I protected the D-EC_ REQUIRED names, `tokens_used` and `session_id` by name — **a field the harness needs that I did not enumerate would still be destroyed**, and the structured marker means the loss would at least be visible rather than scored PRESENT. That is a real improvement and not a proof | **Improved; enumeration is mine and could be short** |
-| 4 | Capture-before-commit holds everywhere | **The ordering.** Tested at the two sites `13_` names — the decision path and the token-spend path — by forcing `write_capture` to raise. Other handlers follow the same shape by construction, and construction is not a test. `14_` C-6 also warns that a generic exception boundary added *before* this fix makes the failure quieter rather than safer; the boundary went in **after**, and the two capture-failure tests are what says so | Not disconfirmed; **two sites tested, others by construction** |
-| 5 | My record matches my code | **Me.** Every figure in §7 was produced by a command run after the last edit. The one number I want checked hardest is "56/56", because a self-test I wrote passing a contract I also wrote is the weakest evidence in this package — which is why §2 exists and why `14_` §6 sends the result to an independent reviewer | **Self-authored; independently unverified** |
-| 6 | The re-aimed workflows express `09_` §2 | **The n8n importer, still.** Structural validation and boundary checks pass, but node types and parameters remain **NOT TESTED** — `n8n-nodes-base` is still blocked by this environment's proxy. This is R0's falsifier row 2, inherited unchanged for the third round, and it closes at import time on the owner's host | **Open, inherited** |
+| 1 | The Revision-5 contract is implemented | **An independent reviewer, and the record says so.** R1 shipped 66 green cases and an adversarial pass and still had a gate bypass. R2 shipped 56 green cases and was **unrunnable over HTTP** — a defect no amount of my own testing found, because my testing was the thing that was wrong. I have no basis to believe R3 is different in kind, only that this round's brief was wider and that I now test the layer the caller meets | **Built to spec; independent verification pending** |
+| 2 | The witnesses prove the unfixed behaviour | **The pins, and both are checked.** If either reference file were a variant the witnesses would describe a build nobody reviewed, so each digest is verified before load and mismatch refuses to continue. What they do **not** prove is that R3's fixes are complete: they show 34 specific behaviours changed, not that no thirty-fifth exists | Not disconfirmed; **scope stated** |
+| 3 | Every control is reachable | **Me, and I was already wrong once this round.** Two §E-required refusals were dead code in my first draft. The outcome-coverage guard now catches that class mechanically, but it only proves each code is *produced by some case* — not that each is produced by the *right* case, and not that the branch a reader believes is guarding something is the branch that fired | **Guarded mechanically; the guard is coarse** |
+| 4 | Redaction is correct in both directions | **Me, about the allowlist again — and about the new exemption.** `Disclose` is a hole in redaction by construction. I argue it is a safe one because it is identity-based, one-directional and untypeable from JSON, and I test both of those. But it is the kind of thing that stays safe until someone adds a code path that wraps something it should not, and no test I can write today catches that future edit | **Improved; the exemption is mine and is a real hole** |
+| 5 | Two-phase evidence holds everywhere | **The ordering, at the transitions §E does not enumerate.** All six named boundaries are fault-injected. A.7 applies to more transitions than those six, and the rest follow the same shape **by construction** — and construction is not a test. I found two ordering defects by testing, which is evidence the shape is not self-enforcing | Not disconfirmed; **six sites tested, others by construction** |
+| 6 | My record matches my code | **Me.** Every figure in §5 came from a command run after the last edit, and I re-checked each against its file before writing this. The number to distrust hardest is **167/167**, because a self-test I wrote passing a contract I also wrote is the weakest evidence in this package — which is exactly what §4 exists to compensate for, and why §G sends this to an independent reviewer | **Self-authored; independently unverified** |
+| 7 | The re-aimed workflows express the Rev-5 contract | **The n8n importer, still.** Structural validation passes; node types and parameters remain **NOT TESTED**, blocked by the proxy. Inherited unchanged for the fourth round; closes at import time | **Open, inherited** |
+| 8 | AUDIT-1's resolution is what Fable meant | **Fable.** I read A.4's `UNCERTAIN` trigger against the governing rule and A.6 and resolved it one way. If the other reading was intended the fix is one line and A.6 needs amending — but the state machine behaves materially differently either way, so this needs a ruling rather than a shrug | **Reported; needs a ruling** |
 
-## 9. Open items and deviations
+## 9. Change requests to Fable
 
-- **Contract tensions reported, not absorbed** — §6(a) `harness/out/`, §6(b) the two secret-shaped fixtures.
-- **Workflow files replaced rather than renamed in place** — §5.
-- **R0 falsifier row 2 still open** — node types/parameters NOT TESTED.
-- **No POC run, no provider contacted.** The Zapier MCP tools that appeared last round are gone from this session; they were unused then and are unavailable now.
-- **No scope deviations.** Nothing outside the `14_` §4 allowlist except §6(a). No `13B_` obligation implemented. No provider selected or ranked. Every THROWAWAY marker kept, and the header still names the four things the real wrapper needs that this deliberately lacks.
-- **Branch deviation (unchanged, disclosed):** operator-designated branch.
-- **Recommended reviewer focus:** §2 first — the witness method is what makes the rest checkable. Then §6(a), which needs a ruling.
+1. **AUDIT-1** — confirm or overturn the `UNCERTAIN`-trigger reading; A.6 needs amending if overturned.
+2. **AUDIT-2** — confirm the two-axis reading of §B's "Quota pool" column, or rename the column.
+3. **AUDIT-4** — accept or reject `poc/stub/r2_reference/` (2 files), outside §0's enumerated allowlist and required by §E.
+4. **`03F_Replay_Fixtures.json` remains FROZEN** and was not touched.
+
+## 10. Open items and deviations
+
+- **Four contract findings reported, not absorbed** — §1.
+- **Two files outside the enumerated allowlist** — AUDIT-4, listed in the manifest.
+- **R0 falsifier row still open** — node types/parameters NOT TESTED, environment-blocked.
+- **No POC run, no provider contacted.** No provider selected, ranked or recommended.
+- **No `13B_` obligation implemented.** Every THROWAWAY marker kept; the header still names the four things the real wrapper needs that this deliberately lacks.
+- **Branch deviation (unchanged, disclosed):** operator-designated branch `claude/task-0002-builder-handoff-g97x8j`.
+- **Recommended reviewer focus:** §1 AUDIT-1 (needs a ruling), then §3 DEF-R2-01 (the defect class that survived two rounds of green tests), then §8 row 4 (the redaction exemption I introduced).
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The rework is claimed complete against `14_` §2; no POC is claimed run, and no security property is claimed independently verified.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). The build is claimed complete against `25_` §A/§B and self-tested against §E; **no POC is claimed run, and no security property is claimed independently verified.** Per `25_` §G this goes to Fable's structural verification and then to one independent ChatGPT security review of the final R2+R3 stub; a verifier's FAIL stands until the verifier changes it.*

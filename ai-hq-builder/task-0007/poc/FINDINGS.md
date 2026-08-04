@@ -14,6 +14,32 @@
 > parked, not deleted.
 >
 > **F-2 is the one to carry forward into D4/D5** — it is unchanged and unaffected.
+>
+> **R3 note.** R3 rebuilt the stub against `25_` Revision 5 and added two findings
+> about the apparatus, both of the same family as the R2 ones — a control that
+> *names* a thing without *establishing* it.
+>
+> **F-7 (apparatus).** The R2 stub could not hand a provider the credential it had
+> just minted. Every response went through the same redaction as a capture, so
+> `resume_token` and `execution_capability` came back as `{"__withheld__": …}`
+> descriptors and POC-1 was unrunnable over HTTP. The R2 self-test passed 56/56
+> because it called `dispatch()` in-process, one layer below where the loss
+> happened. `stub/r1_witnesses.py` reproduces this against the pinned R2 build by
+> running it as a server and reading what a provider would actually have received.
+> The fix is an identity-based disclosure marker the service puts on values it
+> minted, on the response path only; captures and logs still redact
+> unconditionally, and a caller cannot name its way out of redaction because JSON
+> has no such type. **The lesson generalises past this stub**: a suite that tests
+> below the layer the defect lives in reports the wrong answer confidently.
+>
+> **F-8 (apparatus).** Two refusal outcomes `25_` §E requires to be demonstrable —
+> `rejected-unauthorized-target` and `rejected-unknown-target` — were unreachable
+> in the first R3 draft, because the role checks sat behind the registration
+> binding and A.2 guarantees a registration can never hold an unauthorized role.
+> Both branches were dead code. The R3 self-test now enumerates every outcome code
+> the source can emit and fails if any is never produced, so a refusal reason that
+> no request can reach is caught mechanically rather than by reading. A control
+> whose refusal cannot be provoked is not a control.
 
 **Read the status line first: the POC round has NOT been run.** No Zapier account exists, no n8n host exists, no OAuth grant has been made, no provider has been contacted, and no measurement in `data/measurements.template.json` has a value. Everything below was produced by *authoring* the deliverables, not by running them — and each finding says which.
 

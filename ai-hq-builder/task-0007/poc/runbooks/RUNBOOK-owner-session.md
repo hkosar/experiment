@@ -6,7 +6,26 @@
 
 **What this round tests.** The Release-1 App-Building Management Platform workload, per the owner ruling in `09_`: POC-1 is the **Builder-return pipeline**, POC-2 is **idea capture and staging**, POC-3 is the **durable nightly integrity sweep**. The Release-2 call-review and email-triage scenarios are parked, not deleted.
 
-**What this session is for.** Producing numbers. Packet `07_` §4: *"the deliverable is numbers plus observations, not impressions."* Everything in `data/measurements.template.json` currently reads `NOT TESTED`. The session's job is to replace those with measured values and evidence references. A measure you could not run stays `NOT TESTED` — that is a result, and a truthful one.
+**What this session is for.** Producing numbers. Packet `07_` §4: *"the deliverable is numbers plus observations, not impressions."* Everything in `data/measurements.template.json` currently reads `NOT_TESTED` (one measure reads `UNSUPPORTED`). The session's job is to replace those with measured values and evidence references. A measure you could not run stays `NOT_TESTED` **with a reason** — that is a result, and a truthful one.
+
+**An evidence reference is a record, not a filename.** `25_` §D: an `evidence_ref` resolves only when a *measurement-evidence record* binds it to that exact measurement — same candidate, same POC, same `measure_id`, same value. A file that merely exists proves nothing, because one unrelated file can be cited for every result. So for each value you record, add a record to `evidence_records` in the same file:
+
+```json
+"evidence_records": {
+  "ev-poc1-n8n-approval-latency": {
+    "candidate": "n8n", "poc": "POC1", "measure_id": "approval_latency_seconds",
+    "observed_value": 143, "unit": "seconds",
+    "observed_at": "2026-08-04T18:22:10Z",
+    "collector": "owner session, stopwatch on the Discord card",
+    "artifact_or_capture_hash": "<sha256 of the capture or screenshot it came from>",
+    "source_path": "captures/n8n/POC1/relay-delivered-....json"
+  }
+}
+```
+
+Run `python3 data/validate_measurements.py` **before you start and again before you hand the file back**. It checks completeness and provenance, never values — it will not tell you a number is wrong, only that a number claiming to be measured has nothing behind it, or that a measure went missing. Exit 0 means clean.
+
+**One measure is `UNSUPPORTED` and stays that way unless you supply evidence.** `original_vs_reconstituted` — whether the artifact that arrived is byte-for-byte the artifact that was sent. The stub cannot establish it: `25_` §C, it never receives the destination bytes and cannot hash them, so `destination_verified` is always false with that reason recorded, and `destination_digest_claimed` is a provider claim that gates nothing. If you can compare the delivered artifact against the owner-registered `source_digest` out of band, that observation is what turns this measure into `MEASURED` — record how you compared them in the `collector` field.
 
 ---
 
@@ -39,6 +58,12 @@
    **The owner-surface key never goes into a provider.** It is what makes "the owner decided"
    a checked fact rather than "something reached the port" — keep it in your terminal.
    The provider carries only an opaque token; the stub refuses an approval outcome that arrives from the provider side, and refuses a token that is missing, forged, or replayed. Provoking one of those refusals on purpose is a legitimate thing to record.
+   **Register the artifact before it is submitted.** POC-1 will not open a case without a `registration_ref` you minted:
+   `curl -s -X POST http://127.0.0.1:8787/owner/artifact/register -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' -d '{"source_digest":"<sha256 of the artifact>","size_bytes":<n>,"file_count":<n>,"task_id":"TASK-0007","transition":"builder->verifier","target_role":"verifier"}'`
+   The `source_digest` you register is the **authoritative** artifact identity and is immutable once registered. Whatever digest the provider later supplies is only ever *checked against* it. Re-registering the same identity returns the same refs; changing only `target_role` is a **distinct** registration, not a role change on the old one.
+   **When a relay comes back ambiguous, do not let anyone retry it.** The provider's `/poc1/reconcile` can answer only *delivered* or *uncertain* — never *not delivered*, because the absence of a local record cannot rule out a side effect that completed before the stub recorded it. Reaching not-delivered is **your** call and yours alone:
+   `curl -s -X POST http://127.0.0.1:8787/owner/reconcile -H "X-Owner-Key: $OWNER_KEY" -H 'Content-Type: application/json' -d '{"action_request_id":"<ar-…>","outcome":"not_delivered","note":"<how you checked>"}'`
+   Only attest that after you have actually looked at the destination. Exactly one re-attempt is permitted afterwards, and a second is refused. If you want to stop further action **without** attesting non-delivery, use `/owner/revoke` instead — that is the whole reason both routes exist. What you did here, and how long it took, is the `uncertain_reconciliation_outcome` measure.
 2. **The provider never receives the rulebook.** No policy artifacts, no evidence contracts, no journal contents, no step-up secrets. Workflow payloads and OAuth-scoped access only.
 3. **Content minimisation is measured, not assumed.** Where a metadata path suffices, use it. Where raw content must flow to make the flow work at all, **say so and log it** — packet §3 says that observation is itself B-2-relevant evidence. Do not quietly widen the data path to make a step succeed.
 
