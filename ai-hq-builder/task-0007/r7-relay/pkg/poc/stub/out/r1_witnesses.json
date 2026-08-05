@@ -1,0 +1,260 @@
+{
+  "check": "superseded-contract witnesses",
+  "method": "the probes run against the superseded builds themselves, not a reconstruction and not a defect switch",
+  "pinned_references": {
+    "r1": {
+      "matches_reviewed_target": true,
+      "path": "r1_reference/stub_server_r1.py",
+      "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac",
+      "witnesses": 21
+    },
+    "r2": {
+      "matches_returned_artifact": true,
+      "path": "r2_reference/stub_server_r2.py",
+      "sha256": "a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9",
+      "witnesses": 13
+    }
+  },
+  "reproduced": 34,
+  "total": 34,
+  "witnesses": [
+    {
+      "claim": "the pinned R1 file is the build the verifier reviewed",
+      "detail": "expected ecdaae6716c52379",
+      "finding": "PIN",
+      "reproduced": true,
+      "superseded_behaviour": "sha256 ecdaae6716c52379"
+    },
+    {
+      "claim": "R1 accepted a case with NO task id, transition, artifact digest or target role",
+      "detail": null,
+      "finding": "FAB-15",
+      "reproduced": true,
+      "superseded_behaviour": "accepted with ['envelope', 'metadata'] -> 200"
+    },
+    {
+      "claim": "R1's idempotency key had 3 of R1P-04's 5 components",
+      "detail": null,
+      "finding": "FAB-15",
+      "reproduced": true,
+      "superseded_behaviour": "sha256(case_id | action_class | decision_time) = 8d79f49bd4c5d6a7…"
+    },
+    {
+      "claim": "R1P-04 tests (1)(2)(3) were UNRUNNABLE against R1",
+      "detail": null,
+      "finding": "FAB-15",
+      "reproduced": true,
+      "superseded_behaviour": "no task/transition/artifact/role is accepted, so duplicate suppression and target rejection have nothing to key on"
+    },
+    {
+      "claim": "R1's ActionRequest payload did not carry the key to the target",
+      "detail": null,
+      "finding": "FAB-15",
+      "reproduced": true,
+      "superseded_behaviour": "payload = {\"case_id\": \"case-9508236da6d7\"}"
+    },
+    {
+      "claim": "R1's /sink produced the represented side effect with no capability, no case and no authorization",
+      "detail": null,
+      "finding": "SEC-R1-01",
+      "reproduced": true,
+      "superseded_behaviour": "POST /sink -> 200 {\"delivered\": true, \"sink\": \"local throwaway\"}"
+    },
+    {
+      "claim": "R1 wrote a live token verbatim under an unrecognised key",
+      "detail": null,
+      "finding": "SEC-R1-02",
+      "reproduced": true,
+      "superseded_behaviour": "redact({'opaque': <live token>}) -> \"AbruVbVK3IAwt8GqGrNumCLVlFeiSksIPNNyitL"
+    },
+    {
+      "claim": "R1 destroyed authority_id / authority_version / tokens_used",
+      "detail": null,
+      "finding": "FAB-05",
+      "reproduced": true,
+      "superseded_behaviour": "-> [REDACTED:key-name] / [REDACTED:key-name] / [REDACTED:key-name]"
+    },
+    {
+      "claim": "...and the replacement was a bare constant the harness scores PRESENT, hiding the loss",
+      "detail": null,
+      "finding": "FAB-05",
+      "reproduced": true,
+      "superseded_behaviour": "value = '[REDACTED:key-name]'"
+    },
+    {
+      "claim": "R1 let a REJECT be overwritten by an ACCEPT and then minted an ActionRequest for the rejected case",
+      "detail": null,
+      "finding": "SEC-R1-03",
+      "reproduced": true,
+      "superseded_behaviour": "second decision -> 200, verify -> authorized=True"
+    },
+    {
+      "claim": "R1's pending branch wrote NO capture",
+      "detail": null,
+      "finding": "FAB-01",
+      "reproduced": true,
+      "superseded_behaviour": "captures 1 -> 1"
+    },
+    {
+      "claim": "R1's owner-key refusal wrote NO capture",
+      "detail": null,
+      "finding": "FAB-01",
+      "reproduced": true,
+      "superseded_behaviour": "captures 1 -> 1"
+    },
+    {
+      "claim": "R1 hardcoded the candidate, so two providers shared one corpus",
+      "detail": null,
+      "finding": "FAB-02",
+      "reproduced": true,
+      "superseded_behaviour": "candidate field in records: {'<absent>'}; path segment: 'stub'"
+    },
+    {
+      "claim": "R1 wrote no stub-minted timestamp on any capture",
+      "detail": null,
+      "finding": "FAB-09",
+      "reproduced": true,
+      "superseded_behaviour": "recorded_at present on 0 of 1"
+    },
+    {
+      "claim": "R1 accepted a provider-authored decision field on these routes",
+      "detail": null,
+      "finding": "FAB-06",
+      "reproduced": true,
+      "superseded_behaviour": "7 routes accepted it: ['/poc1/receipt', '/poc1/refusal', '/poc3/run-started', '/poc3/checkpoint', '/poc3/reconcile', '/poc3/receipt', '/sink']"
+    },
+    {
+      "claim": "R1 let the provider choose run_id and silently overwrote the run — resetting started_at and emptying checkpoints",
+      "detail": null,
+      "finding": "FAB-07",
+      "reproduced": true,
+      "superseded_behaviour": "checkpoints 1 -> 0, started_at changed: True, status 200"
+    },
+    {
+      "claim": "R1's reconcile asserted certainty and cited ACT-01 for a run that does not exist",
+      "detail": null,
+      "finding": "FAB-08",
+      "reproduced": true,
+      "superseded_behaviour": "-> 200 {\"reconciled\": true, \"side_effect_certain\": true, \"note\": \"post-state checked before any r"
+    },
+    {
+      "claim": "R1's triage asserted provider conduct it cannot observe",
+      "detail": null,
+      "finding": "FAB-08",
+      "reproduced": true,
+      "superseded_behaviour": "links_followed=False actions_taken=[]"
+    },
+    {
+      "claim": "R1 landed a live token in a capture as a rejected key name",
+      "detail": null,
+      "finding": "FAB-14",
+      "reproduced": true,
+      "superseded_behaviour": "token present in captures: True"
+    },
+    {
+      "claim": "a non-ASCII owner key raised TypeError before any authorization verdict",
+      "detail": null,
+      "finding": "FAB-13",
+      "reproduced": true,
+      "superseded_behaviour": "TypeError raised: True"
+    },
+    {
+      "claim": "a TRUTHY non-dict metadata crashed the handler, while the FALSY [] the review's illustrative repro used returned 200 — which is why 13_ VC-01 requires the truthy case",
+      "detail": null,
+      "finding": "SEC-R1-06",
+      "reproduced": true,
+      "superseded_behaviour": "AttributeError on [1]: True; status on []: 200"
+    },
+    {
+      "claim": "the pinned R2 file is the build returned at R2",
+      "detail": "expected a2aea25da2af9736",
+      "finding": "PIN-R2",
+      "reproduced": true,
+      "superseded_behaviour": "sha256 a2aea25da2af9736"
+    },
+    {
+      "claim": "R2 had no /owner/artifact/register: there was no owner-registered digest for a provider-supplied one to be checked against",
+      "detail": null,
+      "finding": "A.2",
+      "reproduced": true,
+      "superseded_behaviour": "POST /owner/artifact/register -> 404"
+    },
+    {
+      "claim": "...so R2 opened a case on a provider-supplied artifact_digest alone, with no registration_ref and nothing to bind it to",
+      "detail": null,
+      "finding": "A.2",
+      "reproduced": true,
+      "superseded_behaviour": "review-case without registration_ref -> 200, keys ['note', 'outcome', 'resume_token']"
+    },
+    {
+      "claim": "R2 ran every RESPONSE through the same redaction as a capture, so over a real socket the resume token it had just minted came back as a descriptor and no provider could ever carry it",
+      "detail": null,
+      "finding": "DEF-R2-01",
+      "reproduced": true,
+      "superseded_behaviour": "live POST /poc1/review-case -> resume_token = {\"__withheld__\": \"secret-key-name\", \"bytes\": 43, \"digest\": \"b9866ec490ecff08fef588dff5b73d"
+    },
+    {
+      "claim": "...and the in-process path returned the token intact, which is why the R2 suite passed 56/56 while the service was unrunnable: that suite called dispatch(), below the response path",
+      "detail": null,
+      "finding": "DEF-R2-01",
+      "reproduced": true,
+      "superseded_behaviour": "dispatch() token is a str, HTTP token is a dict"
+    },
+    {
+      "claim": "R2 took authority from a provider-supplied `origin` field: content the provider authored came back recorded as owner-authorized",
+      "detail": null,
+      "finding": "A.3",
+      "reproduced": true,
+      "superseded_behaviour": "origin='owner' -> instruction_authority='owner-authorized'"
+    },
+    {
+      "claim": "...and R2 had no idea_ref, no stored owner content and no owner_content_digest to compare a copy against",
+      "detail": null,
+      "finding": "A.3",
+      "reproduced": true,
+      "superseded_behaviour": "'idea_ref' appears 0 times in the R2 source"
+    },
+    {
+      "claim": "R2 had neither /owner/reconcile nor /poc1/reconcile, so an uncertain delivery had no route to any resolution at all",
+      "detail": null,
+      "finding": "A.5",
+      "reproduced": true,
+      "superseded_behaviour": "/owner/reconcile -> 404, /poc1/reconcile -> 404"
+    },
+    {
+      "claim": "...and RECONCILED_NOT_DELIVERED did not exist in R2, so the owner-attestation rules Rev 5 makes testable had nothing to bind to",
+      "detail": null,
+      "finding": "R5Q-01",
+      "reproduced": true,
+      "superseded_behaviour": "'RECONCILED_NOT_DELIVERED' appears 0 times in the R2 source"
+    },
+    {
+      "claim": "R2 wrote one record per event with no prepared/committed pair, so a write interrupted after the state moved left authority effective with no record that it had moved",
+      "detail": null,
+      "finding": "A.7",
+      "reproduced": true,
+      "superseded_behaviour": "phases across 4 R2 captures: ['None']"
+    },
+    {
+      "claim": "R2 drew every capture from a single budget, so a provider flooding refusals competed for the same space an owner decision needed",
+      "detail": null,
+      "finding": "A.8",
+      "reproduced": true,
+      "superseded_behaviour": "pools across 4 R2 captures: ['None']"
+    },
+    {
+      "claim": "R2 had no ROUTE_POLICY table: caller, credential, field list, envelope rule and quota pool were spread through handler bodies, so 'delete a policy row and the suite fails closed' had no row to delete",
+      "detail": null,
+      "finding": "B",
+      "reproduced": true,
+      "superseded_behaviour": "hasattr(R2, 'ROUTE_POLICY') = False"
+    },
+    {
+      "claim": "R2 minted a SECOND run for the same schedule occurrence instead of the 409 that preserves the prior started_at and checkpoint count — the duplicate declaration POC-3 exists to measure was recorded as an ordinary new run",
+      "detail": null,
+      "finding": "B-POC3",
+      "reproduced": true,
+      "superseded_behaviour": "second run-started -> 200, run_id run-fb1dc2d92808 vs run-668c59182d00, run records now 2"
+    }
+  ]
+}

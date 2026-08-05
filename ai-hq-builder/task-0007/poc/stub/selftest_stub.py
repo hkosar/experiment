@@ -36,10 +36,12 @@ Exit: 0 all cases pass / 1 any case fails
 """
 from __future__ import annotations
 
+import glob
 import json
 import os
 import re
 import socket
+import stat
 import subprocess
 import sys
 import tempfile
@@ -56,6 +58,8 @@ ROWS = []
 OUTCOMES_SEEN = set()
 
 R5_PINNED_SHA256 = "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68"
+# R7 — the R6 build the verifier examined and reported on in `45_`.
+R6_PINNED_SHA256 = "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0"
 
 A8_NAMED = frozenset((
     "receipt_id", "subject_ref", "executed_at", "occurrence", "schedule_version",
@@ -1596,6 +1600,274 @@ def block_capture_publication():
           bool(control) and control[0]["ok"], "control holds", "")
 
 
+def block_capture_r7():
+    """`46_` — publication-aware handling, scoped quarantine, restart posture.
+
+    Every check here is paired with the same check against the SHA-pinned R6
+    build, because R6 passed all of R6's tests and still had these five defects.
+    A criterion that cannot fail the build it was written against is not
+    evidence, and this workstream has produced two of those already.
+    """
+    block("R7: publication-aware handling, scoped quarantine, restart (46_)")
+    import hashlib                                               # noqa: PLC0415
+    import probe_runner as PR                                    # noqa: PLC0415
+
+    live = os.path.join(HERE, "stub_server.py")
+    r6 = os.path.join(HERE, "r6_reference", "stub_server_r6.py")
+    r6_digest = hashlib.sha256(open(r6, "rb").read()).hexdigest()
+    check("the pinned R6 reference is the build the verifier examined",
+          r6_digest == R6_PINNED_SHA256, R6_PINNED_SHA256[:16], r6_digest[:16])
+    if r6_digest != R6_PINNED_SHA256:
+        return
+
+    for probe, want in (("chatgpt_r6_quarantine_integrity_probe", "5/5 checks"),
+                        ("post_durable_interrupt_compare", "no ineffective claim")):
+        _, criterion = PR.CRITERIA[probe]
+        live_ok, live_detail = criterion(PR.run_probe(probe, live))
+        check("the verifier's %s runs green" % probe, live_ok, want, live_detail)
+        pin_ok, pin_detail = criterion(PR.run_probe(probe, r6))
+        check("...and red against the pinned R6 build", not pin_ok, "red", pin_detail)
+
+    # ---- item 1, through a real route -------------------------------------
+    # A non-OSError raised after the committed directory close is durable-tail
+    # noise. R6 turned it into an ordinary CaptureError and the handler then
+    # removed the registration it had durable evidence for.
+    fresh()
+    real_close = S.os.close
+    seen = {"dirs": 0, "forced": 0}
+
+    def close_after_committed(fd):
+        try:
+            isdir = stat.S_ISDIR(S.os.fstat(fd).st_mode)
+        except OSError:
+            isdir = False
+        if isdir:
+            seen["dirs"] += 1
+            if seen["dirs"] == 2:            # prepared is 1; committed is 2
+                real_close(fd)
+                seen["forced"] += 1
+                raise KeyboardInterrupt("forced after the committed dir fsync")
+        return real_close(fd)
+
+    S.os.close = close_after_committed
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "R7-TAIL", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.close = real_close
+    check("the injected post-durability interruption actually fired",
+          seen["forced"] == 1, 1, seen)
+    check("item 1: a durably committed capture STAYS committed — no ordinary "
+          "'not effective' claim after the publication fsync succeeded",
+          st == 200 and out.get("outcome") != "capture-failed"
+          and len(S.STORE.registrations) == 1,
+          "200 with the registration live", (st, out.get("outcome"),
+                                             len(S.STORE.registrations)))
+    check("...and the tail failure is RECORDED as a soft anomaly, not swallowed",
+          any(a.get("kind") == "post-durable-capture-tail-failure"
+              and a.get("exception") == "KeyboardInterrupt"
+              for a in S.STORE.storage_anomalies),
+          "post-durable-capture-tail-failure", S.STORE.storage_anomalies)
+    check("...and the service is NOT quarantined by it, because nothing is "
+          "unproven — the record is on disk",
+          not S.STORE.storage_quarantine, "no quarantine",
+          len(S.STORE.storage_quarantine))
+
+    # ---- item 3: nothing created, nothing to prove ------------------------
+    fresh()
+    real_makedirs = S.os.makedirs
+    S.os.makedirs = lambda *a, **kw: (_ for _ in ()).throw(
+        OSError(13, "forced pre-artifact directory creation failure"))
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "R7-MKDIR", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.makedirs = real_makedirs
+    check("item 3: a failure BEFORE any temp or final name exists is an "
+          "ordinary capture failure, never a quarantine",
+          st == 500 and out.get("outcome") == "capture-failed"
+          and not S.STORE.storage_quarantine,
+          "500 capture-failed, no quarantine",
+          (st, out.get("outcome"), len(S.STORE.storage_quarantine)))
+    check("...and the capture reservation is RELEASED, because there is no "
+          "record left for it to account for",
+          all(v == 0 for v in S.STORE.captures.values()), "all pools 0",
+          dict(S.STORE.captures))
+
+    # ---- item 4: the rollback's own durability boundary -------------------
+    fresh()
+    real_fsync, real_close = S.os.fsync, S.os.close
+    marks = {"fsyncs": 0, "rollback_fsync_ok": False, "close_faults": 0,
+             "dir_closes": 0}
+
+    def fsync_fail_publication(fd):
+        marks["fsyncs"] += 1
+        if marks["fsyncs"] == 2:             # 1 = the file; 2 = publication dir
+            raise OSError(5, "forced publication directory-fsync failure")
+        out_ = real_fsync(fd)
+        if marks["fsyncs"] == 3:             # 3 = the rollback's own dir fsync
+            marks["rollback_fsync_ok"] = True
+        return out_
+
+    def close_fail_after_rollback(fd):
+        try:
+            isdir = stat.S_ISDIR(S.os.fstat(fd).st_mode)
+        except OSError:
+            isdir = False
+        if isdir:
+            marks["dir_closes"] += 1
+            if marks["dir_closes"] == 2:     # the rollback directory
+                real_close(fd)
+                marks["close_faults"] += 1
+                raise OSError(5, "forced close failure after the rollback fsync")
+        return real_close(fd)
+
+    S.os.fsync, S.os.close = fsync_fail_publication, close_fail_after_rollback
+    err = None
+    try:
+        try:
+            S.write_capture("/poc1/receipt", "POC1", "r7rollback",
+                            {"outcome": "x"}, data_dir=S.Handler.data_dir)
+        except BaseException as exc:                             # noqa: BLE001
+            err = type(exc).__name__
+    finally:
+        S.os.fsync, S.os.close = real_fsync, real_close
+    check("the rollback's own directory fsync succeeded and only its CLOSE was "
+          "faulted", marks["rollback_fsync_ok"] and marks["close_faults"] == 1,
+          "fsync ok, close faulted", marks)
+    check("item 4: a close error after a DURABLE rollback fsync is a soft "
+          "anomaly — ordinary failure, no quarantine",
+          err == "CaptureError" and not S.STORE.storage_quarantine,
+          "CaptureError, no quarantine", (err, len(S.STORE.storage_quarantine)))
+    check("...and the quota unit is released, because the rollback was proven",
+          all(v == 0 for v in S.STORE.captures.values()), "all pools 0",
+          dict(S.STORE.captures))
+    check("...and the anomaly is recorded rather than dropped",
+          any(a.get("kind") == "rollback-directory-close-after-durable-fsync"
+              for a in S.STORE.storage_anomalies),
+          "rollback-directory-close-after-durable-fsync",
+          S.STORE.storage_anomalies)
+
+    # ---- item 5: a restart is not reconciliation --------------------------
+    data = fresh()
+    real_open, real_unlink = S.os.open, S.os.unlink
+    poc_root = os.path.abspath(os.path.join(data, "captures",
+                                            S.STORE.candidate, "POC1"))
+    opens = {"n": 0}
+
+    def blocked_open(path, flags, *a, **kw):
+        if os.path.abspath(os.fspath(path)) == poc_root and flags == os.O_RDONLY:
+            opens["n"] += 1
+            if opens["n"] == 2:              # prepared lands; committed fails
+                raise OSError(5, "forced committed publication dir-open failure")
+        return real_open(path, flags, *a, **kw)
+
+    def blocked_unlink(path, *a, **kw):
+        name = os.path.basename(os.fspath(path))
+        if name.startswith("committed-") and name.endswith(".json"):
+            raise OSError(5, "forced final-link rollback failure")
+        return real_unlink(path, *a, **kw)
+
+    S.os.open, S.os.unlink = blocked_open, blocked_unlink
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "R7-RESTART", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.open, S.os.unlink = real_open, real_unlink
+    check("a genuine unprovable rollback still quarantines (R6, preserved)",
+          st == 503 and out.get("outcome") == "refused-storage-quarantine",
+          "503 refused-storage-quarantine", (st, out.get("outcome")))
+    markers = sorted(glob.glob(os.path.join(
+        data, S.QUARANTINE_DIRNAME, S.STORE.candidate,
+        S.QUARANTINE_PREFIX + "*.json")))
+    check("item 5: the quarantine is PERSISTED as a marker beside captures/, "
+          "not only in memory", len(markers) == 1, "1 marker", markers)
+    check("...and the marker is NOT filed inside captures/, where every reader "
+          "would count it as evidence",
+          all(os.sep + "captures" + os.sep not in m for m in markers),
+          "outside captures/", markers)
+    check("...and the incident says whether the marker landed, so an operator "
+          "is not left guessing whether a restart will be stopped",
+          (out.get("detail") or {}).get("marker_persisted") is True,
+          True, (out.get("detail") or {}).get("marker_persisted"))
+
+    # A genuinely fresh process: same data directory, same candidate, empty
+    # in-memory register. R6 came up clean here and accepted transitions again.
+    saved_store, saved_secrets = S.STORE, S.SECRETS
+    S.SECRETS = S.SecretIndex()
+    S.STORE = S.Store(candidate=saved_store.candidate)
+    S.STORE.base_url = saved_store.base_url
+    S.Handler.data_dir = data
+    try:
+        check("the restarted process starts with an EMPTY in-memory register, "
+              "so anything it refuses comes from the marker on disk",
+              not S.STORE.storage_quarantine and not S.STORE.quarantine_scanned,
+              "empty and unscanned", (len(S.STORE.storage_quarantine),
+                                      S.STORE.quarantine_scanned))
+        st_h, health = get("/health")
+        check("item 5: the restarted process FINDS the marker and reports the "
+              "quarantine on /health",
+              st_h == 200 and health.get("storage_quarantined") is True,
+              "storage_quarantined true", health.get("storage_quarantined"))
+        check("...naming the marker it recovered, so recovery is actionable",
+              bool((health.get("storage_quarantine") or {})
+                   .get("recovered_from_marker")),
+              "marker path reported",
+              (health.get("storage_quarantine") or {}).get("recovered_from_marker"))
+        st_r, out_r = post("/owner/artifact/register",
+                           {"source_digest": DIGEST, "size_bytes": 1,
+                            "file_count": 1, "task_id": "R7-AFTER-RESTART",
+                            "transition": "R", "target_role": "verifier"},
+                           owner())
+        check("item 5: and it REFUSES authority transitions — restarting is not "
+              "reconciliation",
+              st_r == 503 and out_r.get("outcome") == "refused-storage-quarantine",
+              "503 refused-storage-quarantine", (st_r, out_r.get("outcome")))
+        # Reconciliation is an operator act on the filesystem, deliberately with
+        # no in-service path: a "clear the quarantine" route or flag would be a
+        # production-reachable disable for the control itself.
+        for m in markers:
+            os.unlink(m)
+        S.SECRETS = S.SecretIndex()
+        S.STORE = S.Store(candidate=saved_store.candidate)
+        S.STORE.base_url = saved_store.base_url
+        st_a, out_a = post("/owner/artifact/register",
+                           {"source_digest": DIGEST, "size_bytes": 1,
+                            "file_count": 1, "task_id": "R7-RECONCILED",
+                            "transition": "R", "target_role": "verifier"},
+                           owner())
+        check("...and only once an operator has removed the marker does the "
+              "service accept again, so the refusal was the marker's doing",
+              st_a == 200, 200, (st_a, out_a.get("outcome")))
+    finally:
+        S.STORE, S.SECRETS = saved_store, saved_secrets
+    # P2V-01, applied reflexively: the defect this program has already had to
+    # remove once is a control with a production-reachable disable path. A
+    # "clear the quarantine" route or flag would be exactly that, so the only
+    # way out is an operator deleting the marker from the filesystem — proven
+    # by the two checks above. This is the structural half: `STORE.
+    # storage_quarantine` is only ever APPENDED to (the raise) or EXTENDED (the
+    # startup scan). `Store.__init__`'s `self.storage_quarantine = []` is a new
+    # process's empty register, not a path that empties a populated one, and is
+    # named here rather than matched by an over-broad pattern.
+    shrink = [(n, ln.strip()) for n, ln in enumerate(
+        open(os.path.join(HERE, "stub_server.py"), encoding="utf-8")
+        .read().splitlines(), 1)
+        if "storage_quarantine" in ln
+        and (any(op in ln for op in (".clear()", ".pop(", ".remove(", "del "))
+             or re.search(r"STORE\.storage_quarantine\s*=", ln))]
+    check("no in-service path clears a quarantine: STORE.storage_quarantine is "
+          "only appended to or extended, never cleared, popped or reassigned",
+          not shrink, "no clear path", shrink)
+    fresh()
+
+
 # --------------------------------------------------------------------------
 # outcome coverage
 # --------------------------------------------------------------------------
@@ -1620,7 +1892,8 @@ def run_self_test() -> int:
     sys.stderr.write("R3 self-test — 25_ §E\n")
     for fn in (block_identity, block_owner_idea, block_owner_reconciliation,
                block_capability, block_evidence, block_capacity, block_policy,
-               block_live_http, block_validator, block_capture_publication):
+               block_live_http, block_validator, block_capture_publication,
+               block_capture_r7):
         fn()
     block_coverage()
 

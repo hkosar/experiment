@@ -1,0 +1,459 @@
+{
+  "capture_fault_boundaries": {
+    "against_pinned_r5": [
+      {
+        "boundary": "CONTROL (no fault) — a capture still publishes",
+        "failed_properties": [],
+        "observed": {
+          "files": [
+            {
+              "outcome": "x",
+              "path": "captures/control/POC1/capfault-20260805T015130-c608ed3d-0001.json",
+              "phase": null,
+              "size": 552,
+              "step": "capfault"
+            }
+          ],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          },
+          "returned": true
+        },
+        "ok": true
+      },
+      {
+        "boundary": "link failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "temp-unlink failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "directory-open failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "directory-fsync failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "R6 final-link cleanup failure during rollback",
+        "failed_properties": [
+          "error=CaptureError files=1 pools={'general': 0, 'security-refusal': 0, 'reserved-owner': 0}"
+        ],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [
+            {
+              "outcome": "x",
+              "path": "captures/rbfinal-li/POC1/capfault-20260805T015130-1841272c-0001.json",
+              "phase": null,
+              "size": 555,
+              "step": "capfault"
+            }
+          ],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": false
+      },
+      {
+        "boundary": "R6 persistent temp cleanup failure",
+        "failed_properties": [
+          "error=CaptureError files=0 pools={'general': 0, 'security-refusal': 0, 'reserved-owner': 0}"
+        ],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": false
+      },
+      {
+        "boundary": "R6 rollback directory-fsync failure",
+        "failed_properties": [
+          "error=CaptureError files=0 pools={'general': 0, 'security-refusal': 0, 'reserved-owner': 0}"
+        ],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": false
+      },
+      {
+        "boundary": "R6 directory-close after a successful publication fsync",
+        "failed_properties": [
+          "error=CaptureError json_files=0 pools={'general': 0, 'security-refusal': 0, 'reserved-owner': 0}"
+        ],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": false
+      }
+    ],
+    "against_r6": [
+      {
+        "boundary": "CONTROL (no fault) — a capture still publishes",
+        "failed_properties": [],
+        "observed": {
+          "files": [
+            {
+              "outcome": "x",
+              "path": "captures/control/POC1/capfault-20260805T015130-597713f0-0001.json",
+              "phase": null,
+              "size": 553,
+              "step": "capfault"
+            }
+          ],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          },
+          "returned": true
+        },
+        "ok": true
+      },
+      {
+        "boundary": "link failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "temp-unlink failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "directory-open failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureQuarantine: capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: rollback directory fsync failed (EIO)",
+          "files": [],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "directory-fsync failure after the link",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureError: capture write failed: EIO",
+          "files": [],
+          "pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "R6 final-link cleanup failure during rollback",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureQuarantine: capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+          "files": [
+            {
+              "outcome": "x",
+              "path": "captures/rbfinal-li/POC1/capfault-20260805T015130-df92df23-0001.json",
+              "phase": null,
+              "size": 556,
+              "step": "capfault"
+            }
+          ],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "R6 persistent temp cleanup failure",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureQuarantine: capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: temp unlink failed (EIO)",
+          "files": [],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "R6 rollback directory-fsync failure",
+        "failed_properties": [],
+        "observed": {
+          "error": "CaptureQuarantine: capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: rollback directory fsync failed (EIO)",
+          "files": [],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      },
+      {
+        "boundary": "R6 directory-close after a successful publication fsync",
+        "failed_properties": [],
+        "observed": {
+          "error": null,
+          "files": [
+            {
+              "outcome": "x",
+              "path": "captures/rbdirector/POC1/capfault-20260805T015130-9b9d2273-0001.json",
+              "phase": null,
+              "size": 555,
+              "step": "capfault"
+            }
+          ],
+          "pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          }
+        },
+        "ok": true
+      }
+    ]
+  },
+  "check": "R6 rollback/quarantine acceptance evidence",
+  "reviewer_probes": {
+    "against_pinned_r5": [
+      {
+        "detail": "cases=0 tokens=0 outcomes=['refused-internal', 'refused-internal']",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "http_race_probes"
+      },
+      {
+        "detail": "token: authorized=[None, None] caps=0 ars=0 store=0 | capability: delivered=[None, None] receipts=[]",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "http_authority_races"
+      },
+      {
+        "detail": "revoke=409 final_status=DELIVERED_WITH_RECEIPT receipt=present",
+        "finding": "SEC-R3-02",
+        "green": false,
+        "probe": "http_revoke_race"
+      },
+      {
+        "detail": "registrations=0 distinct_refs=1 | runs=0 distinct_run_ids=1",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "more_race_probes"
+      },
+      {
+        "detail": "4/8 sub-probes green; failing: concurrent_capability_spend, concurrent_review_case, concurrent_token_spend, revoke_vs_delivery_race",
+        "finding": "SEC-R3-03/04",
+        "green": false,
+        "probe": "security_probes"
+      },
+      {
+        "detail": "after forced failure=0; next attempt reported=1 counter=1",
+        "finding": "SEC-R3-04",
+        "green": true,
+        "probe": "stage_precise_probe"
+      },
+      {
+        "detail": "files_left=[] pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0}",
+        "finding": "SEC-R3-05",
+        "green": true,
+        "probe": "capture_atomicity_probe"
+      },
+      {
+        "detail": "poc1_refusal->429/refused-quota; poc3_receipt->429/refused-quota; poc2_triage->429/refused-quota",
+        "finding": "SEC-R3-06",
+        "green": true,
+        "probe": "quota_enforcement_probe"
+      },
+      {
+        "detail": "{\"capability_in_capture_bytes\": false, \"capability_in_route_logs\": false, \"disclose_call_sites\": [[1402, \"return 200, {\\\"resume_token\\\": Disclose(token), \\\"outcome\\\": \\\"case-opened\\\",\"], [1530, \"\\\"execution_capability\\\":",
+        "finding": "positive control",
+        "green": true,
+        "probe": "control_probes"
+      },
+      {
+        "detail": "standalone: records=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | committed-registration: steps=['prepared-artifact-register'] registrations=0 pools={'general': 0, 'reserved-owner': 1, 'security-refusal': 0}",
+        "finding": "SEC-R4-01",
+        "green": true,
+        "probe": "chatgpt_capture_publication_fault_probe"
+      },
+      {
+        "detail": "link_failure_control: ordinary files=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | temp_unlink_after_link_failure: ordinary files=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | directory_open_after_link_failure: ordinary files=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0}",
+        "finding": "SEC-R4-01",
+        "green": true,
+        "probe": "chatgpt_capture_postlink_cleanup_probe"
+      },
+      {
+        "detail": "0/5 scenarios; failing: committed_final_link_cleanup_failure, persistent_temp_cleanup_failure, post_fsync_close_plus_cleanup_failure, rollback_directory_fsync, standalone_final_link_cleanup_failure",
+        "finding": "SEC-R4-01 final",
+        "green": false,
+        "probe": "chatgpt_r5_cleanup_rollback_probe"
+      }
+    ],
+    "against_r6": [
+      {
+        "detail": "cases=0 tokens=0 outcomes=['refused-internal', 'refused-internal']",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "http_race_probes"
+      },
+      {
+        "detail": "token: authorized=[None, None] caps=0 ars=0 store=0 | capability: delivered=[None, None] receipts=[]",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "http_authority_races"
+      },
+      {
+        "detail": "revoke=409 final_status=DELIVERED_WITH_RECEIPT receipt=present",
+        "finding": "SEC-R3-02",
+        "green": false,
+        "probe": "http_revoke_race"
+      },
+      {
+        "detail": "registrations=0 distinct_refs=1 | runs=0 distinct_run_ids=1",
+        "finding": "SEC-R3-01",
+        "green": false,
+        "probe": "more_race_probes"
+      },
+      {
+        "detail": "4/8 sub-probes green; failing: concurrent_capability_spend, concurrent_review_case, concurrent_token_spend, revoke_vs_delivery_race",
+        "finding": "SEC-R3-03/04",
+        "green": false,
+        "probe": "security_probes"
+      },
+      {
+        "detail": "after forced failure=0; next attempt reported=1 counter=1",
+        "finding": "SEC-R3-04",
+        "green": true,
+        "probe": "stage_precise_probe"
+      },
+      {
+        "detail": "files_left=[] pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0}",
+        "finding": "SEC-R3-05",
+        "green": true,
+        "probe": "capture_atomicity_probe"
+      },
+      {
+        "detail": "poc1_refusal->429/refused-quota; poc3_receipt->429/refused-quota; poc2_triage->429/refused-quota",
+        "finding": "SEC-R3-06",
+        "green": true,
+        "probe": "quota_enforcement_probe"
+      },
+      {
+        "detail": "{\"capability_in_capture_bytes\": false, \"capability_in_route_logs\": false, \"disclose_call_sites\": [[1512, \"return 200, {\\\"resume_token\\\": Disclose(token), \\\"outcome\\\": \\\"case-opened\\\",\"], [1640, \"\\\"execution_capability\\\":",
+        "finding": "positive control",
+        "green": true,
+        "probe": "control_probes"
+      },
+      {
+        "detail": "standalone: records=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | committed-registration: steps=['prepared-artifact-register'] registrations=0 pools={'general': 0, 'reserved-owner': 1, 'security-refusal': 0}",
+        "finding": "SEC-R4-01",
+        "green": true,
+        "probe": "chatgpt_capture_publication_fault_probe"
+      },
+      {
+        "detail": "link_failure_control: ordinary files=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | temp_unlink_after_link_failure: ordinary files=0 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | directory_open_after_link_failure: quarantined files=0 pools={'general': 1, 'reserved-owner': 0, 'security-refusal': 0}",
+        "finding": "SEC-R4-01",
+        "green": true,
+        "probe": "chatgpt_capture_postlink_cleanup_probe"
+      },
+      {
+        "detail": "5/5 scenarios",
+        "finding": "SEC-R4-01 final",
+        "green": true,
+        "probe": "chatgpt_r5_cleanup_rollback_probe"
+      }
+    ]
+  }
+}

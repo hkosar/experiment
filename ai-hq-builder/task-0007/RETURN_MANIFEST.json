@@ -1,19 +1,20 @@
 {
   "baseline": {
-    "compared_against": "r6-relay/pkg/poc (my R5 return, as the relay shipped it)",
-    "note": "Every count here describes THIS relay, per 41_ §3's labelling note.",
-    "pinned_r5_matches_reviewed_target": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
-    "relay_authority_manifest": "121/121 verified, 0 mismatched",
-    "relay_base_tree_independently_reproduced": "34888d5a188248ed5fab594ba21ac5064632dc73",
-    "relay_snapshot_SHA256SUMS": "122/122 OK"
+    "compared_against": "r7-relay/pkg/poc (my R6 return, as the relay shipped it)",
+    "note": "Every count here describes THIS relay (TASK0007_R7_Builder.zip), per 41_ §3's labelling note.",
+    "pinned_r6_matches_reviewed_target": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
+    "relay_authority_manifest": "108/108 verified, 0 mismatched, 0 missing; 2 unlisted on disk (SHA256SUMS.txt and authority_manifest.json itself)",
+    "relay_base_tree_independently_reproduced": "22e85dd16b646acb45e623c7f7b96896b2a9ed68",
+    "relay_poc_against_my_r6_return": "96/97 byte-identical; the one that differs is stub/out/selftest.json, a regenerate-by-running output",
+    "relay_snapshot_SHA256SUMS": "109/109 OK"
   },
   "counts": {
-    "added": 6,
-    "modified": 6,
+    "added": 5,
+    "modified": 5,
     "removed": 0,
-    "unchanged": 85
+    "unchanged": 92
   },
-  "cycle": "round R6 — capture rollback and quarantine (SEC-R4-01 final)",
+  "cycle": "round R7 — publication-aware handling, scoped quarantine, restart posture (46_)",
   "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json.",
   "files": [
     {
@@ -227,11 +228,10 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "Test module: 38_'s post-link boundaries plus 42_'s rollback boundaries.",
       "bytes": 14614,
       "path": "stub/capture_fault_suite.py",
       "sha256": "36dbfa2ee2f5c7b32099b4d6faf4a2323922f6023748f3080a9fe9a701e74f63",
-      "state": "modified"
+      "state": "unchanged"
     },
     {
       "bytes": 12680,
@@ -242,7 +242,7 @@
     {
       "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "a7381d64a34dd42cd0e68b52461986b5d9aef0dc8b67f8a6c7b32cbd3a819a7c",
+      "sha256": "43822b7eafa16e8765dbb6272e66aadf3565eff1507cd75e7726730a1e6ef103",
       "state": "modified"
     },
     {
@@ -261,12 +261,18 @@
       "bytes": 15911,
       "path": "stub/out/r6_acceptance.json",
       "sha256": "abdfe0ce0e062852efd3653b5c645eb75f1f50ff40cfd5cd81b601fb69c94527",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 79354,
+      "path": "stub/out/r7_acceptance.json",
+      "sha256": "28629b21a3ef977d7fe9379b7b8e69fae1d5b04a676603597e7d29551b7f5adb",
       "state": "added"
     },
     {
-      "bytes": 54786,
+      "bytes": 63642,
       "path": "stub/out/selftest.json",
-      "sha256": "f8ecfdf187819e291a7c1fd31f309e3fbee4fa4c3ba0b21cbc0d0447eaff51c1",
+      "sha256": "205906bd8cdd9281683232ff0f1191393fae43ff24cf7fbedc8af3f403c9c947",
       "state": "modified"
     },
     {
@@ -276,10 +282,9 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "Test module, extended with the rollback probe and its criteria.",
-      "bytes": 21538,
+      "bytes": 26543,
       "path": "stub/probe_runner.py",
-      "sha256": "dd9530400ed69824a08c3414f927193d5b92f52425d25e50fd9898f84e4818c8",
+      "sha256": "55381f4d2927523bfb10a4e84ce28a5d32d724e565988df169e177d131884c85",
       "state": "modified"
     },
     {
@@ -325,17 +330,27 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "42_ names r5_reference/ as a permitted addition on the established precedent.",
       "bytes": 668,
       "path": "stub/r5_reference/README.md",
       "sha256": "68d21c7b384c847332022ae407adee56540b88e9d6dfe34176353d69b8853059",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "42_ names r5_reference/ as a permitted addition on the established precedent.",
       "bytes": 120788,
       "path": "stub/r5_reference/stub_server_r5.py",
       "sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 550,
+      "path": "stub/r6_reference/README.md",
+      "sha256": "43803bd9ee23c77d734b162335d2114c87e73c9c0b5475ff3bb1e766eb08448f",
+      "state": "added"
+    },
+    {
+      "bytes": 128396,
+      "path": "stub/r6_reference/stub_server_r6.py",
+      "sha256": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
       "state": "added"
     },
     {
@@ -441,24 +456,27 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
       "bytes": 10585,
       "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_probe.py",
       "sha256": "8a35943829b0368df49f7ea974fed1e10e7ef956bb609809ee625d94eb391cd4",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
       "bytes": 3880,
       "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_r4.json",
       "sha256": "7f76b001a06c14ac489eb6bbaf19dcc5ea74dd9fcfa414d116fb99890c470a11",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
       "bytes": 3389,
       "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json",
       "sha256": "eabe8f00427b42c122f9f1f234fb502f2eeee37abb68946ee89056647fb6d6e9",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 11775,
+      "path": "stub/security_probes/chatgpt_r6_quarantine_integrity_probe.py",
+      "sha256": "036df2d74de54f688350dcb7860175a675878db5e2421e7c3838c144c921226e",
       "state": "added"
     },
     {
@@ -534,6 +552,12 @@
       "state": "unchanged"
     },
     {
+      "bytes": 1797,
+      "path": "stub/security_probes/post_durable_interrupt_compare.py",
+      "sha256": "d41c3e05cd089150ef506dede4005f062c204fc6cd8866bfe21d52cc23255ab9",
+      "state": "added"
+    },
+    {
       "bytes": 1325,
       "path": "stub/security_probes/quota_enforcement_probe.py",
       "sha256": "6f6abde46a6162a8eed0d420aeea62e667582a0f749383b0b6ebb717e78b5b92",
@@ -570,15 +594,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 84472,
+      "bytes": 98765,
       "path": "stub/selftest_stub.py",
-      "sha256": "651f68cf85fe71e1eea0bb8e295ad63f5cc3dbf0e5a7e2d942d48561d00955f5",
+      "sha256": "85ec8fa9f8b3ea387ccbc62015a09dcb7ce5ac2f2cc57c9efc86b24a0514ab3f",
       "state": "modified"
     },
     {
-      "bytes": 128396,
+      "bytes": 144075,
       "path": "stub/stub_server.py",
-      "sha256": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
+      "sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
       "state": "modified"
     },
     {
@@ -605,80 +629,5 @@
       "sha256": "5d2699d70bb435d96fdabeea8115d5ab500de9fddbc66d933e0a0a3cfff62782",
       "state": "unchanged"
     }
-  ],
-  "governing_contract": "25_ Revision 5 — UNCHANGED; concurrency architecture closed and not reopened",
-  "immutable_denylist_unchanged": [
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/check_boundaries.py",
-      "sha256": "a6a7c0fa0deb087cb8ac05dd1be9c07a54753afa7dc52a391d0867eb192ff63b"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/cost_model.py",
-      "sha256": "c450736fd2d939aebe7857f3a8a4790b3a62639835da9398f40534595beef088"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/receipt_conformance.py",
-      "sha256": "dc93cdf769ec436899c37691aafe39bdd71e7645ab2a8d24119723e7144d1002"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/run_all.sh",
-      "sha256": "07ea1343a89a4f4509056cf145de669b31dd3b2dc3afe9fe211ebc2ab0464893"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/selftest_validator.mjs",
-      "sha256": "fdcf6bbfa57ed38548aed6fb8820f29aeb6961bea530805247e44060051351e0"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "harness/validate_n8n_workflows.mjs",
-      "sha256": "33a6e3a22d9b8f65ed53f9f270a0fcd0ff4df7d34f26cae501042a8ba5a5b4aa"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r1_reference/stub_server_r1.py",
-      "sha256": "ecdaae6716c52379f8871b406c738618f359fb3d3d9e1941d764dc4b376328ac"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r2_reference/README.md",
-      "sha256": "0fa6b19aa305fe309c274a71650f2ba737ec386dc35455d81df9712c7705cd6f"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r2_reference/stub_server_r2.py",
-      "sha256": "a2aea25da2af97368db4eedd9b027da52a84740a9447936c6b50ce0c960900f9"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r3_reference/stub_server_r3.py",
-      "sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r4_reference/README.md",
-      "sha256": "03ac3c8efa4f2d36d2d3479edf349d89fa692a7e10449b731f077fa15b1267c3"
-    },
-    {
-      "byte_identical_to_baseline": true,
-      "path": "stub/r4_reference/stub_server_r4.py",
-      "sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79"
-    }
-  ],
-  "instruction_authority": "42_TASK-0007_R6_Task_Packet_Rollback_Quarantine.md",
-  "outside_enumerated_allowlist": [
-    "stub/capture_fault_suite.py",
-    "stub/probe_runner.py",
-    "stub/r5_reference/README.md",
-    "stub/r5_reference/stub_server_r5.py",
-    "stub/security_probes/chatgpt_r5_cleanup_rollback_probe.py",
-    "stub/security_probes/chatgpt_r5_cleanup_rollback_r4.json",
-    "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json"
-  ],
-  "returned_to": "Fable",
-  "task": "TASK-0007"
+  ]
 }

@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "actual": "{'artifact_id': 'art-0176f39b6507', 'registration_ref': 'reg-qoXuEb2jxfsue9HLuDSjZ2A66s7veSub', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "actual": "{'artifact_id': 'art-42c8af3d81bd', 'registration_ref': 'reg-jkJ5_RVs7T3BiuC99k0n4KIRf5AU_lXM', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
       "block": "identity and registration (A.1 / A.2)",
       "case": "registration mints an artifact_id and an opaque registration_ref",
       "expected": "art-/reg-",
@@ -9,7 +9,7 @@
       "ok": true
     },
     {
-      "actual": "('art-0176f39b6507', 'art-0176f39b6507')",
+      "actual": "('art-42c8af3d81bd', 'art-42c8af3d81bd')",
       "block": "identity and registration (A.1 / A.2)",
       "case": "re-registering the same identity is idempotent — one record, same refs",
       "expected": "same ids",
@@ -17,7 +17,7 @@
       "ok": true
     },
     {
-      "actual": "art-fea6999c9923",
+      "actual": "art-303f9ec1afea",
       "block": "identity and registration (A.1 / A.2)",
       "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
       "expected": "different artifact_id",
@@ -505,7 +505,7 @@
       "ok": true
     },
     {
-      "actual": "(409, 'run-33c7c3ac4a3a', 1)",
+      "actual": "(409, 'run-179d26a09d20', 1)",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
       "expected": "409 preserving prior",
@@ -513,7 +513,7 @@
       "ok": true
     },
     {
-      "actual": "run-33c7c3ac4a3a",
+      "actual": "run-179d26a09d20",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "run identity is stub-minted and the provider correlation value anchors nothing",
       "expected": "stub-minted",
@@ -945,7 +945,7 @@
       "ok": true
     },
     {
-      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': '5a04c7b50477b643aa0086dd9ca85b33'}",
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'a6aded48389ee737f19096a872ba548d'}",
       "block": "capacity and redaction (A.8)",
       "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
       "expected": "structured marker",
@@ -953,7 +953,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': 'e3ce956b3bc040d5009b3a5834597e3e'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
       "block": "capacity and redaction (A.8)",
       "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
       "expected": "descriptor",
@@ -961,7 +961,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': 'e3ce956b3bc040d5009b3a5834597e3e'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
       "block": "capacity and redaction (A.8)",
       "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
       "expected": "descriptor",
@@ -1017,7 +1017,7 @@
       "ok": true
     },
     {
-      "actual": "('ed3702f05def', '4e1d83164ed7')",
+      "actual": "('506c43c7e1ec', '2e2f39dc7111')",
       "block": "capacity and redaction (A.8)",
       "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
       "expected": "different",
@@ -1137,7 +1137,7 @@
       "ok": true
     },
     {
-      "actual": "\"aczSvEmJWExKeqCXhPouugbS7WO8j0hbukXr3V5ZGjk\"",
+      "actual": "\"Eub0ibaIXjFyss19LKnC7CH4M33KmNXKAbd5v7Pnrdo\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
       "expected": "a usable string",
@@ -1145,7 +1145,7 @@
       "ok": true
     },
     {
-      "actual": "\"cap-_Q8afOf4DEPK3teA03Q_PG3lBKV_TZoz\"",
+      "actual": "\"cap-Dc_Q7RMA8wIsnEKfFVclU5vTW9k6SsS5\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "...and the execution capability likewise arrives usable",
       "expected": "a usable string",
@@ -1513,6 +1513,206 @@
       "ok": true
     },
     {
+      "actual": "d0fd4c449e797be4",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the pinned R6 reference is the build the verifier examined",
+      "expected": "d0fd4c449e797be4",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "5/5 checks",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the verifier's chatgpt_r6_quarantine_integrity_probe runs green",
+      "expected": "5/5 checks",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "1/5 checks; failing: item 1: no ordinary ineffective claim beside a durable committed record; item 3: no quarantine when no artifact was ever created; item 4: a close error after a durable rollback fsync is a soft anomaly; item 5: a fresh process finds the quarantine and still refuses",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and red against the pinned R6 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "stub_server.py: forced=1 status=200 outcome=registered committed=1 regs=1",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the verifier's post_durable_interrupt_compare runs green",
+      "expected": "no ineffective claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "stub_server_r6.py: forced=1 status=500 outcome=capture-failed committed=1 regs=0",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and red against the pinned R6 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'dirs': 2, 'forced': 1}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the injected post-durability interruption actually fired",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'registered', 1)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 1: a durably committed capture STAYS committed — no ordinary 'not effective' claim after the publication fsync succeeded",
+      "expected": "200 with the registration live",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'kind': 'post-durable-capture-tail-failure', 'route': '/owner/artifact/register', 'step': 'committed-artifact-register', 'exception': 'KeyboardInterrupt', 'detail': 'forced after the committed dir fsync', 'note': 'record already durable; capture stands'}]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the tail failure is RECORDED as a soft anomaly, not swallowed",
+      "expected": "post-durable-capture-tail-failure",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the service is NOT quarantined by it, because nothing is unproven — the record is on disk",
+      "expected": "no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(500, 'capture-failed', 0)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 3: a failure BEFORE any temp or final name exists is an ordinary capture failure, never a quarantine",
+      "expected": "500 capture-failed, no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the capture reservation is RELEASED, because there is no record left for it to account for",
+      "expected": "all pools 0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'fsyncs': 3, 'rollback_fsync_ok': True, 'close_faults': 1, 'dir_closes': 2}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the rollback's own directory fsync succeeded and only its CLOSE was faulted",
+      "expected": "fsync ok, close faulted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError', 0)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 4: a close error after a DURABLE rollback fsync is a soft anomaly — ordinary failure, no quarantine",
+      "expected": "CaptureError, no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the quota unit is released, because the rollback was proven",
+      "expected": "all pools 0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'kind': 'rollback-directory-close-after-durable-fsync', 'route': '/poc1/receipt', 'step': 'r7rollback', 'errno': 'EIO'}]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the anomaly is recorded rather than dropped",
+      "expected": "rollback-directory-close-after-durable-fsync",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "a genuine unprovable rollback still quarantines (R6, preserved)",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: the quarantine is PERSISTED as a marker beside captures/, not only in memory",
+      "expected": "1 marker",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the marker is NOT filed inside captures/, where every reader would count it as evidence",
+      "expected": "outside captures/",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the incident says whether the marker landed, so an operator is not left guessing whether a restart will be stopped",
+      "expected": "True",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(0, False)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the restarted process starts with an EMPTY in-memory register, so anything it refuses comes from the marker on disk",
+      "expected": "empty and unscanned",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: the restarted process FINDS the marker and reports the quarantine on /health",
+      "expected": "storage_quarantined true",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...naming the marker it recovered, so recovery is actionable",
+      "expected": "marker path reported",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: and it REFUSES authority transitions — restarting is not reconciliation",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'registered')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and only once an operator has removed the marker does the service accept again, so the refusal was the marker's doing",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "no in-service path clears a quarantine: STORE.storage_quarantine is only appended to or extended, never cleared, popped or reassigned",
+      "expected": "no clear path",
+      "note": null,
+      "ok": true
+    },
+    {
       "actual": "[]",
       "block": "outcome coverage — no unreachable refusal reasons",
       "case": "every outcome code the source can emit is produced by some case in this suite (56 declared, 55 exercised, 1 exempt)",
@@ -1522,7 +1722,7 @@
     }
   ],
   "check": "R3 stub self-test (25_ §E)",
-  "passed": 190,
-  "total": 190,
+  "passed": 215,
+  "total": 215,
   "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
 }

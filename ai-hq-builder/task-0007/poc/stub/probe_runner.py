@@ -402,7 +402,99 @@ def _c_rollback(r):
                                                if failed else ""))
 
 
+def _c_r6_quarantine(r):
+    """`46_` items 1, 3, 4 and 5, plus the R6 property that must not move.
+
+    Four of the probe's five summary flags name a DEFECT, so the criterion is
+    that they are `False`; the fifth names the confirmed R6 behaviour and must
+    stay `True`. Each is paired here with a check that the probe's fault
+    actually landed, because "no spurious quarantine" is trivially satisfiable
+    by an injection that never fires — which is exactly how a suite of mine
+    passed 5/5 against the build it existed to fail at R5.
+    """
+    s = r.get("summary") or {}
+    pd = r.get("post_durable_non_oserror") or {}
+    pm = r.get("preartifact_makedirs_failure") or {}
+    rc = r.get("rollback_close_after_fsync") or {}
+    fr = r.get("fail_closed_and_restart") or {}
+    restart = fr.get("restart") or {}
+
+    def pools_empty(d):
+        return all(v == 0 for v in (d.get("pools") or {"x": 1}).values())
+
+    v = {
+        # Item 1 — a durably committed capture is committed.
+        "item 1: no ordinary ineffective claim beside a durable committed record": (
+            s.get("ordinary_failure_with_durable_committed_evidence") is False
+            and (pd.get("fault_calls") or {}).get("forced", 0) >= 1
+            and pd.get("status") == 200
+            and pd.get("registrations") == 1),
+        # Item 3 — nothing created, nothing to prove.
+        "item 3: no quarantine when no artifact was ever created": (
+            s.get("preartifact_spurious_quarantine") is False
+            and (pm.get("fault_calls") or {}).get("makedirs_faults", 0) >= 1
+            and not (pm.get("records") or [])
+            and not (pm.get("quarantine") or [])
+            and pools_empty(pm)),
+        # Item 4 — the rollback's own durability boundary.
+        "item 4: a close error after a durable rollback fsync is a soft anomaly": (
+            s.get("post_rollback_fsync_spurious_quarantine") is False
+            and (rc.get("fault_calls") or {}).get(
+                "rollback_directory_fsync_succeeded") is True
+            and (rc.get("fault_calls") or {}).get("rollback_close_faults", 0) >= 1
+            and not (rc.get("records") or [])
+            and not (rc.get("quarantine") or [])
+            and pools_empty(rc)),
+        # Item 5 — a restart is not reconciliation.
+        "item 5: a fresh process finds the quarantine and still refuses": (
+            s.get("restart_bypasses_explicit_recovery") is False
+            and (restart.get("health") or [0, {}])[1].get("storage_quarantined") is True
+            and (restart.get("register") or [0])[0] == 503
+            and restart.get("quarantine_count", 0) >= 1),
+        # R6, confirmed by the verifier: this must not have moved.
+        "R6 preserved: the raising process itself still fails closed": (
+            s.get("current_process_fail_closed") is True),
+    }
+    failed = sorted(k for k, ok in v.items() if not ok)
+    return not failed, ("%d/%d checks%s" % (sum(v.values()), len(v),
+                                            "; failing: " + "; ".join(failed)
+                                            if failed else ""))
+
+
+def _c_post_durable(r):
+    """`46_` item 2 — the exact red-before-green probe, on its own.
+
+    A non-`OSError` interruption raised immediately after the real committed
+    directory close must leave no ordinary ineffective claim beside the
+    committed record. The probe prints one row per target; run through here it
+    gets one.
+    """
+    rows = r if isinstance(r, list) else [r]
+    if not rows:
+        return False, "no rows"
+    detail, ok = [], True
+    for row in rows:
+        forced = (row.get("calls") or {}).get("forced", 0)
+        body = row.get("body") or {}
+        committed = [x for x in (row.get("records") or [])
+                     if x.get("phase") == "committed"]
+        good = (forced >= 1                       # the interruption really fired
+                and bool(committed)               # a durable committed record exists
+                and row.get("status") == 200
+                and body.get("outcome") != "capture-failed"
+                and row.get("registrations") == 1
+                and row.get("identity_index") == 1)
+        ok = ok and good
+        detail.append("%s: forced=%d status=%s outcome=%s committed=%d regs=%s"
+                      % (os.path.basename(str(row.get("target"))), forced,
+                         row.get("status"), body.get("outcome"),
+                         len(committed), row.get("registrations")))
+    return ok, " | ".join(detail)
+
+
 CRITERIA = {
+    "chatgpt_r6_quarantine_integrity_probe": ("SEC-R4-01 R7", _c_r6_quarantine),
+    "post_durable_interrupt_compare": ("SEC-R4-01 R7 item 2", _c_post_durable),
     "chatgpt_r5_cleanup_rollback_probe": ("SEC-R4-01 final", _c_rollback),
     "chatgpt_capture_publication_fault_probe": ("SEC-R4-01", _c_capture_publication),
     "chatgpt_capture_postlink_cleanup_probe": ("SEC-R4-01", _c_capture_postlink),
@@ -424,12 +516,17 @@ ORDER = ("http_race_probes", "http_authority_races", "http_revoke_race",
          "chatgpt_capture_publication_fault_probe",
          "chatgpt_capture_postlink_cleanup_probe",
          # R6 — SEC-R4-01 final
-         "chatgpt_r5_cleanup_rollback_probe")
+         "chatgpt_r5_cleanup_rollback_probe",
+         # R7 — publication-aware handling, scoped quarantine, restart posture
+         "chatgpt_r6_quarantine_integrity_probe",
+         "post_durable_interrupt_compare")
 
 # Probes that take the target as an argument instead of a hard-coded SRC= line.
 ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
                          "chatgpt_capture_postlink_cleanup_probe",
-                         "chatgpt_r5_cleanup_rollback_probe"))
+                         "chatgpt_r5_cleanup_rollback_probe",
+                         "chatgpt_r6_quarantine_integrity_probe",
+                         "post_durable_interrupt_compare"))
 
 
 def run_all(target: str, expect_green: bool, emit=None) -> list:

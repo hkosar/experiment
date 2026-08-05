@@ -1,0 +1,215 @@
+{
+  "capability_spend": {
+    "final_status": "DELIVERED_WITH_RECEIPT",
+    "handler_entries_before_release": 1,
+    "receipts": 1,
+    "responses": [
+      [
+        200,
+        {
+          "action_request_status": "DELIVERED_WITH_RECEIPT",
+          "attempt": 1,
+          "delivered": true,
+          "destination_digest_claimed_is_provider_reported": true,
+          "destination_verified": false,
+          "outcome": "delivered",
+          "receipt": {
+            "action_request_id": "ar-3097dfca6d7e",
+            "case_id": "case-20c10dcedff4",
+            "delivered_attempt": 1,
+            "idempotency_key": "010a68238ff5b60a9a2b32038d1d2352606241dd6ff8fdb7ec54dc73158158eb",
+            "receipt_id": "dlv-8ced482cd936"
+          },
+          "replayed": false
+        }
+      ],
+      [
+        200,
+        {
+          "action_request_status": "DELIVERED_WITH_RECEIPT",
+          "attempt": 2,
+          "delivered": false,
+          "no_second_side_effect": true,
+          "outcome": "replayed-no-second-side-effect",
+          "receipt": {
+            "action_request_id": "ar-3097dfca6d7e",
+            "case_id": "case-20c10dcedff4",
+            "delivered_attempt": 1,
+            "idempotency_key": "010a68238ff5b60a9a2b32038d1d2352606241dd6ff8fdb7ec54dc73158158eb",
+            "receipt_id": "dlv-8ced482cd936"
+          },
+          "replayed": true
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": false
+  },
+  "registration": {
+    "handler_entries_before_release": 1,
+    "identity_index": 1,
+    "registrations": 1,
+    "responses": [
+      [
+        200,
+        {
+          "artifact_id": "art-43e074664bb4",
+          "outcome": "registered",
+          "registration_ref": "reg-NDt38oJgcRVukUPnv4xlJOs8VeMEtnCY",
+          "source_digest_is_authoritative": true
+        }
+      ],
+      [
+        200,
+        {
+          "artifact_id": "art-43e074664bb4",
+          "idempotent": true,
+          "note": "same registration identity; no second record",
+          "outcome": "already-registered",
+          "registration_ref": "reg-NDt38oJgcRVukUPnv4xlJOs8VeMEtnCY"
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": false
+  },
+  "review_case": {
+    "cases": 1,
+    "handler_entries_before_release": 1,
+    "responses": [
+      [
+        200,
+        {
+          "note": "carry this token; the decision is made on the owner surface",
+          "outcome": "case-opened",
+          "resume_token": "8DoDYJfPexTgMIkBvWaBuRQb7PUlJBFPJX-Tz_QmWnw"
+        }
+      ],
+      [
+        200,
+        {
+          "duplicate_suppressed": true,
+          "outcome": "duplicate-suppressed",
+          "prior_receipt": {
+            "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+            "artifact_id": "art-3960738ba79d",
+            "idempotency_key": "9b13d14bfbbf33bac30c0ed3c4e8f0d5d106bc18bee2b9817f0bc21636327ffa",
+            "receipt_id": "rcpt-e4c08f45ba37",
+            "submission_epoch": 1,
+            "target_role": "verifier",
+            "task_id": "CASE",
+            "transition": "R"
+          },
+          "reprocessed": false
+        }
+      ]
+    ],
+    "tokens": 1,
+    "two_handlers_entered_before_first_release": false
+  },
+  "revoke_vs_delivery": {
+    "delivery": [
+      200,
+      {
+        "action_request_status": "DELIVERED_WITH_RECEIPT",
+        "attempt": 1,
+        "delivered": true,
+        "destination_digest_claimed_is_provider_reported": true,
+        "destination_verified": false,
+        "outcome": "delivered",
+        "receipt": {
+          "action_request_id": "ar-78aba60b8c36",
+          "case_id": "case-c5f5d328d759",
+          "delivered_attempt": 1,
+          "idempotency_key": "429da229f673f9d1fe70e0b38e93e36d2156db614e0eb165ebff5178ed73f5ab",
+          "receipt_id": "dlv-0e8666f39f85"
+        },
+        "replayed": false
+      }
+    ],
+    "final_status": "DELIVERED_WITH_RECEIPT",
+    "receipt_present": true,
+    "revoke": [
+      409,
+      {
+        "action_request_status": "DELIVERED_WITH_RECEIPT",
+        "outcome": "refused",
+        "reason": "capability is already terminal (DELIVERED_WITH_RECEIPT); no state change",
+        "refused": true
+      }
+    ],
+    "revoke_handler_entered_while_delivery_handler_paused": false
+  },
+  "run_declaration": {
+    "declarations": 1,
+    "handler_entries_before_release": 1,
+    "responses": [
+      [
+        200,
+        {
+          "note": "run identity is stub-minted; any provider correlation value is carried separately and anchors nothing",
+          "outcome": "run-started",
+          "provider_correlation_id": "x",
+          "run_id": "run-8c8b98a989a1",
+          "stage_endpoint": "http://127.0.0.1:43365/stage/deliver"
+        }
+      ],
+      [
+        409,
+        {
+          "checkpoint_count": 0,
+          "declaration_duplicate": true,
+          "outcome": "duplicate-run-declaration",
+          "reason": "this schedule occurrence is already declared; a duplicate declaration is itself a POC-3 measurement and does not overwrite the prior record",
+          "refused": true,
+          "run_id": "run-8c8b98a989a1",
+          "started_at": 1785857825.465374
+        }
+      ]
+    ],
+    "runs": 1,
+    "two_handlers_entered_before_first_release": false
+  },
+  "token_spend": {
+    "action_requests": 1,
+    "capabilities": 1,
+    "handler_entries_before_release": 1,
+    "responses": [
+      [
+        200,
+        {
+          "action_request": {
+            "action_class": "relay-artifact",
+            "case_id": "case-0e757a96e195",
+            "endpoint": "http://127.0.0.1:44927/relay/deliver",
+            "id": "ar-4ba6b31364ac",
+            "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+            "payload": {
+              "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "case_id": "case-0e757a96e195",
+              "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+              "task_id": "TOK",
+              "transition": "R"
+            },
+            "policy_version": "P1",
+            "risk_class": "consequential",
+            "scope": "business",
+            "target_role": "verifier"
+          },
+          "action_request_status": "MINTED",
+          "authorized": true,
+          "execution_capability": "cap-DHtnlLIkEUJ1P4X0qFJMMRim8_BJ56TC",
+          "expires_in_s": 300,
+          "outcome": "authorized"
+        }
+      ],
+      [
+        403,
+        {
+          "outcome": "refused-token",
+          "reason": "resume token has already been used \u2014 replay refused",
+          "refused": true
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": false
+  }
+}

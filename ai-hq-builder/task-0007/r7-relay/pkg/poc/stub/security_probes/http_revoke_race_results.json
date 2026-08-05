@@ -1,0 +1,37 @@
+{
+  "final_status": "DELIVERED_WITH_RECEIPT",
+  "receipt": {
+    "action_request_id": "ar-5387a0f5826f",
+    "case_id": "case-71ee378f4388",
+    "delivered_attempt": 1,
+    "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+    "receipt_id": "dlv-a92a37038f21"
+  },
+  "relay": [
+    200,
+    {
+      "action_request_status": "DELIVERED_WITH_RECEIPT",
+      "attempt": 1,
+      "delivered": true,
+      "destination_digest_claimed_is_provider_reported": true,
+      "destination_verified": false,
+      "outcome": "delivered",
+      "receipt": {
+        "action_request_id": "ar-5387a0f5826f",
+        "case_id": "case-71ee378f4388",
+        "delivered_attempt": 1,
+        "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+        "receipt_id": "dlv-a92a37038f21"
+      },
+      "replayed": false
+    }
+  ],
+  "revoke": [
+    200,
+    {
+      "action_request_id": "ar-5387a0f5826f",
+      "action_request_status": "REVOKED",
+      "outcome": "revoked"
+    }
+  ]
+}

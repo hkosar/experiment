@@ -1,0 +1,235 @@
+{
+  "note": "Zapier exposes no public import format for arbitrary Zaps — Zap definitions are not portable artifacts the way n8n workflow JSON is. These are BUILD INSTRUCTIONS for the Zapier editor; the portability asymmetry is finding F-1 in FINDINGS.md.",
+  "scenarios": "Release 1 (09_ §2). The Release-2 call-review and email-triage scenarios are parked, not deleted — see 09_ §1.",
+  "partition": "business",
+  "status": "NOT BUILT — no Zapier account exists in the Builder environment",
+  "every_http_step_must_send": {
+    "X-Provider-Key": "the provider credential the stub prints at startup (no owner authority; distinct from the owner key)",
+    "Content-Type": "application/json — the stub refuses anything else (SEC-R1-08)"
+  },
+  "zaps": [
+    {
+      "id": "POC1",
+      "name": "Builder-return pipeline",
+      "scenario": "09_ §2 POC-1",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Webhooks by Zapier",
+          "event": "Catch Hook",
+          "config": "Builder return artifact (zip + manifest)",
+          "boundary": "inbound external-untrusted, Business partition only"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Code by Zapier",
+          "event": "Run Javascript",
+          "config": "Apply the envelope AND bind the five-component identity tuple: task_id, transition, artifact_digest (COMPUTED here from the artifact, never taken from the sender), target_role (symbolic), submission_epoch. Carry the owner-minted registration_ref through unchanged; if the submission has none, stop here and record the refusal — this step cannot mint one.",
+          "boundary": "25_ A.1 — a raw archive hash alone is not identity. 25_ A.2 — the artifact identity is owner-registered at /owner/artifact/register; the digest computed here is only ever CHECKED AGAINST it and is never an authority on its own."
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc1/review-case with registration_ref plus the five identity components and the external-untrusted envelope",
+          "boundary": "returns a resume token, OR duplicate-suppressed with the prior receipt and reprocessed:false, OR one of three distinguishable rejections: rejected-artifact-binding (403, the submission disagrees with the owner registration), rejected-unauthorized-target (403), rejected-unknown-target (400)"
+        },
+        {
+          "n": 4,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "outcome equals case-opened",
+          "boundary": "duplicate suppression and target rejection must NOT read as success"
+        },
+        {
+          "n": 5,
+          "type": "Action",
+          "app": "Human in the Loop by Zapier",
+          "event": "Request approval",
+          "config": "Carries the pause only. The card and the decision live on the AI OS surface; Zapier never learns the case id",
+          "boundary": "packet §3 — the provider may carry the pause, never decide it"
+        },
+        {
+          "n": 6,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc1/verify-decision with ONLY {token}",
+          "boundary": "the endpoint is an allowlist; any additional field is refused"
+        },
+        {
+          "n": 7,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "authorized is true"
+        },
+        {
+          "n": 8,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "POST to action_request.endpoint with {capability, action_request_id, case_id, payload} exactly as returned — the payload is the one the AI OS authorized, not one this Zap composes",
+          "boundary": "25_ A.4 — the destination comes from the ActionRequest the AI OS built by resolving the ROLE, and the capability binds the idempotency identity, action request, case, endpoint and canonical payload digest. A replay of the SAME payload returns the prior receipt with no_second_side_effect:true; a DIFFERENT payload from a delivered state is refused, as is any delivery on REVOKED, EXPIRED or UNCERTAIN."
+        },
+        {
+          "n": 9,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc1/receipt with {action_request_id, case_id, provider_status in {ok,error,uncertain}, provider_message, destination_digest_claimed (or null), provider_metrics}",
+          "boundary": "25_ A.6 — CORROBORATING ONLY. This step cannot mark an action delivered, alter capability state or satisfy any acceptance check, and a provider_status of 'ok' is a provider claim rather than a service conclusion. A receipt arriving after the capability is REVOKED or EXPIRED is captured, refused, and changes nothing."
+        },
+        {
+          "n": 10,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "On an ambiguous or timed-out relay: AI OS /poc1/reconcile with {capability, action_request_id}",
+          "boundary": "25_ A.5 — this route returns RECONCILED_DELIVERED or UNCERTAIN and can NEVER return RECONCILED_NOT_DELIVERED. Local absence is not proof: only an owner attestation on /owner/reconcile reaches not-delivered, and exactly one re-attempt is permitted after it. Do not retry from UNCERTAIN — the wrapper refuses it."
+        }
+      ],
+      "measures": [
+        "setup time",
+        "duplicate suppression observed",
+        "unauthorized-target rejection distinguishable from duplicate success",
+        "approval transport",
+        "relay attempts vs deliveries",
+        "evidence quality",
+        "connection-level revocation severing access, measured",
+        "monthly cost at expected volume",
+        "uncertain-result reconciliation outcome, and whether the fabric offered any way to distinguish delivered from not-delivered without the owner"
+      ],
+      "r1p05_artifact_measures": [
+        "max practical webhook payload size",
+        "binary fidelity and digest preservation end to end",
+        "file-count/archive limits",
+        "behaviour on nested archives, symlinks, traversal paths and malformed archives (failing closed is a recordable capability gap, not a POC failure)",
+        "whether the provider stores, inspects or retains artifact contents",
+        "retention and deletion controls",
+        "original artifact relayed vs reconstituted",
+        "owner-card latency without the artifact entering Discord"
+      ]
+    },
+    {
+      "id": "POC2",
+      "name": "Idea capture and staging",
+      "scenario": "09_ §2 POC-2 / R1P-02",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Webhooks by Zapier",
+          "event": "Catch Hook",
+          "config": "Idea intake, Business partition only"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Code by Zapier",
+          "event": "Run Javascript",
+          "config": "Bind the request: carry the owner-minted idea_ref (Case A) or, with no ref, send the top-level external-untrusted envelope (Case B). Give EVERY external item its own envelope. Any owner_content sent is a convenience copy only.",
+          "boundary": "25_ A.3 — authority derives ONLY from an idea_ref the owner minted at /owner/idea against content the wrapper stored server-side. A convenience copy that does not canonicalize to the stored owner_content_digest is refused 403; owner_content without a valid idea_ref is refused 403 and is never owner-authored. An item never inherits authority from the enclosing idea, and any origin/trust/instruction_authority this Zap sets is ignored for authority and recorded as provider-supplied."
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc2/triage — new-topic vs existing-project-addition, staged record, and the instruction-authority verdict",
+          "boundary": "the AI OS classifies; Zapier transports"
+        },
+        {
+          "n": 4,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "instruction_authority is 'none' whenever origin is 'external'",
+          "boundary": "the POC's proof obligation: external content informs classification WITHOUT acquiring instruction authority"
+        }
+      ],
+      "explicitly_absent": [
+        "no external action",
+        "no link followed",
+        "no attachment opened",
+        "no send step of any kind"
+      ],
+      "measures": [
+        "trust isolation across the two cases",
+        "classification handoff",
+        "staged-record write",
+        "mobile briefing visibility",
+        "cost and latency"
+      ],
+      "assertion": "Read authority_components from the response and confirm every external_items[i] carries instruction_authority 'none'. A single flattened authority value for the whole request is a defect (25_ A.3), so an assertion written against one top-level field does not satisfy this."
+    },
+    {
+      "id": "POC3",
+      "name": "Durable nightly integrity sweep",
+      "scenario": "09_ §2 POC-3",
+      "steps": [
+        {
+          "n": 1,
+          "type": "Trigger",
+          "app": "Schedule by Zapier",
+          "event": "Every Day",
+          "config": "03:00 local",
+          "boundary": "the provider hosts the schedule; the AI OS journal owns the spec"
+        },
+        {
+          "n": 2,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/run-started declaring schedule_id and occurrence, and passing the Zap run id as provider_correlation_id",
+          "boundary": "25_ §B — run identity is STUB-MINTED; this Zap never chooses a run_id, and any provider correlation value is carried separately and anchors nothing. A duplicate declaration of the same (schedule_id, occurrence) is a 409 that PRESERVES the prior started_at and checkpoint count — a duplicate run-started is itself a POC-3 measurement, never an overwrite. After the induced kill, expect that 409 and continue against the run_id it returns."
+        },
+        {
+          "n": 3,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "POST to the returned stage_endpoint with {run_id}; leave Zapier's autoreplay/retry enabled",
+          "boundary": "25_ §B — /stage/deliver is RETRY-TOLERANT by design: the round induces a mid-flight kill, and a single-use rule here would mis-score the provider retry POC-3 exists to measure."
+        },
+        {
+          "n": 4,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/checkpoint"
+        },
+        {
+          "n": 5,
+          "type": "Action",
+          "app": "Filter by Zapier",
+          "event": "Only continue if",
+          "config": "side_effect_certain is true; otherwise branch to /poc3/reconcile",
+          "boundary": "25_ §B — the wrapper compares only what it recorded and reports external_post_state_checked:false. It never asserts a check it did not perform; record that as the answer, not as a gap in the run."
+        },
+        {
+          "n": 6,
+          "type": "Action",
+          "app": "Webhooks by Zapier",
+          "event": "POST",
+          "config": "AI OS /poc3/receipt"
+        }
+      ],
+      "induced_failure_required": "kill the run mid-flight between the stage and the checkpoint and record the ACTUAL retry/replay behaviour — packet §4 forbids simulating this in prose. The stub's 409-on-duplicate-declaration preserves the prior run record so 'resumed' and 'replayed from the top' are distinguishable, which they were not in R1",
+      "measures": [
+        "durability across the induced kill",
+        "retry semantics",
+        "stage attempts recorded separately from deliveries",
+        "side-effect uncertainty handling",
+        "checkpoint integration",
+        "independent missed-run detection",
+        "evidence and replay"
+      ]
+    }
+  ],
+  "contract": "25_ Revision 5 (§A/§B). The route policy is the authority: a field a route does not list is reduced to a descriptor under the provider provenance key and never reaches the top level of a capture."
+}
