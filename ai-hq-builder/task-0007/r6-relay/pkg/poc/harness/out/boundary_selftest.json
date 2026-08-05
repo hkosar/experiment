@@ -1,0 +1,61 @@
+{
+  "check": "boundary-checker self-test",
+  "cases": [
+    {
+      "case": "clean control",
+      "expected": "clean",
+      "actual": "clean",
+      "ok": true
+    },
+    {
+      "case": "personal partition declared",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "policy artifact sent to provider",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "secret material in a definition",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "personal data path",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "classification with no envelope",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "classification before the envelope",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "provider decides the approval",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    },
+    {
+      "case": "journal contents sent to provider",
+      "expected": "violation",
+      "actual": "violation",
+      "ok": true
+    }
+  ],
+  "passed": 9,
+  "total": 9
+}

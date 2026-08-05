@@ -1,0 +1,7 @@
+  [ok  ] CONTROL (no fault) — a capture still publishes {"files": [{"path": "captures/control/POC1/capfault-20260804T205553-b2a42a22-0001.json", "size": 552, "step": "capfault", "phase": null, "outcome": "x
+  [ok  ] link failure after the link                    {"error": "CaptureError: capture write failed: EIO", "files": [], "pools": {"general": 0, "security-refusal": 0, "reserved-owner": 0}}
+  [FAIL] temp-unlink failure after the link             FAILED: no final file left
+  [FAIL] directory-open failure after the link          FAILED: no final file left; no quota consumed
+  [FAIL] directory-fsync failure after the link         FAILED: no final file left; no quota consumed
+
+2/5 capture-fault boundaries hold (stub_server_r4.py)

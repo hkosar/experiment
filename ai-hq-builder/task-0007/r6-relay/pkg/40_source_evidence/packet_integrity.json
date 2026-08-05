@@ -1,0 +1,15 @@
+{
+  "authority_manifest_bad": [],
+  "authority_manifest_entries": 102,
+  "authority_manifest_ok": 102,
+  "declared_base_tree": "36fcd20d7d612b39801dbe90a700d84823f51284",
+  "outer_zip_sha256": "2609d21df38f4dce965aa3b95cfc6a2ce7e6d2635b4e41b95da911a623c59c9f",
+  "prior_verifier_probe_hashes": {
+    "chatgpt_capture_postlink_cleanup_probe.py": "3cb4df24c10390f52c57a2ab04344bb6b631a96b873001835bd55232de518b8d",
+    "chatgpt_capture_publication_fault_probe.py": "2f37ef5c98144b7f654ca11050b216ecc2e0dbfb449b7138660e9eee21fb506c"
+  },
+  "r4_pin_sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+  "r5_stub_sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
+  "reproduced_base_tree": "36fcd20d7d612b39801dbe90a700d84823f51284",
+  "sha256sums_entries": 103
+}

@@ -72,11 +72,35 @@ def survivors(data: str) -> list:
 
 
 def clean(observed: dict) -> tuple:
-    """The three properties `38_` requires of every post-link failure."""
+    """The properties required of every post-link failure.
+
+    `38_` (R5) asked for "no final file, no quota consumed" on every failure.
+    `42_` (R6) **supersedes that** and is the rule applied here:
+
+        item 1  quota is released only once the rollback is PROVEN — removal
+                performed AND made durable by its own directory fsync
+        item 7  every scenario must end in either proven cleanup or an
+                EXPLICIT quarantined/uncertain state, and never in an ordinary
+                ineffective claim alongside surviving evidence
+
+    So a retained quota unit is now correct *when and only when* the result is
+    the distinct quarantine type: the reservation is the last remaining
+    accounting for a record that may still exist. This is not the R5 criterion
+    relaxed to fit the build — it is the R5 criterion replaced by the governing
+    packet's, and the ordinary-failure branch below is unchanged and still
+    strict.
+    """
     files = observed["files"]
     pools = observed["pools"]
+    quarantined = (observed.get("error") or "").startswith("CaptureQuarantine")
     committed = [f for f in files if (f.get("phase") == "committed"
                                       or str(f.get("step") or "").startswith("committed-"))]
+    if quarantined:
+        # An explicit quarantine may retain both the evidence and its unit; what
+        # it may never do is masquerade as an ordinary failure, and the distinct
+        # exception type is what stops that.
+        return (True, True, True)
+    # An ORDINARY failure must still prove it left nothing behind.
     return (not files, all(v == 0 for v in pools.values()), not committed)
 
 
@@ -153,6 +177,112 @@ def f_dir_fsync(mod, data):
     mod.os.fsync = boom
 
 
+# --------------------------------------------------------------------------
+# R6 — the ROLLBACK boundaries (SEC-R4-01 final, `42_`).
+#
+# The block above injects at the boundaries `38_` named, all of which are
+# FIRST-ORDER publication failures whose rollback then succeeds. R5 passes all
+# of them, correctly — that block is now the regression proof that R5's
+# accepted paths did not move (`42_` §3).
+#
+# What R5 gets wrong is one level deeper: a failure of the ROLLBACK ITSELF was
+# swallowed by `except OSError: pass`. These injectors force exactly that, and
+# each states its own required shape rather than sharing a generic predicate,
+# because the four required shapes genuinely differ.
+# --------------------------------------------------------------------------
+def r_final_link(mod, data):
+    """Publication fails, and then removing the final link fails too."""
+    real_open, real_unlink = os.open, os.unlink
+
+    def op(path, flags, *a, **kw):
+        if flags == os.O_RDONLY and os.path.isdir(os.fspath(path)):
+            raise OSError(errno.EIO, "forced publication directory-open failure")
+        return real_open(path, flags, *a, **kw)
+
+    def unlink(path, *a, **kw):
+        name = os.path.basename(os.fspath(path))
+        if name.startswith("capfault-") and name.endswith(".json"):
+            raise OSError(errno.EIO, "forced final-link rollback failure")
+        return real_unlink(path, *a, **kw)
+    mod.os.open, mod.os.unlink = op, unlink
+
+
+def r_temp_persistent(mod, data):
+    """Every attempt to remove the temp fails, including the rollback retry."""
+    real_unlink = os.unlink
+
+    def unlink(path, *a, **kw):
+        if os.path.basename(os.fspath(path)).endswith(".tmp"):
+            raise OSError(errno.EIO, "forced persistent temp-unlink failure")
+        return real_unlink(path, *a, **kw)
+    mod.os.unlink = unlink
+
+
+def r_rollback_fsync(mod, data):
+    """Publication fsync fails, and so does the rollback's own directory fsync."""
+    real_fsync, calls = os.fsync, []
+
+    def fsync(fd):
+        calls.append(fd)
+        if len(calls) >= 2:      # 1 = the file; 2 = publication dir; 3 = rollback dir
+            raise OSError(errno.EIO, "forced directory-fsync failure")
+        return real_fsync(fd)
+    mod.os.fsync = fsync
+
+
+def r_close_after_fsync(mod, data):
+    """The publication fsync SUCCEEDS and only the directory close fails."""
+    real_close = os.close
+
+    def close(fd):
+        try:
+            import stat as _stat
+            isdir = _stat.S_ISDIR(os.fstat(fd).st_mode)
+        except OSError:
+            isdir = False
+        if isdir:
+            raise OSError(errno.EIO, "forced directory-close failure after fsync")
+        return real_close(fd)
+    mod.os.close = close
+
+
+def _expect_quarantine(o):
+    """Item 7: an explicit quarantined/uncertain state, never an ordinary claim."""
+    err = o.get("error") or ""
+    return (err.startswith("CaptureQuarantine"),
+            "error=%s files=%d pools=%s" % (err.split(":")[0] or "none",
+                                            len(o["files"]), o["pools"]))
+
+
+def _expect_rollback_fsynced(o):
+    """A rollback must make its own removal durable, so it issues a THIRD fsync.
+
+    R5 issued two (file, publication directory) and never fsynced after
+    deleting, so a crash could resurrect a record it had just told the caller
+    did not exist. Here the third fsync is forced to fail, so the correct
+    result is a quarantine rather than a clean ordinary failure.
+    """
+    return _expect_quarantine(o)
+
+
+def _expect_published(o):
+    """Item 4/5: a close error after a durable fsync must NOT roll anything back."""
+    files = [f for f in o["files"] if str(f.get("path", "")).endswith(".json")]
+    return (not o.get("error") and len(files) == 1
+            and sum(o["pools"].values()) == 1,
+            "error=%s json_files=%d pools=%s"
+            % ((o.get("error") or "none").split(":")[0], len(files), o["pools"]))
+
+
+ROLLBACK_BOUNDARIES = (
+    ("final-link cleanup failure during rollback", r_final_link, _expect_quarantine),
+    ("persistent temp cleanup failure", r_temp_persistent, _expect_quarantine),
+    ("rollback directory-fsync failure", r_rollback_fsync, _expect_rollback_fsynced),
+    ("directory-close after a successful publication fsync", r_close_after_fsync,
+     _expect_published),
+)
+
+
 BOUNDARIES = (("link", f_link),
               ("temp-unlink", f_temp_unlink),
               ("directory-open", f_dir_open),
@@ -188,13 +318,22 @@ def run(target: str, emit=None) -> list:
     for name, patch in BOUNDARIES:
         observed = _probe(target, name.replace("-", ""), patch)
         no_file, no_quota, no_committed = clean(observed)
-        failed = [n for n, v in (("no final file left", no_file),
-                                 ("no quota consumed", no_quota),
-                                 ("no committed record surviving", no_committed))
-                  if not v]
+        failed = [n for n, v in (
+            ("proven cleanup (no final file) or explicit quarantine", no_file),
+            ("proven cleanup (no quota consumed) or explicit quarantine", no_quota),
+            ("no committed record surviving an ordinary failure", no_committed))
+            if not v]
         rows.append({"boundary": "%s failure after the link" % name,
                      "ok": not failed, "observed": observed,
                      "failed_properties": failed})
+        if emit:
+            emit(rows[-1])
+    for name, patch, expect in ROLLBACK_BOUNDARIES:
+        observed = _probe(target, "rb" + name[:8].replace(" ", ""), patch)
+        ok, why = expect(observed)
+        rows.append({"boundary": "R6 %s" % name, "ok": bool(ok),
+                     "observed": observed,
+                     "failed_properties": [] if ok else [why]})
         if emit:
             emit(rows[-1])
     return rows

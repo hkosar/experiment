@@ -1,0 +1,411 @@
+{
+  "name": "POC1 — Builder-return pipeline (Release 1, Business partition only)",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "poc1-builder-return",
+        "httpMethod": "POST",
+        "responseMode": "onReceived"
+      },
+      "id": "builder-return-webhook",
+      "name": "Builder Return Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        0,
+        300
+      ],
+      "notes": "INBOUND. A Builder return artifact (zip + manifest) arrives. Business partition only (05_ §2). EXTERNAL-UNTRUSTED until the envelope node. 09_ §2: this is the Release-1 workload, not the Release-2 call flow.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "jsCode": "// 25_ A.1 — the identity tuple, all five components. A raw archive hash alone\n// is NOT identity: two tasks may legitimately submit byte-identical artifacts,\n// and one task may resubmit with changed routing.\n//\n// 25_ A.2 — `registration_ref` is minted by the OWNER at\n// /owner/artifact/register and travels with the submission. This workflow\n// carries it; it cannot mint one, and a submission without one is refused here\n// rather than sent on, because the wrapper would refuse it anyway and a local\n// refusal is the one that records why.\nconst crypto = require('crypto');\nreturn items.map(i => {\n  const b64 = i.json.artifact_b64 || '';\n  const digest = crypto.createHash('sha256')\n                       .update(Buffer.from(b64, 'base64')).digest('hex');\n  if (!i.json.registration_ref) {\n    throw new Error('no registration_ref: the owner must register the artifact '\n      + 'at /owner/artifact/register before it can be submitted. The digest '\n      + 'computed here is only ever CHECKED AGAINST the owner-registered '\n      + 'source_digest — it is never an authority on its own (25_ A.2).');\n  }\n  return { json: {\n    envelope: { trust: 'external-untrusted', partition: 'business' },\n    registration_ref: i.json.registration_ref,   // owner-minted (A.2)\n    // the five identity components (A.1)\n    task_id: i.json.task_id,\n    transition: i.json.transition,          // e.g. 'builder->verifier'\n    artifact_digest: digest,                // computed here, not trusted\n    target_role: i.json.target_role,        // SYMBOLIC role; the wrapper resolves it\n    submission_epoch: Number(i.json.submission_epoch ?? 0)\n  } };\n});"
+      },
+      "id": "apply-envelope-and-bind-identity",
+      "name": "Apply Envelope and Bind Identity",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "BOUNDARY + A.1/A.2. The digest is COMPUTED from the artifact rather than taken from the sender, and is then only ever checked against the owner-registered source_digest. `target_role` is symbolic; the wrapper resolves it from its own table. Measurement fields are not sent: 25_ §B lists the exact fields this route accepts, and anything else is reduced to a descriptor in the capture.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/review-case",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "ai-os---open-review-case",
+      "name": "AI OS — Open Review Case",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        440,
+        300
+      ],
+      "notes": "AUTHORITY. Carries registration_ref plus the five identity components. Returns a resume token (new case), a duplicate-suppression result with the PRIOR receipt, or a distinguishable rejection: rejected-artifact-binding (403) when the submission disagrees with the owner registration, rejected-unauthorized-target (403), rejected-unknown-target (400).",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.outcome }}",
+              "operation": "equals",
+              "value2": "case-opened"
+            }
+          ]
+        }
+      },
+      "id": "duplicate-or-rejected?",
+      "name": "Duplicate or Rejected?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "R1P-04 (1) and (3) are OBSERVED here: duplicate-suppressed and rejected-unauthorized-target take the false branch and are recorded as distinct outcomes, never as a success.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "resume": "webhook"
+      },
+      "id": "wait-for-owner-decision",
+      "name": "Wait for Owner Decision",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [
+        880,
+        200
+      ],
+      "notes": "TRANSPORT ONLY. The provider carries the pause; the decision is made on the AI OS/Discord card. The provider never learns the case id.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/verify-decision",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({token: $('AI OS — Open Review Case').item.json.resume_token}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "verify-decision-token",
+      "name": "Verify Decision Token",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1100,
+        200
+      ],
+      "notes": "AUTHORITY. ONLY the token — the endpoint is an allowlist and refuses any other field. Returns the ActionRequest plus a single-use execution capability, or pending, or a refusal.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.authorized }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "authorized?",
+      "name": "Authorized?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        1320,
+        200
+      ],
+      "notes": "GATE. No capability, no relay.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.action_request.endpoint }}",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({capability: $json.execution_capability, action_request_id: $json.action_request.id, case_id: $json.action_request.case_id, payload: $json.action_request.payload}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "controlled-relay",
+      "name": "Controlled Relay",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        120
+      ],
+      "notes": "EXECUTION. The endpoint comes from the ActionRequest the AI OS built by resolving the ROLE — never from this workflow, and the payload is the one the AI OS authorized, not one this workflow composes: the capability binds a canonical payload digest and a different payload is refused (25_ A.4). A replay of the SAME payload returns the prior receipt with no second side effect; a different one from a delivered state is refused.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/receipt",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({action_request_id: $('Verify Decision Token').item.json.action_request.id, case_id: $('Verify Decision Token').item.json.action_request.case_id, provider_status: $json.delivered ? 'ok' : 'uncertain', provider_message: String($json.outcome || '').slice(0, 1024), destination_digest_claimed: null, provider_metrics: {}}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "return-receipt-to-ai-os",
+      "name": "Return Receipt To AI OS",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1760,
+        120
+      ],
+      "notes": "EVIDENCE, CORROBORATING ONLY. 25_ A.6: this route cannot mark an action delivered, alter capability state or satisfy any acceptance check, and a provider_status of 'ok' is a provider claim rather than a service conclusion. destination_digest_claimed is null here because this workflow never sees the destination bytes (§C); an owner session that can compare them supplies it.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/refusal",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({refusal_code: String($json.outcome || 'unknown').slice(0, 64), refusal_message: String($json.reason || '').slice(0, 1024)}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "record-non-relay-outcome",
+      "name": "Record Non-Relay Outcome",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        880,
+        420
+      ],
+      "notes": "FAIL-CLOSED. Duplicate suppression, artifact-binding rejection and unauthorized/unknown target are all recorded — never silently dropped. The body uses refusal_code/refusal_message because those are the fields 25_ §B lists for this route; anything else becomes a descriptor in the capture.",
+      "notesInFlow": false
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.AIOS_WRAPPER_BASE }}/poc1/refusal",
+        "method": "POST",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({refusal_code: String($json.outcome || 'unknown').slice(0, 64), refusal_message: String($json.reason || '').slice(0, 1024)}) }}",
+        "sendHeaders": true,
+        "specifyHeaders": "keypair",
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "X-Provider-Key",
+              "value": "={{ $env.AIOS_PROVIDER_KEY }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        }
+      },
+      "id": "record-unauthorized",
+      "name": "Record Unauthorized",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [
+        1540,
+        300
+      ],
+      "notes": "FAIL-CLOSED. Pending and owner-rejected both land here, as refusal_code / refusal_message (25_ §B).",
+      "notesInFlow": false
+    }
+  ],
+  "connections": {
+    "Builder Return Webhook": {
+      "main": [
+        [
+          {
+            "node": "Apply Envelope and Bind Identity",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Apply Envelope and Bind Identity": {
+      "main": [
+        [
+          {
+            "node": "AI OS — Open Review Case",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI OS — Open Review Case": {
+      "main": [
+        [
+          {
+            "node": "Duplicate or Rejected?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Duplicate or Rejected?": {
+      "main": [
+        [
+          {
+            "node": "Wait for Owner Decision",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Record Non-Relay Outcome",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait for Owner Decision": {
+      "main": [
+        [
+          {
+            "node": "Verify Decision Token",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify Decision Token": {
+      "main": [
+        [
+          {
+            "node": "Authorized?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Authorized?": {
+      "main": [
+        [
+          {
+            "node": "Controlled Relay",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Record Unauthorized",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Controlled Relay": {
+      "main": [
+        [
+          {
+            "node": "Return Receipt To AI OS",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "meta": {
+    "poc": "POC-1",
+    "scenario": "Builder-return pipeline (09_ §2)",
+    "partition": "business",
+    "task": "TASK-0007",
+    "status": "NOT TESTED",
+    "contract": "25_ Revision 5 (§A/§B)"
+  }
+}

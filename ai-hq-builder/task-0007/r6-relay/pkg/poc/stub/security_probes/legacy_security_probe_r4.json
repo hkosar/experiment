@@ -1,0 +1,106 @@
+{
+  "concurrent_capability_spend": {
+    "attempts": [
+      null,
+      null
+    ],
+    "delivered": [
+      null,
+      null
+    ],
+    "receipt_ids": [
+      null,
+      null
+    ],
+    "relay_attempts": null,
+    "replayed": [
+      null,
+      null
+    ],
+    "status": "MINTED",
+    "statuses": [
+      500,
+      500
+    ],
+    "stored_receipt": null
+  },
+  "concurrent_review_case": {
+    "case_count": 0,
+    "case_ids": [],
+    "identity_count": 0,
+    "outcomes": [
+      "refused-internal",
+      "refused-internal"
+    ],
+    "statuses": [
+      500,
+      500
+    ],
+    "token_count": 0,
+    "tokens_case_ids": []
+  },
+  "concurrent_token_spend": {
+    "action_request_ids": [
+      null,
+      null
+    ],
+    "authorized": [
+      null,
+      null
+    ],
+    "capability_count": 0,
+    "statuses": [
+      500,
+      500
+    ],
+    "token_consumed": false
+  },
+  "expiry_without_transition_evidence": {
+    "expiration_named_captures": [
+      "prepared-expire-20260804T155831-a86a8271-0001.json",
+      "committed-expire-20260804T155831-a86a8271-0001.json"
+    ],
+    "final_status": "EXPIRED",
+    "outcome": "refused-terminal",
+    "status": 403,
+    "transition_count_delta": 1
+  },
+  "false_capability_commit_on_secret_index_failure": {
+    "capability_count": 0,
+    "commit_count": 0,
+    "commit_fields": [],
+    "outcome": "refused-quota",
+    "status": 429,
+    "token_consumed": false
+  },
+  "false_case_opened_capture_on_token_failure": {
+    "captures": [
+      {
+        "fields": {
+          "outcome": "refused-quota",
+          "reason": "forced token ceiling",
+          "refused": true
+        },
+        "step": "review-quota"
+      }
+    ],
+    "case_count": 0,
+    "outcome": "refused-quota",
+    "status": 429
+  },
+  "revoke_vs_delivery_race": {
+    "final_capability_status": "DELIVERED_WITH_RECEIPT",
+    "receipt_present": true,
+    "relay_delivered": true,
+    "relay_status": 200,
+    "revoke_outcome": "refused",
+    "revoke_status": 409
+  },
+  "stage_attempt_mutates_without_capture": {
+    "attempt_after_failure": 1,
+    "first_outcome": "capture-failed",
+    "first_status": 500,
+    "second_attempt": 1,
+    "second_status": 200
+  }
+}

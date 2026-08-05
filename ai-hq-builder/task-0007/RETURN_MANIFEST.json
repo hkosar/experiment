@@ -1,18 +1,19 @@
 {
   "baseline": {
-    "authority_manifest": "104/104 verified, 0 mismatched",
-    "base_tree_independently_reproduced": "4b0874f66d10c2fda06e5f87024372862397637a",
-    "compared_against": "r5-relay/pkg/poc (my R4 return, as the relay shipped it)",
-    "pinned_r4_matches_reviewed_target": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
-    "snapshot_SHA256SUMS": "105/105 OK"
+    "compared_against": "r6-relay/pkg/poc (my R5 return, as the relay shipped it)",
+    "note": "Every count here describes THIS relay, per 41_ §3's labelling note.",
+    "pinned_r5_matches_reviewed_target": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
+    "relay_authority_manifest": "121/121 verified, 0 mismatched",
+    "relay_base_tree_independently_reproduced": "34888d5a188248ed5fab594ba21ac5064632dc73",
+    "relay_snapshot_SHA256SUMS": "122/122 OK"
   },
   "counts": {
-    "added": 20,
-    "modified": 5,
+    "added": 6,
+    "modified": 6,
     "removed": 0,
-    "unchanged": 66
+    "unchanged": 85
   },
-  "cycle": "round R5 — capture-publication correction (SEC-R4-01)",
+  "cycle": "round R6 — capture rollback and quarantine (SEC-R4-01 final)",
   "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json.",
   "files": [
     {
@@ -226,11 +227,11 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "New test module: 38_'s required fault injection at every post-link boundary.",
-      "bytes": 8531,
+      "allowlist_note": "Test module: 38_'s post-link boundaries plus 42_'s rollback boundaries.",
+      "bytes": 14614,
       "path": "stub/capture_fault_suite.py",
-      "sha256": "071c38cb8fd3ebc0a63f595be339c062fdd9323128078b977625fbb2d27a1c73",
-      "state": "added"
+      "sha256": "36dbfa2ee2f5c7b32099b4d6faf4a2323922f6023748f3080a9fe9a701e74f63",
+      "state": "modified"
     },
     {
       "bytes": 12680,
@@ -241,7 +242,7 @@
     {
       "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "7e1e845f9fe502e30c71ff633f9bb489b5813de0d830e65a4e03276e10de8ff8",
+      "sha256": "a7381d64a34dd42cd0e68b52461986b5d9aef0dc8b67f8a6c7b32cbd3a819a7c",
       "state": "modified"
     },
     {
@@ -254,12 +255,18 @@
       "bytes": 11276,
       "path": "stub/out/r5_acceptance.json",
       "sha256": "11ee2c210102052d70370e5468dc30361e54a495661f66c9050f637b47df58fe",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 15911,
+      "path": "stub/out/r6_acceptance.json",
+      "sha256": "abdfe0ce0e062852efd3653b5c645eb75f1f50ff40cfd5cd81b601fb69c94527",
       "state": "added"
     },
     {
-      "bytes": 51250,
+      "bytes": 54786,
       "path": "stub/out/selftest.json",
-      "sha256": "4c472e2b1e4657350f77011afa0292ea707b65a3c6541f557bdacc31af1ab66c",
+      "sha256": "f8ecfdf187819e291a7c1fd31f309e3fbee4fa4c3ba0b21cbc0d0447eaff51c1",
       "state": "modified"
     },
     {
@@ -269,10 +276,10 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "Existing test module, extended with the two new probes and their criteria.",
-      "bytes": 18422,
+      "allowlist_note": "Test module, extended with the rollback probe and its criteria.",
+      "bytes": 21538,
       "path": "stub/probe_runner.py",
-      "sha256": "8f32353e31f26be8cc5ca091a1e0bbae999314ccd44325e39e99a4740e86aab1",
+      "sha256": "dd9530400ed69824a08c3414f927193d5b92f52425d25e50fd9898f84e4818c8",
       "state": "modified"
     },
     {
@@ -306,17 +313,29 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "38_ names r4_reference/ as a permitted addition on the established precedent.",
       "bytes": 665,
       "path": "stub/r4_reference/README.md",
       "sha256": "03ac3c8efa4f2d36d2d3479edf349d89fa692a7e10449b731f077fa15b1267c3",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "38_ names r4_reference/ as a permitted addition on the established precedent.",
       "bytes": 118995,
       "path": "stub/r4_reference/stub_server_r4.py",
       "sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "42_ names r5_reference/ as a permitted addition on the established precedent.",
+      "bytes": 668,
+      "path": "stub/r5_reference/README.md",
+      "sha256": "68d21c7b384c847332022ae407adee56540b88e9d6dfe34176353d69b8853059",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "42_ names r5_reference/ as a permitted addition on the established precedent.",
+      "bytes": 120788,
+      "path": "stub/r5_reference/stub_server_r5.py",
+      "sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
       "state": "added"
     },
     {
@@ -338,101 +357,108 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 2860,
       "path": "stub/security_probes/chatgpt_capture_postlink_cleanup_probe.py",
       "sha256": "3cb4df24c10390f52c57a2ab04344bb6b631a96b873001835bd55232de518b8d",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 1163,
       "path": "stub/security_probes/chatgpt_capture_postlink_cleanup_r4.json",
       "sha256": "86612670d727c783dc5468345a1c87821b147ca1758ae75293927ebdcbf39673",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 3403,
       "path": "stub/security_probes/chatgpt_capture_publication_fault_probe.py",
       "sha256": "2f37ef5c98144b7f654ca11050b216ecc2e0dbfb449b7138660e9eee21fb506c",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 1658,
       "path": "stub/security_probes/chatgpt_capture_publication_fault_r3.json",
       "sha256": "e1e189672496b6d9a27215d76799ff7e8936300711cd296266bc6e9217c3a833",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 1642,
       "path": "stub/security_probes/chatgpt_capture_publication_fault_r4.json",
       "sha256": "112820c9a5278d1240f253fc75d5d3391b048c65ec37e4e4b835cd3986995ca0",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 860,
       "path": "stub/security_probes/chatgpt_r4_epoch_r3.json",
       "sha256": "1c61cf55e01dda1aed20c2c7bae37c2280d20567d1156314e792c9676f54c1f5",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 945,
       "path": "stub/security_probes/chatgpt_r4_epoch_r4.json",
       "sha256": "129cf2fb09d174584bf869ace4728c7b4e908770ba92273c4beff6191e18314c",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 730,
       "path": "stub/security_probes/chatgpt_r4_legacy_http_authority_races.json",
       "sha256": "cb3f6a0fecd898805ea7f831cccbb79c5510d3b2f9fc0fd4fced68e652bb427a",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 334,
       "path": "stub/security_probes/chatgpt_r4_legacy_http_race_probes.json",
       "sha256": "d0552d512ae8877ad454307512d7dc21e2aa51e06a5d595b79fc092ce9b46606",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 1303,
       "path": "stub/security_probes/chatgpt_r4_legacy_http_revoke_race.json",
       "sha256": "5685110e5a8bdbc188216a3fa49961aa85f6c64c86ec2edeadcd36a98a4aa0ca",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 3083,
       "path": "stub/security_probes/chatgpt_r4_legacy_nonrace_results.json",
       "sha256": "6cf7d2899d1ecead53d78b1af47f15999f0c4420985070df8346a7fb79349115",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 2440,
       "path": "stub/security_probes/chatgpt_r4_nway_r4.json",
       "sha256": "628dffdae60ecdec157f23816d6419be5d4048f2113c4d600c88eff3ff685b6f",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 6712,
       "path": "stub/security_probes/chatgpt_r4_prelock_r3.json",
       "sha256": "4a02c85f4348c63a2d8414231f26c9cc1459effdc743c34ad05fc48c7e56837d",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's own SEC-R4-01 probe scripts and recorded outputs, byte-identical from 36_security_probes/. Evidence-only.",
       "bytes": 6790,
       "path": "stub/security_probes/chatgpt_r4_prelock_r4.json",
       "sha256": "158544c957e4a9744ba9740e3b4751744092bad9f427ccc525892a3a61463bcd",
+      "state": "unchanged"
+    },
+    {
+      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
+      "bytes": 10585,
+      "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_probe.py",
+      "sha256": "8a35943829b0368df49f7ea974fed1e10e7ef956bb609809ee625d94eb391cd4",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
+      "bytes": 3880,
+      "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_r4.json",
+      "sha256": "7f76b001a06c14ac489eb6bbaf19dcc5ea74dd9fcfa414d116fb99890c470a11",
+      "state": "added"
+    },
+    {
+      "allowlist_note": "The verifier's own probe scripts and recorded outputs, byte-identical. Evidence-only; never executed by the service.",
+      "bytes": 3389,
+      "path": "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json",
+      "sha256": "eabe8f00427b42c122f9f1f234fb502f2eeee37abb68946ee89056647fb6d6e9",
       "state": "added"
     },
     {
@@ -484,18 +510,16 @@
       "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's probes and outputs, byte-identical. Evidence-only; never executed by the service.",
       "bytes": 491,
       "path": "stub/security_probes/legacy_more_race_r4.json",
       "sha256": "c7c5de770944b70af05890b29ae8e43fd90d9d393fe70233c25f7594f8feb640",
-      "state": "added"
+      "state": "unchanged"
     },
     {
-      "allowlist_note": "The verifier's probes and outputs, byte-identical. Evidence-only; never executed by the service.",
       "bytes": 2186,
       "path": "stub/security_probes/legacy_security_probe_r4.json",
       "sha256": "96ad1787218d888bcdb67fe8d3648ad02104baeaca533db7f52cd11c0663e507",
-      "state": "added"
+      "state": "unchanged"
     },
     {
       "bytes": 2031,
@@ -546,15 +570,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 80839,
+      "bytes": 84472,
       "path": "stub/selftest_stub.py",
-      "sha256": "c4d53d1862308219ec997fc573d4ddb4296e93f5d42e19e1048fec1a6fb8226a",
+      "sha256": "651f68cf85fe71e1eea0bb8e295ad63f5cc3dbf0e5a7e2d942d48561d00955f5",
       "state": "modified"
     },
     {
-      "bytes": 120788,
+      "bytes": 128396,
       "path": "stub/stub_server.py",
-      "sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
+      "sha256": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
       "state": "modified"
     },
     {
@@ -582,7 +606,7 @@
       "state": "unchanged"
     }
   ],
-  "governing_contract": "25_ Revision 5 — UNCHANGED; R4 concurrency architecture accepted and not reopened",
+  "governing_contract": "25_ Revision 5 — UNCHANGED; concurrency architecture closed and not reopened",
   "immutable_denylist_unchanged": [
     {
       "byte_identical_to_baseline": true,
@@ -633,30 +657,27 @@
       "byte_identical_to_baseline": true,
       "path": "stub/r3_reference/stub_server_r3.py",
       "sha256": "7f13494ee510ef6e863f7324680832a582fb075f6d6ccf4442b379345b90f572"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "stub/r4_reference/README.md",
+      "sha256": "03ac3c8efa4f2d36d2d3479edf349d89fa692a7e10449b731f077fa15b1267c3"
+    },
+    {
+      "byte_identical_to_baseline": true,
+      "path": "stub/r4_reference/stub_server_r4.py",
+      "sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79"
     }
   ],
-  "instruction_authority": "38_TASK-0007_R5_Task_Packet_Capture_Publication_Fix.md",
+  "instruction_authority": "42_TASK-0007_R6_Task_Packet_Rollback_Quarantine.md",
   "outside_enumerated_allowlist": [
     "stub/capture_fault_suite.py",
     "stub/probe_runner.py",
-    "stub/r4_reference/README.md",
-    "stub/r4_reference/stub_server_r4.py",
-    "stub/security_probes/chatgpt_capture_postlink_cleanup_probe.py",
-    "stub/security_probes/chatgpt_capture_postlink_cleanup_r4.json",
-    "stub/security_probes/chatgpt_capture_publication_fault_probe.py",
-    "stub/security_probes/chatgpt_capture_publication_fault_r3.json",
-    "stub/security_probes/chatgpt_capture_publication_fault_r4.json",
-    "stub/security_probes/chatgpt_r4_epoch_r3.json",
-    "stub/security_probes/chatgpt_r4_epoch_r4.json",
-    "stub/security_probes/chatgpt_r4_legacy_http_authority_races.json",
-    "stub/security_probes/chatgpt_r4_legacy_http_race_probes.json",
-    "stub/security_probes/chatgpt_r4_legacy_http_revoke_race.json",
-    "stub/security_probes/chatgpt_r4_legacy_nonrace_results.json",
-    "stub/security_probes/chatgpt_r4_nway_r4.json",
-    "stub/security_probes/chatgpt_r4_prelock_r3.json",
-    "stub/security_probes/chatgpt_r4_prelock_r4.json",
-    "stub/security_probes/legacy_more_race_r4.json",
-    "stub/security_probes/legacy_security_probe_r4.json"
+    "stub/r5_reference/README.md",
+    "stub/r5_reference/stub_server_r5.py",
+    "stub/security_probes/chatgpt_r5_cleanup_rollback_probe.py",
+    "stub/security_probes/chatgpt_r5_cleanup_rollback_r4.json",
+    "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json"
   ],
   "returned_to": "Fable",
   "task": "TASK-0007"

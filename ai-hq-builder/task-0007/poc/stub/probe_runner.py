@@ -335,18 +335,75 @@ def _c_capture_publication(r):
 
 
 def _c_capture_postlink(r):
+    """R5's criterion, superseded by `42_` items 1 and 7.
+
+    R5 required "no file, no quota" from every post-link failure. R6 releases
+    the quota only once the rollback is PROVEN, so a scenario whose rollback
+    cannot be established must instead end in the distinct quarantine result —
+    and may legitimately retain both the evidence and its unit. The
+    ordinary-failure branch is unchanged and still strict.
+    """
     verdicts, detail = {}, []
     for key in ("link_failure_control", "temp_unlink_after_link_failure",
                 "directory_open_after_link_failure"):
         d = r.get(key, {})
         files = d.get("files") or []
         pools = d.get("pools") or {}
-        verdicts[key] = not files and all(v == 0 for v in pools.values())
-        detail.append("%s: files=%d pools=%s" % (key, len(files), pools))
+        quarantined = ((d.get("error") or {}).get("type") == "CaptureQuarantine")
+        verdicts[key] = quarantined or (not files
+                                        and all(v == 0 for v in pools.values()))
+        detail.append("%s: %s files=%d pools=%s"
+                      % (key, "quarantined" if quarantined else "ordinary",
+                         len(files), pools))
     return all(verdicts.values()), " | ".join(detail)
 
 
+def _c_rollback(r):
+    """SEC-R4-01 final — `42_` item 7, applied scenario by scenario.
+
+    "Every non-control scenario must produce either proven cleanup or an
+    explicit quarantined/uncertain state — never a normal ineffective claim
+    alongside surviving committed evidence."
+    """
+    def quarantined(d):
+        return (d.get("error") or {}).get("type") == "CaptureQuarantine"
+
+    v = {}
+    # Rollback of the final link fails => the record may survive => quarantine.
+    v["standalone_final_link_cleanup_failure"] = quarantined(
+        r.get("standalone_final_link_cleanup_failure", {}))
+    # Same, reached through a real route: the RESPONSE must say quarantined and
+    # must not be the ordinary "not effective" claim.
+    c = r.get("committed_final_link_cleanup_failure", {})
+    v["committed_final_link_cleanup_failure"] = (
+        (c.get("body") or {}).get("outcome") == "refused-storage-quarantine"
+        and (c.get("body") or {}).get("storage_uncertain") is True)
+    # The rollback removed the record AND made the removal durable: a third
+    # fsync had to happen, and nothing may survive.
+    f = r.get("rollback_directory_fsync", {})
+    v["rollback_directory_fsync"] = (
+        f.get("rollback_directory_fsync_observed") is True
+        and not (f.get("records") or [])
+        and all(x == 0 for x in (f.get("pools") or {}).values()))
+    # Durable publication, then a close error: the record STAYS, and the
+    # transition is not rolled back (items 4 and 5).
+    pc = r.get("post_fsync_close_plus_cleanup_failure", {})
+    v["post_fsync_close_plus_cleanup_failure"] = (
+        pc.get("error") is None and bool(pc.get("returned"))
+        and sum((pc.get("pools") or {}).values()) == 1)
+    # A temp that cannot be removed even on retry is a hidden artifact =>
+    # quarantine, never an ordinary failure.
+    v["persistent_temp_cleanup_failure"] = quarantined(
+        r.get("persistent_temp_cleanup_failure", {}))
+
+    failed = sorted(k for k, ok in v.items() if not ok)
+    return not failed, ("%d/%d scenarios%s" % (sum(v.values()), len(v),
+                                               "; failing: " + ", ".join(failed)
+                                               if failed else ""))
+
+
 CRITERIA = {
+    "chatgpt_r5_cleanup_rollback_probe": ("SEC-R4-01 final", _c_rollback),
     "chatgpt_capture_publication_fault_probe": ("SEC-R4-01", _c_capture_publication),
     "chatgpt_capture_postlink_cleanup_probe": ("SEC-R4-01", _c_capture_postlink),
     "http_race_probes": ("SEC-R3-01", _c_http_race),
@@ -365,11 +422,14 @@ ORDER = ("http_race_probes", "http_authority_races", "http_revoke_race",
          "capture_atomicity_probe", "quota_enforcement_probe", "control_probes",
          # R5 — SEC-R4-01
          "chatgpt_capture_publication_fault_probe",
-         "chatgpt_capture_postlink_cleanup_probe")
+         "chatgpt_capture_postlink_cleanup_probe",
+         # R6 — SEC-R4-01 final
+         "chatgpt_r5_cleanup_rollback_probe")
 
 # Probes that take the target as an argument instead of a hard-coded SRC= line.
 ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
-                         "chatgpt_capture_postlink_cleanup_probe"))
+                         "chatgpt_capture_postlink_cleanup_probe",
+                         "chatgpt_r5_cleanup_rollback_probe"))
 
 
 def run_all(target: str, expect_green: bool, emit=None) -> list:

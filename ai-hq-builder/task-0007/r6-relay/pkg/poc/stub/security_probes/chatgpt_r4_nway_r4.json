@@ -1,0 +1,127 @@
+{
+  "capability_spend": {
+    "final_status": "DELIVERED_WITH_RECEIPT",
+    "handler_entries_before_release": 1,
+    "outcomes": [
+      "delivered",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect",
+      "replayed-no-second-side-effect"
+    ],
+    "receipts": 1,
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ]
+  },
+  "registration": {
+    "handler_entries_before_release": 1,
+    "identity_index": 1,
+    "outcomes": [
+      "registered",
+      "already-registered",
+      "already-registered",
+      "already-registered",
+      "already-registered",
+      "already-registered",
+      "already-registered",
+      "already-registered"
+    ],
+    "registrations": 1,
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ]
+  },
+  "review_case": {
+    "cases": 1,
+    "handler_entries_before_release": 1,
+    "outcomes": [
+      "case-opened",
+      "duplicate-suppressed",
+      "duplicate-suppressed",
+      "duplicate-suppressed",
+      "duplicate-suppressed",
+      "duplicate-suppressed",
+      "duplicate-suppressed",
+      "duplicate-suppressed"
+    ],
+    "statuses": [
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200,
+      200
+    ],
+    "tokens": 1
+  },
+  "run_declaration": {
+    "declarations": 1,
+    "handler_entries_before_release": 1,
+    "outcomes": [
+      "run-started",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration",
+      "duplicate-run-declaration"
+    ],
+    "runs": 1,
+    "statuses": [
+      200,
+      409,
+      409,
+      409,
+      409,
+      409,
+      409,
+      409
+    ]
+  },
+  "token_spend": {
+    "action_requests": 1,
+    "capabilities": 1,
+    "handler_entries_before_release": 1,
+    "outcomes": [
+      "authorized",
+      "refused-token",
+      "refused-token",
+      "refused-token",
+      "refused-token",
+      "refused-token",
+      "refused-token",
+      "refused-token"
+    ],
+    "statuses": [
+      200,
+      403,
+      403,
+      403,
+      403,
+      403,
+      403,
+      403
+    ]
+  }
+}

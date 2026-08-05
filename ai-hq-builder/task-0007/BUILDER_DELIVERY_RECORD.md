@@ -1,105 +1,102 @@
-# Builder Delivery Record — TASK-0007 Round R5 (capture-publication correction)
+# Builder Delivery Record — TASK-0007 Round R6 (capture rollback and quarantine)
 
-**Task:** TASK-0007 R5 — one defect: SEC-R4-01, capture publication marked durable before the directory fsync.
+**Task:** TASK-0007 R6 — SEC-R4-01, final: a failure of the rollback itself was swallowed.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
 **Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §8).
-**Instruction authority:** `38_TASK-0007_R5_Task_Packet_Capture_Publication_Fix.md` (governing). `25_` unchanged; the R4 concurrency architecture accepted and **not reopened**. `36_`/`36A_`/`36B_`/`37_` and the shipped probes are authoritative inputs.
+**Instruction authority:** `42_TASK-0007_R6_Task_Packet_Rollback_Quarantine.md` (governing). `25_` unchanged; the concurrency architecture closed and not reopened; R5's accepted post-link paths preserved.
 **Returned to:** **Fable.**
-**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted. **Nothing is outstanding and nothing needed a ruling this round.**
+**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted. No change requests; nothing needs a ruling.
 
-**Snapshot integrity (H-06), before anything was read as authority:**
+**Snapshot integrity (H-06), before anything was read as authority — all counts below describe THIS relay** (`TASK0007_R6_Rollback_Quarantine_Builder.zip`), which is the labelling correction `41_` §3 asked for:
 
 | Check | Result |
 | --- | --- |
-| `SHA256SUMS.txt` | **105/105 OK** |
-| `authority_manifest.json` | **104/104 verified, 0 mismatched, 0 missing**; one unlisted file on disk, `SHA256SUMS.txt` itself |
-| `BASE_BINDING.txt` tree, independently reproduced | **`4b0874f66d10c2fda06e5f87024372862397637a`** — matches |
-| Relay's `poc/` against my R4 return | **69/71 byte-identical**; the two that differ are `stub/out/selftest.json` and `stub/out/r1_witnesses.json`, both regenerate-by-running |
-| `r4_reference/stub_server_r4.py` | **`2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79`** — the R4 build the verifier examined |
+| `SHA256SUMS.txt` | **122/122 OK** |
+| `authority_manifest.json` | **121/121 verified, 0 mismatched, 0 missing**; one unlisted file on disk, `SHA256SUMS.txt` itself |
+| `BASE_BINDING.txt` tree, independently reproduced | **`34888d5a188248ed5fab594ba21ac5064632dc73`** — matches |
+| Relay's `poc/` against my R5 return | **89/91 byte-identical**; the two that differ are the regenerate-by-running evidence outputs |
+| `r5_reference/stub_server_r5.py` | **`972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68`** — the R5 build the verifier examined |
 
 ---
 
-## 1. The defect, and that it was mine
+## 1. The defect, and why it is the same one twice
 
-`37_` §3 and `38_` describe it exactly. `write_capture` set `published = True` immediately after `os.link` succeeded, **before** the directory fsync. A failure at the directory open or fsync then left the `finally` block believing the capture had landed: it kept the reserved quota unit and left the final file on disk, while the caller rolled the transition out of live state. The survivor read `phase: committed`, `outcome: committed`, `final_status: REGISTERED` — durable evidence asserting authority for a transition that never became effective, which is the precise failure A.7 exists to prevent. Separately, a temp-unlink failure after a successful link left the final hard link, because cleanup retried only the temp name.
+`stub_server.py:735` was `except OSError: pass`. If removing the final link failed after a publication failure, the success-named `committed` record survived on disk while the service returned the ordinary `capture-failed / not effective` response. The caller was told the transition was ineffective while durable evidence said it committed.
 
-I wrote that ordering at R4 while fixing SEC-R3-05, and I wrote the comment above it claiming "any failure removes the temp artifact and RELEASES the pool unit" — which was true of every boundary I had thought about and false of the two I had not. The `published` flag conflated two different facts, *the link succeeded* and *the record is durable*, and the bug lived exactly in the gap between them.
+That is SEC-R4-01 again — the same authority contradiction, displaced from the first-order path into the recovery path. I fixed the first-order path at R5 and wrote a bare `except OSError: pass` in the cleanup two lines below it, which means I treated the rollback as bookkeeping rather than as part of the guarantee. **The rollback is not housekeeping. It is the half of the transaction that decides whether the service is allowed to say "this did not happen."**
 
-## 2. The correction
+`41_` §2 is right that this needs two cascading filesystem failures and is close to unreachable on a healthy localhost disk. I am not going to argue it is more dangerous than it is. What makes it worth the round is that "the cleanup failed silently" is the exact mechanism by which an evidence guarantee dies without anyone noticing.
 
-Three states are now tracked separately, because conflating them is what produced the defect:
+## 2. The correction — the verifier's seven
 
-| | meaning |
-| --- | --- |
-| `tmp` | the temp file exists, until it is unlinked |
-| `linked_path` | the final path exists, from the moment `os.link` returns |
-| `published` | the record is durable — set **only after the directory fsync returns** |
+| # | Required | Implemented |
+| --- | --- | --- |
+| 1 | Quota released only when rollback is proven | `_rollback_capture` removes the final link and any temp, **fsyncs the directory to make the removal durable**, and only then calls `_release_pool` |
+| 2 | Cleanup failure is a distinct storage-uncertain result | new `CaptureQuarantine`, **deliberately not a subclass of `CaptureError`** so the handlers' `except (CaptureError, QuotaError)` cannot convert it back into the ordinary claim |
+| 3 | Quarantine and fail closed | the incident is registered on `STORE.storage_quarantine`; dispatch then refuses **every** further authority transition with `503 refused-storage-quarantine`; `GET /health` still serves and reports why |
+| 4 | Durable publication at the true boundary | `published = True` sits immediately after `os.fsync(dfd)` returns, inside the `try`, so the later `os.close` cannot downgrade an already-durable record |
+| 5 | Publication separated from temp housekeeping | a directory-close error after a successful fsync is recorded as a **soft anomaly** that blocks nothing and rolls nothing back |
+| 6 | Tests red against R5, green against the fix | §4 |
+| 7 | The verifier's rollback probe green | **5/5 against R6, 0/5 against pinned R5** |
 
-The `finally` releases the pool unit and removes **both** `linked_path` and `tmp` whenever `published` is false. The final path is removed first: it is the one that would otherwise be read as durable evidence, so if only one cleanup can succeed, that is the one that matters. This also closes the temp-unlink case — when that unlink fails, `tmp` is still set *and* `linked_path` is set, so both are cleaned.
+The quota unit is retained on quarantine deliberately: while a record may still exist, the reservation is the only remaining accounting for it. Releasing it would be a second false statement on top of the first.
 
-`os.link` is kept, as `38_` §5 requires; the no-overwrite property was confirmed correct and is not touched. **The concurrency model is untouched** — the change is confined to the publication ordering inside `write_capture`, exactly as the packet predicted, so there was nothing to stop and report.
+**One judgement call, flagged for Fable.** When the removal *succeeds* but its directory fsync cannot be performed, I treat the rollback as not established and quarantine. Item 1 sequences the fsync before the release and item 3 says quarantine "when rollback cannot be established", so this reads as required — but it is the strictest available reading, and it is why the `directory_open_after_link_failure` scenario now ends in quarantine where R5 ended in an ordinary failure. If Fable prefers "removed but undurable" to be a soft anomaly instead, that is a two-line change.
 
-## 3. My own fault suite passed against the defective build before it worked
+## 3. Nothing routed around an injection point
 
-`capture_fault_suite.py` injects at all four post-link boundaries and asserts the three properties `38_` names. Its first draft went **5/5 against the pinned R4 build** — a build that must fail three of them.
-
-The cause: `mod.os` *is* the process-wide `os` module, so patching it is global rather than local to the loaded stub, and the draft never restored what it patched. The first injector broke `os.link` for every probe after it, so each later boundary failed at the *link* instead of at its own boundary, left nothing behind, and passed vacuously. The suite is now snapshot-and-restore around every injection, and the fault names it in a comment rather than being quietly corrected.
-
-This is the second time in two rounds that a test of mine passed vacuously, and both times the only thing that caught it was **requiring red against the pinned defective build before accepting green against the fixed one**. That check is worth more than any individual test in this package, and it is the one habit from this program I would carry into the production wrapper unchanged.
-
-The suite also carries a **control**: an unfaulted capture must still publish and still consume its unit. Four "nothing survived" assertions are otherwise satisfiable by a build that never publishes anything.
+`42_` cautions against evasion, and I checked for it specifically because I did it three times at R4. Every fault the verifier's probes inject still lands: `os.open`, `os.unlink`, `os.fsync` and `os.close` are all called through the module-level `os` the probes patch, and the new rollback path deliberately calls the **same** `os.open`/`os.fsync` the publication path uses, so a probe blocking the directory also blocks the rollback's fsync. That is why `directory_open_after_link_failure` quarantines rather than quietly succeeding — the injection reaches the recovery path too, which is the honest outcome rather than the convenient one.
 
 ## 4. Verification — every figure from a command run after the last edit
 
-| Suite | Against R5 | Against pinned R4 | Meaning |
+| Suite | Against R6 | Against pinned R5 | Meaning |
 | --- | --- | --- | --- |
-| **Verifier's `chatgpt_capture_publication_fault_probe`** | **green** | **red** | SEC-R4-01, both sub-cases |
-| **Verifier's `chatgpt_capture_postlink_cleanup_probe`** | **green** | **red** | link / temp-unlink / directory-open |
-| **`capture_fault_suite.py`** (mine) | **5/5** | **2/5** | all four boundaries + control |
-| Stub self-test | **178/178** | — | 170 from R4, plus 8 for SEC-R4-01 |
-| Reviewer's full probe set (11) | **6 green** | 4 green | the five barrier-class remain per AUDIT-R4-5, ruled on in `37_` §1 |
-| Superseded-build witnesses | **34/34** | — | R1 21, R2 13, both pins digest-checked |
+| **Verifier's `chatgpt_r5_cleanup_rollback_probe`** | **5/5 scenarios** | **0/5** | item 7 |
+| `capture_fault_suite.py` — R6 rollback boundaries | **4/4** | **0/4** | final-link, persistent temp, rollback fsync, close-after-fsync |
+| `capture_fault_suite.py` — R5 boundaries (regression) | **5/5** | **5/5** | `42_` §3: R5's accepted paths did not move |
+| Stub self-test | **190/190** | — | 178 from R5, plus 12 for the rollback/quarantine work |
+| Reviewer's full probe set (12) | 7 green | 6 green | the five barrier-class remain per AUDIT-R4-5, ruled on in `37_` §1 |
+| Superseded-build witnesses | **34/34** | — | R1 21, R2 13 |
 | Deterministic barriers | **6/6** | — | corroborating, per `37_` §2 |
 | Acceptance oracle | **7/7, 33 clauses** | — | branch-specific, live HTTP |
 | Measurement validator | **160/160, 0 violations** | — | unchanged |
-| Structural harness | **PASS** | — | harness code byte-identical, `out/**` regenerated |
+| Structural harness | **PASS** | — | harness code byte-identical; `out/**` regenerated |
 
-On the committed-registration case the expected reading is **not** "nothing survives": the `prepared` record published successfully and legitimately remains, holding its own quota unit. A.7 is explicit that an orphan `prepared` is reported uncertain, never complete. What must not survive is the `committed` record — and it does not. Observed: `steps=['prepared-artifact-register']`, `registrations=0`, `identity_index=0`, `reserved-owner=1`.
+The five rollback scenarios, R5 → R6: `standalone_final_link_cleanup_failure` ordinary error with the record surviving → **quarantine**; `committed_final_link_cleanup_failure` `capture-failed` → **`refused-storage-quarantine`**; `rollback_directory_fsync` two fsyncs and no durable removal → **three fsyncs, nothing surviving**; `post_fsync_close_plus_cleanup_failure` ordinary error discarding a durable record → **published and retained**; `persistent_temp_cleanup_failure` ordinary error with a hidden `.tmp` → **quarantine**.
 
-## 5. Fable's correction to its own ruling, accepted
+## 5. Two corrections to my own record, from `41_` §3
 
-`37_` §2 downgrades `barrier_suite.py` from **equivalent** to **corroborating**: its `race()` helper aligns two clients immediately before sending, which aligns intent but does not deterministically force both requests to the same server-side precondition. That is right, and I accept it without reservation — I called it equivalent in the R4 record and it was not. The controlling instrument is the verifier's live-HTTP handler-entry release gate, which wraps the real handler without bypassing auth, route policy, preconditions, transition code or capture code.
-
-I have **not** adopted that gate into my own suite this round, because `38_` says "Scope: one defect" and building new concurrency instrumentation is not that. It is the obvious first improvement if a later round reopens the area, and I would rather flag it than smuggle it in. `barrier_suite.py` stays and is labelled corroborating in this record.
+- **I over-reported what was independently confirmed.** The verifier's runner hit a 240-second limit partway through and confirmed only the R5 capture-publication block, **8/8** — not my full 178/178. My R5 record's verification table did not distinguish "the verifier ran this" from "I ran this", and it should have. Every figure in §4 above is **Builder-run**; the only independently confirmed numbers this program has are the ones the verifier states in its own reports.
+- **My snapshot counts were ambiguously labelled.** `105/105` and `4b0874…` in the R5 record described the relay *I* received, while the outer re-check packet carried different figures. Both were true of different artifacts and neither was wrong, but I did not say which artifact each described. §"Snapshot integrity" above now names the relay explicitly.
 
 ## 6. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | SEC-R4-01 is fixed | **The verifier, with its own probes.** Both ship in this return and both go green here and red against the pin. The narrow risk is that a boundary exists that neither the verifier nor I injected at — the write, the flush, the file fsync, the mkstemp — all of which are *pre*-link and already covered by the R4 work, but "already covered" is what I believed about the post-link path too | **Built to spec; independent verification pending** |
-| 2 | Nothing else regressed | **The regression battery, which I also wrote.** 178/178, 34/34, 6/6, 7/7, 160/160 and a green harness. Every one of those numbers has been green in a round that was later returned FAIL, so their value is in the delta, not the total | Not disconfirmed; **same author as the thing tested** |
-| 3 | My fault suite can actually fail | **It could not, in draft, and I nearly shipped it.** It now goes 2/5 against the pin and 5/5 here, and carries a publish-control so it cannot pass by breaking everything. That is evidence it discriminates — not proof it discriminates on every property it claims | **Demonstrated in both directions** |
-| 4 | The fix is confined to publication ordering | **The diff.** One function changed; the concurrency model, the lock discipline, `Disclose`, the pools and the quota accounting are untouched. If a reviewer finds a behavioural change outside `write_capture`, this claim is wrong | Not disconfirmed; **diff shipped** |
-| 5 | My record matches my code | **Me.** Every figure in §4 came from a command run after the last edit. The number to distrust hardest remains the one I authored both sides of | **Self-authored; independently unverified** |
+| 1 | The rollback is now proven or quarantined | **The verifier's probe, which ships here and goes 5/5 vs 0/5.** The residual risk is a *third* level: something in `_rollback_capture` itself failing in a way I have not injected — and that is precisely the shape of the last two rounds, so I would attack it there first | **Built to spec; independent verification pending** |
+| 2 | Quarantine fails closed | **The blocking rule is coarse on purpose.** Every POST is refused once quarantined, including read-only listings. That is deliberate — a service that cannot describe its own evidence should not be answering questions about it — but it is stricter than "as necessary", and if that is wrong it is wrong in the safe direction | Not disconfirmed; **deliberately coarse** |
+| 3 | R5's accepted paths did not regress | **The R5 boundary block, still 5/5 on both builds.** Two criteria did change — `directory_open_after_link_failure` and the post-link probe — and I changed them because `42_` items 1 and 7 supersede `38_`'s "no quota consumed", not because my build failed them. That is exactly the move a Builder makes when weakening a criterion to fit, so it is the claim to check hardest, and the ordinary-failure branch of both criteria is unchanged and still strict | **Changed by supersession; stated, not buried** |
+| 4 | No injection was routed around | **Me, and I have done it three times.** §3 gives the mechanism rather than the assurance; the check is that every patched `os` call is still on the live path, and the quarantine at `directory_open_after_link_failure` is the visible proof that the probe still reaches the recovery path | Not disconfirmed; **mechanism stated** |
+| 5 | My record matches my code | **Me**, and §5 records two places it did not. Every figure in §4 is Builder-run and none of it is independently confirmed | **Self-authored; independently unverified** |
 
 ## 7. Return contents
 
-Complete `poc/` tree, Delivery Record, self-verified `RETURN_MANIFEST.json`, `proposed_classifications.json` (**suggestion only**), and `diffs/`.
+Complete `poc/` tree, Delivery Record, self-verified `RETURN_MANIFEST.json`, `proposed_classifications.json` (**suggestion only**), `diffs/`.
 
-Changed: `stub/stub_server.py` (the `write_capture` publication ordering only), `stub/selftest_stub.py` (the SEC-R4-01 block), `stub/probe_runner.py` (the two new probes and their criteria).
-Added: `stub/r4_reference/` (permitted by `38_`), `stub/capture_fault_suite.py`, and the verifier's two probe scripts plus their recorded outputs under `stub/security_probes/`.
+Changed: `stub/stub_server.py` (the rollback path, the durability boundary, the quarantine registers, dispatch fail-closed, `/health`), `stub/selftest_stub.py`, `stub/capture_fault_suite.py`, `stub/probe_runner.py`.
+Added: `stub/r5_reference/` (permitted by `42_`) and the verifier's `chatgpt_r5_cleanup_rollback_probe.py` plus its recorded outputs under `stub/security_probes/`.
 Regenerated by running: `harness/out/**`, `stub/out/**`.
 
 ## 8. Open items and deviations
 
-- **No change requests this round.** Nothing in `38_` was internally inconsistent, nothing required touching `25_` or the concurrency model, and nothing needs a ruling.
-- **Immutable denylist unchanged** — `r1_/r2_/r3_reference`, harness code, `authority_manifest.json`; proven per-file in the manifest.
-- **`barrier_suite.py` is corroborating, not controlling** — §5.
-- **Inherited and still open:** n8n node types and parameters remain NOT TESTED (`n8n-nodes-base` blocked by the egress proxy, 403), fifth round unchanged.
+- **No change requests.** Nothing in `42_` was internally inconsistent; nothing needed the concurrency model or a `25_` clause. One judgement call is flagged in §2 for Fable to soften if it prefers.
+- **Immutable denylist unchanged** — `r1_`–`r4_reference`, harness code, `authority_manifest.json`; proven per-file in the manifest.
+- **Inherited and still open:** n8n node types and parameters remain NOT TESTED (`n8n-nodes-base` blocked by the egress proxy, 403), sixth round unchanged.
 - **No POC run, no provider contacted. No `13B_` obligation implemented.** Every THROWAWAY marker kept.
 - **Branch deviation (unchanged, disclosed):** operator-designated branch.
-- **Recommended reviewer focus:** §3 — the vacuous-pass draft is the most instructive thing in this return, and the red-before-green discipline is what I would want checked hardest.
+- **On proportionality (`41_` §5):** the owner holds that call, not me. If he takes the accept-the-residual-risk option instead, this round's work does not need to be unwound — the quarantine path simply never fires on a healthy disk.
+- **Recommended reviewer focus:** §6 row 3 — the two criteria I changed — then §2's flagged judgement call.
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). SEC-R4-01 is claimed corrected against `38_`; **no POC is claimed run, and no security property is claimed independently verified.** Per `38_` the next steps are Fable structural verification and the verifier's re-check of this one finding, after which the owner session is unblocked. That gate closes when the verifier says so, not when I do.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). SEC-R4-01 is claimed corrected against `42_`; **no POC is claimed run, and no security property is claimed independently verified.** Per `42_` the next steps are Fable structural verification and the verifier's re-check of this one finding, after which the owner session is unblocked. That gate closes when the verifier says so, not when I do.*

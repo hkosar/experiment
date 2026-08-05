@@ -1,0 +1,53 @@
+{
+  "directory_open_after_link_failure": {
+    "error": {
+      "text": "capture write failed: EIO",
+      "type": "CaptureError"
+    },
+    "files": [
+      {
+        "path": "captures/diropen/POC1/cleanup-fault-20260804T205549-eacd8618-0001.json",
+        "size": 558
+      }
+    ],
+    "pools": {
+      "general": 1,
+      "reserved-owner": 0,
+      "security-refusal": 0
+    },
+    "returned": null
+  },
+  "link_failure_control": {
+    "error": {
+      "text": "capture write failed: EIO",
+      "type": "CaptureError"
+    },
+    "files": [],
+    "pools": {
+      "general": 0,
+      "reserved-owner": 0,
+      "security-refusal": 0
+    },
+    "returned": null
+  },
+  "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/r4_reference/stub_server_r4.py",
+  "temp_unlink_after_link_failure": {
+    "error": {
+      "text": "capture write failed: EIO",
+      "type": "CaptureError"
+    },
+    "files": [
+      {
+        "path": "captures/unlinkfail/POC1/cleanup-fault-20260804T205549-b4a8fb6c-0001.json",
+        "size": 561
+      }
+    ],
+    "pools": {
+      "general": 0,
+      "reserved-owner": 0,
+      "security-refusal": 0
+    },
+    "returned": null,
+    "unlink_calls": 2
+  }
+}

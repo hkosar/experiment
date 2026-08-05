@@ -1,0 +1,20 @@
+  1008	    txn = Transition("/owner/artifact/register", "POC1", "artifact-register",
+  1009	                     artifact_id, None, "REGISTERED", authored_by="owner-surface",
+  1010	                     links={"artifact_id": artifact_id})
+  1011	    txn.prepare()
+  1012	    with STORE.lock:
+  1013	        STORE.registrations[ref] = dict(rec, provisional=True)
+  1014	        STORE.reg_by_identity[identity] = ref
+  1015	    try:
+  1016	        txn.commit()
+  1017	    except (CaptureError, QuotaError) as exc:
+  1018	        with STORE.lock:
+  1019	            STORE.registrations.pop(ref, None)
+  1020	            STORE.reg_by_identity.pop(identity, None)
+  1021	        return 500, {"refused": True, "outcome": "capture-failed",
+  1022	                     "reason": "registration not recorded, and therefore not "
+  1023	                               "effective: %s" % exc}
+  1024	    with STORE.lock:
+  1025	        STORE.registrations[ref]["provisional"] = False
+  1026	    return 200, {"artifact_id": artifact_id, "registration_ref": ref,
+  1027	                 "outcome": "registered", "source_digest_is_authoritative": True}

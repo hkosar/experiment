@@ -1,0 +1,13 @@
+{
+  "first": {
+    "status": 500,
+    "outcome": "capture-failed",
+    "attempt_counter_after": 1
+  },
+  "second": {
+    "status": 200,
+    "outcome": "stage-delivered",
+    "reported_attempt": 2,
+    "attempt_counter_after": 2
+  }
+}

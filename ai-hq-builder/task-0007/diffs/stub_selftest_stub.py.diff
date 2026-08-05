@@ -1,52 +1,83 @@
---- r5-relay/pkg/poc/stub/selftest_stub.py	2026-08-04 18:26:14.000000000 +0000
-+++ poc/stub/selftest_stub.py	2026-08-04 18:36:56.718749109 +0000
-@@ -1496,6 +1496,40 @@
+--- r6-relay/pkg/poc/stub/selftest_stub.py	2026-08-04 21:31:56.000000000 +0000
++++ poc/stub/selftest_stub.py	2026-08-05 01:48:09.975251420 +0000
+@@ -55,6 +55,8 @@
+ ROWS = []
+ OUTCOMES_SEEN = set()
  
++R5_PINNED_SHA256 = "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68"
++
+ A8_NAMED = frozenset((
+     "receipt_id", "subject_ref", "executed_at", "occurrence", "schedule_version",
+     "purpose", "authority_id", "authority_version", "content_hash",
+@@ -1514,6 +1516,71 @@
+         check("R4-01 %s" % row["boundary"], row["ok"], "holds",
+               row["failed_properties"] or "")
  
- # --------------------------------------------------------------------------
-+# SEC-R4-01 — capture publication (R5)
-+# --------------------------------------------------------------------------
-+def block_capture_publication():
-+    block("capture publication: every post-link boundary (SEC-R4-01)")
-+    import hashlib                                               # noqa: PLC0415
-+    import capture_fault_suite as CF                             # noqa: PLC0415
++    # R6 — the pinned R5 build, and the verifier's own rollback probe.
++    r5 = os.path.join(HERE, "r5_reference", "stub_server_r5.py")
++    r5_digest = hashlib.sha256(open(r5, "rb").read()).hexdigest()
++    check("the pinned R5 reference is the build the verifier examined",
++          r5_digest == R5_PINNED_SHA256, R5_PINNED_SHA256[:16], r5_digest[:16])
++    r5_rows = [r for r in CF.run(r5) if r["boundary"].startswith("R6 ")]
++    red = [r for r in r5_rows if not r["ok"]]
++    check("...and every R6 rollback boundary FAILS against it (%d of %d red)"
++          % (len(red), len(r5_rows)), len(red) == len(r5_rows) and r5_rows,
++          "all red", [r["boundary"] for r in r5_rows if r["ok"]])
 +
-+    pinned = os.path.join(HERE, "r4_reference", "stub_server_r4.py")
-+    digest = hashlib.sha256(open(pinned, "rb").read()).hexdigest()
-+    check("the pinned R4 reference is the build the verifier examined",
-+          digest == CF.R4_PINNED_SHA256, CF.R4_PINNED_SHA256[:16], digest[:16])
-+    if digest != CF.R4_PINNED_SHA256:
-+        return
++    import probe_runner as PR                                    # noqa: PLC0415
++    finding, criterion = PR.CRITERIA["chatgpt_r5_cleanup_rollback_probe"]
++    live_ok, live_detail = criterion(PR.run_probe(
++        "chatgpt_r5_cleanup_rollback_probe", os.path.join(HERE, "stub_server.py")))
++    check("the verifier's chatgpt_r5_cleanup_rollback_probe runs green",
++          live_ok, "5/5 scenarios", live_detail)
++    pin_ok, pin_detail = criterion(PR.run_probe(
++        "chatgpt_r5_cleanup_rollback_probe", r5))
++    check("...and red against the pinned R5 build", not pin_ok, "red", pin_detail)
 +
-+    for row in CF.run(os.path.join(HERE, "stub_server.py")):
-+        check("R4-01 %s" % row["boundary"], row["ok"], "holds",
-+              row["failed_properties"] or "")
++    # Item 3 through a real route: the response must be the distinct quarantine
++    # result, and the service must then refuse further authority transitions.
++    data = fresh()
++    real_open, real_unlink = os.open, os.unlink
 +
-+    # The same suite must be RED against the pin, or it proves nothing about
-+    # this build. Demonstrated-failing is the standing method, and it is what
-+    # caught this file passing vacuously in draft.
-+    pinned_rows = CF.run(pinned)
-+    faults = [r for r in pinned_rows if not r["boundary"].startswith("CONTROL")]
-+    red = [r for r in faults if not r["ok"]]
-+    check("...and the same boundaries FAIL against the pinned R4 build "
-+          "(%d of %d fault boundaries red)" % (len(red), len(faults)),
-+          len(red) >= 3, ">=3 red", [r["boundary"] for r in faults if r["ok"]])
-+    control = [r for r in pinned_rows if r["boundary"].startswith("CONTROL")]
-+    check("...while the pin's CONTROL still publishes, so the red is the "
-+          "defect and not a broken harness",
-+          bool(control) and control[0]["ok"], "control holds", "")
++    def blocked_open(path, flags, *a, **kw):
++        if flags == os.O_RDONLY and os.path.isdir(os.fspath(path)):
++            raise OSError(5, "forced publication directory-open failure")
++        return real_open(path, flags, *a, **kw)
 +
++    def blocked_unlink(path, *a, **kw):
++        name = os.path.basename(os.fspath(path))
++        if name.startswith("committed-") and name.endswith(".json"):
++            raise OSError(5, "forced final-link rollback failure")
++        return real_unlink(path, *a, **kw)
 +
-+# --------------------------------------------------------------------------
- # outcome coverage
- # --------------------------------------------------------------------------
- def block_coverage():
-@@ -1519,7 +1553,7 @@
-     sys.stderr.write("R3 self-test — 25_ §E\n")
-     for fn in (block_identity, block_owner_idea, block_owner_reconciliation,
-                block_capability, block_evidence, block_capacity, block_policy,
--               block_live_http, block_validator):
-+               block_live_http, block_validator, block_capture_publication):
-         fn()
-     block_coverage()
- 
++    S.os.open, S.os.unlink = blocked_open, blocked_unlink
++    try:
++        st, out = post("/owner/artifact/register",
++                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
++                        "task_id": "QUAR", "transition": "R",
++                        "target_role": "verifier"}, owner())
++    finally:
++        S.os.open, S.os.unlink = real_open, real_unlink
++    check("an unprovable rollback returns the DISTINCT quarantine result, never "
++          "the ordinary 'not effective' claim",
++          st == 503 and out.get("outcome") == "refused-storage-quarantine"
++          and out.get("storage_uncertain") is True,
++          "503 refused-storage-quarantine", (st, out.get("outcome")))
++    check("...and the quota unit is retained, because it is the last accounting "
++          "for a record that may still exist",
++          sum(S.STORE.captures.values()) >= 1, ">=1 retained",
++          S.STORE.captures)
++    st2, out2 = post("/owner/cases", {}, owner())
++    check("...and the service then FAILS CLOSED to further authority transitions",
++          st2 == 503 and out2.get("outcome") == "refused-storage-quarantine",
++          "503 refused-storage-quarantine", (st2, out2.get("outcome")))
++    st3, health = get("/health")
++    check("...while GET /health is still served and says why (A.8)",
++          st3 == 200 and health.get("storage_quarantined") is True
++          and health.get("ok") is False,
++          "health reports the quarantine", health.get("storage_quarantined"))
++    fresh()
++
+     # The same suite must be RED against the pin, or it proves nothing about
+     # this build. Demonstrated-failing is the standing method, and it is what
+     # caught this file passing vacuously in draft.

@@ -1,0 +1,83 @@
+--- /mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/r4_reference/stub_server_r4.py	2026-08-04 20:41:37.000000000 +0000
++++ /mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/stub_server.py	2026-08-04 20:41:37.000000000 +0000
+@@ -644,7 +644,31 @@
+     # overwrites, so it cannot express "a final path that did not previously
+     # exist". Link fails with FileExistsError instead, which is the guarantee
+     # the finding asks for, and it is equally atomic on one filesystem.
++    # SEC-R4-01 (R5) — publication is not "published" until the DIRECTORY FSYNC
++    # has succeeded.
++    #
++    # R4 set `published = True` immediately after `os.link`, before the
++    # directory fsync. A failure at the directory open or fsync then left the
++    # `finally` believing the capture had landed: it kept the reserved quota
++    # unit and left the final file on disk, while the caller rolled the
++    # transition out of live state. The surviving record read `phase:
++    # committed`, `outcome: committed`, `final_status: REGISTERED` — durable
++    # evidence asserting authority for a transition that never became
++    # effective, which is the exact failure A.7 exists to prevent.
++    #
++    # Three things are tracked separately now, because "the link succeeded" and
++    # "the record is durable" are different facts and conflating them is what
++    # produced the defect:
++    #   tmp          the temp file, until it is unlinked
++    #   linked_path  the final path, from the moment the link succeeds
++    #   published    ONLY after the directory fsync returns
++    #
++    # Any failure after the link therefore removes the final path as well as
++    # the temp, and releases the pool unit — including reserved-owner. That
++    # also covers the temp-unlink failure, which in R4 cleaned only the temp
++    # name and left the final hard link behind.
+     tmp = None
++    linked_path = None
+     published = False
+     try:
+         os.makedirs(root, exist_ok=True)
+@@ -668,17 +692,19 @@
+                                 % (step, STORE.run_instance, seq))
+             try:
+                 os.link(tmp, path)      # fails if the final path already exists
++                linked_path = path
+                 break
+             except FileExistsError:
+                 continue
+         os.unlink(tmp)
+         tmp = None
+-        published = True
+         dfd = os.open(root, os.O_RDONLY)
+         try:
+             os.fsync(dfd)
+         finally:
+             os.close(dfd)
++        # Only here. Everything above this line is still rollable back.
++        published = True
+     except (CaptureError, QuotaError):
+         raise
+     except OSError as exc:
+@@ -691,15 +717,21 @@
+         # internal error, and so the caller's rollback path runs.
+         raise CaptureError("capture write failed: %s" % type(exc).__name__)
+     finally:
+-        # A failed capture leaves NO temp artifact and NO consumed quota unit.
+-        # The pool reservation is released here rather than in each caller,
+-        # because every failure path in this function must give it back and a
+-        # caller cannot see which ones ran.
++        # A failed capture leaves NO final file, NO temp artifact and NO
++        # consumed quota unit. The pool reservation is released here rather
++        # than in each caller, because every failure path in this function must
++        # give it back and a caller cannot see which ones ran.
++        #
++        # The final path is removed FIRST: it is the one that would otherwise
++        # be read as durable evidence, and if only one cleanup can succeed that
++        # is the one that matters.
+         if not published:
+             _release_pool(pool)
+-            if tmp:
++            for stale in (linked_path, tmp):
++                if not stale:
++                    continue
+                 try:
+-                    os.unlink(tmp)
++                    os.unlink(stale)
+                 except OSError:
+                     pass
+     return path

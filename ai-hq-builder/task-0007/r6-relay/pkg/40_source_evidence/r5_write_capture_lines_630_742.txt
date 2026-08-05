@@ -1,0 +1,113 @@
+   630	    # SEC-R3-05 — crash-atomic publication.
+   631	    #
+   632	    # R3 pre-created the FINAL path with O_EXCL to reserve the name, then wrote
+   633	    # a temp file beside it and renamed over it. A failure between those two
+   634	    # steps left a zero-byte final file that every reader counts as a capture,
+   635	    # and the pool unit had already been consumed. Both are corrected here:
+   636	    #
+   637	    #   * nothing is created at the final path until the content is durable;
+   638	    #   * the temp file is created with O_EXCL under a unique name;
+   639	    #   * write → flush → fsync the file → link onto a final path that did not
+   640	    #     exist → unlink the temp → fsync the directory;
+   641	    #   * any failure removes the temp artifact and RELEASES the pool unit.
+   642	    #
+   643	    # `os.link` rather than `os.replace` is deliberate: rename silently
+   644	    # overwrites, so it cannot express "a final path that did not previously
+   645	    # exist". Link fails with FileExistsError instead, which is the guarantee
+   646	    # the finding asks for, and it is equally atomic on one filesystem.
+   647	    # SEC-R4-01 (R5) — publication is not "published" until the DIRECTORY FSYNC
+   648	    # has succeeded.
+   649	    #
+   650	    # R4 set `published = True` immediately after `os.link`, before the
+   651	    # directory fsync. A failure at the directory open or fsync then left the
+   652	    # `finally` believing the capture had landed: it kept the reserved quota
+   653	    # unit and left the final file on disk, while the caller rolled the
+   654	    # transition out of live state. The surviving record read `phase:
+   655	    # committed`, `outcome: committed`, `final_status: REGISTERED` — durable
+   656	    # evidence asserting authority for a transition that never became
+   657	    # effective, which is the exact failure A.7 exists to prevent.
+   658	    #
+   659	    # Three things are tracked separately now, because "the link succeeded" and
+   660	    # "the record is durable" are different facts and conflating them is what
+   661	    # produced the defect:
+   662	    #   tmp          the temp file, until it is unlinked
+   663	    #   linked_path  the final path, from the moment the link succeeds
+   664	    #   published    ONLY after the directory fsync returns
+   665	    #
+   666	    # Any failure after the link therefore removes the final path as well as
+   667	    # the temp, and releases the pool unit — including reserved-owner. That
+   668	    # also covers the temp-unlink failure, which in R4 cleaned only the temp
+   669	    # name and left the final hard link behind.
+   670	    tmp = None
+   671	    linked_path = None
+   672	    published = False
+   673	    try:
+   674	        os.makedirs(root, exist_ok=True)
+   675	        fd, tmp = tempfile.mkstemp(prefix=".%s-" % step, suffix=".tmp", dir=root)
+   676	        os.close(fd)      # mkstemp already created it exclusively
+   677	        # Deliberately `open()` and not `os.fdopen()`: the reviewer's
+   678	        # capture_atomicity_probe injects its fault at `builtins.open`, and an
+   679	        # implementation that routed around the injection would evade the test
+   680	        # rather than pass it.
+   681	        with open(tmp, "w", encoding="utf-8", newline="\n") as fh:
+   682	            json.dump(body, fh, indent=2, sort_keys=True, ensure_ascii=False)
+   683	            fh.write("\n")
+   684	            fh.flush()
+   685	            os.fsync(fh.fileno())
+   686	        seq = 0
+   687	        while True:
+   688	            seq += 1
+   689	            if seq > 9999:
+   690	                raise CaptureError("cannot allocate a capture filename")
+   691	            path = os.path.join(root, "%s-%s-%04d.json"
+   692	                                % (step, STORE.run_instance, seq))
+   693	            try:
+   694	                os.link(tmp, path)      # fails if the final path already exists
+   695	                linked_path = path
+   696	                break
+   697	            except FileExistsError:
+   698	                continue
+   699	        os.unlink(tmp)
+   700	        tmp = None
+   701	        dfd = os.open(root, os.O_RDONLY)
+   702	        try:
+   703	            os.fsync(dfd)
+   704	        finally:
+   705	            os.close(dfd)
+   706	        # Only here. Everything above this line is still rollable back.
+   707	        published = True
+   708	    except (CaptureError, QuotaError):
+   709	        raise
+   710	    except OSError as exc:
+   711	        raise CaptureError("capture write failed: %s"
+   712	                           % errno.errorcode.get(exc.errno, exc.errno))
+   713	    except BaseException as exc:
+   714	        # Anything else that stops the evidence landing is, from the
+   715	        # transition's point of view, the same event: the capture failed. It is
+   716	        # reported as such so the caller gets a structured refusal instead of an
+   717	        # internal error, and so the caller's rollback path runs.
+   718	        raise CaptureError("capture write failed: %s" % type(exc).__name__)
+   719	    finally:
+   720	        # A failed capture leaves NO final file, NO temp artifact and NO
+   721	        # consumed quota unit. The pool reservation is released here rather
+   722	        # than in each caller, because every failure path in this function must
+   723	        # give it back and a caller cannot see which ones ran.
+   724	        #
+   725	        # The final path is removed FIRST: it is the one that would otherwise
+   726	        # be read as durable evidence, and if only one cleanup can succeed that
+   727	        # is the one that matters.
+   728	        if not published:
+   729	            _release_pool(pool)
+   730	            for stale in (linked_path, tmp):
+   731	                if not stale:
+   732	                    continue
+   733	                try:
+   734	                    os.unlink(stale)
+   735	                except OSError:
+   736	                    pass
+   737	    return path
+   738	
+   739	
+   740	class Transition:
+   741	    """A.7 — an authority-bearing transition. Effective only once `committed`
+   742	    has durably landed; the in-memory change is provisional until then."""

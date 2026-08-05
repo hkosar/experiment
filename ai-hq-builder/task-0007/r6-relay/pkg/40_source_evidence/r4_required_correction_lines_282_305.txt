@@ -1,0 +1,24 @@
+   282	#### Required correction
+   283	
+   284	Implement an explicit publication state machine that tracks both the temp path and the final link.
+   285	
+   286	1. Do not set `published` until the final directory entry has successfully passed directory fsync.
+   287	2. On any error after `os.link` but before successful directory fsync:
+   288	   - remove the final link;
+   289	   - remove the temp name if it still exists;
+   290	   - fsync the directory again so the rollback itself is durable; and
+   291	   - release the pool reservation only after the capture is proven ineffective.
+   292	3. If rollback cleanup or its directory fsync cannot be established, do not return the ordinary claim that the transition is ineffective. Enter an explicit fail-closed/quarantined storage state requiring reconciliation; the service cannot truthfully choose between “committed” and “rolled back” while the final record may remain.
+   293	4. Keep post-publication cleanup semantically separate from publication. Once the final record is durably published, a temp-cleanup problem must not cause the caller to roll back live state while retaining committed evidence.
+   294	5. Add branch-specific fault tests for:
+   295	   - filename allocation / `mkstemp`;
+   296	   - open, write, flush, and file fsync;
+   297	   - `os.link`;
+   298	   - temp unlink after link;
+   299	   - directory open;
+   300	   - publication directory fsync;
+   301	   - final-link cleanup failure; and
+   302	   - rollback directory-fsync failure.
+   303	6. For every authority transition, assert that a non-2xx rollback leaves no `committed-*` record for that transition and no extra capture quota. A prepared attempt record may remain if the contract intends it; committed success evidence may not.
+   304	7. Run the new tests against this R4 target and require red, then against the corrected target and require green.
+   305	

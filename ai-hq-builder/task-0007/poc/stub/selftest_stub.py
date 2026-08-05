@@ -55,6 +55,8 @@ DATA_DIR = os.path.join(HERE, "..", "data")
 ROWS = []
 OUTCOMES_SEEN = set()
 
+R5_PINNED_SHA256 = "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68"
+
 A8_NAMED = frozenset((
     "receipt_id", "subject_ref", "executed_at", "occurrence", "schedule_version",
     "purpose", "authority_id", "authority_version", "content_hash",
@@ -1513,6 +1515,71 @@ def block_capture_publication():
     for row in CF.run(os.path.join(HERE, "stub_server.py")):
         check("R4-01 %s" % row["boundary"], row["ok"], "holds",
               row["failed_properties"] or "")
+
+    # R6 — the pinned R5 build, and the verifier's own rollback probe.
+    r5 = os.path.join(HERE, "r5_reference", "stub_server_r5.py")
+    r5_digest = hashlib.sha256(open(r5, "rb").read()).hexdigest()
+    check("the pinned R5 reference is the build the verifier examined",
+          r5_digest == R5_PINNED_SHA256, R5_PINNED_SHA256[:16], r5_digest[:16])
+    r5_rows = [r for r in CF.run(r5) if r["boundary"].startswith("R6 ")]
+    red = [r for r in r5_rows if not r["ok"]]
+    check("...and every R6 rollback boundary FAILS against it (%d of %d red)"
+          % (len(red), len(r5_rows)), len(red) == len(r5_rows) and r5_rows,
+          "all red", [r["boundary"] for r in r5_rows if r["ok"]])
+
+    import probe_runner as PR                                    # noqa: PLC0415
+    finding, criterion = PR.CRITERIA["chatgpt_r5_cleanup_rollback_probe"]
+    live_ok, live_detail = criterion(PR.run_probe(
+        "chatgpt_r5_cleanup_rollback_probe", os.path.join(HERE, "stub_server.py")))
+    check("the verifier's chatgpt_r5_cleanup_rollback_probe runs green",
+          live_ok, "5/5 scenarios", live_detail)
+    pin_ok, pin_detail = criterion(PR.run_probe(
+        "chatgpt_r5_cleanup_rollback_probe", r5))
+    check("...and red against the pinned R5 build", not pin_ok, "red", pin_detail)
+
+    # Item 3 through a real route: the response must be the distinct quarantine
+    # result, and the service must then refuse further authority transitions.
+    data = fresh()
+    real_open, real_unlink = os.open, os.unlink
+
+    def blocked_open(path, flags, *a, **kw):
+        if flags == os.O_RDONLY and os.path.isdir(os.fspath(path)):
+            raise OSError(5, "forced publication directory-open failure")
+        return real_open(path, flags, *a, **kw)
+
+    def blocked_unlink(path, *a, **kw):
+        name = os.path.basename(os.fspath(path))
+        if name.startswith("committed-") and name.endswith(".json"):
+            raise OSError(5, "forced final-link rollback failure")
+        return real_unlink(path, *a, **kw)
+
+    S.os.open, S.os.unlink = blocked_open, blocked_unlink
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "QUAR", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.open, S.os.unlink = real_open, real_unlink
+    check("an unprovable rollback returns the DISTINCT quarantine result, never "
+          "the ordinary 'not effective' claim",
+          st == 503 and out.get("outcome") == "refused-storage-quarantine"
+          and out.get("storage_uncertain") is True,
+          "503 refused-storage-quarantine", (st, out.get("outcome")))
+    check("...and the quota unit is retained, because it is the last accounting "
+          "for a record that may still exist",
+          sum(S.STORE.captures.values()) >= 1, ">=1 retained",
+          S.STORE.captures)
+    st2, out2 = post("/owner/cases", {}, owner())
+    check("...and the service then FAILS CLOSED to further authority transitions",
+          st2 == 503 and out2.get("outcome") == "refused-storage-quarantine",
+          "503 refused-storage-quarantine", (st2, out2.get("outcome")))
+    st3, health = get("/health")
+    check("...while GET /health is still served and says why (A.8)",
+          st3 == 200 and health.get("storage_quarantined") is True
+          and health.get("ok") is False,
+          "health reports the quarantine", health.get("storage_quarantined"))
+    fresh()
 
     # The same suite must be RED against the pin, or it proves nothing about
     # this build. Demonstrated-failing is the standing method, and it is what

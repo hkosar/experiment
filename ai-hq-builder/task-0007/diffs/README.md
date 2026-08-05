@@ -1,18 +1,21 @@
-# Diffs — TASK-0007 R5
+# Diffs — TASK-0007 R6
 
-Changed files diffed against **the R4 baseline the relay shipped**
-(`r5-relay/pkg/poc/`), verified 69/71 byte-identical to my R4 return before any
+Changed files diffed against **the R5 baseline the relay shipped**
+(`r6-relay/pkg/poc/`), verified 89/91 byte-identical to my R5 return before any
 editing (the two that differ are the regenerate-by-running evidence outputs).
 
-- `stub_stub_server.py.diff` — **the whole of the SEC-R4-01 correction.** One
-  function, `write_capture`: `linked_path` tracked separately, `published` set
-  only after the directory fsync, and the `finally` removing the final path as
-  well as the temp. Nothing else in the service changed.
-- `stub_selftest_stub.py.diff` — the SEC-R4-01 block (8 cases).
-- `stub_probe_runner.py.diff` — the verifier's two new probes and their criteria.
-- `stub_capture_fault_suite.py.diff` — new, diffed against `/dev/null`.
+- `stub_stub_server.py.diff` — the SEC-R4-01 correction: `_rollback_capture`
+  (proven removal + its own directory fsync, or `CaptureQuarantine`), the
+  durability boundary moved inside the `try` so a close error cannot downgrade
+  a durable record, the two storage registers, dispatch failing closed while
+  quarantined, and `/health` reporting it.
+- `stub_capture_fault_suite.py.diff` — the four R6 rollback boundaries, added
+  alongside the R5 boundaries which remain as the regression proof.
+- `stub_probe_runner.py.diff` — the verifier's rollback probe and its criteria.
+- `stub_selftest_stub.py.diff` — the R6 block, including the quarantine driven
+  through a real route and the fail-closed check.
 
-Not diffed: `stub/r4_reference/stub_server_r4.py` is a byte-identical copy of the
-R4 build (`sha256 2876522b…22450f79`) — verify with `sha256sum`, as the suites do
-before loading it. `stub/security_probes/chatgpt_*` are the verifier's own files,
-copied byte-identically. `harness/out/**` and `stub/out/**` regenerate by running.
+Not diffed: `stub/r5_reference/stub_server_r5.py` is a byte-identical copy of the
+R5 build (`sha256 972c30d5…3dd15e68`) — verify with `sha256sum`, as the suites do
+before loading it. `stub/security_probes/chatgpt_*` are the verifier's own files.
+`harness/out/**` and `stub/out/**` regenerate by running.

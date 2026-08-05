@@ -1,9 +1,9 @@
 {
-  "SUGGESTION ONLY": "authority_manifest.json is published by Fable, never by the Builder. This confers no authority on anything.",
-  "note": "No file in this return is proposed as `governing`. The governing instruction is 38_, which the Builder did not author and does not return.",
+  "SUGGESTION ONLY": "authority_manifest.json is published by Fable, never the Builder.",
+  "note": "No file here is proposed as `governing`. The governing instruction is 42_, which the Builder did not author and does not return.",
   "proposed": {
     "evidence-only": {
-      "count": 58,
+      "count": 62,
       "paths": [
         "harness/out/boundary.json",
         "harness/out/boundary.log",
@@ -26,6 +26,7 @@
         "stub/out/r1_witnesses.json",
         "stub/out/r4_acceptance.json",
         "stub/out/r5_acceptance.json",
+        "stub/out/r6_acceptance.json",
         "stub/out/selftest.json",
         "stub/out/stub_selftest.json",
         "stub/security_probes/README.md",
@@ -45,6 +46,9 @@
         "stub/security_probes/chatgpt_r4_nway_r4.json",
         "stub/security_probes/chatgpt_r4_prelock_r3.json",
         "stub/security_probes/chatgpt_r4_prelock_r4.json",
+        "stub/security_probes/chatgpt_r5_cleanup_rollback_probe.py",
+        "stub/security_probes/chatgpt_r5_cleanup_rollback_r4.json",
+        "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json",
         "stub/security_probes/control_probes.py",
         "stub/security_probes/control_probes_results.json",
         "stub/security_probes/http_authority_races.py",
@@ -100,18 +104,20 @@
       "reason": "implementation baseline the Builder edits under the allowlist"
     },
     "superseded": {
-      "count": 6,
+      "count": 8,
       "paths": [
         "stub/r1_reference/stub_server_r1.py",
         "stub/r2_reference/README.md",
         "stub/r2_reference/stub_server_r2.py",
         "stub/r3_reference/stub_server_r3.py",
         "stub/r4_reference/README.md",
-        "stub/r4_reference/stub_server_r4.py"
+        "stub/r4_reference/stub_server_r4.py",
+        "stub/r5_reference/README.md",
+        "stub/r5_reference/stub_server_r5.py"
       ],
-      "reason": "a pinned byte-identical copy of a build that is no longer the contract; loaded only after its digest verifies"
+      "reason": "a pinned byte-identical copy of a build that is no longer the contract"
     }
   },
-  "round": "R5",
+  "round": "R6",
   "task": "TASK-0007"
 }

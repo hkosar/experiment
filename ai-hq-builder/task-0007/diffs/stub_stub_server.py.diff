@@ -1,83 +1,243 @@
---- r5-relay/pkg/poc/stub/stub_server.py	2026-08-04 18:26:14.000000000 +0000
-+++ poc/stub/stub_server.py	2026-08-04 18:34:22.213841717 +0000
-@@ -644,7 +644,31 @@
-     # overwrites, so it cannot express "a final path that did not previously
-     # exist". Link fails with FileExistsError instead, which is the guarantee
-     # the finding asks for, and it is equally atomic on one filesystem.
-+    # SEC-R4-01 (R5) — publication is not "published" until the DIRECTORY FSYNC
-+    # has succeeded.
-+    #
-+    # R4 set `published = True` immediately after `os.link`, before the
-+    # directory fsync. A failure at the directory open or fsync then left the
-+    # `finally` believing the capture had landed: it kept the reserved quota
-+    # unit and left the final file on disk, while the caller rolled the
-+    # transition out of live state. The surviving record read `phase:
-+    # committed`, `outcome: committed`, `final_status: REGISTERED` — durable
-+    # evidence asserting authority for a transition that never became
-+    # effective, which is the exact failure A.7 exists to prevent.
-+    #
-+    # Three things are tracked separately now, because "the link succeeded" and
-+    # "the record is durable" are different facts and conflating them is what
-+    # produced the defect:
-+    #   tmp          the temp file, until it is unlinked
-+    #   linked_path  the final path, from the moment the link succeeds
-+    #   published    ONLY after the directory fsync returns
-+    #
-+    # Any failure after the link therefore removes the final path as well as
-+    # the temp, and releases the pool unit — including reserved-owner. That
-+    # also covers the temp-unlink failure, which in R4 cleaned only the temp
-+    # name and left the final hard link behind.
-     tmp = None
-+    linked_path = None
-     published = False
-     try:
-         os.makedirs(root, exist_ok=True)
-@@ -668,17 +692,19 @@
-                                 % (step, STORE.run_instance, seq))
-             try:
-                 os.link(tmp, path)      # fails if the final path already exists
-+                linked_path = path
-                 break
-             except FileExistsError:
-                 continue
-         os.unlink(tmp)
-         tmp = None
--        published = True
+--- r6-relay/pkg/poc/stub/stub_server.py	2026-08-04 21:31:56.000000000 +0000
++++ poc/stub/stub_server.py	2026-08-05 01:44:41.511022124 +0000
+@@ -401,6 +401,23 @@
+     """A capture could not be committed. A.7: nothing commits after one."""
+ 
+ 
++class CaptureQuarantine(Exception):
++    """The capture failed AND its rollback could not be proven (SEC-R4-01).
++
++    Deliberately NOT a subclass of `CaptureError`. Handlers catch `CaptureError`
++    and report the ordinary "not effective" result, and reporting that while a
++    success-named `committed` record may still be on disk is the exact authority
++    contradiction this whole finding exists to eliminate — R5 displaced it into
++    the recovery path by swallowing the cleanup failure with `except OSError:
++    pass`. Because this is a separate type it passes through those handlers
++    untouched and reaches dispatch, which fails the service closed instead.
++    """
++
++    def __init__(self, message, detail=None):
++        super().__init__(message)
++        self.detail = detail or {}
++
++
+ class QuotaError(Exception):
+     def __init__(self, message, status=429):
+         super().__init__(message)
+@@ -450,6 +467,19 @@
+         self.runs_by_declaration = {}
+         self.captures = {POOL_GENERAL: 0, POOL_SECURITY: 0, POOL_OWNER: 0}
+         self.uncaptured_refusals = 0   # bounded counter, aggregate only
++        # SEC-R4-01 — storage integrity registers.
++        #   `storage_quarantine` is HARD: a rollback that could not be proven,
++        #   so a success-named record may survive on disk for a transition the
++        #   service treats as ineffective. While it is non-empty the service
++        #   refuses further authority transitions and requires explicit
++        #   recovery, because it can no longer tell the truth about its own
++        #   evidence.
++        #   `storage_anomalies` is SOFT: something went wrong that does NOT
++        #   contradict the record — e.g. a directory-fd close error after the
++        #   publication fsync already made the record durable. Recorded and
++        #   surfaced, never silently dropped, but it blocks nothing.
++        self.storage_quarantine = []
++        self.storage_anomalies = []
+         self.transitions = []          # transition_id -> phase log (in-memory mirror)
+ 
+     @staticmethod
+@@ -558,6 +588,59 @@
+             STORE.captures[pool] = max(0, STORE.captures[pool] - 1)
+ 
+ 
++
++def _rollback_capture(pool, linked_path, tmp, root, route, step):
++    """Undo a capture that never became durable — provably, or quarantine.
++
++    Raises `CaptureQuarantine` when the rollback cannot be established. The
++    caller must NOT convert that into an ordinary capture failure: while it is
++    raised, a success-named record may still be on disk for a transition
++    nothing else believes happened.
++    """
++    problems = []
++    # The final path first: it is the one a reader would count as durable
++    # evidence, so if only one removal can succeed that is the one that matters.
++    for stale, what in ((linked_path, "final-link"), (tmp, "temp")):
++        if not stale:
++            continue
++        try:
++            os.unlink(stale)
++        except FileNotFoundError:
++            pass                      # already gone; that is a proven removal
++        except OSError as exc:
++            problems.append("%s unlink failed (%s)"
++                            % (what, errno.errorcode.get(exc.errno, exc.errno)))
++    if not problems:
++        # The removal itself has to be durable, or a crash could resurrect the
++        # record the service has just told its caller does not exist.
++        try:
++            dfd = os.open(root, os.O_RDONLY)
++            try:
++                os.fsync(dfd)
++            finally:
++                os.close(dfd)
++        except OSError as exc:
++            problems.append("rollback directory fsync failed (%s)"
++                            % errno.errorcode.get(exc.errno, exc.errno))
++
++    if problems:
++        detail = {"route": route, "step": step,
++                  "surviving_final_path": linked_path,
++                  "surviving_temp_path": tmp,
++                  "problems": problems,
++                  "quota_pool_retained": pool}
++        with STORE.lock:
++            STORE.storage_quarantine.append(detail)
++        # The quota unit is deliberately NOT released: the reservation is the
++        # only remaining accounting for a record that may still exist.
++        raise CaptureQuarantine(
++            "capture rollback could not be established, so this service can no "
++            "longer state whether the evidence on disk describes an effective "
++            "transition; it is quarantined and fails closed until recovered: %s"
++            % "; ".join(problems), detail)
++    _release_pool(pool)
++
++
+ def write_capture(route: str, poc: str, step: str, minted: dict = None,
+                   authored_by: str = "stub", refusal: bool = False,
+                   data_dir: str = None, provider: dict = None,
+@@ -701,10 +784,23 @@
          dfd = os.open(root, os.O_RDONLY)
          try:
              os.fsync(dfd)
++            # SEC-R4-01 item 4 — THE TRUE DURABILITY BOUNDARY. The record is
++            # durable the instant this fsync returns. R5 set the flag after the
++            # `finally` had also closed the fd, so a close error turned an
++            # already-durable committed record into an ordinary rollback claim.
++            published = True
          finally:
-             os.close(dfd)
-+        # Only here. Everything above this line is still rollable back.
-+        published = True
+-            os.close(dfd)
+-        # Only here. Everything above this line is still rollable back.
+-        published = True
++            try:
++                os.close(dfd)
++            except OSError as exc:
++                # Item 5 — a close failure AFTER a successful fsync cannot undo
++                # durability, so it must not roll back live state. It is not
++                # swallowed either: it is recorded as a soft anomaly, which
++                # blocks nothing and is surfaced on /health.
++                STORE.storage_anomalies.append(
++                    {"kind": "directory-close-after-durable-fsync",
++                     "route": route, "step": step,
++                     "errno": errno.errorcode.get(exc.errno, exc.errno)})
      except (CaptureError, QuotaError):
          raise
      except OSError as exc:
-@@ -691,15 +717,21 @@
+@@ -717,23 +813,22 @@
          # internal error, and so the caller's rollback path runs.
          raise CaptureError("capture write failed: %s" % type(exc).__name__)
      finally:
--        # A failed capture leaves NO temp artifact and NO consumed quota unit.
--        # The pool reservation is released here rather than in each caller,
--        # because every failure path in this function must give it back and a
--        # caller cannot see which ones ran.
-+        # A failed capture leaves NO final file, NO temp artifact and NO
-+        # consumed quota unit. The pool reservation is released here rather
-+        # than in each caller, because every failure path in this function must
-+        # give it back and a caller cannot see which ones ran.
+-        # A failed capture leaves NO final file, NO temp artifact and NO
+-        # consumed quota unit. The pool reservation is released here rather
+-        # than in each caller, because every failure path in this function must
+-        # give it back and a caller cannot see which ones ran.
++        # SEC-R4-01 items 1-3 — the rollback must be PROVEN before the quota is
++        # released and before the caller is allowed to say "not effective".
+         #
+-        # The final path is removed FIRST: it is the one that would otherwise
+-        # be read as durable evidence, and if only one cleanup can succeed that
+-        # is the one that matters.
++        # R5 released the unit first and then attempted the unlinks inside a
++        # bare `except OSError: pass`. If removing the final link failed, the
++        # success-named `committed` record survived on disk while the service
++        # returned the ordinary ineffective response — the same authority
++        # contradiction SEC-R4-01 was opened to eliminate, moved one level down
++        # into the recovery path.
 +        #
-+        # The final path is removed FIRST: it is the one that would otherwise
-+        # be read as durable evidence, and if only one cleanup can succeed that
-+        # is the one that matters.
++        # Now: remove the final link and any temp, make the REMOVAL durable
++        # with its own directory fsync, and only then release the reservation.
++        # If any of that cannot be established, the service quarantines instead
++        # of claiming anything.
          if not published:
-             _release_pool(pool)
--            if tmp:
-+            for stale in (linked_path, tmp):
-+                if not stale:
-+                    continue
-                 try:
--                    os.unlink(tmp)
-+                    os.unlink(stale)
-                 except OSError:
-                     pass
+-            _release_pool(pool)
+-            for stale in (linked_path, tmp):
+-                if not stale:
+-                    continue
+-                try:
+-                    os.unlink(stale)
+-                except OSError:
+-                    pass
++            _rollback_capture(pool, linked_path, tmp, root, route, step)
      return path
+ 
+ 
+@@ -959,11 +1054,26 @@
+ # --------------------------------------------------------------------------
+ def h_health(_p):
+     # A.6: liveness only. No case, decision, or capture-activity counts.
+-    return 200, {"ok": True, "service": "poc-wrapper-stub", "throwaway": THROWAWAY,
+-                 "candidate": STORE.candidate, "run_instance": STORE.run_instance,
+-                 "partition": ALLOWED_PARTITION,
+-                 "relay_endpoint": STORE.base_url + "/relay/deliver",
+-                 "stage_endpoint": STORE.base_url + STAGE_TARGET_PATH}
++    #
++    # SEC-R4-01: storage integrity IS liveness — a quarantined service accepts
++    # nothing, and an owner staring at a stalled session needs to see why here
++    # rather than guess. These are counts and a kind, never case or decision
++    # activity, so A.6's restriction is untouched.
++    body = {"ok": not STORE.storage_quarantine,
++            "service": "poc-wrapper-stub", "throwaway": THROWAWAY,
++            "candidate": STORE.candidate, "run_instance": STORE.run_instance,
++            "partition": ALLOWED_PARTITION,
++            "relay_endpoint": STORE.base_url + "/relay/deliver",
++            "stage_endpoint": STORE.base_url + STAGE_TARGET_PATH,
++            "storage_quarantined": bool(STORE.storage_quarantine),
++            "storage_anomalies": len(STORE.storage_anomalies)}
++    if STORE.storage_quarantine:
++        body["storage_quarantine"] = {
++            "incidents": len(STORE.storage_quarantine),
++            "problems": STORE.storage_quarantine[0].get("problems"),
++            "recovery": "explicit operator recovery required; this service will "
++                        "accept no further authority transition"}
++    return 200, body
+ 
+ 
+ HEX64 = re.compile(r"^[0-9a-f]{64}$")
+@@ -2209,6 +2319,21 @@
+     # acquiring this one, so the acquisition order is total and no cycle — and
+     # therefore no deadlock — is possible. See the Delivery Record's audit.
+     with STORE.lock:
++        # SEC-R4-01 item 3 — fail closed while storage integrity is unproven.
++        # A quarantine means a success-named record may exist on disk for a
++        # transition nothing else believes happened, so the service can no
++        # longer speak truthfully about its own evidence. Every further
++        # authority transition is refused until an operator recovers it;
++        # `GET /health` still serves and reports why, per A.8.
++        if STORE.storage_quarantine:
++            return 503, {"refused": True, "outcome": "refused-storage-quarantine",
++                         "reason": "capture storage is quarantined: a rollback "
++                                   "could not be established, so evidence on "
++                                   "disk may contradict this service's state. "
++                                   "No further authority transition is accepted "
++                                   "until this is recovered explicitly.",
++                         "incidents": len(STORE.storage_quarantine),
++                         "first_incident": STORE.storage_quarantine[0]}
+         return _dispatch_inner(method, path, payload, headers)
+ 
+ 
+@@ -2280,6 +2405,17 @@
+         # A capture quota reached mid-handler. No evidence, no authority.
+         status = exc.status
+         return exc.status, {"refused": True, "outcome": "quota", "reason": str(exc)}
++    except CaptureQuarantine as exc:
++        # Item 3: never the ordinary ineffective claim. This is a DISTINCT
++        # result — the transition may or may not be described by durable
++        # evidence, and the service says exactly that rather than guessing.
++        status = 503
++        return 503, {"refused": True, "outcome": "refused-storage-quarantine",
++                     "reason": str(exc), "storage_uncertain": True,
++                     "transition_effective": "UNKNOWN — evidence on disk may "
++                                             "describe this transition as "
++                                             "committed; reconcile before use",
++                     "detail": exc.detail}
+     except CaptureError as exc:
+         # A.7: the `prepared` record is written BEFORE state moves, so a failure
+         # here means nothing was mutated — the request fails closed with a

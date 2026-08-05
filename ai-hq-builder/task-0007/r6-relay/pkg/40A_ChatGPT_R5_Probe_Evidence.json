@@ -1,0 +1,596 @@
+{
+  "accepted_improvements": [
+    "published assignment moved past the ordinary publication directory-fsync path",
+    "final hard link tracked separately as linked_path",
+    "ordinary link, one-shot temp-unlink, directory-open, and directory-fsync faults clean current directory state and release failed-write quota",
+    "prepared registration record and one reserved-owner unit correctly survive ordinary committed-publication failure",
+    "os.link no-overwrite primitive retained"
+  ],
+  "independent_omitted_boundary_probe": {
+    "decisive_observations": {
+      "committed_cleanup_failure_committed_records": [
+        {
+          "file": "captures/commitcleanup/POC1/committed-artifact-register-20260804T205539-33bc6204-0001.json",
+          "final_status": "REGISTERED",
+          "outcome": "committed",
+          "phase": "committed",
+          "size": 717,
+          "step": "committed-artifact-register"
+        }
+      ],
+      "committed_cleanup_failure_identity_index": 0,
+      "committed_cleanup_failure_live_registrations": 0,
+      "committed_cleanup_failure_pools": {
+        "general": 0,
+        "reserved-owner": 1,
+        "security-refusal": 0
+      },
+      "committed_cleanup_failure_status": 500,
+      "committed_cleanup_failure_transition_mirror": [],
+      "persistent_temp_survives": true,
+      "post_fsync_close_directory_fsync_successes": 1,
+      "post_fsync_close_final_file_survives": true,
+      "rollback_directory_fsync_observed": false,
+      "standalone_final_file_survives": true
+    },
+    "r4": {
+      "committed_final_link_cleanup_failure": {
+        "body": {
+          "outcome": "capture-failed",
+          "reason": "registration not recorded, and therefore not effective: capture write failed: EIO",
+          "refused": true
+        },
+        "fault_calls": {
+          "committed_directory_open_faults": 1,
+          "final_cleanup_unlink_faults": 0
+        },
+        "identity_index": 0,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/commitcleanup/POC1/committed-artifact-register-20260804T205541-1156b177-0001.json",
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "phase": "committed",
+            "size": 718,
+            "step": "committed-artifact-register"
+          },
+          {
+            "file": "captures/commitcleanup/POC1/prepared-artifact-register-20260804T205541-1156b177-0001.json",
+            "final_status": null,
+            "outcome": "prepared",
+            "phase": "prepared",
+            "size": 845,
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 0,
+        "status": 500,
+        "transition_mirror": []
+      },
+      "persistent_temp_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "temp_unlink_faults": 2
+        },
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/templeak/POC1/.templeak-6tuwgd75.tmp",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 554,
+            "step": "templeak"
+          },
+          {
+            "file": "captures/templeak/POC1/templeak-20260804T205541-8b51ed3e-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 554,
+            "step": "templeak"
+          }
+        ],
+        "returned": null
+      },
+      "post_fsync_close_plus_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "directory_close_faults": 1,
+          "directory_fsync_successes": 1,
+          "final_cleanup_unlink_faults": 0
+        },
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/postfsyncclose/POC1/postclose-20260804T205541-365c200b-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 560,
+            "step": "postclose"
+          }
+        ],
+        "returned": null
+      },
+      "rollback_directory_fsync": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fsync_calls": 2,
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/rollbackfsync/POC1/rollbackfsync-20260804T205541-631bc57a-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 564,
+            "step": "rollbackfsync"
+          }
+        ],
+        "returned": null,
+        "rollback_directory_fsync_observed": false
+      },
+      "standalone_final_link_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "directory_open_faults": 1,
+          "final_cleanup_unlink_faults": 0
+        },
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/cleanupunlink/POC1/cleanupfinal-20260804T205541-d3a0985b-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 562,
+            "step": "cleanupfinal"
+          }
+        ],
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/r4_reference/stub_server_r4.py"
+    },
+    "r5": {
+      "committed_final_link_cleanup_failure": {
+        "body": {
+          "outcome": "capture-failed",
+          "reason": "registration not recorded, and therefore not effective: capture write failed: EIO",
+          "refused": true
+        },
+        "fault_calls": {
+          "committed_directory_open_faults": 1,
+          "final_cleanup_unlink_faults": 1
+        },
+        "identity_index": 0,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 1,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/commitcleanup/POC1/committed-artifact-register-20260804T205539-33bc6204-0001.json",
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "phase": "committed",
+            "size": 717,
+            "step": "committed-artifact-register"
+          },
+          {
+            "file": "captures/commitcleanup/POC1/prepared-artifact-register-20260804T205539-33bc6204-0001.json",
+            "final_status": null,
+            "outcome": "prepared",
+            "phase": "prepared",
+            "size": 845,
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 0,
+        "status": 500,
+        "transition_mirror": []
+      },
+      "persistent_temp_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "temp_unlink_faults": 2
+        },
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/templeak/POC1/.templeak-3vckc6cg.tmp",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 553,
+            "step": "templeak"
+          }
+        ],
+        "returned": null
+      },
+      "post_fsync_close_plus_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "directory_close_faults": 1,
+          "directory_fsync_successes": 1,
+          "final_cleanup_unlink_faults": 1
+        },
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/postfsyncclose/POC1/postclose-20260804T205539-f53a6d2b-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 561,
+            "step": "postclose"
+          }
+        ],
+        "returned": null
+      },
+      "rollback_directory_fsync": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fsync_calls": 2,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [],
+        "returned": null,
+        "rollback_directory_fsync_observed": false
+      },
+      "standalone_final_link_cleanup_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "directory_open_faults": 1,
+          "final_cleanup_unlink_faults": 1
+        },
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/cleanupunlink/POC1/cleanupfinal-20260804T205539-bc383c6e-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 562,
+            "step": "cleanupfinal"
+          }
+        ],
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/stub_server.py"
+    }
+  },
+  "integrity": {
+    "authority_manifest_bad": [],
+    "authority_manifest_entries": 102,
+    "authority_manifest_ok": 102,
+    "declared_base_tree": "36fcd20d7d612b39801dbe90a700d84823f51284",
+    "outer_zip_sha256": "2609d21df38f4dce965aa3b95cfc6a2ce7e6d2635b4e41b95da911a623c59c9f",
+    "prior_verifier_probe_hashes": {
+      "chatgpt_capture_postlink_cleanup_probe.py": "3cb4df24c10390f52c57a2ab04344bb6b631a96b873001835bd55232de518b8d",
+      "chatgpt_capture_publication_fault_probe.py": "2f37ef5c98144b7f654ca11050b216ecc2e0dbfb449b7138660e9eee21fb506c"
+    },
+    "r4_pin_sha256": "2876522bec584678c2326d002e58e9fa388b64ac9be9092c2ba1a18022450f79",
+    "r5_stub_sha256": "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68",
+    "reproduced_base_tree": "36fcd20d7d612b39801dbe90a700d84823f51284",
+    "sha256sums_entries": 103
+  },
+  "regression_notes": {
+    "barrier_suite": "6/6 corroborating; concurrency ruling unchanged",
+    "full_selftest": "not independently completed; exceeded 240-second command limit after reaching measurement-validator block",
+    "n8n_harness": "structural dependency n8n-workflow absent; not used for SEC-R4-01 verdict",
+    "oracle_suite": "7/7, 33 clauses",
+    "targeted_r5_selftest": "8/8",
+    "witnesses": "34/34"
+  },
+  "report": "40 \u2014 ChatGPT R5 single-finding re-check",
+  "required_correction": [
+    "remove final/temp names and fsync the rollback directory before releasing quota or claiming ineffectiveness",
+    "propagate cleanup failure into an explicit storage-uncertain/quarantined state instead of swallowing it",
+    "set published at the successful publication-directory-fsync boundary; do not roll back solely because directory-fd close later fails",
+    "separate durable publication from temp housekeeping so housekeeping failure cannot create a false rollback",
+    "add final-link-cleanup, persistent-temp-cleanup, rollback-directory-fsync, and post-fsync-close fault tests; require current R5 red and corrected build green"
+  ],
+  "scope": {
+    "concurrency_architecture_reopened": false,
+    "finding": "SEC-R4-01",
+    "owner_poc_released": false
+  },
+  "source_findings": [
+    {
+      "location": "poc/stub/stub_server.py:707",
+      "observation": "published=True occurs after os.close(dfd), not immediately after successful publication directory fsync."
+    },
+    {
+      "location": "poc/stub/stub_server.py:728-729",
+      "observation": "failed-write pool reservation is released before rollback cleanup is proven."
+    },
+    {
+      "location": "poc/stub/stub_server.py:730-736",
+      "observation": "final/temp unlink failures are swallowed with except OSError: pass."
+    },
+    {
+      "location": "poc/stub/stub_server.py:728-736",
+      "observation": "no directory open/fsync follows rollback unlink, so deletion durability is not established."
+    },
+    {
+      "location": "poc/stub/stub_server.py:1017-1023",
+      "observation": "caller removes live registration state and returns ordinary not-effective claim for any CaptureError; no storage-uncertain/quarantine result exists."
+    }
+  ],
+  "supplied_probe_results": {
+    "criteria": {
+      "r4_postlink_red": true,
+      "r4_publication_red": true,
+      "r5_postlink_green": true,
+      "r5_publication_green": true
+    },
+    "postlink_cleanup_probe_r4": {
+      "directory_open_after_link_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [
+          {
+            "path": "captures/diropen/POC1/cleanup-fault-20260804T205549-eacd8618-0001.json",
+            "size": 558
+          }
+        ],
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null
+      },
+      "link_failure_control": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [],
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/r4_reference/stub_server_r4.py",
+      "temp_unlink_after_link_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [
+          {
+            "path": "captures/unlinkfail/POC1/cleanup-fault-20260804T205549-b4a8fb6c-0001.json",
+            "size": 561
+          }
+        ],
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null,
+        "unlink_calls": 2
+      }
+    },
+    "postlink_cleanup_probe_r5": {
+      "directory_open_after_link_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [],
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null
+      },
+      "link_failure_control": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [],
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/stub_server.py",
+      "temp_unlink_after_link_failure": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "files": [],
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "returned": null,
+        "unlink_calls": 3
+      }
+    },
+    "publication_probe_r4": {
+      "committed_registration_directory_fsync": {
+        "body": {
+          "outcome": "capture-failed",
+          "reason": "registration not recorded, and therefore not effective: capture write failed: EIO",
+          "refused": true
+        },
+        "fsync_calls": 4,
+        "identity_index": 0,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/falsecommit/POC1/committed-artifact-register-20260804T205545-b6972689-0001.json",
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "phase": "committed",
+            "size": 716,
+            "step": "committed-artifact-register"
+          },
+          {
+            "file": "captures/falsecommit/POC1/prepared-artifact-register-20260804T205545-b6972689-0001.json",
+            "final_status": null,
+            "outcome": "prepared",
+            "phase": "prepared",
+            "size": 842,
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 0,
+        "status": 500,
+        "transition_mirror": []
+      },
+      "standalone_directory_fsync": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fsync_calls": 2,
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/standalone/POC1/postpub-fault-20260804T205545-5def4c28-0001.json",
+            "final_status": null,
+            "outcome": "x",
+            "phase": null,
+            "size": 561,
+            "step": "postpub-fault"
+          }
+        ],
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/r4_reference/stub_server_r4.py"
+    },
+    "publication_probe_r5": {
+      "committed_registration_directory_fsync": {
+        "body": {
+          "outcome": "capture-failed",
+          "reason": "registration not recorded, and therefore not effective: capture write failed: EIO",
+          "refused": true
+        },
+        "fsync_calls": 4,
+        "identity_index": 0,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 1,
+          "security-refusal": 0
+        },
+        "records": [
+          {
+            "file": "captures/falsecommit/POC1/prepared-artifact-register-20260804T205543-bb42fe31-0001.json",
+            "final_status": null,
+            "outcome": "prepared",
+            "phase": "prepared",
+            "size": 842,
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 0,
+        "status": 500,
+        "transition_mirror": []
+      },
+      "standalone_directory_fsync": {
+        "error": {
+          "text": "capture write failed: EIO",
+          "type": "CaptureError"
+        },
+        "fsync_calls": 2,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "records": [],
+        "returned": null
+      },
+      "target": "/mnt/data/r5_single_finding_recheck_clean/pkg/poc/stub/stub_server.py"
+    }
+  },
+  "verdict": {
+    "finding_status": "OPEN",
+    "gate_blocking": true,
+    "reason": "Rollback cleanup errors are swallowed and rollback deletion is not directory-fsynced; a normal ineffective response can coexist with surviving committed evidence.",
+    "result": "FAIL",
+    "severity": "High"
+  }
+}
