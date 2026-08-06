@@ -1,0 +1,59 @@
+--- a/poc/harness/run_all.sh (R8 baseline)
++++ b/poc/harness/run_all.sh (R9 — CR-R8-01, authorized in 56_ §0)
+@@ -6,10 +6,13 @@
+ cd "$(dirname "$0")"
+ mkdir -p out
+ fail=0
++skipped=0
+ 
+ # The n8n library is not vendored into the return (it is ~90 packages and carries
+ # no evidence). Install it once before the first run:
++have_n8n=1
+ if ! node -e "require('n8n-workflow')" >/dev/null 2>&1; then
++  have_n8n=0
+   echo "n8n-workflow is not installed. Run this once, from this directory:"
+   echo "    npm install n8n-workflow"
+   echo "Everything except the two structural checks will still run."
+@@ -26,8 +29,23 @@
+   fi
+ }
+ 
+-run "n8n structural validation"      structural.json        node validate_n8n_workflows.mjs
+-run "validator self-test"            validator_selftest.json node selftest_validator.mjs
++# CR-R8-01, authorized in 56_ §0: a check that could NOT RUN because an optional
++# dependency is unavailable is not a check that ran and failed. The verifier's
++# environment has no n8n-workflow, and R8 rendered that as "=== HARNESS FAIL ===",
++# which the owner would reasonably read as something being broken.
++skip() {  # skip <label> <why>
++  printf '\n=== %s ===\n' "$1"
++  printf 'NOT RUN — %s\n' "$2"
++  skipped=1
++}
++
++if [ "$have_n8n" -eq 1 ]; then
++  run "n8n structural validation"      structural.json        node validate_n8n_workflows.mjs
++  run "validator self-test"            validator_selftest.json node selftest_validator.mjs
++else
++  skip "n8n structural validation" "optional dependency n8n-workflow is unavailable; an environment limitation, not a product defect"
++  skip "validator self-test"       "optional dependency n8n-workflow is unavailable; an environment limitation, not a product defect"
++fi
+ run "boundary compliance"            boundary.json          python3 check_boundaries.py
+ run "boundary self-test"             boundary_selftest.json python3 check_boundaries.py --self-test
+ run "cost model"                     cost_model.json        python3 cost_model.py
+@@ -36,7 +54,14 @@
+ run "receipt self-test"              receipt_selftest.json  python3 receipt_conformance.py --self-test
+ run "D-EC_ field inventory"          receipt_fields.json    python3 receipt_conformance.py --fields
+ 
+-printf '\n=== HARNESS %s ===\n' "$([ $fail -eq 0 ] && echo PASS || echo FAIL)"
++if [ $fail -ne 0 ]; then
++  verdict=FAIL; code=1
++elif [ $skipped -ne 0 ]; then
++  verdict="INCOMPLETE (every check that ran passed; one or more were NOT RUN)"; code=2
++else
++  verdict=PASS; code=0
++fi
++printf '\n=== HARNESS %s ===\n' "$verdict"
+ printf 'NOTE: passing means the definitions and the arithmetic are sound.\n'
+ printf 'It does NOT mean any POC has been run. No provider was contacted.\n'
+-exit $fail
++exit $code

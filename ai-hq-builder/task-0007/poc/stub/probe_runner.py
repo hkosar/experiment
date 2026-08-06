@@ -617,7 +617,110 @@ def _c_r7_adversarial(r):
                                           if failed else ""))
 
 
+def _c_r8_adversarial(r):
+    """`54_`'s findings as `56_` items F-K restate them.
+
+    Ten of the probe's eleven summary flags name a DEFECT, so the criterion is
+    that each is `False`. The eleventh is the verifier's own POSITIVE CONTROL —
+    a genuine no-record failure reported truthfully — and it must stay `True`.
+    Without it every one of the ten is satisfiable by a build that simply never
+    says `none`, which is the shape a lazy fix would take.
+
+    Each is paired with a check that the injected fault fired and, where the
+    finding is about an inventory, that the inventory is actually usable.
+    """
+    s = r.get("summary") or {}
+    pd = r.get("post_durable_marker_close_misclassified") or {}
+    fp = r.get("failed_primary_is_unlisted_durable_record") or {}
+    ri = r.get("restart_inventory_loses_sibling_marker") or {}
+    so = r.get("scan_once_two_process_bypass") or {}
+    ts = r.get("transient_scan_error_mislabelled_durable") or {}
+    ctl = r.get("both_marker_writes_fail_truthfully_without_disk_fact") or {}
+    wf = r.get("writefree_temp_exists_but_live_response_claims_none") or {}
+    pm = r.get("partial_marker_files_exist_but_live_response_claims_none") or {}
+    fse = r.get("fallback_scan_error_reports_data_directory_as_record") or {}
+    rp = r.get("realpath_fix_edges") or {}
+
+    def files_only(paths):
+        return all(not os.path.isdir(p) for p in (paths or []))
+
+    v = {
+        # Item F — a durably fsynced marker cannot be erased by its close tail.
+        "F: post-durable marker close keeps DURABLE": (
+            s.get("post_durable_marker_close_false_none_claim") is False
+            and len((pd.get("faults") or {}).get("marker_close_fault_paths") or []) == 2
+            and len((pd.get("faults") or {}).get("marker_dir_fsync_paths") or []) == 2
+            and (pd.get("body_restart_fields") or {}).get("restart_protection") != "none"),
+        # Item F — presence is the signal; a partial marker is still a marker.
+        "F: a partial marker is not 'nothing on disk'": (
+            s.get("partial_marker_live_false_none_claim") is False
+            and len((pm.get("faults") or {}).get("partial_dump_fault_paths") or []) == 2
+            and (pm.get("body_restart_fields") or {}).get("restart_protection") != "none"),
+        # Item G — the live temp fact reaches the live posture.
+        "G: a surviving temp counts in the raising process": (
+            s.get("writefree_temp_live_false_none_claim") is False
+            and (wf.get("faults") or {}).get("mkstemp_faults") == 1
+            and wf.get("temp_exists") is True
+            and (wf.get("body_restart_fields") or {}).get("restart_protection") != "none"),
+        # Item H — a durable primary stays in the inventory.
+        "H: a close-tail anomaly does not delist a real marker": (
+            s.get("failed_primary_reconciliation_inventory_incomplete") is False
+            and len((fp.get("faults") or {}).get("marker_close_fault_paths") or []) == 1
+            and not (fp.get("remaining_before_restart") or [])
+            and (fp.get("restart_health") or [0, {}])[1].get(
+                "storage_quarantined") is False),
+        # Item H — the sibling relationship survives a restart, and the
+        # delete-what-is-named sequence ends CLEAN.
+        "H: restart reconstruction ends clean": (
+            s.get("restart_inventory_loses_sibling_marker") is False
+            and len(ri.get("initial_durable_records") or []) == 2
+            and len(ri.get("restart_durable_records") or []) == 2
+            and (ri.get("second_restart_health_after_deleting_every_reported_record")
+                 or [0, {}])[1].get("storage_quarantined") is False),
+        # Item I — a scan error is never a durable record.
+        "I: a transient primary scan error mints no durable record": (
+            s.get("transient_scan_error_false_durable_claim") is False
+            and (ts.get("faults") or {}).get("primary_faults") == 1
+            and not (((ts.get("first_health") or [0, {}])[1].get(
+                "storage_quarantine") or {}).get("durable_records") or [])),
+        # Item I — and never names a directory an operator is told to delete.
+        "I: a fallback scan error never names the data directory": (
+            s.get("fallback_scan_error_dangerous_false_inventory") is False
+            and (fse.get("faults") or {}).get("fallback_list_faults") == 1
+            and files_only(((fse.get("first_health") or [0, {}])[1].get(
+                "storage_quarantine") or {}).get("durable_records"))
+            and fse.get("sentinel_exists") is True),
+        # Item J — the scan-once bypass, executed and closed.
+        "J: a process that scanned clean first still refuses": (
+            s.get("scan_once_two_process_bypass") is False
+            and (so.get("a_initial_health") or [0, {}])[1].get(
+                "storage_quarantined") is False
+            and so.get("b_quarantine_status") == 503
+            and (so.get("a_register_after_marker_created") or [0])[0] == 503),
+        # Item K — containment.
+        "K: no quota leaks on a containment refusal": (
+            s.get("candidate_symlink_quota_leak") is False
+            and (rp.get("candidate_symlink") or {}).get("refused") is True),
+        "K: a captures-ROOT symlink is refused, not resolved through": (
+            s.get("captures_root_symlink_accepted") is False
+            and not ((rp.get("captures_root_symlink") or {})
+                     .get("physical_files_outside_data_dir") or [])),
+        # The verifier's positive control — this one must stay TRUE.
+        "CONTROL: a genuine no-record failure still reports none truthfully": (
+            s.get("both_marker_fail_truthful_none_control") is True
+            and len((ctl.get("faults") or {}).get("marker_open_fault_paths") or []) == 2
+            and (ctl.get("restart_register") or [0])[0] == 200),
+    }
+    if len(s) != 11:
+        return False, "probe produced %d of 11 summary flags" % len(s)
+    failed = sorted(k for k, ok in v.items() if not ok)
+    return not failed, ("%d/%d checks%s" % (sum(v.values()), len(v),
+                                            "; failing: " + "; ".join(failed)
+                                            if failed else ""))
+
+
 CRITERIA = {
+    "chatgpt_r8_adversarial_recheck": ("SEC-R4-01 R9", _c_r8_adversarial),
     "chatgpt_r7_adversarial_recheck": ("SEC-R4-01 R8", _c_r7_adversarial),
     "chatgpt_r6_quarantine_integrity_probe": ("SEC-R4-01 R7", _c_r6_quarantine),
     "post_durable_interrupt_compare": ("SEC-R4-01 R7 item 2", _c_post_durable),
@@ -647,14 +750,17 @@ ORDER = ("http_race_probes", "http_authority_races", "http_revoke_race",
          "chatgpt_r6_quarantine_integrity_probe",
          "post_durable_interrupt_compare",
          # R8 — facts, not proxies
-         "chatgpt_r7_adversarial_recheck")
+         "chatgpt_r7_adversarial_recheck",
+         # R9 — marker facts, complete inventories, enforced invariants
+         "chatgpt_r8_adversarial_recheck")
 
 # Probes that take the target as an argument instead of a hard-coded SRC= line.
 ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
                          "chatgpt_capture_postlink_cleanup_probe",
                          "chatgpt_r5_cleanup_rollback_probe",
                          "chatgpt_r6_quarantine_integrity_probe",
-                         "post_durable_interrupt_compare"))
+                         "post_durable_interrupt_compare",
+                         "chatgpt_r8_adversarial_recheck"))
 
 
 def run_all(target: str, expect_green: bool, emit=None, comparison: str = None) -> list:

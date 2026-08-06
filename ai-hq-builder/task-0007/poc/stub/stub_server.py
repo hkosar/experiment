@@ -32,6 +32,7 @@ import json
 import os
 import re
 import secrets
+import stat
 import sys
 import tempfile
 import threading
@@ -493,6 +494,11 @@ class Store:
         # behind a POST that holds `STORE.lock` for its whole duration.
         self.quarantine_scanned = False
         self.quarantine_scan_lock = threading.Lock()
+        # R9 — the temp prefixes live `write_capture` calls currently hold.
+        # A `.tmp` under one of these has outlived nothing; see
+        # `_surviving_temp_artifacts`. Guarded by `STORE.lock`, which every
+        # POST already holds, so it adds no new lock and no new ordering.
+        self.inflight_temp_prefixes = set()
         self.transitions = []          # transition_id -> phase log (in-memory mirror)
 
     @staticmethod
@@ -675,10 +681,61 @@ def _release_pool(pool: str):
 # would still fire, at the wrong call, testing nothing. That is an evasion by
 # construction, and `51_` §4 forbids exactly it. Reported rather than done.
 # ---------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# R9 items F-I — the marker layer stopped classifying its own return values.
+#
+# R8 built this layer to remove three proxies and put two new ones inside the
+# remedy. `_write_marker` returned an error for ANY exception in its body —
+# including one raised after the marker file AND its parent directory had both
+# been fsynced — and `_persist_quarantine` counted a marker as landed only on a
+# clean return. **"The function returned without an exception" stood in for the
+# disk facts "a record exists" and "a record is durable."** The verifier executed
+# the consequences: a durably written marker reported as `restart_protection:
+# "none"` with a warning that a restart WILL clear the quarantine, while a fresh
+# process found that same marker and refused. And a scan that merely could not
+# LIST a directory minted `restart_protection: "durable"` with the directory
+# itself in `durable_records` — which, next to a runbook saying "delete every
+# path in `durable_records`", instructs an operator to delete the evidence tree.
+#
+# Every classification below is now a question put to the filesystem:
+#
+#   DURABLE            file fsync AND parent-directory fsync both returned. A
+#                      later exception — the directory close included — is a
+#                      recorded soft anomaly and CANNOT erase it. Same
+#                      post-durability boundary as publication (R5/R7) and
+#                      rollback (R8 item D), applied a third time, here.
+#   PRESENT_OR_UNKNOWN the path exists, or may exist, and durability was not
+#                      established. Presence is the signal; a partial marker is
+#                      still a marker, and now the classification honours the
+#                      docstring that already said so.
+#   ABSENT_KNOWN       the failure preceded creation AND absence was verified as
+#                      a filesystem fact — ask the directory, and a directory
+#                      that cannot be listed establishes nothing.
+#
+# `restart_protection` derives from the BEST surviving fact across both marker
+# locations and the live temp facts, never from exception-freeness.
+# ---------------------------------------------------------------------------
 QUARANTINE_DIRNAME = "storage_quarantine"
 QUARANTINE_PREFIX = "quarantine-"
 QUARANTINE_FALLBACK_PREFIX = "STORAGE-QUARANTINE-"
 TEMP_SUFFIX = ".tmp"
+
+# Item F's three facts, most protective first.
+MARKER_DURABLE = "DURABLE"
+MARKER_PRESENT = "PRESENT_OR_UNKNOWN"
+MARKER_ABSENT = "ABSENT_KNOWN"
+_MARKER_RANK = {MARKER_ABSENT: 0, MARKER_PRESENT: 1, MARKER_DURABLE: 2}
+
+# The posture vocabulary. Deliberately distinct from the marker facts above:
+# a marker's fact is about one file, a posture is about whether a restarted
+# process will be stopped, and conflating the two is how R8 got here.
+PROTECT_DURABLE = "durable"    # a record exists on disk and was proven durable
+PROTECT_PRESENT = "present_unverified"   # a record exists but was not proven
+PROTECT_UNKNOWN = "unknown"    # could not be established — claim nothing
+PROTECT_NONE = "none"          # verified: no record anywhere, restart clears it
+_PROTECT_RANK = {PROTECT_NONE: 0, PROTECT_UNKNOWN: 1,
+                 PROTECT_PRESENT: 2, PROTECT_DURABLE: 3}
 
 
 def _quarantine_root(data_dir: str = None):
@@ -696,8 +753,7 @@ def _quarantine_fallback_dir(data_dir: str = None):
     Deliberately a DIFFERENT directory from the primary and one that already
     exists, so the two mechanisms fail independently: the primary needs a
     directory created and a file written inside it, the fallback needs only the
-    file. The verifier's two reproductions break exactly the two things the
-    primary needs and neither of the things the fallback needs.
+    file.
     """
     base = data_dir or Handler.data_dir
     candidate = str(STORE.candidate)
@@ -706,15 +762,45 @@ def _quarantine_fallback_dir(data_dir: str = None):
     return os.path.abspath(base)
 
 
-def _write_marker(path: str, marker: dict) -> str:
-    """Write one marker durably. Returns None on success, else the reason.
+def _path_fact(path: str) -> str:
+    """Ask the filesystem what is at `path`. Never infer it from an exception.
 
-    No temp-and-rename: a partial marker is still a marker. Presence is the
-    signal, and the scan treats an unreadable file as an incident rather than
-    as absence, so there is nothing for atomicity to protect.
+    This is item F's whole point in four lines. R8 decided "did a record land?"
+    from whether a function raised; this decides it from whether the file is
+    there. When the answer cannot be obtained it returns PRESENT — "I could not
+    tell" is not "there is nothing", and only one of those two readings is safe.
     """
     try:
-        parent = os.path.dirname(path)
+        if os.path.exists(path):
+            return MARKER_PRESENT
+    except BaseException:                                         # noqa: BLE001
+        return MARKER_PRESENT
+    try:
+        names = os.listdir(os.path.dirname(path))
+    except FileNotFoundError:
+        return MARKER_ABSENT          # no directory, therefore nothing in it
+    except BaseException:                                         # noqa: BLE001
+        return MARKER_PRESENT         # cannot look, cannot conclude absence
+    # §1 re-search: the draft returned ABSENT as soon as the listing SUCCEEDED,
+    # which is "I was able to look" standing in for "the name is not there".
+    # The listing is only evidence of absence if the name is actually not in it.
+    return MARKER_ABSENT if os.path.basename(path) not in names else MARKER_PRESENT
+
+
+def _write_marker(path: str, marker: dict) -> dict:
+    """Write one marker and report the DISK FACT, not the control flow.
+
+    Returns `{path, state, error, anomaly}`. Never raises: `56_` §3 keeps that
+    constraint on the whole persistence path.
+
+    No temp-and-rename. A partial marker is still a marker — the scan treats an
+    unreadable file as an incident rather than as absence — so there is nothing
+    for atomicity to protect, and item F now classifies that partial file as
+    PRESENT rather than as a failure.
+    """
+    out = {"path": path, "state": MARKER_ABSENT, "error": None, "anomaly": None}
+    parent = os.path.dirname(path)
+    try:
         os.makedirs(parent, exist_ok=True)
         with open(path, "w", encoding="utf-8", newline="\n") as fh:
             json.dump(marker, fh, indent=2, sort_keys=True, ensure_ascii=False)
@@ -722,78 +808,110 @@ def _write_marker(path: str, marker: dict) -> str:
             fh.flush()
             os.fsync(fh.fileno())
         dfd = os.open(parent, os.O_RDONLY)
-        try:
-            os.fsync(dfd)
-        finally:
-            os.close(dfd)
     except BaseException as exc:                                  # noqa: BLE001
-        return "%s: %s" % (type(exc).__name__, exc)
-    return None
+        out["error"] = "%s: %s" % (type(exc).__name__, exc)
+        out["state"] = _path_fact(path)
+        return out
+    try:
+        os.fsync(dfd)
+        # THE DURABILITY BOUNDARY. The record is on disk and will survive a
+        # power cut the instant this returns. Nothing after it can undo that,
+        # so nothing after it may downgrade this state.
+        out["state"] = MARKER_DURABLE
+    except BaseException as exc:                                  # noqa: BLE001
+        out["error"] = "%s: %s" % (type(exc).__name__, exc)
+        out["state"] = _path_fact(path)
+    finally:
+        try:
+            os.close(dfd)
+        except BaseException as exc:                              # noqa: BLE001
+            # Item F, explicit: a close-tail exception is a soft anomaly and
+            # cannot erase DURABLE. This is the exact line the verifier's
+            # `post_durable_marker_close_misclassified` scenario attacks.
+            out["anomaly"] = "marker directory close failed (%s)" % _why(exc)
+            if out["state"] != MARKER_DURABLE:
+                out["state"] = _path_fact(path)
+    return out
 
 
 def _persist_quarantine(detail: dict, data_dir: str = None):
-    """Establish, durably, that this process quarantined — or say it could not.
+    """Establish, durably, that this process quarantined — or say what it could.
 
-    Still cannot raise: `51_` §3 keeps that constraint, and the reason is
-    unchanged — this only ever runs where the filesystem has already failed, and
-    losing the quarantine because the record of it could not be written would be
-    strictly worse than an unrecorded quarantine. What R8 changes is that
-    failure is no longer the end of the story. Two locations are attempted, and
-    what lands is reported rather than assumed.
+    Still cannot raise (`56_` §3): this only ever runs where the filesystem has
+    already failed, and losing the quarantine because the record of it could not
+    be written would be strictly worse than an unrecorded quarantine.
+
+    Item H — both markers carry the SAME incident ID and the COMPLETE sibling
+    inventory, so a restarted process can reconstruct one incident from either
+    one and name every file an operator has to remove. R8 wrote two markers with
+    no relationship between them; on restart they became two incidents, `/health`
+    showed the first, and an operator who deleted everything the service named
+    was still quarantined by the sibling it never mentioned.
     """
     stamp = "%s-%s" % (STORE.run_instance, uuid.uuid4().hex[:8])
+    incident_id = detail.setdefault("incident_id", "quar-" + uuid.uuid4().hex[:16])
+
+    targets = []
+    primary = _quarantine_root(data_dir)
+    fallback = _quarantine_fallback_dir(data_dir)
+    if primary:
+        targets.append(("primary", os.path.join(
+            primary, "%s%s.json" % (QUARANTINE_PREFIX, stamp))))
+    if fallback:
+        targets.append(("fallback", os.path.join(
+            fallback, "%s%s-%s.json" % (QUARANTINE_FALLBACK_PREFIX,
+                                        STORE.candidate, stamp))))
+    if not targets:
+        detail["marker_attempts"] = [{"location": "primary", "path": None,
+                                      "state": MARKER_ABSENT,
+                                      "error": "candidate name is not path-safe"}]
+        detail["marker_persisted"] = False
+        return
+
+    siblings = [p for _label, p in targets]
     marker = {
         "synthetic": True,
         "produced_by": "stub_server.py (%s)" % THROWAWAY,
         "kind": "storage-quarantine",
+        "incident_id": incident_id,
         "candidate": STORE.candidate,
         "run_instance": STORE.run_instance,
         "raised_at": time.time(),
+        # Item H: the complete inventory, written into BOTH markers before
+        # either is attempted, so finding one is enough to name the other.
+        "sibling_paths": siblings,
+        "surviving_temp_paths": list(detail.get("surviving_temp_paths") or []),
+        "surviving_final_path": detail.get("surviving_final_path"),
         "requires": ("explicit operator reconciliation: inspect the records "
-                     "named below, decide what the evidence on disk actually "
-                     "says, then delete THIS FILE. Until it is gone every "
-                     "process using this data directory refuses authority "
+                     "named here, decide what the evidence on disk actually "
+                     "says, then delete EVERY path listed under "
+                     "`sibling_paths` and `surviving_temp_paths` that still "
+                     "exists. Until they are gone, every process that acquires "
+                     "this data directory's lock refuses authority "
                      "transitions. Restarting the service does not clear it."),
         "incident": detail,
     }
-    attempts, landed = [], []
-    primary = _quarantine_root(data_dir)
-    fallback = _quarantine_fallback_dir(data_dir)
-    targets = []
-    if primary:
-        targets.append(("primary",
-                        os.path.join(primary, "%s%s.json"
-                                     % (QUARANTINE_PREFIX, stamp))))
-    if fallback:
-        targets.append(("fallback",
-                        os.path.join(fallback, "%s%s-%s.json"
-                                     % (QUARANTINE_FALLBACK_PREFIX,
-                                        STORE.candidate, stamp))))
-    if not targets:
-        detail["marker_persisted"] = False
-        detail["restart_protection"] = "none"
-        detail["marker_attempts"] = [{"location": "primary", "path": None,
-                                      "error": "candidate name is not path-safe"}]
-        return
+
     # BOTH are attempted every time, not the fallback only when the primary
     # fails. A fallback exercised only in the failure case is an untested path,
-    # and an untested path is exactly how the primary's own gap survived R7 —
-    # the code was there, it just never ran where anyone was looking. Two
-    # independent durable records also mean the fact survives losing either one.
+    # and an untested path is how the primary's own gap survived R7.
+    attempts = []
     for label, path in targets:
-        why = _write_marker(path, marker)
-        attempts.append({"location": label, "path": path, "error": why})
-        if why is None:
-            landed.append(path)
+        res = _write_marker(path, marker)
+        res["location"] = label
+        attempts.append(res)
     detail["marker_attempts"] = attempts
-    detail["marker_persisted"] = bool(landed)
-    detail["marker_paths"] = landed
-    # Kept for continuity with the R7 field the verifier and Fable both read.
-    detail["marker_path"] = landed[0] if landed else None
-    detail["restart_protection"] = "durable" if landed else "none"
-    if not landed:
-        detail["marker_error"] = "; ".join(
-            "%s: %s" % (a["location"], a["error"]) for a in attempts)
+    detail["sibling_paths"] = siblings
+    # Kept for continuity with the field prior rounds' reports read, but it is
+    # now derived from the disk facts rather than from exception-freeness.
+    detail["marker_persisted"] = any(a["state"] != MARKER_ABSENT for a in attempts)
+    for a in attempts:
+        if a.get("anomaly"):
+            STORE.storage_anomalies.append(
+                {"kind": "quarantine-marker-close-after-durable-fsync",
+                 "incident_id": incident_id, "path": a["path"],
+                 "detail": a["anomaly"],
+                 "note": "marker already durable; the record stands"})
 
 
 def _surviving_temp_artifacts(data_dir: str = None) -> list:
@@ -810,6 +928,27 @@ def _surviving_temp_artifacts(data_dir: str = None) -> list:
     candidate = str(STORE.candidate)
     if not SAFE_NAME.match(candidate) or candidate in (".", ".."):
         return []
+    # R9, §1 self-search, and it was MINE AGAIN — caught by the regression
+    # suites, not by reading, which is the honest account.
+    #
+    # "A `.tmp` exists under `captures/`" was standing in for "a `.tmp`
+    # OUTLIVED the process that created it". At R8 the scan ran once at
+    # startup, before any capture had been written, so the two were the same
+    # statement. Item J made the scan run before every authority transition,
+    # and they came apart immediately: every normal capture has a real `.tmp`
+    # on disk between `mkstemp` and the unlink, so a concurrent request
+    # scanning in that window quarantined a perfectly healthy service. The
+    # barrier and oracle suites went red on exactly that.
+    #
+    # The fact is established from this process's own in-flight register: a
+    # temp whose reserved prefix is still held by a live `write_capture` has
+    # outlived nothing. The prefix is added BEFORE the create and discarded in
+    # a `finally`, so the window it covers is exactly the window in which the
+    # artifact may exist untracked (item C's boundary). A fresh process holds
+    # none, so after a restart every temp counts — which is the case the
+    # write-free mechanism exists for.
+    with STORE.lock:
+        inflight = tuple(STORE.inflight_temp_prefixes)
     root = os.path.abspath(os.path.join(base, "captures", candidate))
     found, unlistable = [], []
     try:
@@ -817,11 +956,9 @@ def _surviving_temp_artifacts(data_dir: str = None) -> list:
     except FileNotFoundError:
         return []                       # no capture tree, therefore no temps
     except BaseException as exc:                                  # noqa: BLE001
-        return [{"route": "startup", "step": "surviving-temp-scan",
-                 "problems": ["capture tree could not be listed (%s), so the "
-                              "absence of unproven artifacts cannot be "
-                              "established" % _why(exc)],
-                 "restart_protection": "durable"}]
+        return [_scan_error_incident(
+            "capture tree could not be listed (%s), so the absence of unproven "
+            "artifacts cannot be established" % _why(exc), root)]
     for poc in pocs:
         sub = os.path.join(root, poc)
         try:
@@ -829,34 +966,60 @@ def _surviving_temp_artifacts(data_dir: str = None) -> list:
         except NotADirectoryError:
             continue                    # a file, not a POC directory
         except BaseException as exc:                              # noqa: BLE001
-            # §1 FOURTH INSTANCE, and it was MINE. The first draft of this
-            # function wrote `except OSError: continue` here, which reports "I
-            # could not look" as "there is nothing here" — the identical
-            # proxy-for-fact substitution this round exists to remove, written
-            # into the function whose whole job is to establish a fact. Caught
-            # by re-reading my own new code against the §1 table rather than by
-            # any test, which is the honest account of how it was found.
-            unlistable.append({"route": "startup", "step": "surviving-temp-scan",
-                               "problems": ["capture directory %r could not be "
-                                            "listed (%s), so the absence of "
-                                            "unproven artifacts in it cannot be "
-                                            "established" % (poc, _why(exc))],
-                               "restart_protection": "durable"})
+            # §1, and it was MINE at R8: `except OSError: continue` here reports
+            # "I could not look" as "there is nothing here".
+            unlistable.append(_scan_error_incident(
+                "capture directory %r could not be listed (%s), so the absence "
+                "of unproven artifacts in it cannot be established"
+                % (poc, _why(exc)), sub))
             continue
         for name in names:
-            if name.endswith(TEMP_SUFFIX):
-                found.append(os.path.join(sub, name))
-    return unlistable + [{"route": "startup", "step": "surviving-temp-artifact",
-             "problems": ["a temp capture artifact outlived the process that "
-                          "created it, so its removal was never proven"],
-             "surviving_temp_path": p,
-             "recovered_from_disk_fact": p,
-             "marker_persisted": False,
-             "restart_protection": "durable",
-             "reconcile_by": ("inspect this temp artifact, then remove it; its "
-                              "presence is a filesystem fact, not a marker, so "
-                              "no marker write was needed to preserve it")}
-            for p in found]
+            if not name.endswith(TEMP_SUFFIX):
+                continue
+            if any(name.startswith(pref) for pref in inflight):
+                continue        # a live capture in THIS process owns it
+            found.append(os.path.join(sub, name))
+    return unlistable + [{
+        "route": "startup", "step": "surviving-temp-artifact",
+        "incident_id": "temp-" + sha256_hex(p)[:16],
+        "problems": ["a temp capture artifact outlived the process that "
+                     "created it, so its removal was never proven"],
+        "surviving_temp_path": p,
+        "surviving_temp_paths": [p],
+        "recovered_from_disk_fact": p,
+        "evidence_records": [p],
+        "restart_protection": PROTECT_DURABLE,
+        "reconcile_by": ("inspect this temp artifact, then remove it; its "
+                         "presence is a filesystem fact, not a marker, so no "
+                         "marker write was needed to preserve it")}
+        for p in found]
+
+
+def _scan_error_incident(problem: str, location: str) -> dict:
+    """A directory that could not be listed. NOT a durable record — item I.
+
+    R8 put the directory's own path into `recovered_from_marker` and stamped
+    `restart_protection: "durable"`, so a transient `EIO` on the fallback scan
+    presented the ENTIRE data directory as a record to delete, beside a runbook
+    saying to delete every path in `durable_records`. An operator following the
+    written instruction in good faith would have destroyed the evidence tree.
+
+    A scan failure fails the current process closed and says the persistence
+    state is UNKNOWN. It contributes nothing to `evidence_records`, and the
+    location is reported under a key that is explicitly not a record to remove.
+
+    The ID is derived from the location so a re-scan of the same unlistable
+    directory merges instead of accumulating.
+    """
+    return {"route": "startup", "step": "quarantine-scan-error",
+            "incident_id": "scanerr-" + sha256_hex(location)[:16],
+            "problems": [problem],
+            "unlistable_location": location,
+            "unlistable_location_note": ("diagnostic only — this is NOT a "
+                                         "record to delete, and it is NOT "
+                                         "evidence that a quarantine exists"),
+            "restart_protection": PROTECT_UNKNOWN,
+            "evidence_records": []}
 
 
 def _read_marker(path: str) -> dict:
@@ -869,145 +1032,317 @@ def _read_marker(path: str) -> dict:
     if isinstance(marker, dict) and isinstance(marker.get("incident"), dict):
         incident = dict(marker["incident"])
         incident["raised_by_run_instance"] = marker.get("run_instance")
+        incident["incident_id"] = (marker.get("incident_id")
+                                   or incident.get("incident_id")
+                                   or "marker-" + sha256_hex(path)[:16])
+        siblings = list(marker.get("sibling_paths") or [])
+        temps = list(marker.get("surviving_temp_paths") or [])
     else:
+        # A partial or unreadable marker still proves a quarantine happened —
+        # it just cannot say which one, so it gets its own identity from its
+        # path and names only itself.
         incident = {"route": "startup", "step": "quarantine-marker-scan",
+                    "incident_id": "marker-" + sha256_hex(path)[:16],
                     "problems": ["quarantine marker present but unreadable; "
                                  "its presence is the signal"]}
+        siblings, temps = [], []
     incident["recovered_from_marker"] = path
-    # The embedded copy predates its own persistence — `_persist_quarantine`
-    # stamps that on the live incident AFTER writing, so a marker cannot claim
-    # to have been written by quoting itself. Reading it back is the proof, so
-    # the recovered incident carries the stamp instead.
-    incident["marker_persisted"] = True
-    incident["marker_path"] = path
-    incident["restart_protection"] = "durable"
-    incident["reconcile_by"] = ("inspect the records named here, then delete "
-                                "this marker file; restarting does not clear it")
+    # Item H — the complete inventory, reconstructed from whichever sibling was
+    # found, filtered to what actually exists now.
+    inventory = [path] + [s for s in siblings if s != path] + temps
+    incident["evidence_records"] = _existing_only(inventory)
+    incident["restart_protection"] = PROTECT_DURABLE
     return incident
 
 
-def _scan_quarantine_markers(data_dir: str = None) -> list:
-    """Everything a previous process left behind for this candidate.
+def _classify_records(paths) -> tuple:
+    """Split candidate records into VERIFIED FILES and UNVERIFIABLE paths.
 
-    Fails closed on every ambiguity it can observe: an unparseable marker and an
-    unlistable directory both count. R7's docstring claimed that too and was
-    true only of the ambiguities it looked at — which is why the scan now looks
-    in three places, one of which requires no successful write.
+    Item I's hard rule is that only a real file may be presented as a record to
+    delete — never a directory, never a path that is not there.
+
+    §1 re-search, and this one was mine: the draft used `os.path.isfile(p)` and
+    dropped everything it returned False for. `isfile` swallows every `OSError`
+    and returns False, so a marker that could not be STAT'ED — a real record,
+    still on disk — vanished silently from the operator's inventory. That is
+    finding 2.2's exact shape ("a real marker omitted from the inventory") in
+    the code written to fix finding 2.3. The two failure directions are
+    genuinely different and now have genuinely different answers: a path proven
+    absent is dropped, a path that cannot be resolved is REPORTED as
+    unverifiable rather than deleted from the record or presented as deletable.
+    """
+    files, unverifiable, seen = [], [], set()
+    for p in paths:
+        if not p or p in seen:
+            continue
+        seen.add(p)
+        try:
+            st = os.stat(p)
+        except FileNotFoundError:
+            continue                    # proven absent; not a record
+        except BaseException:                                     # noqa: BLE001
+            unverifiable.append(p)      # cannot tell; say so, do not guess
+            continue
+        if stat.S_ISREG(st.st_mode):
+            files.append(p)
+        elif not stat.S_ISDIR(st.st_mode):
+            unverifiable.append(p)      # neither a file nor a directory
+        # a directory is never a record and is never reported as one
+    return files, unverifiable
+
+
+def _existing_only(paths) -> list:
+    """The verified-file subset. See `_classify_records` for the other half."""
+    return _classify_records(paths)[0]
+
+
+def _scan_quarantine_markers(data_dir: str = None) -> list:
+    """Everything a previous process left on disk for this candidate.
+
+    Three places, one of which needs no successful write. Fails closed on every
+    ambiguity it can observe, and — item I — an ambiguity it cannot resolve
+    yields UNKNOWN rather than a fabricated durable record.
     """
     found = []
-
-    primary = _quarantine_root(data_dir)
-    if primary:
+    for label, directory, want in (
+            ("primary", _quarantine_root(data_dir), None),
+            ("fallback", _quarantine_fallback_dir(data_dir),
+             "%s%s-" % (QUARANTINE_FALLBACK_PREFIX, STORE.candidate))):
+        if not directory:
+            continue
         try:
-            names = sorted(os.listdir(primary))
+            names = sorted(os.listdir(directory))
         except FileNotFoundError:
-            names = []          # this location never took a marker
-        except OSError as exc:
-            names = None
-            found.append({"route": "startup", "step": "quarantine-marker-scan",
-                          "problems": ["quarantine directory could not be listed "
-                                       "(%s)" % errno.errorcode.get(exc.errno,
-                                                                    exc.errno)],
-                          "recovered_from_marker": primary,
-                          "restart_protection": "durable"})
-        for name in names or []:
-            if name.startswith(QUARANTINE_PREFIX) and name.endswith(".json"):
-                found.append(_read_marker(os.path.join(primary, name)))
-
-    fallback = _quarantine_fallback_dir(data_dir)
-    if fallback:
-        want = "%s%s-" % (QUARANTINE_FALLBACK_PREFIX, STORE.candidate)
-        try:
-            names = sorted(os.listdir(fallback))
-        except FileNotFoundError:
-            names = []
-        except OSError as exc:
-            names = None
-            found.append({"route": "startup", "step": "quarantine-marker-scan",
-                          "problems": ["fallback marker directory could not be "
-                                       "listed (%s)"
-                                       % errno.errorcode.get(exc.errno, exc.errno)],
-                          "recovered_from_marker": fallback,
-                          "restart_protection": "durable"})
-        for name in names or []:
-            if name.startswith(want) and name.endswith(".json"):
-                found.append(_read_marker(os.path.join(fallback, name)))
-
+            continue                    # this location never took a marker
+        except BaseException as exc:                              # noqa: BLE001
+            found.append(_scan_error_incident(
+                "%s marker directory could not be listed (%s), so the absence "
+                "of a quarantine record there cannot be established"
+                % (label, _why(exc)), directory))
+            continue
+        for name in names:
+            ok = (name.startswith(want) if want
+                  else name.startswith(QUARANTINE_PREFIX))
+            if ok and name.endswith(".json"):
+                found.append(_read_marker(os.path.join(directory, name)))
     found.extend(_surviving_temp_artifacts(data_dir))
     return found
 
 
-def _ensure_quarantine_scanned(data_dir: str = None):
-    """Run the marker scan exactly once per process, on the first request.
+def _merge_incidents(existing: list, incoming: list) -> list:
+    """Item H — one incident, one ID, one inventory. Idempotent by construction.
 
-    Deliberately not in `Store.__init__`: `Handler.data_dir` is assigned after
-    the Store is built, so at construction time there is no directory to scan.
-    Deliberately not gated on `STORE.lock`: `GET /health` must stay servable
-    while a POST holds that lock for its whole duration (A.8).
+    Called on every dispatch (item J's second half), so it must never grow the
+    register by re-observing the same disk facts: an incident already present
+    absorbs the newcomer's evidence records and posture instead of appending.
+    """
+    by_id = {}
+    for inc in existing:
+        by_id.setdefault(inc.get("incident_id"), inc)
+    added = []
+    for inc in incoming:
+        key = inc.get("incident_id")
+        prior = by_id.get(key)
+        if prior is None:
+            by_id[key] = inc
+            added.append(inc)
+            continue
+        merged, seen = [], set()
+        for p in (prior.get("evidence_records") or []) + (inc.get("evidence_records") or []):
+            if p not in seen:
+                seen.add(p)
+                merged.append(p)
+        prior["evidence_records"] = merged
+        if _PROTECT_RANK.get(inc.get("restart_protection"), 0) > \
+           _PROTECT_RANK.get(prior.get("restart_protection"), 0):
+            prior["restart_protection"] = inc.get("restart_protection")
+        if inc.get("recovered_from_marker") and not prior.get("recovered_from_marker"):
+            prior["recovered_from_marker"] = inc["recovered_from_marker"]
+    return added
+
+
+def _refresh_quarantine(data_dir: str = None):
+    """Re-observe the disk before every authority transition — item J.
+
+    R8 scanned ONCE per process and I judged the gap unreachable. The verifier
+    executed the exact challenge and disproved it: process A scans clean,
+    process B quarantines the shared directory with both markers durably
+    written, process A goes on accepting transitions at 200 — while the marker
+    it never read says every process using this directory refuses. **A claim
+    that exceeds its enforcement is itself a proxy-for-fact instance**, and that
+    is the standing rule `55_` §3 adopted from it.
+
+    `56_` item J selects an exclusive `flock` as the mechanism and pre-authorizes
+    the rescan alternative. **This build does both, and neither is decoration.**
+    The lock (see `_acquire_candidate_lock`) is what makes the invariant true for
+    processes that start normally — it stops the accidental second launch the
+    verifier is really worried about. The rescan is what makes the SENTENCE true
+    for any process at all, including one that never went through the startup
+    path, which is precisely the configuration the verifier's probe constructs.
+    Shipping only the lock would leave the marker's "every process" claim
+    exceeding its enforcement again, one layer down, which is the whole finding.
+
+    Cost is two or three `os.listdir` calls per authority transition on a
+    localhost throwaway apparatus. Merging is by incident ID, so re-observing
+    the same facts is a no-op rather than a growing register.
     """
     with STORE.quarantine_scan_lock:
-        if STORE.quarantine_scanned:
-            return
-        STORE.quarantine_scanned = True
         try:
-            recovered = _scan_quarantine_markers(data_dir)
+            observed = _scan_quarantine_markers(data_dir)
         except BaseException as exc:                              # noqa: BLE001
-            recovered = [{"route": "startup", "step": "quarantine-marker-scan",
-                          "problems": ["quarantine marker scan failed (%s: %s)"
-                                       % (type(exc).__name__, exc)]}]
-        STORE.storage_quarantine.extend(recovered)
+            observed = [_scan_error_incident(
+                "quarantine scan failed (%s: %s)" % (type(exc).__name__, exc),
+                str(data_dir or Handler.data_dir))]
+        STORE.quarantine_scanned = True
+        added = _merge_incidents(STORE.storage_quarantine, observed)
+        STORE.storage_quarantine.extend(added)
 
 
 def _restart_posture(incident: dict) -> dict:
-    """The operator-facing restart statement — R8 item B, one place only.
+    """The operator-facing restart statement — one place, derived from facts.
 
-    R7 put `marker_persisted` into the `/health` quarantine block with an
-    explicit comment saying an operator has to be able to tell "a restart will
-    still be stopped" from "the marker could not be written, so it will not be"
-    — and then asserted `reconcile_by: "…restarting does not clear it"`
-    UNCONDITIONALLY, in the same JSON object. The true field and the false
-    sentence sat one key apart. The executed re-check proved the sentence false.
+    R7 put `marker_persisted` into the `/health` block with a comment saying an
+    operator must be able to tell "a restart will still be stopped" from "the
+    marker could not be written, so it will not be" — and then asserted
+    "restarting does not clear it" unconditionally one key later. R8 made the
+    sentence conditional but derived the condition from whether a function had
+    raised, so a durably-written marker still produced "nothing on disk".
 
-    Every statement this service makes about restart behaviour now comes from
-    here, so there is exactly one place for it to be wrong, and it is derived
-    from what actually landed rather than from what was attempted.
+    Now the condition is the best fact actually observed:
+
+      durable            a record exists and was proven durable (fsynced marker,
+                         a marker read back off disk, or a temp verified present)
+      present_unverified a record exists or may exist but was not proven
+      unknown            it could not be established — claim nothing either way
+      none               VERIFIED: no marker anywhere, no temp. A restart really
+                         does clear it, and saying so is the truthful answer
+
+    Item G: a live `surviving_temp_path` is a restart signal in the RAISING
+    process, not only after a restart scan. R8's write-free mechanism was
+    invisible to R8's own posture function.
     """
-    durable = (incident.get("restart_protection") == "durable"
-               or bool(incident.get("marker_persisted"))
-               or bool(incident.get("recovered_from_marker"))
-               or bool(incident.get("recovered_from_disk_fact")))
-    if durable:
-        records, seen = [], set()
-        for p in ((incident.get("marker_paths") or [])
-                  + [incident.get("marker_path"),
-                     incident.get("recovered_from_marker"),
-                     incident.get("recovered_from_disk_fact")]):
-            if p and p not in seen:
-                seen.add(p)
-                records.append(p)
-        return {
-            "restart_protection": "durable",
-            "survives_restart": True,
-            "reconcile_by": ("inspect the records this incident names, then "
-                             "delete EVERY durable record listed in "
-                             "`durable_records`; restarting does not clear it"),
-            "durable_records": records,
-        }
-    return {
-        "restart_protection": "none",
-        "survives_restart": False,
-        "WARNING": ("NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt "
-                    "to write one failed, so a restart of this service WILL "
-                    "clear the quarantine and WILL accept authority transitions "
-                    "again while the ambiguous evidence is still on disk. DO NOT "
-                    "RESTART. Reconcile the records named here first, from this "
-                    "running process."),
-        "reconcile_by": ("do NOT restart. Inspect the records this incident "
-                         "names while this process is still running; nothing on "
-                         "disk will tell a new process what happened here"),
-        "marker_attempts": incident.get("marker_attempts"),
-        "durable_records": [],
-    }
+    records, level = [], PROTECT_NONE
+
+    def raise_to(name):
+        nonlocal level
+        if _PROTECT_RANK[name] > _PROTECT_RANK[level]:
+            level = name
+
+    if incident.get("restart_protection"):
+        raise_to(incident["restart_protection"])
+
+    for a in (incident.get("marker_attempts") or []):
+        state = a.get("state")
+        if state == MARKER_DURABLE:
+            records.append(a.get("path"))
+            raise_to(PROTECT_DURABLE)
+        elif state == MARKER_PRESENT:
+            records.append(a.get("path"))
+            raise_to(PROTECT_PRESENT)
+    for p in (incident.get("evidence_records") or []):
+        records.append(p)
+    # Item G — the live temp facts.
+    temps = list(incident.get("surviving_temp_paths") or [])
+    if incident.get("surviving_temp_path"):
+        temps.append(incident["surviving_temp_path"])
+    for p in temps:
+        records.append(p)
+
+    # Only VERIFIED files survive into the inventory (item I). A record that
+    # exists on disk right now is the strongest fact available, so it carries
+    # the posture on its own — unless a weaker marker state already said the
+    # record's durability was not proven, in which case that qualification
+    # stands rather than being rounded up.
+    records, unverifiable = _classify_records(records)
+    if records and level != PROTECT_PRESENT:
+        raise_to(PROTECT_DURABLE)
+    elif records:
+        raise_to(PROTECT_PRESENT)
+
+    out = {"restart_protection": level,
+           "survives_restart": level in (PROTECT_DURABLE, PROTECT_PRESENT),
+           "durable_records": records}
+    if unverifiable:
+        # Never silently dropped and never presented as deletable.
+        out["unverifiable_records"] = unverifiable
+        out["unverifiable_records_note"] = (
+            "these paths could not be resolved, so this service cannot say "
+            "whether they are quarantine records. Do NOT delete them on this "
+            "basis; inspect them by hand")
+    if level == PROTECT_DURABLE:
+        out["reconcile_by"] = ("inspect the records this incident names, then "
+                               "delete EVERY path in `durable_records`; "
+                               "restarting does not clear it")
+    elif level == PROTECT_PRESENT:
+        out["reconcile_by"] = ("a record exists on disk but its durability was "
+                               "not proven. Treat it as binding: inspect the "
+                               "records this incident names, then delete EVERY "
+                               "path in `durable_records`. Do not assume a "
+                               "restart clears it")
+        out["NOTE"] = ("a quarantine record is present but was not proven "
+                       "durable; a restart will most likely still be stopped, "
+                       "and must not be relied on to clear it")
+    elif level == PROTECT_UNKNOWN:
+        out["reconcile_by"] = ("the state of the quarantine records could not "
+                               "be established — a directory could not be "
+                               "listed. Do NOT restart and do NOT delete "
+                               "anything on this basis; resolve the storage "
+                               "fault first, then re-read /health")
+        out["WARNING"] = ("STORAGE STATE UNKNOWN. This service cannot tell "
+                          "whether a durable quarantine record exists. Nothing "
+                          "here is a record to delete. Do not restart.")
+        out["unresolved_locations"] = [
+            x for x in [incident.get("unlistable_location")] if x]
+    else:
+        out["WARNING"] = ("NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every "
+                          "attempt to write one failed and no artifact survives "
+                          "on disk, so a restart of this service WILL clear the "
+                          "quarantine and WILL accept authority transitions "
+                          "again. DO NOT RESTART. Reconcile the records named "
+                          "here, from this running process.")
+        out["reconcile_by"] = ("do NOT restart. Inspect the records this "
+                               "incident names while this process is still "
+                               "running; nothing on disk will tell a new "
+                               "process what happened here")
+        out["marker_attempts"] = incident.get("marker_attempts")
+    return out
+
+
+def _quarantine_summary() -> dict:
+    """Every incident and every real record — item H, for `/health` and the 503s.
+
+    R8 exposed only `storage_quarantine[0]` and derived the inventory from that
+    one incident, so an operator who deleted everything the service named was
+    still quarantined by the sibling it never mentioned.
+    """
+    incidents = list(STORE.storage_quarantine)
+    records, problems, level = [], [], PROTECT_NONE
+    unresolved = []
+    for inc in incidents:
+        posture = _restart_posture(inc)
+        records.extend(posture["durable_records"])
+        unresolved.extend(posture.get("unresolved_locations") or [])
+        for p in (inc.get("problems") or []):
+            if p not in problems:
+                problems.append(p)
+        if _PROTECT_RANK[posture["restart_protection"]] > _PROTECT_RANK[level]:
+            level = posture["restart_protection"]
+    records = _existing_only(records)
+    merged = {"incidents": len(incidents),
+              "incident_ids": [i.get("incident_id") for i in incidents],
+              "problems": problems,
+              "recovery": "explicit operator recovery required; this service "
+                          "will accept no further authority transition"}
+    # Re-derive the sentence from the MERGED level so the text and the union of
+    # records agree; a single synthetic incident carrying both is the input.
+    merged.update(_restart_posture({"restart_protection": level,
+                                    "evidence_records": records,
+                                    "unlistable_location": unresolved[0]
+                                    if unresolved else None}))
+    merged["durable_records"] = records
+    if unresolved:
+        merged["unresolved_locations"] = unresolved
+    return merged
 
 
 def _absorb_post_durable(route: str, step: str, exc: BaseException):
@@ -1186,6 +1521,13 @@ def _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir=None,
 
     if problems:
         detail = {"route": route, "step": step,
+                  # §1 re-search: stamped HERE, not inside `_persist_quarantine`
+                  # below. `_merge_incidents` keys on this, and between the
+                  # append and the persist call the incident was briefly
+                  # ID-less — a concurrent `_refresh_quarantine` would have
+                  # merged it under `None` with any other ID-less incident.
+                  # "It will get an ID in a moment" is not "it has one".
+                  "incident_id": "quar-" + uuid.uuid4().hex[:16],
                   "surviving_final_path": linked_path,
                   "surviving_temp_path": temps[0] if temps else None,
                   "surviving_temp_paths": temps,
@@ -1236,6 +1578,43 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
         if not SAFE_NAME.match(str(part)) or part in (".", ".."):
             raise CaptureError("unsafe capture path component %r" % part)
 
+    # R9 item K(a) — CONTAINMENT BEFORE RESERVATION.
+    #
+    # R8 reserved the capture-pool unit first and raised the containment refusal
+    # after, with no release: one refused write leaked one quota unit out of the
+    # pool permanently. A plain ordering defect, and the ordering that cannot
+    # leak is to establish the path is legal before taking anything for it.
+    #
+    # R9 item K(b) — VALIDATE THE ROOT ITSELF.
+    #
+    # R8 put `realpath` on both sides of the prefix comparison, which fixed
+    # "symlink below the captures root" and created "symlink AT the captures
+    # root": both sides resolve THROUGH the same pre-existing link, the prefix
+    # test passes, and the bytes land outside the data directory. The R8 fix
+    # moved the blind spot rather than closing it, which is worth saying plainly
+    # — a check whose two sides can both be redirected by one link is comparing
+    # a value against itself.
+    #
+    # So the canonical root is now compared against where it must PHYSICALLY be:
+    # `captures` immediately inside the resolved data directory. If
+    # `<data_dir>/captures` resolves anywhere else, it is a redirected root and
+    # is refused rather than resolved through.
+    #
+    # Residual and stated, unchanged from R8: a component swapped for a symlink
+    # BETWEEN this check and the `os.makedirs` below would still land outside.
+    # `56_` item K(c) carries the `O_NOFOLLOW`/`openat` design forward to `13B_`
+    # and it is explicitly not an R9 obligation.
+    captures_dir = os.path.join(data_dir, "captures")
+    expected = os.path.join(os.path.realpath(data_dir), "captures")
+    actual_root = os.path.realpath(captures_dir)
+    if actual_root != expected:
+        raise CaptureError("capture path escapes the captures directory: the "
+                           "captures root does not resolve to its physical "
+                           "location under the data directory")
+    root = os.path.realpath(os.path.join(captures_dir, candidate, poc))
+    if not root.startswith(expected + os.sep):
+        raise CaptureError("capture path escapes the captures directory")
+
     pool = _pool_for(route, refusal, owner_authenticated=owner_authenticated)
     if not _reserve_pool(pool):
         if pool == POOL_OWNER:
@@ -1245,36 +1624,6 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
         with STORE.lock:
             STORE.uncaptured_refusals += 1
         raise CaptureError("security-refusal pool exhausted; counted in aggregate")
-
-    # §1 FOURTH INSTANCE, found by the search `51_` §1 required and fixed here.
-    #
-    # This was `os.path.abspath` on both sides. `abspath` is purely LEXICAL — it
-    # normalises `..` and makes the path absolute and does not touch the
-    # filesystem. So the test was "the path STRING starts with the captures
-    # prefix", standing in for the fact "the bytes land inside the captures
-    # directory". Those two diverge the moment any component is a symlink:
-    # `captures/<candidate>` pointing elsewhere passes the string test and
-    # writes outside the tree. `SAFE_NAME` blocks `..`, which is the failure
-    # this check was shown; a symlink is the one it was silent on. Same shape as
-    # the three findings, one control over.
-    #
-    # `realpath` resolves symlinks, so both sides are now the real locations and
-    # the test is the fact. Not reachable from any owner or provider request —
-    # every path component is `SAFE_NAME`-matched and the stub creates these
-    # directories itself — so it needs an operator or a prior process to have
-    # placed a symlink under `--data`. Reported at that severity rather than
-    # inflated.
-    #
-    # Residual and stated: a component swapped for a symlink BETWEEN this check
-    # and the `os.makedirs` below would still land outside. Closing that needs
-    # `O_NOFOLLOW` directory descriptors and openat-relative writes, which is a
-    # real design change to the publication path and out of `51_`'s five items.
-    # For a localhost throwaway apparatus with one operator, the lexical→real
-    # fix is the proportionate one; the TOCTOU remainder is named, not hidden.
-    root = os.path.realpath(os.path.join(data_dir, "captures", candidate, poc))
-    expected = os.path.realpath(os.path.join(data_dir, "captures"))
-    if not root.startswith(expected + os.sep):
-        raise CaptureError("capture path escapes the captures directory")
 
     policy = ROUTE_POLICY.get(("POST", route)) or ROUTE_POLICY.get(("GET", route))
     allowed = policy["fields"] if policy else ()
@@ -1364,6 +1713,11 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
     # pass (`51_` §4), so the create stays where the probe can reach it and the
     # fact is established a different way.
     tmp_prefix = ".%s-%s-" % (step, uuid.uuid4().hex)
+    # Registered BEFORE the create and discarded in the `finally` below, so the
+    # in-flight window is exactly the window in which an artifact may exist
+    # untracked — the same boundary item C established.
+    with STORE.lock:
+        STORE.inflight_temp_prefixes.add(tmp_prefix)
     try:
         os.makedirs(root, exist_ok=True)
         fd, tmp = tempfile.mkstemp(prefix=tmp_prefix, suffix=".tmp", dir=root)
@@ -1456,6 +1810,8 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
         if not published:
             _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir,
                               tmp_prefix=tmp_prefix)
+        with STORE.lock:
+            STORE.inflight_temp_prefixes.discard(tmp_prefix)
     return path
 
 
@@ -1695,28 +2051,17 @@ def h_health(_p):
             "storage_quarantined": bool(STORE.storage_quarantine),
             "storage_anomalies": len(STORE.storage_anomalies)}
     if STORE.storage_quarantine:
-        first = STORE.storage_quarantine[0]
-        block = {
-            "incidents": len(STORE.storage_quarantine),
-            "problems": first.get("problems"),
-            "recovery": "explicit operator recovery required; this service will "
-                        "accept no further authority transition",
-            # R7 item 5 — an operator has to be able to tell the difference
-            # between "a restart will still be stopped" and "the marker could
-            # not be written, so it will not be". Both are quarantined now; only
-            # one of them stays quarantined. R8 item B — and the SENTENCE next
-            # to this field now agrees with it, which at R7 it did not.
-            "marker_persisted": first.get("marker_persisted"),
-            "marker_path": first.get("marker_path"),
-            "recovered_from_marker": first.get("recovered_from_marker"),
-        }
-        block.update(_restart_posture(first))
+        # R9 item H — EVERY incident and the union of EVERY real record, not
+        # `storage_quarantine[0]` and whatever that one happened to name. An
+        # operator who deleted everything R8 named was still quarantined by the
+        # sibling marker it never mentioned.
+        block = _quarantine_summary()
+        block["incident_details"] = list(STORE.storage_quarantine)
         body["storage_quarantine"] = block
-        # An unprotected quarantine is the one an operator must not walk away
-        # from, so it is stated at the top level too rather than nested three
-        # keys deep in a block someone may not open.
-        if block["restart_protection"] == "none":
-            body["restart_protection"] = "none"
+        # A quarantine an operator must not walk away from is stated at the top
+        # level too, rather than nested inside a block someone may not open.
+        body["restart_protection"] = block["restart_protection"]
+        if block.get("WARNING"):
             body["WARNING"] = block["WARNING"]
     return 200, body
 
@@ -2957,10 +3302,13 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
     state.
     """
     headers = headers or {}
-    # R7 item 5 — before this process answers ANYTHING, including /health, it
-    # has to find out whether a previous process quarantined this data
-    # directory. A restart is not reconciliation.
-    _ensure_quarantine_scanned()
+    # R7 item 5 / R9 item J — before this process answers ANYTHING, including
+    # /health, it re-observes the disk. A restart is not reconciliation, and
+    # neither is having scanned once at startup: R8 cached the first scan, and
+    # the verifier executed a second process quarantining the shared directory
+    # while the first went on accepting transitions at 200. Merging is by
+    # incident ID, so re-observing the same facts is a no-op.
+    _refresh_quarantine()
     if method != "POST":
         return _dispatch_inner(method, path, payload, headers)
     # One lock, held across the whole request. `STORE.lock` is an RLock and the
@@ -2975,7 +3323,6 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
         # authority transition is refused until an operator recovers it;
         # `GET /health` still serves and reports why, per A.8.
         if STORE.storage_quarantine:
-            first = STORE.storage_quarantine[0]
             out = {"refused": True, "outcome": "refused-storage-quarantine",
                    "reason": "capture storage is quarantined: a rollback "
                              "could not be established, so evidence on "
@@ -2983,10 +3330,12 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
                              "No further authority transition is accepted "
                              "until this is recovered explicitly.",
                    "incidents": len(STORE.storage_quarantine),
-                   "first_incident": first}
-            # R8 item B — the same conditional statement as `/health`, from the
-            # same function, so the two can never disagree.
-            out.update(_restart_posture(first))
+                   "first_incident": STORE.storage_quarantine[0],
+                   "incident_details": list(STORE.storage_quarantine)}
+            # R9 item H — the same MERGED summary `/health` serves, from the
+            # same function, so the two can never disagree and neither can omit
+            # an incident or a record.
+            out.update(_quarantine_summary())
             return 503, out
         return _dispatch_inner(method, path, payload, headers)
 
@@ -3235,6 +3584,83 @@ def serve(port: int, data_dir: str, advertise: str = None):
 
 CANDIDATE_NAME = re.compile(r"^[a-z0-9][a-z0-9._-]{0,31}$")
 
+# R9 item J — the launch path ENFORCES the one-process invariant.
+#
+# R8's quarantine marker said "every process using this data directory refuses
+# authority transitions". Nothing enforced that. The verifier executed the
+# counterexample: process A scans clean, process B quarantines the shared
+# directory with both markers durably written, process A goes on accepting
+# transitions at 200. **A claim that exceeds its enforcement is itself a
+# proxy-for-fact instance** — the marker asserted a fact whose only ground was an
+# unstated usage pattern — and `55_` §3 adopted the standing rule accordingly.
+# Fable concurred with my judgement that the gap was unreachable and was
+# overruled by execution; the judgement was mine and it was wrong.
+#
+# `56_` item J selects `flock` and pre-authorizes the rescan alternative. This
+# build ships BOTH, because each closes a hole the other leaves:
+#
+#   the LOCK    stops the accidental second launch — the real risk, an operator
+#               starting a second stub on the same data directory — before it
+#               can do anything at all;
+#   the RESCAN  (`_refresh_quarantine`, called on every dispatch) makes the
+#               marker's "every process" SENTENCE true for any process, including
+#               one that never went through this startup path. Shipping only the
+#               lock would leave the claim exceeding its enforcement again, one
+#               layer down, which is the finding itself.
+#
+# Advisory, not mandatory: `flock` binds cooperating processes, which every
+# process running this file is. It is released by the kernel when the process
+# exits however it exits, so a crashed stub does not strand the directory.
+LOCK_PREFIX = ".stub-"
+LOCK_SUFFIX = ".lock"
+
+
+def _acquire_candidate_lock(data_dir: str, candidate: str):
+    """Hold `<data_dir>/.stub-<candidate>.lock` exclusively, or refuse to start.
+
+    Returns `(fd, None)` on success and `(None, reason)` on refusal. The fd is
+    deliberately never closed: the lock lives for the process lifetime, and the
+    kernel drops it on exit.
+    """
+    try:
+        import fcntl                                              # noqa: PLC0415
+    except ImportError:
+        return None, ("this platform has no fcntl, so the one-process invariant "
+                      "cannot be enforced by a lock; refusing to start rather "
+                      "than claiming a protection that is not there")
+    path = os.path.join(os.path.abspath(data_dir),
+                        "%s%s%s" % (LOCK_PREFIX, candidate, LOCK_SUFFIX))
+    try:
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        fd = os.open(path, os.O_RDWR | os.O_CREAT, 0o600)
+    except OSError as exc:
+        return None, ("could not open the candidate lock %s (%s); refusing to "
+                      "start" % (path, _why(exc)))
+    try:
+        fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+    except OSError:
+        try:
+            holder = os.read(fd, 256).decode("utf-8", "replace").strip()
+        except OSError:
+            holder = "unknown"
+        os.close(fd)
+        return None, ("another stub process already holds %s (%s). Two "
+                      "processes on one data directory and candidate would "
+                      "each keep their own view of the quarantine, and the "
+                      "one that scanned first would go on accepting authority "
+                      "transitions after the other quarantined the directory. "
+                      "Stop that process, or use a different --candidate or "
+                      "--data." % (path, holder or "holder unknown"))
+    try:
+        os.ftruncate(fd, 0)
+        os.write(fd, ("pid=%d run_instance=%s started=%s\n"
+                      % (os.getpid(), STORE.run_instance,
+                         time.strftime("%Y-%m-%dT%H:%M:%S"))).encode("utf-8"))
+        os.fsync(fd)
+    except OSError:
+        pass            # the lock is held; the annotation is a courtesy
+    return fd, None
+
 
 def main(argv):
     ap = argparse.ArgumentParser(description="THROWAWAY POC wrapper stub")
@@ -3250,6 +3676,10 @@ def main(argv):
         return 2
     global STORE
     STORE = Store(candidate=args.candidate)
+    lock_fd, why = _acquire_candidate_lock(args.data, args.candidate)
+    if lock_fd is None:
+        sys.stderr.write("refusing to start: %s\n" % why)
+        return 3
     serve(args.port, args.data, args.advertise)
     return 0
 

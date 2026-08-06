@@ -41,12 +41,17 @@ Run `python3 data/validate_measurements.py` **before you start and again before 
 | **Both keys read into shell variables** — `read -rs OWNER_KEY`, `read -rs PROVIDER_KEY` | The stub prints them at startup as bare values. **Never paste either into a command line**; the owner key never goes near a provider, and the provider credential carries no owner authority |
 
 **If the stub ever answers `503 refused-storage-quarantine`, stop and check
-`restart_protection` on `/health` before restarting it.** `"durable"` means the quarantine is
-recorded on disk and a restart will keep refusing — reconcile, then delete every path in
-`durable_records`. `"none"` means **every attempt to record it failed and a restart will
-silently clear it** — do not restart; reconcile from the running process. The n8n runbook's
-Part B2 carries the full table. This is the filesystem failing underneath the apparatus, not
-the apparatus misbehaving, and it is worth recording as a finding either way.
+`restart_protection` on `/health` before restarting it.** `"durable"` or
+`"present_unverified"` both mean a record exists on disk and a restart will keep refusing —
+reconcile, then delete **every** path in `durable_records`; they are siblings of one
+incident and deleting some of them leaves you quarantined. `"unknown"` means the stub could
+not tell, and **nothing** it reports in that state is a record to delete. `"none"` means
+every attempt to record it failed and a restart will silently clear it — do not restart;
+reconcile from the running process. The n8n runbook's Part B2 carries the full table.
+
+**Only one stub per `--data` + `--candidate`.** It takes an exclusive lock at startup and a
+second one refuses to start, naming the holder — so stop the n8n stub before starting the
+Zapier one on the same data directory. This is why the round is run one candidate at a time.
 
 **Cost exposure.** Both candidates have free tiers adequate for this round. If any step asks for a paid plan before a POC can complete, stop and record it — "the free tier cannot express this flow" is a genuine economics finding, not an obstacle to work around by spending.
 

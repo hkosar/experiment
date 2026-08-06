@@ -1,0 +1,212 @@
+{
+  "capability_spend": {
+    "final_status": "DELIVERED_WITH_RECEIPT",
+    "handler_entries_before_release": 2,
+    "receipts": 1,
+    "responses": [
+      [
+        200,
+        {
+          "action_request_status": "DELIVERED_WITH_RECEIPT",
+          "attempt": 1,
+          "delivered": true,
+          "destination_digest_claimed_is_provider_reported": true,
+          "destination_verified": false,
+          "outcome": "delivered",
+          "receipt": {
+            "action_request_id": "ar-c21c35583952",
+            "case_id": "case-663cdd06f66b",
+            "delivered_attempt": 1,
+            "idempotency_key": "010a68238ff5b60a9a2b32038d1d2352606241dd6ff8fdb7ec54dc73158158eb",
+            "receipt_id": "dlv-68d0bdd62ef0"
+          },
+          "replayed": false
+        }
+      ],
+      [
+        200,
+        {
+          "action_request_status": "DELIVERED_WITH_RECEIPT",
+          "attempt": 1,
+          "delivered": true,
+          "destination_digest_claimed_is_provider_reported": true,
+          "destination_verified": false,
+          "outcome": "delivered",
+          "receipt": {
+            "action_request_id": "ar-c21c35583952",
+            "case_id": "case-663cdd06f66b",
+            "delivered_attempt": 1,
+            "idempotency_key": "010a68238ff5b60a9a2b32038d1d2352606241dd6ff8fdb7ec54dc73158158eb",
+            "receipt_id": "dlv-cfc9c01e4e80"
+          },
+          "replayed": false
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": true
+  },
+  "registration": {
+    "handler_entries_before_release": 2,
+    "identity_index": 1,
+    "registrations": 2,
+    "responses": [
+      [
+        200,
+        {
+          "artifact_id": "art-6df092e70702",
+          "outcome": "registered",
+          "registration_ref": "reg-NiZIxbMA2nIMmMQO2DGZRPdduZWyFxNb",
+          "source_digest_is_authoritative": true
+        }
+      ],
+      [
+        200,
+        {
+          "artifact_id": "art-cc9d2c832ad7",
+          "outcome": "registered",
+          "registration_ref": "reg-A4BfqwiYGiP53vGaK2H9m0CofMHFrPRL",
+          "source_digest_is_authoritative": true
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": true
+  },
+  "review_case": {
+    "cases": 2,
+    "handler_entries_before_release": 2,
+    "responses": [
+      [
+        200,
+        {
+          "note": "carry this token; the decision is made on the owner surface",
+          "outcome": "case-opened",
+          "resume_token": "W_bcRz1SJx_AaEyDTzR0MbuYvKjMJKJEgNVae-TlRJM"
+        }
+      ],
+      [
+        200,
+        {
+          "note": "carry this token; the decision is made on the owner surface",
+          "outcome": "case-opened",
+          "resume_token": "fUUlTdO0jvReyA33fFppc5uIaBnWn1dqBmB4jjwEIuk"
+        }
+      ]
+    ],
+    "tokens": 2,
+    "two_handlers_entered_before_first_release": true
+  },
+  "revoke_vs_delivery": {
+    "delivery": [
+      403,
+      {
+        "action_request_status": "REVOKED",
+        "outcome": "refused-terminal",
+        "reason": "capability is REVOKED; no delivery and no state change",
+        "refused": true
+      }
+    ],
+    "final_status": "REVOKED",
+    "receipt_present": false,
+    "revoke": [
+      200,
+      {
+        "action_request_id": "ar-357a715863ee",
+        "action_request_status": "REVOKED",
+        "outcome": "revoked"
+      }
+    ],
+    "revoke_handler_entered_while_delivery_handler_paused": true
+  },
+  "run_declaration": {
+    "declarations": 1,
+    "handler_entries_before_release": 2,
+    "responses": [
+      [
+        200,
+        {
+          "note": "run identity is stub-minted; any provider correlation value is carried separately and anchors nothing",
+          "outcome": "run-started",
+          "provider_correlation_id": "x",
+          "run_id": "run-188ad2b1ebdd",
+          "stage_endpoint": "http://127.0.0.1:39347/stage/deliver"
+        }
+      ],
+      [
+        200,
+        {
+          "note": "run identity is stub-minted; any provider correlation value is carried separately and anchors nothing",
+          "outcome": "run-started",
+          "provider_correlation_id": "x",
+          "run_id": "run-b22f28d18059",
+          "stage_endpoint": "http://127.0.0.1:39347/stage/deliver"
+        }
+      ]
+    ],
+    "runs": 2,
+    "two_handlers_entered_before_first_release": true
+  },
+  "token_spend": {
+    "action_requests": 2,
+    "capabilities": 2,
+    "handler_entries_before_release": 2,
+    "responses": [
+      [
+        200,
+        {
+          "action_request": {
+            "action_class": "relay-artifact",
+            "case_id": "case-a86f30a91ecd",
+            "endpoint": "http://127.0.0.1:38407/relay/deliver",
+            "id": "ar-d4831573a1e4",
+            "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+            "payload": {
+              "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "case_id": "case-a86f30a91ecd",
+              "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+              "task_id": "TOK",
+              "transition": "R"
+            },
+            "policy_version": "P1",
+            "risk_class": "consequential",
+            "scope": "business",
+            "target_role": "verifier"
+          },
+          "action_request_status": "MINTED",
+          "authorized": true,
+          "execution_capability": "cap-FZXDGZx9_AJZPXr3iMwBcdc1ADqXIb7s",
+          "expires_in_s": 300,
+          "outcome": "authorized"
+        }
+      ],
+      [
+        200,
+        {
+          "action_request": {
+            "action_class": "relay-artifact",
+            "case_id": "case-a86f30a91ecd",
+            "endpoint": "http://127.0.0.1:38407/relay/deliver",
+            "id": "ar-a048806388d9",
+            "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+            "payload": {
+              "artifact_digest": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+              "case_id": "case-a86f30a91ecd",
+              "idempotency_key": "a928394b1dc080faa752c2ad25dcd5df95a5f41f4a49043fe9e3aac975ae244f",
+              "task_id": "TOK",
+              "transition": "R"
+            },
+            "policy_version": "P1",
+            "risk_class": "consequential",
+            "scope": "business",
+            "target_role": "verifier"
+          },
+          "action_request_status": "MINTED",
+          "authorized": true,
+          "execution_capability": "cap-C-_3En6i2XGag68yDWbNEQ833EAfj57o",
+          "expires_in_s": 300,
+          "outcome": "authorized"
+        }
+      ]
+    ],
+    "two_handlers_entered_before_first_release": true
+  }
+}

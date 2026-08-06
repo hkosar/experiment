@@ -1,0 +1,1098 @@
+{
+  "both_marker_writes_fail_truthfully_without_disk_fact": {
+    "body": {
+      "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+      "detail": {
+        "marker_attempts": [
+          {
+            "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json'",
+            "location": "primary",
+            "path": "/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json"
+          },
+          {
+            "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json'",
+            "location": "fallback",
+            "path": "/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json"
+          }
+        ],
+        "marker_error": "primary: PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json'; fallback: PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json'",
+        "marker_path": null,
+        "marker_paths": [],
+        "marker_persisted": false,
+        "problems": [
+          "final-link unlink failed (EIO)"
+        ],
+        "quota_pool_retained": "reserved-owner",
+        "restart_protection": "none",
+        "route": "/owner/artifact/register",
+        "step": "committed-artifact-register",
+        "surviving_final_path": "/tmp/chatgpt-r8-adv-c9w24zvq/captures/both-marker-fail-control/POC1/committed-artifact-register-20260806T202738-fbd13dff-0001.json",
+        "surviving_temp_path": null,
+        "surviving_temp_paths": []
+      },
+      "durable_records": [],
+      "marker_attempts": [
+        {
+          "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json'",
+          "location": "primary",
+          "path": "/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json"
+        },
+        {
+          "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json'",
+          "location": "fallback",
+          "path": "/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json"
+        }
+      ],
+      "outcome": "refused-storage-quarantine",
+      "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+      "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+      "refused": true,
+      "restart_protection": "none",
+      "storage_uncertain": true,
+      "survives_restart": false,
+      "transition_effective": "UNKNOWN \u2014 evidence on disk may describe this transition as committed; reconcile before use"
+    },
+    "current_health": [
+      200,
+      {
+        "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+        "candidate": "both-marker-fail-control",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "restart_protection": "none",
+        "run_instance": "20260806T202738-fbd13dff",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+          "durable_records": [],
+          "incidents": 1,
+          "marker_attempts": [
+            {
+              "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json'",
+              "location": "primary",
+              "path": "/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json"
+            },
+            {
+              "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json'",
+              "location": "fallback",
+              "path": "/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json"
+            }
+          ],
+          "marker_path": null,
+          "marker_persisted": false,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+          "recovered_from_marker": null,
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "none",
+          "survives_restart": false
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "fallback_markers": [],
+    "faults": {
+      "capture_dir_opens": 2,
+      "final_unlink_faults": 1,
+      "marker_open_fault_paths": [
+        "/tmp/chatgpt-r8-adv-c9w24zvq/storage_quarantine/both-marker-fail-control/quarantine-20260806T202738-fbd13dff-7d5b1a16.json",
+        "/tmp/chatgpt-r8-adv-c9w24zvq/STORAGE-QUARANTINE-both-marker-fail-control-20260806T202738-fbd13dff-7d5b1a16.json"
+      ],
+      "publication_open_faults": 1
+    },
+    "primary_markers": [],
+    "restart_health": [
+      200,
+      {
+        "candidate": "both-marker-fail-control",
+        "ok": true,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-8204aedf",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantined": false,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      200,
+      {
+        "artifact_id": "art-767ade8d5365",
+        "outcome": "registered",
+        "registration_ref": "reg-B1OhB-Oa3lwwwvpRu0IO9MJqg2K8CwOJ",
+        "source_digest_is_authoritative": true
+      }
+    ],
+    "status": 503,
+    "truthful_none_control": true
+  },
+  "failed_primary_is_unlisted_durable_record": {
+    "detail_marker_attempts": [
+      {
+        "error": "RuntimeError: forced marker directory-close tail failure after real close",
+        "location": "primary",
+        "path": "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json"
+      },
+      {
+        "error": null,
+        "location": "fallback",
+        "path": "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json"
+      }
+    ],
+    "fallback_markers": [
+      "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json"
+    ],
+    "faults": {
+      "capture_dir_opens": 2,
+      "final_unlink_faults": 1,
+      "marker_close_fault_paths": [
+        "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary"
+      ],
+      "marker_dir_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary",
+        "/tmp/chatgpt-r8-adv-byhdi780"
+      ],
+      "marker_file_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json",
+        "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json"
+      ],
+      "publication_open_faults": 1
+    },
+    "listed_deleted": [
+      "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json"
+    ],
+    "marker_docs": {
+      "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json": "storage-quarantine",
+      "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json": "storage-quarantine"
+    },
+    "primary_markers": [
+      "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json"
+    ],
+    "reconciliation_inventory_incomplete": true,
+    "remaining_before_restart": [
+      "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json"
+    ],
+    "restart_fields": {
+      "durable_records": [
+        "/tmp/chatgpt-r8-adv-byhdi780/STORAGE-QUARANTINE-marker-close-primary-20260806T202738-b1b33516-a594c698.json"
+      ],
+      "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+      "restart_protection": "durable",
+      "survives_restart": true
+    },
+    "restart_health": [
+      200,
+      {
+        "candidate": "marker-close-primary",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-c8ab3ed8",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json"
+          ],
+          "incidents": 1,
+          "marker_path": "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      503,
+      {
+        "durable_records": [
+          "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json"
+        ],
+        "first_incident": {
+          "marker_path": "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "raised_by_run_instance": "20260806T202738-b1b33516",
+          "reconcile_by": "inspect the records named here, then delete this marker file; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-byhdi780/storage_quarantine/marker-close-primary/quarantine-20260806T202738-b1b33516-a594c698.json",
+          "restart_protection": "durable",
+          "route": "/owner/artifact/register",
+          "step": "committed-artifact-register",
+          "surviving_final_path": "/tmp/chatgpt-r8-adv-byhdi780/captures/marker-close-primary/POC1/committed-artifact-register-20260806T202738-b1b33516-0001.json",
+          "surviving_temp_path": null,
+          "surviving_temp_paths": []
+        },
+        "incidents": 1,
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+        "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+        "refused": true,
+        "restart_protection": "durable",
+        "survives_restart": true
+      }
+    ],
+    "status": 503
+  },
+  "fallback_scan_error_reports_data_directory_as_record": {
+    "dangerous_false_inventory": true,
+    "faults": {
+      "fallback_list_faults": 1
+    },
+    "first_health": [
+      200,
+      {
+        "candidate": "fallback-scan-error",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-6a204f1a",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-iyccgfwv"
+          ],
+          "incidents": 1,
+          "marker_path": null,
+          "marker_persisted": null,
+          "problems": [
+            "fallback marker directory could not be listed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-iyccgfwv",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "reported_durable_records": [
+      "/tmp/chatgpt-r8-adv-iyccgfwv"
+    ],
+    "reported_record_types": [
+      {
+        "is_directory": true,
+        "is_file": false,
+        "path": "/tmp/chatgpt-r8-adv-iyccgfwv"
+      }
+    ],
+    "restart_health": [
+      200,
+      {
+        "candidate": "fallback-scan-error",
+        "ok": true,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-ddd5f422",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantined": false,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      200,
+      {
+        "artifact_id": "art-703a4d19c298",
+        "outcome": "registered",
+        "registration_ref": "reg-Ri_DiMCemd9ZGwvcq5PLrwM1BUdmkJSm",
+        "source_digest_is_authoritative": true
+      }
+    ],
+    "sentinel": "/tmp/chatgpt-r8-adv-iyccgfwv/unrelated-owner-data.txt",
+    "sentinel_exists": true
+  },
+  "partial_marker_files_exist_but_live_response_claims_none": {
+    "body_restart_fields": {
+      "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+      "durable_records": [],
+      "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+      "restart_protection": "none",
+      "survives_restart": false
+    },
+    "current_health": [
+      200,
+      {
+        "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+        "candidate": "partial-marker-live-posture",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "restart_protection": "none",
+        "run_instance": "20260806T202738-23ffaa08",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+          "durable_records": [],
+          "incidents": 1,
+          "marker_attempts": [
+            {
+              "error": "OSError: [Errno 28] forced marker JSON write failure after path creation",
+              "location": "primary",
+              "path": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+            },
+            {
+              "error": "OSError: [Errno 28] forced marker JSON write failure after path creation",
+              "location": "fallback",
+              "path": "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json"
+            }
+          ],
+          "marker_path": null,
+          "marker_persisted": false,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+          "recovered_from_marker": null,
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "none",
+          "survives_restart": false
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "detail": {
+      "marker_attempts": [
+        {
+          "error": "OSError: [Errno 28] forced marker JSON write failure after path creation",
+          "location": "primary",
+          "path": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+        },
+        {
+          "error": "OSError: [Errno 28] forced marker JSON write failure after path creation",
+          "location": "fallback",
+          "path": "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json"
+        }
+      ],
+      "marker_error": "primary: OSError: [Errno 28] forced marker JSON write failure after path creation; fallback: OSError: [Errno 28] forced marker JSON write failure after path creation",
+      "marker_path": null,
+      "marker_paths": [],
+      "marker_persisted": false,
+      "problems": [
+        "final-link unlink failed (EIO)"
+      ],
+      "quota_pool_retained": "reserved-owner",
+      "restart_protection": "none",
+      "route": "/owner/artifact/register",
+      "step": "committed-artifact-register",
+      "surviving_final_path": "/tmp/chatgpt-r8-adv-blwx86h6/captures/partial-marker-live-posture/POC1/committed-artifact-register-20260806T202738-23ffaa08-0001.json",
+      "surviving_temp_path": null,
+      "surviving_temp_paths": []
+    },
+    "fallback_markers": [
+      "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json"
+    ],
+    "false_none_despite_partial_marker_presence": true,
+    "faults": {
+      "capture_dir_opens": 2,
+      "final_unlink_faults": 1,
+      "partial_dump_fault_paths": [
+        "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json",
+        "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json"
+      ],
+      "publication_open_faults": 1
+    },
+    "marker_sizes": {
+      "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json": 28,
+      "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json": 28
+    },
+    "primary_markers": [
+      "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+    ],
+    "restart_health": [
+      200,
+      {
+        "candidate": "partial-marker-live-posture",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-5023e45f",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+          ],
+          "incidents": 2,
+          "marker_path": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json",
+          "marker_persisted": true,
+          "problems": [
+            "quarantine marker present but unreadable; its presence is the signal"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      503,
+      {
+        "durable_records": [
+          "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+        ],
+        "first_incident": {
+          "marker_path": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json",
+          "marker_persisted": true,
+          "problems": [
+            "quarantine marker present but unreadable; its presence is the signal"
+          ],
+          "reconcile_by": "inspect the records named here, then delete this marker file; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json",
+          "restart_protection": "durable",
+          "route": "startup",
+          "step": "quarantine-marker-scan"
+        },
+        "incidents": 2,
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+        "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+        "refused": true,
+        "restart_protection": "durable",
+        "survives_restart": true
+      }
+    ],
+    "status": 503
+  },
+  "post_durable_marker_close_misclassified": {
+    "body_restart_fields": {
+      "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+      "durable_records": [],
+      "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+      "restart_protection": "none",
+      "survives_restart": false
+    },
+    "current_health": [
+      200,
+      {
+        "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+        "candidate": "marker-close-both",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "restart_protection": "none",
+        "run_instance": "20260806T202738-55609491",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+          "durable_records": [],
+          "incidents": 1,
+          "marker_attempts": [
+            {
+              "error": "RuntimeError: forced marker directory-close tail failure after real close",
+              "location": "primary",
+              "path": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+            },
+            {
+              "error": "RuntimeError: forced marker directory-close tail failure after real close",
+              "location": "fallback",
+              "path": "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+            }
+          ],
+          "marker_path": null,
+          "marker_persisted": false,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+          "recovered_from_marker": null,
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "none",
+          "survives_restart": false
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "detail_marker_fields": {
+      "marker_attempts": [
+        {
+          "error": "RuntimeError: forced marker directory-close tail failure after real close",
+          "location": "primary",
+          "path": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+        },
+        {
+          "error": "RuntimeError: forced marker directory-close tail failure after real close",
+          "location": "fallback",
+          "path": "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+        }
+      ],
+      "marker_error": "primary: RuntimeError: forced marker directory-close tail failure after real close; fallback: RuntimeError: forced marker directory-close tail failure after real close",
+      "marker_path": null,
+      "marker_paths": [],
+      "marker_persisted": false,
+      "restart_protection": "none"
+    },
+    "fallback_markers": [
+      "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+    ],
+    "false_none_claim": true,
+    "faults": {
+      "capture_dir_opens": 2,
+      "final_unlink_faults": 1,
+      "marker_close_fault_paths": [
+        "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both",
+        "/tmp/chatgpt-r8-adv-c2wk_szr"
+      ],
+      "marker_dir_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both",
+        "/tmp/chatgpt-r8-adv-c2wk_szr"
+      ],
+      "marker_file_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+        "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+      ],
+      "publication_open_faults": 1
+    },
+    "marker_docs": {
+      "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json": "storage-quarantine",
+      "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json": "storage-quarantine"
+    },
+    "primary_markers": [
+      "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+    ],
+    "restart_health": [
+      200,
+      {
+        "candidate": "marker-close-both",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-77c23eff",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+          ],
+          "incidents": 2,
+          "marker_path": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      503,
+      {
+        "durable_records": [
+          "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+        ],
+        "first_incident": {
+          "marker_path": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "raised_by_run_instance": "20260806T202738-55609491",
+          "reconcile_by": "inspect the records named here, then delete this marker file; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+          "restart_protection": "durable",
+          "route": "/owner/artifact/register",
+          "step": "committed-artifact-register",
+          "surviving_final_path": "/tmp/chatgpt-r8-adv-c2wk_szr/captures/marker-close-both/POC1/committed-artifact-register-20260806T202738-55609491-0001.json",
+          "surviving_temp_path": null,
+          "surviving_temp_paths": []
+        },
+        "incidents": 2,
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+        "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+        "refused": true,
+        "restart_protection": "durable",
+        "survives_restart": true
+      }
+    ],
+    "status": 503
+  },
+  "realpath_fix_edges": {
+    "candidate_symlink": {
+      "after_pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "before_pools": {
+        "general": 0,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "error": "CaptureError: capture path escapes the captures directory",
+      "outside_files": [],
+      "quota_leaked": true,
+      "refused": true
+    },
+    "captures_root_symlink": {
+      "accepted_root_symlink": true,
+      "error": null,
+      "physical_files_outside_data_dir": [
+        "/tmp/chatgpt-r8-outside-root-943o2wkm/realpath-root/POC1/rootlink-20260806T202738-740c5888-0001.json"
+      ],
+      "returned": "/tmp/chatgpt-r8-outside-root-943o2wkm/realpath-root/POC1/rootlink-20260806T202738-740c5888-0001.json"
+    }
+  },
+  "restart_inventory_loses_sibling_marker": {
+    "fallback_markers": [
+      "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json"
+    ],
+    "initial_durable_records": [
+      "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json",
+      "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json"
+    ],
+    "primary_markers": [
+      "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json"
+    ],
+    "restart_durable_records": [
+      "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json"
+    ],
+    "restart_incidents": 2,
+    "restart_recovered_from_marker": "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json",
+    "second_restart_health_after_deleting_every_reported_record": [
+      200,
+      {
+        "candidate": "restart-inventory",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-9eb05f34",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json"
+          ],
+          "incidents": 1,
+          "marker_path": "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "sibling_relationship_lost": true,
+    "status": 503
+  },
+  "scan_once_two_process_bypass": {
+    "a_health_after_marker_created": [
+      200,
+      {
+        "candidate": "scan-once",
+        "ok": true,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-22981a66",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantined": false,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "a_initial_health": [
+      200,
+      {
+        "candidate": "scan-once",
+        "ok": true,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-22981a66",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantined": false,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "a_register_after_marker_created": [
+      200,
+      {
+        "artifact_id": "art-1aedf373d796",
+        "outcome": "registered",
+        "registration_ref": "reg--PIbJ63IZgnsxDS_bfEHzjp_2VGS9AzZ",
+        "source_digest_is_authoritative": true
+      }
+    ],
+    "already_scanned_process_bypasses": true,
+    "b_faults": {
+      "capture_dir_opens": 2,
+      "final_unlink_faults": 1,
+      "marker_close_fault_paths": [],
+      "marker_dir_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once",
+        "/tmp/chatgpt-r8-adv-hzz3zd8x"
+      ],
+      "marker_file_fsync_paths": [
+        "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+        "/tmp/chatgpt-r8-adv-hzz3zd8x/STORAGE-QUARANTINE-scan-once-20260806T202738-bf132c75-53ea0f23.json"
+      ],
+      "publication_open_faults": 1
+    },
+    "b_quarantine_status": 503,
+    "b_restart_fields": {
+      "durable_records": [
+        "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+        "/tmp/chatgpt-r8-adv-hzz3zd8x/STORAGE-QUARANTINE-scan-once-20260806T202738-bf132c75-53ea0f23.json"
+      ],
+      "restart_protection": "durable",
+      "survives_restart": true
+    },
+    "fresh_c_health": [
+      200,
+      {
+        "candidate": "scan-once",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-b9d2a956",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json"
+          ],
+          "incidents": 2,
+          "marker_path": "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "fresh_c_register": [
+      503,
+      {
+        "durable_records": [
+          "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json"
+        ],
+        "first_incident": {
+          "marker_path": "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "raised_by_run_instance": "20260806T202738-bf132c75",
+          "reconcile_by": "inspect the records named here, then delete this marker file; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-hzz3zd8x/storage_quarantine/scan-once/quarantine-20260806T202738-bf132c75-53ea0f23.json",
+          "restart_protection": "durable",
+          "route": "/owner/artifact/register",
+          "step": "committed-artifact-register",
+          "surviving_final_path": "/tmp/chatgpt-r8-adv-hzz3zd8x/captures/scan-once/POC1/committed-artifact-register-20260806T202738-bf132c75-0001.json",
+          "surviving_temp_path": null,
+          "surviving_temp_paths": []
+        },
+        "incidents": 2,
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+        "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+        "refused": true,
+        "restart_protection": "durable",
+        "survives_restart": true
+      }
+    ],
+    "marker_requires": "explicit operator reconciliation: inspect the records named below, decide what the evidence on disk actually says, then delete THIS FILE. Until it is gone every process using this data directory refuses authority transitions. Restarting the service does not clear it."
+  },
+  "summary": {
+    "both_marker_fail_truthful_none_control": true,
+    "candidate_symlink_quota_leak": true,
+    "captures_root_symlink_accepted": true,
+    "failed_primary_reconciliation_inventory_incomplete": true,
+    "fallback_scan_error_dangerous_false_inventory": true,
+    "partial_marker_live_false_none_claim": true,
+    "post_durable_marker_close_false_none_claim": true,
+    "restart_inventory_loses_sibling_marker": true,
+    "scan_once_two_process_bypass": true,
+    "transient_scan_error_false_durable_claim": true,
+    "writefree_temp_live_false_none_claim": true
+  },
+  "target": "/mnt/data/R8_exec/poc/stub/stub_server.py",
+  "target_sha256": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1",
+  "transient_scan_error_mislabelled_durable": {
+    "false_durable_claim": true,
+    "faults": {
+      "primary_faults": 1
+    },
+    "first_health": [
+      200,
+      {
+        "candidate": "transient-scan",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-6a42f2e5",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-hnz5blaa/storage_quarantine/transient-scan"
+          ],
+          "incidents": 1,
+          "marker_path": null,
+          "marker_persisted": null,
+          "problems": [
+            "quarantine directory could not be listed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-hnz5blaa/storage_quarantine/transient-scan",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "reported_durable_records_exist": [
+      [
+        "/tmp/chatgpt-r8-adv-hnz5blaa/storage_quarantine/transient-scan",
+        false
+      ]
+    ],
+    "restart_health": [
+      200,
+      {
+        "candidate": "transient-scan",
+        "ok": true,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-bbcd3367",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantined": false,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      200,
+      {
+        "artifact_id": "art-8b75d5da826c",
+        "outcome": "registered",
+        "registration_ref": "reg-GplP-lGs_zPpLzAFvNfWsgKasHwBfbkX",
+        "source_digest_is_authoritative": true
+      }
+    ]
+  },
+  "writefree_temp_exists_but_live_response_claims_none": {
+    "body_restart_fields": {
+      "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+      "durable_records": [],
+      "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+      "restart_protection": "none",
+      "survives_restart": false
+    },
+    "current_health": [
+      200,
+      {
+        "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+        "candidate": "writefree-live-posture",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "restart_protection": "none",
+        "run_instance": "20260806T202738-4e6ef60a",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+          "durable_records": [],
+          "incidents": 1,
+          "marker_attempts": [
+            {
+              "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json'",
+              "location": "primary",
+              "path": "/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json"
+            },
+            {
+              "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json'",
+              "location": "fallback",
+              "path": "/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json"
+            }
+          ],
+          "marker_path": null,
+          "marker_persisted": false,
+          "problems": [
+            "temp unlink failed (EIO)"
+          ],
+          "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+          "recovered_from_marker": null,
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "none",
+          "survives_restart": false
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "detail": {
+      "marker_attempts": [
+        {
+          "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json'",
+          "location": "primary",
+          "path": "/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json"
+        },
+        {
+          "error": "PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json'",
+          "location": "fallback",
+          "path": "/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json"
+        }
+      ],
+      "marker_error": "primary: PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json'; fallback: PermissionError: [Errno 13] forced marker write failure at both locations: '/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json'",
+      "marker_path": null,
+      "marker_paths": [],
+      "marker_persisted": false,
+      "problems": [
+        "temp unlink failed (EIO)"
+      ],
+      "quota_pool_retained": "reserved-owner",
+      "restart_protection": "none",
+      "route": "/owner/artifact/register",
+      "step": "prepared-artifact-register",
+      "surviving_final_path": null,
+      "surviving_temp_path": "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp",
+      "surviving_temp_paths": [
+        "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+      ]
+    },
+    "fallback_markers": [],
+    "false_none_despite_writefree_disk_fact": true,
+    "faults": {
+      "created_temp": "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp",
+      "marker_open_fault_paths": [
+        "/tmp/chatgpt-r8-adv-2jltupig/storage_quarantine/writefree-live-posture/quarantine-20260806T202738-4e6ef60a-ccd28af2.json",
+        "/tmp/chatgpt-r8-adv-2jltupig/STORAGE-QUARANTINE-writefree-live-posture-20260806T202738-4e6ef60a-ccd28af2.json"
+      ],
+      "mkstemp_faults": 1,
+      "temp_unlink_faults": 1
+    },
+    "fresh_durable_records": [
+      "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+    ],
+    "primary_markers": [],
+    "restart_health": [
+      200,
+      {
+        "candidate": "writefree-live-posture",
+        "ok": false,
+        "partition": "business",
+        "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+        "run_instance": "20260806T202738-f8979e99",
+        "service": "poc-wrapper-stub",
+        "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+        "storage_anomalies": 0,
+        "storage_quarantine": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+          ],
+          "incidents": 1,
+          "marker_path": null,
+          "marker_persisted": false,
+          "problems": [
+            "a temp capture artifact outlived the process that created it, so its removal was never proven"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": null,
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "storage_quarantined": true,
+        "throwaway": "THROWAWAY POC APPARATUS \u2014 not the AI OS wrapper, no Track B credit, must not survive into production use"
+      }
+    ],
+    "restart_register": [
+      503,
+      {
+        "durable_records": [
+          "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+        ],
+        "first_incident": {
+          "marker_persisted": false,
+          "problems": [
+            "a temp capture artifact outlived the process that created it, so its removal was never proven"
+          ],
+          "reconcile_by": "inspect this temp artifact, then remove it; its presence is a filesystem fact, not a marker, so no marker write was needed to preserve it",
+          "recovered_from_disk_fact": "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp",
+          "restart_protection": "durable",
+          "route": "startup",
+          "step": "surviving-temp-artifact",
+          "surviving_temp_path": "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+        },
+        "incidents": 1,
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+        "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+        "refused": true,
+        "restart_protection": "durable",
+        "survives_restart": true
+      }
+    ],
+    "status": 503,
+    "temp_exists": true
+  }
+}

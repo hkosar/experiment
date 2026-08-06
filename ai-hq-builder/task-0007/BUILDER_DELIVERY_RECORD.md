@@ -1,180 +1,142 @@
-# Builder Delivery Record — TASK-0007 Round R8 (facts, not proxies)
+# Builder Delivery Record — TASK-0007 Round R9 (marker state as facts, complete inventories, enforced invariants)
 
-**Task:** TASK-0007 R8 — `51_`'s four gating items, the §1 fourth-instance search, and one non-gating item.
+**Task:** TASK-0007 R9 — `56_`'s items F–K, the carried item E, and the §1 re-search over all R8+R9 remediation code.
 **Builder:** Claude Code session, model `claude-opus-5` (standing authorized substitution, trail entry 69).
-**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §8).
-**Instruction authority:** `51_TASK-0007_R8_Task_Packet_Facts_Not_Proxies.md` (governing), with `49_` — read first, as `51_` §5 directs — as the authoritative findings behind it and `50_` as Fable's concurrence. `25_` unchanged; concurrency, provider contracts, the POC architecture and the `47_` §3 publication-tail ruling closed and not reopened.
+**Branch:** `claude/task-0002-builder-handoff-g97x8j` (operator-designated; see §9).
+**Instruction authority:** `56_TASK-0007_R9_Task_Packet_Marker_Facts_and_Enforcement.md` (governing), with `54_` — read first, as `56_` §3 directs — as the authoritative findings and `55_` as Fable's concurrence. `25_` unchanged; concurrency, provider contracts, the POC architecture, both settled rulings and the R8-closed items C/D are closed and not reopened.
 **Returned to:** **Fable.**
-**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted. **One change request: CR-R8-01, §5** — item E cannot be done inside the packet's own denylist.
+**Status:** **Built and self-tested. Independent verification pending.** No POC has been run; no provider was contacted. No change requests — CR-R8-01 was authorized in `56_` §0 and is applied.
 
-**Snapshot integrity (H-06), before anything was read as authority — all counts below describe THIS relay** (`TASK0007_R8_Builder.zip`):
+**Snapshot integrity (H-06), before anything was read as authority — all counts describe THIS relay** (`TASK0007_R9_Builder_2.zip`):
 
 | Check | Result |
 | --- | --- |
-| `SHA256SUMS.txt` | **113/113 OK** |
-| `authority_manifest.json` | **112/112 verified, 0 mismatched, 0 missing**; two unlisted files on disk, `SHA256SUMS.txt` and the manifest itself |
-| `BASE_BINDING.txt` tree, independently reproduced | **`69ca5043f0e844f5c81caef7b5eae38bf52ec91d`** — matches |
-| Relay's `poc/` against my R7 return | **102/102 byte-identical** |
-| `r7_reference/stub_server_r7.py` | **`69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91`** — the digest `49_` and `50_` both independently report for the executed build |
-| Verifier's probe, against `49_security_probes/` | **`b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366`** — byte-identical |
+| `SHA256SUMS.txt` | **118/118 OK** |
+| `authority_manifest.json` | **117/117 verified, 0 mismatched, 0 missing**; two unlisted on disk, `SHA256SUMS.txt` and the manifest itself |
+| `BASE_BINDING.txt` tree, independently reproduced | **`64bf6c8f6e0187865fca22c82094863755e96879`** — matches |
+| Relay's `poc/` against my R8 return | **106/106 byte-identical** |
+| `r8_reference/stub_server_r8.py` | **`5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1`** |
+| Verifier's probe, against `54_security_probes/` | **`282a654e2ea2ae62e4f4c892c3728b7b50b50a53fa0051bf70ebdacf8c1426e6`** — byte-identical |
 
 ---
 
-## 1. The habit, named accurately
+## 1. What R8 did, stated without softening
 
-`50_` §3 and `51_` §1 are right, and the framing is better than "three bugs". Each control tested a **cheap proxy** for the fact it existed to establish, and each was correct on the input it was shown and blind one step over:
+R8 removed three proxies and put two new ones **inside the remedy**. `_write_marker` returned an error for any exception anywhere in its body — including one raised after the marker file *and* its parent directory had both been fsynced — and `_persist_quarantine` counted a marker as landed only on a clean return. **"The function returned without an exception" stood in for the disk facts "a record exists" and "a record is durable."** That is the third time this workstream has applied a post-durability boundary correctly in one place and missed it in the next (publication R5/R7, rollback R8, marker R9).
 
-| Control | What it tested | What it had to establish |
-| --- | --- | --- |
-| no-artifact early return | `tmp` is `None` | no temp or final name **ever existed on disk** |
-| rollback close tail | the exception is an `OSError` | **anything at all** went wrong after durability |
-| restart quarantine | no marker file is present | the previous process **did not quarantine** |
+Two things I want on the record rather than buried:
 
-What makes this worth stating rather than just fixing: I wrote the R7 `/health` block with an explicit comment saying an operator must be able to tell "a restart will still be stopped" from "the marker could not be written, so it will not be" — **and then asserted "restarting does not clear it" unconditionally, one key later, in the same JSON object.** I identified the exact operator need and contradicted it in the next statement. That is not a blind spot; it is a failure to check my own output against the requirement I had just written down. The countermeasure this round is `_restart_posture()`: **one function** produces every operator-facing restart statement, called from `/health` and both 503 bodies, so there is exactly one place for it to be wrong and it is derived from what actually landed.
+**The scan-once judgement was mine, Fable concurred, and the verifier disproved it by execution.** I wrote in the R8 record that scan-once was "formally the pattern" and judged the gap unreachable because two processes on one data directory is not the supported configuration. `55_` §3 identifies the exact defect in that reasoning, and it is not "the assumption was wrong" — it is that **I never checked the assumption against the sentence the service ships.** The marker text says *"every process using this data directory refuses authority transitions"*, unconditionally. A claim that exceeds its enforcement is itself a proxy-for-fact instance. I had the §1 table in front of me and did not apply it to the sentence.
 
-## 2. The corrections — `51_`'s items
+**The `durable_records` finding is the one that could have caused real harm.** A transient `EIO` on the fallback scan put the entire data directory into `durable_records`, next to a runbook telling the operator to delete every path in it. An operator following the written instruction in good faith would have destroyed the evidence tree. Nothing else this round is in that category, and I am not going to describe it as a reporting defect.
+
+## 2. The corrections — `56_`'s items
 
 | # | Required | Implemented |
 | --- | --- | --- |
-| **A** | an unpersisted marker must not be only diagnostic | **three mechanisms and truthful disclosure** — §3 |
-| **B** | operator text conditional and true | `_restart_posture()`, one definition and three call sites (`/health`, the dispatch-gate 503, the raising request's 503). The runbooks carry the operator instruction; the audit `51_` asked for found the sentence in **no** runbook, so the change there is an addition, not a correction |
-| **C** | track temp creation as a filesystem fact | `tmp_prefix` is chosen and bound **before any create**; `_existing_temp_artifacts` lists the directory for it. The early return runs only when there is no final link, no temp on disk, **and** the absence was established — a directory that cannot be listed establishes nothing and falls through to the proof path. A directory that does not exist *does* establish absence, which is how the `os.makedirs` case stays fixed |
-| **D** | rollback tail exception-type complete | every handler in `_rollback_capture` — unlink, directory open, fsync, close — now catches `BaseException`, split on `rollback_durable` exactly as before. `_release_pool` runs on the durable path, which R7 skipped entirely because the exception escaped before reaching it |
-| **E** | non-gating harness status | **CANNOT BE DONE INSIDE THE DENYLIST — CR-R8-01, §5.** Patch written and verified, not applied |
-| **§1** | search for a fourth instance | **two found, both fixed** — §4 |
+| **F** | tri-state marker fact, not a success Boolean | `_write_marker` returns `{path, state, error, anomaly}`; `state` comes from `_path_fact`, which **asks the filesystem**. `DURABLE` is set the instant the parent-directory fsync returns and nothing after it may lower it — the close tail records a soft anomaly instead. `PRESENT_OR_UNKNOWN` when the path exists or cannot be shown absent; `ABSENT_KNOWN` only when absence is verified the item-C way |
+| **G** | live disk facts feed the live posture | `_restart_posture` counts `surviving_temp_paths` from the **live** incident, and every real record raises the level. While any temp or present/durable marker exists, `none` / `survives_restart: false` / "nothing on disk" cannot be emitted |
+| **H** | one incident, one ID, one complete inventory | a stable `incident_id` stamped at construction; the **same ID and the complete sibling inventory written into both markers**; `_merge_incidents` deduplicates by ID on scan; `_quarantine_summary` exposes **every** incident and the union of every real record on `/health` and both 503 bodies |
+| **I** | a scan error is never a durable record | `_scan_error_incident` — `restart_protection: "unknown"`, the location reported under `unlistable_location` with an explicit "this is NOT a record to delete", nothing added to `durable_records`. `_classify_records` admits only **stat-verified regular files**; a directory never qualifies |
+| **J** | enforce the one-process invariant | **both mechanisms** — `flock(LOCK_EX \| LOCK_NB)` on `<data_dir>/.stub-<candidate>.lock` held for the process lifetime, **and** `_refresh_quarantine` before every authority transition. §4 |
+| **K** | complete the containment check | (a) containment now runs **before** `_reserve_pool`, so a refusal cannot leak a unit; (b) the canonical root is compared against its physical location under the resolved data directory, so a root symlink is **refused** rather than resolved through by both sides |
+| **E** | the authorized `run_all.sh` edit | applied. `NOT RUN` is distinct from ran-and-failed: FAIL/1, INCOMPLETE/2, PASS/0. Verified with the dependency absent (exit 2) and present (exit 0). No vendoring, no network |
 
-`51_` item C's warning was specific and I checked it: the ordinary `os.makedirs`-failed case is still an ordinary `capture-failed` with all pools released and no quarantine, asserted directly in the self-test immediately after the item-C case, so the availability defect `46_` item 3 fixed did not regress into a spurious quarantine.
+## 3. §1 — the re-search over all R8 and R9 code, reported either way
 
-## 3. Item A — what I did, and the option I did not take
+`56_` §1 sharpened the instruction: the pattern concentrates in new remediation code, so look there first. I enumerated the surface mechanically — every function whose text differs from the pinned R7 build (R8's changes) or from the pinned R8 build (R9's) — **25 functions**. Four instances found, all fixed.
 
-**Three mechanisms, because no one of them can establish the fact on a filesystem that is already failing:**
-
-1. **Primary** — `<data_dir>/storage_quarantine/<candidate>/quarantine-*.json`, as at R7.
-2. **Fallback** — `<data_dir>/STORAGE-QUARANTINE-<candidate>-*.json`. A different directory, and one that **already exists** (the captures tree lives under it), so it needs no directory creation. The two failure shapes the verifier reproduced break exactly the two things the primary needs and neither of the things the fallback needs. **Both are attempted every time, not the fallback only on primary failure** — a fallback exercised only in the failure case is an untested path, and an untested path is how the primary's own gap survived R7.
-3. **Write-free** — any surviving `.tmp` under `captures/<candidate>/`. A temp that outlived its process is an unproven artifact by construction, and `42_` already settled that a temp which cannot be removed is quarantine-worthy. This needs **no successful write at all**, which is the only kind of signal that survives a read-only disk.
-
-**And when none of them lands, the service says so.** `restart_protection: "none"`, `survives_restart: false`, and an explicit `WARNING` beginning "DO NOT RESTART" — surfaced at the **top level** of `/health` as well as inside the quarantine block, because an operator may not open a nested object. `_persist_quarantine` still cannot raise; `51_` §3 keeps that constraint and the reason is unchanged.
-
-**The option I did not take, and why — this is the part to read.** `51_` item A offers **inverting the write** first, and it is the structurally better idea: create the durable signal before the operation that can fail, remove it only on proven success. I could not take it. The inverted write has to happen inside `_rollback_capture`, which is inside the window whose `os.fsync` and directory `os.close` **ordinals** the verifier's probes count — "the second directory close", "the third fsync". Two extra fsyncs and a directory open/close there would relocate every one of those injected faults onto the marker's own I/O. The fault would still fire, at the wrong call, testing nothing. That is an evasion by construction and `51_` §4 forbids exactly it. So: resolution 1 (second durable location), stated as a choice rather than presented as the only option, with the reason the better option is unavailable.
-
-## 4. §1 — the fourth-instance search, and what it found
-
-`51_` §1: *"A fourth instance found by the Builder is worth more to this program than the three fixed ones."* I searched every control in `stub_server.py` against the table's question — **does this control's test establish its fact, or stand in for it?** Two instances, both fixed; the rest of the audit stated either way, because a negative result only means anything if the ground it covers is named.
-
-### FOUND — the capture-path containment check was lexical, not real (fixed)
-
-`write_capture` computed `root` and `expected` with `os.path.abspath` and compared with `startswith`. **`abspath` is purely lexical** — it normalises `..` and makes the path absolute and never touches the filesystem. So the test was *"the path string starts with the captures prefix"*, standing in for the fact *"the bytes land inside the captures directory"*. Those diverge the moment any component is a symlink: `captures/<candidate>` pointing elsewhere passes the string test and writes outside the tree. `SAFE_NAME` blocks `..`, which is the failure this check was shown; a symlink is the one it was silent on. Same shape, one control over.
-
-Fixed with `os.path.realpath` on both sides, and a self-test case that plants a real symlink and asserts both the refusal and that nothing was written outside.
-
-**Severity, stated honestly rather than inflated:** not reachable from any owner or provider request. Every path component is `SAFE_NAME`-matched and the stub creates these directories itself, so it needs an operator or a prior process to have placed a symlink under `--data`. **Residual, named not hidden:** a component swapped for a symlink *between* the check and the `os.makedirs` would still land outside. Closing that needs `O_NOFOLLOW` descriptors and openat-relative writes — a real design change to the publication path, outside `51_`'s items.
-
-### FOUND — in my own R8 code, while writing the fix for this exact class (fixed)
-
-The first draft of `_surviving_temp_artifacts` — the function whose entire job is to establish a fact — wrote `except OSError: continue` on the per-POC directory listing. That reports **"I could not look"** as **"there is nothing here."** It is the identical substitution, committed inside the remedy for it, and I found it by re-reading my own new code against the §1 table rather than by any test. An unlistable capture directory now counts as an incident.
-
-I report this one because it is the more useful of the two. The pattern is not something previous rounds had and this round removed; it is a default I reach for under a `try:` unless I actively check. §1's instruction is the check.
-
-### LOOKED, AND FOUND NONE — with the ground named
-
-| Control | Its test | Verdict |
-| --- | --- | --- |
-| owner/provider authentication | `hmac.compare_digest` against the stored key | the fact |
-| route policy | `ROUTE_POLICY` row; missing ⇒ 404 fail closed | the table **is** the policy |
-| capture field allowlisting | membership in the route's `fields` | the fact |
-| entity quota | `_entity_live` = the counter the route itself increments | SEC-R3-06 already removed the parallel-counter proxy here |
-| capture pools | `_pool_for`, policy-driven | the fact |
-| token spend | `consumed` flag set under the held lock | the fact |
-| revocation | epoch compared at terminal commit | the fact (SEC-R3-02) |
-| publication durability | `published` set after `os.fsync` returns | the fact (R5/R7) |
-| rollback durability | `rollback_durable` set after its fsync returns | the fact (R7) |
-| transport refusals | Content-Length / Content-Type / JSON shape | facts about the request |
-| redaction | `SECRETS.scrub` (exact for minted secrets) + regex patterns (heuristic) | **partly a proxy, and irreducibly so** — see below |
-
-**Redaction is the one honest "proxy" I am not proposing to change.** `SECRET_PATTERNS` is a heuristic for "this blob contains a secret", and no exact test exists for the general case. It is not the defect class: the exact half (`SECRETS.scrub`) covers every value this service minted, which is the only category it has authority over, and the heuristic half is additive. Naming it here so that "found none" is not read as "looked only where it was easy".
-
-### CONSIDERED AND JUDGED NOT AN INSTANCE — stated so the judgement can be overruled
-
-`_ensure_quarantine_scanned` scans **once per process**, so its test is "was this directory quarantined when I first served a request", standing in for "is it quarantined **now**". Formally the pattern. I did not fix it, and the reasoning is: the only gap is a second process sharing the same data directory concurrently, which is not a supported configuration — the runbook starts one stub per candidate — and the in-process case is covered by the in-memory register rather than by the scan, so this process always fails closed on its own quarantine regardless. Re-scanning per request would also need marker-path deduplication to avoid re-appending the process's own incident, which would change `before_state == after_state` in a verifier-confirmed R6 predicate. **If Fable disagrees, it is a contained change and I would rather be told than have guessed.**
-
-## 5. CR-R8-01 — item E cannot be done inside the packet's own denylist
-
-**`51_` §2 item E requires modifying `poc/harness/run_all.sh`. `51_` §3 and §5 both forbid it.** `25_` §0 names it explicitly on the immutable denylist: *"all `poc/harness/*.py`, `*.mjs`, `run_all.sh`"*. Every file in the chain item E names — `run_all.sh`, `validate_n8n_workflows.mjs`, `selftest_validator.mjs` — is denylisted, so there is no allowlisted seam, and `51_` §5's new-file permission is for modules under `stub/`, none of which can change what `run_all.sh` prints.
-
-`51_` §5 says to stop and report on an internally inconsistent clause. Item E is explicitly **non-gating**, so I stopped item E and finished everything else rather than stopping the round.
-
-The patch is written out at `diffs/PROPOSED-NOT-APPLIED-item-E-run_all.sh.txt` and **verified without being applied** — run from `poc/harness/` under a temporary name, dependency absent and then present, temporary copy deleted:
-
-- dependency **absent** → exit **2**, `=== HARNESS INCOMPLETE (every check that ran passed; one or more were NOT RUN) ===`, both Node checks printing `NOT RUN — optional dependency n8n-workflow is unavailable`;
-- dependency **present** → exit **0**, `=== HARNESS PASS ===`.
-
-Exit-status-preserving for every check that actually runs. No vendoring, no network requirement. **This working tree ships `run_all.sh` byte-identical**; authorising the patch costs one line.
-
-## 6. Verification — every figure from a command run after the last edit
-
-Red-before-green against the SHA-pinned R7, **with the injected fault shown landing identically on both builds** — `51_` §4 makes that standing practice, and it carries unusual weight this round because two of the three fixes could be faked by a build that simply stopped calling the thing the probe patches. Item C is the live example: selecting the temp pathname myself and calling `os.open(O_CREAT|O_EXCL)` would satisfy the requirement *and* stop the verifier's `tempfile.mkstemp` patch from ever firing. The create therefore stays where the probe can reach it and the fact is established a different way.
-
-| Suite | Against R8 | Against pinned R7 | Meaning |
+| # | Where | The proxy | How it was found |
 | --- | --- | --- | --- |
-| **Verifier's `chatgpt_r7_adversarial_recheck`** | **4/4** | **0/4** | items A, C, D |
-| — item A, marker-`makedirs` (EROFS) | restart **quarantined, 503** | restart clean, **200** | fault fired on both (`marker_makedirs_faults: 1`) |
-| — item A, marker-`open` (EACCES) | restart **quarantined, 503** | restart clean, **200** | fault fired on both (`marker_open_faults: 1`) |
-| — item C, temp created pre-return | **`CaptureQuarantine`**, quota retained | `CaptureError`, quota released | `mkstemp_faults: 1` on both |
-| — item D, `RuntimeError` after real close | **`CaptureError` + 1 soft anomaly**, quota released | `RuntimeError` escapes, **0** anomalies, quota retained | `runtime_close_faults: 1` on both |
-| **Verifier's `chatgpt_r6_quarantine_integrity_probe`** | **5/5** | 5/5 | R7-confirmed, unchanged |
-| **Verifier's `post_durable_interrupt_compare`** | **green** | green | the `47_` §3 ruling, unchanged |
-| **Verifier's `chatgpt_r5_cleanup_rollback_probe`** | **5/5** | 5/5 | R6-confirmed, unchanged |
-| `capture_fault_suite.py` | **9/9** | 9/9 | unchanged, and the file is **byte-identical to R7** |
+| 1 | `_surviving_temp_artifacts` | *"a `.tmp` exists under `captures/`"* standing in for *"a `.tmp` **outlived** the process that created it"*. At R8 the scan ran once at startup, before any capture existed, so the two were the same statement. Item J made it run before every transition and they came apart instantly: **every normal capture has a real `.tmp` on disk between `mkstemp` and the unlink**, so a concurrent request quarantined a perfectly healthy service | **The regression suites, not reading.** Barriers went 3/6 and the oracle 6/7 the moment the rescan landed. Fixed by registering the reserved temp prefix on the Store *before* the create and excluding in-flight prefixes — a fact about this process's own state, which is authoritative for its own temps |
+| 2 | `_existing_only` | `os.path.isfile(p)` returning False stood in for *"this is not a record"*. `isfile` swallows every `OSError`, so a marker that could not be **stat'ed** — a real record, still on disk — vanished silently from the operator's inventory. **That is finding 2.2's exact shape inside the code written to fix finding 2.3** | Reading, against the §1 table. Now `_classify_records` splits *proven absent* (dropped) from *cannot resolve* (reported as `unverifiable_records`, never deleted and never presented as deletable) |
+| 3 | `_path_fact` | *"the directory listing succeeded"* standing in for *"the name is not in it"* — I returned `ABSENT_KNOWN` as soon as `listdir` did not raise, without checking membership | Reading. Now the basename must actually be absent from the listing |
+| 4 | `_rollback_capture` | the incident ID was stamped inside `_persist_quarantine`, which runs **after** the incident is appended to the register. Between those two lines the incident had no ID, and `_merge_incidents` keys on it — a concurrent `_refresh_quarantine` would have merged it under `None` with any other ID-less incident. *"It will get an ID in a moment"* is not *"it has one"* | Reading, while checking item H's merge key |
+
+**Instance 1 is the one worth the round.** It is the same shape as the scan-once finding one level down: a statement that was true under an unstated condition (the scan only ever ran at startup), shipped as though it were unconditional. It was found because item J removed the condition and the suites broke loudly — which is an argument for the regression set, not for my reading.
+
+**Looked and found none**, with the ground named so the negative result means something: authentication (`compare_digest` against the stored value), route policy (the table *is* the policy), field allowlisting, entity quota (SEC-R3-06 already removed the parallel-counter proxy), pool selection, token spend under the held lock, revocation epoch at terminal commit, publication durability (R5/R7), rollback durability (R8), temp-as-filesystem-fact (R8 item C), transport refusals, `_merge_incidents`' union semantics, `_acquire_candidate_lock` (the lock *is* the enforcement), and `_quarantine_summary`'s per-incident iteration. Redaction remains partly heuristic **by necessity** and is named again here so "found none" is not read as "looked only where it was easy".
+
+## 4. Item J — why both mechanisms, and not just the one `56_` selected
+
+`56_` selects `flock` and pre-authorizes the rescan alternative. **This build ships both, and neither is decoration.**
+
+- **The lock** stops the accidental second launch — the real operational risk, an operator starting a second stub on the same data directory — before it can do anything at all. A second process on the same `(data_dir, candidate)` refuses to start and names the holder's PID.
+- **The rescan** makes the marker's *"every process"* sentence true for **any** process, including one that never went through the startup path. That is precisely the configuration the verifier's probe constructs, and it is the configuration in which the sentence would otherwise still exceed its enforcement — one layer down, which is the finding itself.
+
+Shipping only the lock would have left `54_` §3's mechanism closed and `55_` §3's *rule* still violated. The cost is two or three `os.listdir` calls per authority transition on a localhost throwaway apparatus, and merging is by incident ID so re-observing the same facts is a no-op rather than a growing register.
+
+**Stated as a limitation:** `flock` is advisory. It binds cooperating processes, which every process running this file is; it does not stop a different program from writing into the data directory. On a platform without `fcntl` the stub now **refuses to start** rather than claim a protection it cannot enforce.
+
+## 5. Verification — every figure from a command run after the last edit
+
+Red-before-green against the SHA-pinned R8, with the injected fault asserted firing identically on both builds.
+
+| Suite | Against R9 | Against pinned R8 | Meaning |
+| --- | --- | --- | --- |
+| **Verifier's `chatgpt_r8_adversarial_recheck`** | **11/11 checks** | **1/11** | items F–K |
+| — F, post-durable marker close | `durable`, both markers listed | `none`, `durable_records: []` | 2 file fsyncs, 2 dir fsyncs, 2 close faults on both |
+| — F, partial marker (ENOSPC mid-JSON) | `present_unverified`, both listed | `none` | 2 partial-write faults on both |
+| — G, surviving temp, both markers refused | `durable`, temp listed | `none` | `mkstemp_faults: 1` on both |
+| — H, durable primary with close-tail anomaly | listed; delete-and-restart **clean** | primary omitted; restart **503** | 1 close fault on both |
+| — H, sibling restart reconstruction | 1 incident, 2 records, **ends clean** | 2 incidents, 1 record, still quarantined | — |
+| — I, transient primary scan `EIO` | `unknown`, **no** records | `durable`, a nonexistent path | 1 fault on both |
+| — I, transient fallback scan `EIO` | `unknown`, **no** records, sentinel intact | the **whole data directory** named as deletable | 1 fault on both |
+| — J, two processes one directory | A refuses at **503** after B quarantines | A accepts at **200** | — |
+| — K, containment refusal | **no** pool unit consumed | one unit leaked | — |
+| — K, captures-root symlink | **refused**, nothing outside | accepted, JSON written outside | — |
+| — **verifier's positive control** | **`none`, truthfully; fresh process clean at 200** | same | must stay green — §8 row 2 |
+| **Verifier's `chatgpt_r7_adversarial_recheck`** | **4/4** | 4/4 | R8-closed items C/D, unchanged |
+| **`chatgpt_r6_quarantine_integrity_probe`** | **5/5** | 5/5 | unchanged |
+| **`post_durable_interrupt_compare`** | **green** | green | the `47_` §3 ruling, unchanged |
+| **`chatgpt_r5_cleanup_rollback_probe`** | **5/5** | 5/5 | unchanged |
+| `capture_fault_suite.py` | **9/9** | 9/9 | unchanged, and the file is **byte-identical to R8** |
 | Acceptance oracle | **7/7, 33 clauses** | — | unchanged |
-| Deterministic barriers | **6/6** | — | unchanged, corroborating per `37_` §2 |
-| Current-process fail-closed | **true** | true | unchanged |
-| Prepared-record / quota behaviour | **unchanged** | unchanged | §6.1 |
-| Stub self-test | **250/250** | — | 216 through R7, plus 34 for R8 |
-| Reviewer's full probe set (now 15) | 10 green | 9 green | the same five barrier-class remain per AUDIT-R4-5, ruled on in `37_` §1 |
+| Deterministic barriers | **6/6** | — | unchanged |
+| Stub self-test | **285/285** | — | 250 through R8, plus 35 for R9 |
+| Reviewer's full probe set (now 16) | 11 green | 10 green | the same five barrier-class remain per AUDIT-R4-5, ruled on in `37_` §1 |
 | Superseded-build witnesses | **34/34** | — | R1 21, R2 13 |
 | Measurement validator | **160/160, 0 violations** | — | unchanged |
-| Structural harness | **PASS** | — | harness code byte-identical, `run_all.sh` included |
+| Structural harness | **PASS**, exit 0 | — | and **INCOMPLETE, exit 2** with `n8n-workflow` absent — item E |
 
-**The both-locations-fail case is mine, not the verifier's, and it is the one that matters.** The verifier's probe breaks only the primary; a fallback would pass it whether or not it were a real second mechanism. So the self-test runs each marker failure **twice**: once with the primary broken (the fallback must carry it, and the failed primary attempt must be reported so the fallback is not silently standing in) and once with **every** location broken (the service must report `restart_protection: none`, warn explicitly, and emit **no** sentence claiming a restart will be stopped — asserted by searching the whole response body).
+## 6. Two criteria changed, stated rather than quietly widened
 
-### 6.1 The accepted prepared-record and quota behaviour, side by side
+Both were forced by behaviour `56_` requires, and both are checked *more* strictly now:
 
-`committed_final_link_cleanup_failure`, R7 and R8: **503** `refused-storage-quarantine` on both; pools `{general 0, reserved-owner 2, security-refusal 0}` on both; **1** registration, **1** identity-index entry on both; the same two capture records (`committed`/`committed`, `prepared`/`prepared`). R8 adds the second marker file outside `captures/`.
-
-### 6.2 One criterion changed, stated rather than widened quietly
-
-The R7 self-test's *"the quarantine is persisted as a marker"* asserted **exactly one** marker and then deleted only the primary to prove reconciliation works. `51_` item A requires a second durable location, so that assertion now fails for the right reason. It is split: the R7 property is still checked verbatim (one primary marker, outside `captures/`), a new check asserts the fallback exists **in a different directory**, and reconciliation now removes every durable record. Flagged here because "a Builder loosening a test after a behaviour change" is the move that deserves suspicion, and `50_` §2.2 is a live example of one getting through.
+- **R7 block, "naming the marker it recovered".** Item H replaced the single `recovered_from_marker` with a merged inventory, because R8's version named one marker and left the operator quarantined by its sibling. The check now requires **every** recovered record to be listed and each to be a real file.
+- **R8 block, "the fallback location carried the quarantine".** Item F replaced the `marker_paths` success list with per-attempt tri-state disk facts, because a success list was the proxy. The check now reads the states and requires the surviving attempt to be the fallback at `DURABLE`.
 
 ## 7. Return contents
 
 Complete `poc/` tree, Delivery Record, self-verified `RETURN_MANIFEST.json` (regenerated **after** the final run), `proposed_classifications.json` (**suggestion only**), `diffs/`.
 
-Changed: `stub/stub_server.py`, `stub/probe_runner.py`, `stub/selftest_stub.py`, `runbooks/RUNBOOK-n8n.md`, `runbooks/RUNBOOK-owner-session.md`, `runbooks/RUNBOOK-zapier.md`.
-Added: `stub/r7_reference/` (permitted by `51_` §5), the verifier's `chatgpt_r7_adversarial_recheck.py` under `stub/security_probes/`, `stub/out/r8_acceptance.json`, and `diffs/PROPOSED-NOT-APPLIED-item-E-run_all.sh.txt`.
-**Unchanged and deliberately so:** `stub/capture_fault_suite.py`, and every file on the immutable denylist including `harness/run_all.sh`.
-Regenerated by running: `harness/out/**` (byte-identical to R7), `stub/out/selftest.json`, `stub/out/r1_witnesses.json`.
+Changed: `stub/stub_server.py`, `stub/probe_runner.py`, `stub/selftest_stub.py`, all three runbooks, and **`harness/run_all.sh`** — the single authorized denylist exception (CR-R8-01, `56_` §0).
+Added: `stub/r8_reference/` (permitted by `56_` §4), the verifier's `chatgpt_r8_adversarial_recheck.py` under `stub/security_probes/`, `stub/out/r9_acceptance.json`.
+**Unchanged and deliberately so:** `stub/capture_fault_suite.py`, and every other denylisted file including `r1_`–`r7_reference/`.
+Regenerated by running: `harness/out/**` (byte-identical to R8), `stub/out/selftest.json`, `stub/out/r1_witnesses.json`.
 
 ## 8. Falsifier element (APP-06 / CPB-14, reflexive)
 
 | # | Claim | Who would have to be wrong, and how | Status |
 | --- | --- | --- | --- |
-| 1 | Item A establishes the fact rather than a better proxy | **The verifier, and the sharpest challenge is that a second location is still a marker write.** It is: on a wholly read-only filesystem both fail, and then the only thing left is the write-free `.tmp` fact and truthful disclosure. I did not claim a durable control there — I made the service say it does not have one. If the reviewer holds that the honest-disclosure branch is insufficient, that is a real disagreement about what is achievable, not about what was built | **Built to spec; independent verification pending** |
-| 2 | The fallback is a second mechanism, not a relocated goalpost | **Me, and this is the claim to attack first.** A fallback in a directory the verifier's probe does not fault is *exactly* what an evasion would look like. Three things distinguish it: the primary is still attempted and its failure is reported in `marker_attempts`; the probe's faults still fire (asserted, both builds); and the both-locations-fail case ships and shows the service disclosing rather than claiming | Not disconfirmed; **the disconfirming test ships** |
-| 3 | Item C did not stop the verifier's probe from landing | **Me, three times historically.** `tempfile.mkstemp` is still what creates the file, specifically so the probe's patch fires — `mkstemp_faults: 1` on both builds. The tempting fix (select the name, `os.open` it myself) would have been cleaner code and a silent evasion | Not disconfirmed; **mechanism stated** |
-| 4 | The §1 search was real and not a formality | **Me.** The strongest evidence that it was real is that one of the two instances it found was **in the code I wrote this round to fix the same class** — a search performed for appearances would not have turned that up, and would certainly not have reported it | **Two found, both fixed, one self-inflicted** |
-| 5 | `capture_fault_suite.py` at 9/9 is evidence for R8 | **It is not.** It passes 9/9 against pinned R7 too. It is the regression proof that R6's and R7's accepted boundaries did not move, and nothing more. Every R8 figure comes from the verifier's new probe and the self-test block built around it | **Named as regression-only** |
-| 6 | The scan-once judgement in §4 is correct | **Me, and I am least confident of this one.** It is formally the pattern; I judged the gap unreachable in the supported configuration and the fix non-trivial. If that judgement is wrong, it is wrong in the direction of leaving an instance open, which is the direction this workstream has been wrong in before | **Judgement stated, not buried** |
-| 7 | My record matches my code | **Me.** Every figure in §6 is Builder-run. The only independently confirmed numbers this program has are the ones the verifier states in its own reports — and `50_` §4 notes that R7 was the first build where the self-test, witnesses and measurement validation were independently executed rather than taken on my word | **Self-authored; independently unverified** |
+| 1 | Item F classifies disk facts, not control flow | **The verifier.** The residual is `_path_fact` itself: it asks `os.path.exists` and then a directory listing, and on a filesystem where both lie there is no fourth thing to ask. It fails toward `PRESENT`, which over-claims protection rather than under-claiming it — the opposite direction from R8's failures, and the safe one for a quarantine | **Built to spec; independent verification pending** |
+| 2 | The fix did not simply delete the `none` branch | **This is the claim to attack first, and the verifier already built the instrument.** Ten of the eleven flags are "does not say `none`"; every one of them is satisfiable by a build that never says `none` at all. The verifier's **positive control** is the eleventh and it is in my criterion as a required green: a genuine no-record failure still reports `none`, warns explicitly, and a fresh process really does start clean at 200 | Not disconfirmed; **the disconfirming test is the verifier's own** |
+| 3 | Both item-J mechanisms are load-bearing | **Me.** The rescan alone would pass the verifier's probe — the probe never uses the startup path, so the lock is invisible to it. I shipped the lock anyway because `56_` selects it and because the probe's configuration is not the operator's. The reverse is also true and matters more: the **lock alone would fail the probe**, and a Builder optimising for the acceptance set would have shipped only the rescan | **Both shipped; neither is provable by the probe alone** |
+| 4 | The §1 re-search was real | **Me.** Four instances, in code I wrote in the last two rounds. The strongest evidence it was real is instance 1: it was found by the **regression suites breaking**, not by my reading, and I am reporting the mechanism of discovery rather than presenting it as insight. The weakest part is that instances 2–4 came from reading, and reading is what missed them the first time | **Four found, all fixed, one found by tests** |
+| 5 | Item K closes the containment gap | **The verifier, and the honest answer is that it closes the gap it was given.** Root symlink refused, candidate symlink refused, no quota leak. The check-to-use TOCTOU remains and is unchanged; `56_` item K(c) carries `O_NOFOLLOW`/`openat` to `13B_` and explicitly excludes it from R9 | **Scoped as the packet scoped it** |
+| 6 | `capture_fault_suite.py` at 9/9 is evidence for R9 | **It is not.** 9/9 against pinned R8 as well. Regression proof only | **Named as regression-only** |
+| 7 | My record matches my code | **Me.** Every figure in §5 is Builder-run. The only independently confirmed numbers this program has are the verifier's own, and `55_` §1 records that the R8 return met a four-execution reproducibility standard — which `56_` §6 makes the bar for this evidence | **Self-authored; independently unverified** |
 
 ## 9. Open items and deviations
 
-- **One change request: CR-R8-01 (§5).** Item E requires editing a denylisted file. Patch supplied, unapplied, verified.
-- **Immutable denylist unchanged** — `r1_`–`r6_reference/`, all harness code including `run_all.sh`, `authority_manifest.json`; proven per-file in the manifest and by directory diff.
-- **Inherited and still open:** n8n node types and parameters remain NOT TESTED (`n8n-nodes-base` blocked by the egress proxy, 403), eighth round unchanged. `n8n-workflow` — a different package — installs normally here and from the public registry; `node_modules/` is **not** in the return.
+- **No change requests.** Nothing in `56_` was internally inconsistent; the one inconsistency from last round (CR-R8-01) was authorized in `56_` §0 and is applied.
+- **Immutable denylist unchanged except the single authorized edit** — `r1_`–`r7_reference/` and all other harness files byte-identical; `authority_manifest.json` untouched; proven per-file in the manifest and by directory diff.
+- **Inherited and still open:** n8n node types and parameters remain NOT TESTED (`n8n-nodes-base` blocked by the egress proxy, 403), ninth round unchanged. `n8n-workflow` — a different package — installs normally; `node_modules/` is **not** in the return.
+- **`flock` is advisory** and the stub refuses to start where `fcntl` is unavailable. Stated in §4 rather than left implicit.
 - **No POC run, no provider contacted. No `13B_` obligation implemented.** Every THROWAWAY marker kept.
 - **Branch deviation (unchanged, disclosed):** operator-designated branch.
-- **Recommended reviewer focus:** §8 row 2 (is the fallback a real mechanism or a moved goalpost), then §4's scan-once judgement, then §6.2's changed criterion.
+- **Recommended reviewer focus:** §8 row 2 (did the `none` branch survive honestly), then §8 row 3 (which of the two J mechanisms the probe can actually see), then §3 instance 1 — a statement true only under an unstated condition, which is the shape that has now produced findings at two different levels in two consecutive rounds.
 
 ---
 
-*Builder-authored completion claim and evidence index — not independent evidence (APP-06). `51_`'s four gating items are claimed corrected and the §1 search reported either way; **no POC is claimed run, and no security property is claimed independently verified.** Per `51_` §6 the next steps are Fable structural verification and an executed verifier re-check; the input archive's SHA-256 is quoted in-channel and every red-before-green result here is reproducible from `stub/out/r8_acceptance.json` and the shipped probe. That gate closes when the verifier says so, not when I do.*
+*Builder-authored completion claim and evidence index — not independent evidence (APP-06). `56_`'s items F–K and the carried item E are claimed corrected and the §1 re-search reported in full; **no POC is claimed run, and no security property is claimed independently verified.** Per `56_` §6 the next steps are Fable structural verification and an executed verifier re-check under the trail-158 rule; the input archive's SHA-256 is quoted in-channel and every red-before-green result here is reproducible from `stub/out/r9_acceptance.json` and the shipped probe. That gate closes when the verifier says so, not when I do.*

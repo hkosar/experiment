@@ -1,0 +1,347 @@
+{
+  "environment": {
+    "git": "2.47.3",
+    "node": "22.16.0",
+    "platform": "Linux-6.18.35-x86_64-with-glibc2.41",
+    "python": "3.13.5"
+  },
+  "gate": {
+    "hands_on_n8n_vs_zapier": "BLOCKED",
+    "security_gate": "OPEN"
+  },
+  "independent_adversarial": {
+    "key_cases": {
+      "partial_marker_write": {
+        "fallback_markers": [
+          "/tmp/chatgpt-r8-adv-blwx86h6/STORAGE-QUARANTINE-partial-marker-live-posture-20260806T202738-23ffaa08-fda32ada.json"
+        ],
+        "false_none_claim": true,
+        "primary_markers": [
+          "/tmp/chatgpt-r8-adv-blwx86h6/storage_quarantine/partial-marker-live-posture/quarantine-20260806T202738-23ffaa08-fda32ada.json"
+        ],
+        "restart_register_status": 503,
+        "status": 503
+      },
+      "post_durable_marker_close": {
+        "fallback_markers": [
+          "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+        ],
+        "false_none_claim": true,
+        "faults": {
+          "capture_dir_opens": 2,
+          "final_unlink_faults": 1,
+          "marker_close_fault_paths": [
+            "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both",
+            "/tmp/chatgpt-r8-adv-c2wk_szr"
+          ],
+          "marker_dir_fsync_paths": [
+            "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both",
+            "/tmp/chatgpt-r8-adv-c2wk_szr"
+          ],
+          "marker_file_fsync_paths": [
+            "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json",
+            "/tmp/chatgpt-r8-adv-c2wk_szr/STORAGE-QUARANTINE-marker-close-both-20260806T202738-55609491-ddb03fec.json"
+          ],
+          "publication_open_faults": 1
+        },
+        "primary_markers": [
+          "/tmp/chatgpt-r8-adv-c2wk_szr/storage_quarantine/marker-close-both/quarantine-20260806T202738-55609491-ddb03fec.json"
+        ],
+        "restart_register_status": 503,
+        "status": 503
+      },
+      "realpath": {
+        "candidate_symlink": {
+          "after_pools": {
+            "general": 1,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          },
+          "before_pools": {
+            "general": 0,
+            "reserved-owner": 0,
+            "security-refusal": 0
+          },
+          "error": "CaptureError: capture path escapes the captures directory",
+          "outside_files": [],
+          "quota_leaked": true,
+          "refused": true
+        },
+        "captures_root_symlink": {
+          "accepted_root_symlink": true,
+          "error": null,
+          "physical_files_outside_data_dir": [
+            "/tmp/chatgpt-r8-outside-root-943o2wkm/realpath-root/POC1/rootlink-20260806T202738-740c5888-0001.json"
+          ],
+          "returned": "/tmp/chatgpt-r8-outside-root-943o2wkm/realpath-root/POC1/rootlink-20260806T202738-740c5888-0001.json"
+        }
+      },
+      "scan_error_fallback": {
+        "dangerous_false_inventory": true,
+        "fresh_register_status": 200,
+        "record_types": [
+          {
+            "is_directory": true,
+            "is_file": false,
+            "path": "/tmp/chatgpt-r8-adv-iyccgfwv"
+          }
+        ],
+        "reported_records": [
+          "/tmp/chatgpt-r8-adv-iyccgfwv"
+        ]
+      },
+      "scan_error_primary": {
+        "false_durable_claim": true,
+        "first_posture": {
+          "durable_records": [
+            "/tmp/chatgpt-r8-adv-hnz5blaa/storage_quarantine/transient-scan"
+          ],
+          "incidents": 1,
+          "marker_path": null,
+          "marker_persisted": null,
+          "problems": [
+            "quarantine directory could not be listed (EIO)"
+          ],
+          "reconcile_by": "inspect the records this incident names, then delete EVERY durable record listed in `durable_records`; restarting does not clear it",
+          "recovered_from_marker": "/tmp/chatgpt-r8-adv-hnz5blaa/storage_quarantine/transient-scan",
+          "recovery": "explicit operator recovery required; this service will accept no further authority transition",
+          "restart_protection": "durable",
+          "survives_restart": true
+        },
+        "fresh_register_status": 200
+      },
+      "scan_once_multi_process": {
+        "bypass": true,
+        "fresh_process_status": 503,
+        "process_a_after_process_b_marker_status": 200
+      },
+      "sibling_inventory": {
+        "initial_durable_records": [
+          "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json",
+          "/tmp/chatgpt-r8-adv-kfb7j3uj/STORAGE-QUARANTINE-restart-inventory-20260806T202738-cc426449-4c9448ff.json"
+        ],
+        "restart_durable_records": [
+          "/tmp/chatgpt-r8-adv-kfb7j3uj/storage_quarantine/restart-inventory/quarantine-20260806T202738-cc426449-4c9448ff.json"
+        ],
+        "restart_incidents": 2,
+        "sibling_relationship_lost": true
+      },
+      "writefree_temp_live_posture": {
+        "fresh_durable_records": [
+          "/tmp/chatgpt-r8-adv-2jltupig/captures/writefree-live-posture/POC1/.prepared-artifact-register-f5b2f913dcf5471b807994600647113c-8b72vbc5.tmp"
+        ],
+        "live_restart_fields": {
+          "WARNING": "NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt to write one failed, so a restart of this service WILL clear the quarantine and WILL accept authority transitions again while the ambiguous evidence is still on disk. DO NOT RESTART. Reconcile the records named here first, from this running process.",
+          "durable_records": [],
+          "reconcile_by": "do NOT restart. Inspect the records this incident names while this process is still running; nothing on disk will tell a new process what happened here",
+          "restart_protection": "none",
+          "survives_restart": false
+        },
+        "restart_register_status": 503,
+        "temp_exists": true
+      }
+    },
+    "positive_control": {
+      "name": "both marker writes fail before any marker exists and no temp/disk fact survives",
+      "truthful_none": true
+    },
+    "repeatability": {
+      "executions_with_identical_boolean_summary": 4,
+      "identical": true
+    },
+    "summary": {
+      "both_marker_fail_truthful_none_control": true,
+      "candidate_symlink_quota_leak": true,
+      "captures_root_symlink_accepted": true,
+      "failed_primary_reconciliation_inventory_incomplete": true,
+      "fallback_scan_error_dangerous_false_inventory": true,
+      "partial_marker_live_false_none_claim": true,
+      "post_durable_marker_close_false_none_claim": true,
+      "restart_inventory_loses_sibling_marker": true,
+      "scan_once_two_process_bypass": true,
+      "transient_scan_error_false_durable_claim": true,
+      "writefree_temp_live_false_none_claim": true
+    }
+  },
+  "integrity": {
+    "SHA256SUMS": {
+      "entries": 118,
+      "invalid": 0,
+      "valid": 118
+    },
+    "attached_zip": {
+      "path": "R8_Recheck.zip",
+      "sha256": "c06588ad99b39eb9cc3ec1c76c7c5e0a65ecaffc645a03b6bc654fb77ec83cbf"
+    },
+    "authority_manifest": {
+      "declared_files": 117,
+      "entries": 117,
+      "mismatches": [],
+      "missing": [],
+      "present_and_hash_valid": 117
+    },
+    "base_binding_tree": "1e7825af3406e974899ebe1ffd0b311683d2dd71",
+    "base_commit_declared_only": "6a25c2bbe97613f674ecb016ffeb64229d65a182",
+    "base_snapshot_reproduced_tree": "1e7825af3406e974899ebe1ffd0b311683d2dd71"
+  },
+  "item_disposition": {
+    "A": "FAIL \u2014 fallback is real, but existing/durable marker files and surviving live temp facts can be classified as restart_protection none",
+    "B": "FAIL \u2014 operator-facing restart claims and durable_records inventory are false or incomplete in multiple executed cases",
+    "C": "PASS at the required post-create/pre-return boundary",
+    "D": "PASS at the required rollback post-durable tail",
+    "E": "DEFERRED/NON-GATING per Fable ruling; environment still lacks n8n-workflow"
+  },
+  "required_execution": {
+    "acceptance_oracle": {
+      "clauses": 33,
+      "result": "7/7"
+    },
+    "capture_fault_suite": {
+      "pinned_r7": "9/9",
+      "r8": "9/9"
+    },
+    "deterministic_barriers": {
+      "result": "6/6"
+    },
+    "harness": {
+      "classification": "QUALIFICATION, NON-GATING",
+      "rc": 1,
+      "reason": "n8n-workflow unavailable; Node structural validator did not run successfully; Python boundary/cost/receipt checks ran as logged"
+    },
+    "measurement_validation": {
+      "result": "160/160",
+      "violations": 0
+    },
+    "post_durable_interrupt_compare": {
+      "pinned_r7": {
+        "body": {
+          "artifact_id": "art-25bdb6549d7b",
+          "outcome": "registered",
+          "registration_ref": "reg-4F_uTgqy4NLfO9totTBqQ6ZFD_S-ahOB",
+          "source_digest_is_authoritative": true
+        },
+        "calls": {
+          "dir": 2,
+          "forced": 1
+        },
+        "identity_index": 1,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 0,
+        "records": [
+          {
+            "file": "captures/stub_server_r7.py/POC1/committed-artifact-register-20260806T200919-93c44874-0001.json",
+            "outcome": "committed",
+            "phase": "committed",
+            "step": "committed-artifact-register"
+          },
+          {
+            "file": "captures/stub_server_r7.py/POC1/prepared-artifact-register-20260806T200919-93c44874-0001.json",
+            "outcome": "prepared",
+            "phase": "prepared",
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 1,
+        "status": 200,
+        "target": "/mnt/data/R8_exec/poc/stub/r7_reference/stub_server_r7.py"
+      },
+      "r8": {
+        "body": {
+          "artifact_id": "art-9a97953e09f4",
+          "outcome": "registered",
+          "registration_ref": "reg-ex4Orr1ZfShYrLYEbbyKTjZKUV_iHa66",
+          "source_digest_is_authoritative": true
+        },
+        "calls": {
+          "dir": 2,
+          "forced": 1
+        },
+        "identity_index": 1,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 0,
+        "records": [
+          {
+            "file": "captures/stub_server.py/POC1/committed-artifact-register-20260806T200919-b759593b-0001.json",
+            "outcome": "committed",
+            "phase": "committed",
+            "step": "committed-artifact-register"
+          },
+          {
+            "file": "captures/stub_server.py/POC1/prepared-artifact-register-20260806T200919-b759593b-0001.json",
+            "outcome": "prepared",
+            "phase": "prepared",
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "registrations": 1,
+        "status": 200,
+        "target": "/mnt/data/R8_exec/poc/stub/stub_server.py"
+      }
+    },
+    "r5_cleanup_rollback_probe": {
+      "pinned_r7": "5/5",
+      "r8": "5/5"
+    },
+    "r6_quarantine_integrity_probe": {
+      "pinned_r7": "5/5",
+      "r7_summary": {
+        "current_process_fail_closed": true,
+        "ordinary_failure_with_durable_committed_evidence": false,
+        "post_rollback_fsync_spurious_quarantine": false,
+        "preartifact_spurious_quarantine": false,
+        "restart_bypasses_explicit_recovery": false
+      },
+      "r8": "5/5",
+      "r8_summary": {
+        "current_process_fail_closed": true,
+        "ordinary_failure_with_durable_committed_evidence": false,
+        "post_rollback_fsync_spurious_quarantine": false,
+        "preartifact_spurious_quarantine": false,
+        "restart_bypasses_explicit_recovery": false
+      }
+    },
+    "r7_adversarial_red_green": {
+      "fault_injection_landed_on_both": true,
+      "pinned_r7": "0/4 red",
+      "r8": "4/4 green"
+    },
+    "shipped_self_test": {
+      "count": "250/250",
+      "rc": 0,
+      "result": "PASS"
+    },
+    "witnesses": {
+      "result": "34/34"
+    }
+  },
+  "source_locations": {
+    "capture_containment_and_reservation": "poc/stub/stub_server.py:1239-1277",
+    "dispatch_scan_and_gate": "poc/stub/stub_server.py:2960-2990",
+    "health_first_incident": "poc/stub/stub_server.py:1697-1714",
+    "marker_persistence_classification": "poc/stub/stub_server.py:734-797",
+    "marker_scan": "poc/stub/stub_server.py:889-936",
+    "marker_writer": "poc/stub/stub_server.py:709-731",
+    "n8n_runbook": "poc/runbooks/RUNBOOK-n8n.md:50-59",
+    "restart_posture": "poc/stub/stub_server.py:961-1010",
+    "rollback": "poc/stub/stub_server.py:1096-1207",
+    "scan_once": "poc/stub/stub_server.py:940-958",
+    "temp_restart_scan": "poc/stub/stub_server.py:799-859"
+  },
+  "targets": {
+    "executed_r7_probe_sha256": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366",
+    "independent_r8_probe_sha256": "282a654e2ea2ae62e4f4c892c3728b7b50b50a53fa0051bf70ebdacf8c1426e6",
+    "independent_r8_result_sha256": "c0c5428b386d6b46d737305d7e485de33097585266e2051ebac999d06876acdf",
+    "packet_r7_probe_sha256": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366",
+    "pinned_r7_stub_sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
+    "r8_stub_sha256": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1"
+  },
+  "verdict": "FAIL"
+}

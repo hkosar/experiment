@@ -65,6 +65,9 @@ R6_PINNED_SHA256 = "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d1
 # R8 — the R7 build the verifier EXECUTED and reported on in `49_`, concurred
 # in `50_`; both independently report this digest for it.
 R7_PINNED_SHA256 = "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91"
+# R9 — the R8 build the verifier executed four times, reported in `54_` and
+# concurred in `55_`.
+R8_PINNED_SHA256 = "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1"
 
 A8_NAMED = frozenset((
     "receipt_id", "subject_ref", "executed_at", "occurrence", "schedule_version",
@@ -1835,11 +1838,20 @@ def block_capture_r7():
               "quarantine on /health",
               st_h == 200 and health.get("storage_quarantined") is True,
               "storage_quarantined true", health.get("storage_quarantined"))
-        check("...naming the marker it recovered, so recovery is actionable",
-              bool((health.get("storage_quarantine") or {})
-                   .get("recovered_from_marker")),
-              "marker path reported",
-              (health.get("storage_quarantine") or {}).get("recovered_from_marker"))
+        # R9 CHANGED THIS CRITERION, stated rather than quietly widened. `56_`
+        # item H replaced the single per-incident `recovered_from_marker` with a
+        # MERGED inventory across every incident, because R8's version named one
+        # marker and left the operator quarantined by its sibling. The R7
+        # property it was written for — the restarted process names what it
+        # recovered — is unchanged and now checked more strictly: every recovered
+        # record must be listed, and each must be a real file.
+        recovered = ((health.get("storage_quarantine") or {})
+                     .get("durable_records") or [])
+        check("...naming EVERY record it recovered, so recovery is actionable",
+              len(recovered) == len(markers)
+              and all(os.path.isfile(p) for p in recovered)
+              and set(recovered) == set(markers),
+              "every marker path reported", (recovered, markers))
         st_r, out_r = post("/owner/artifact/register",
                            {"source_digest": DIGEST, "size_bytes": 1,
                             "file_count": 1, "task_id": "R7-AFTER-RESTART",
@@ -2013,12 +2025,20 @@ def block_capture_r8():
                       and bool(health.get("WARNING")),
                       "top-level warning", health.get("restart_protection"))
             else:
+                # R9 CHANGED THIS CRITERION too, same reason: `56_` item F
+                # replaced the `marker_paths` success list with a per-attempt
+                # tri-state disk fact, because a success Boolean was the proxy.
+                # The R8 property is unchanged and now read off the states.
+                landed = [a for a in (detail.get("marker_attempts") or [])
+                          if a.get("state") in (S.MARKER_DURABLE, S.MARKER_PRESENT)]
                 check("%s: the fallback location carried the quarantine" % case,
                       detail.get("marker_persisted") is True
                       and out.get("restart_protection") == "durable"
-                      and len(detail.get("marker_paths") or []) == 1,
-                      "durable via fallback",
-                      (detail.get("marker_persisted"), detail.get("marker_paths")))
+                      and len(landed) == 1
+                      and landed[0].get("location") == "fallback"
+                      and landed[0].get("state") == S.MARKER_DURABLE,
+                      "one DURABLE fallback marker",
+                      (detail.get("marker_persisted"), detail.get("marker_attempts")))
                 check("...and the failed PRIMARY attempt is reported, so the "
                       "fallback is not silently standing in for it",
                       any(a.get("location") == "primary" and a.get("error")
@@ -2209,6 +2229,420 @@ def block_capture_r8():
     fresh()
 
 
+def _quarantine_via(fault=None, data=None, extra=None):
+    """Induce the accepted ambiguous-committed-record quarantine, optionally
+    faulting the marker writer. Returns `(status, body, hits, data)`."""
+    data = data or fresh()
+    poc_root = os.path.abspath(os.path.join(data, "captures", S.STORE.candidate, "POC1"))
+    real = {"open": S.os.open, "unlink": S.os.unlink, "close": S.os.close,
+            "fsync": S.os.fsync, "builtin": builtins.open, "dump": S.json.dump}
+    hits = {"dir_opens": 0, "publication_faults": 0, "final_unlink_faults": 0,
+            "marker_file_fsyncs": 0, "marker_dir_fsyncs": 0,
+            "marker_close_faults": 0, "marker_open_faults": 0,
+            "partial_dump_faults": 0}
+    primary_dir = os.path.abspath(S._quarantine_root(data))
+    fallback_pre = "%s%s-" % (S.QUARANTINE_FALLBACK_PREFIX, S.STORE.candidate)
+
+    def is_marker(p):
+        b = os.path.basename(p or "")
+        return (p or "").startswith(primary_dir + os.sep) or b.startswith(fallback_pre)
+
+    def fd_path(fd):
+        try:
+            return os.path.abspath(os.readlink("/proc/self/fd/%d" % fd))
+        except OSError:
+            return None
+
+    def op(path, flags, *a, **kw):
+        p = os.path.abspath(os.fspath(path))
+        if p == poc_root and flags == os.O_RDONLY:
+            hits["dir_opens"] += 1
+            if hits["dir_opens"] == 2:
+                hits["publication_faults"] += 1
+                raise OSError(5, "forced committed publication dir-open failure")
+        return real["open"](path, flags, *a, **kw)
+
+    def unlink(path, *a, **kw):
+        if os.path.basename(os.fspath(path)).startswith("committed-"):
+            hits["final_unlink_faults"] += 1
+            raise OSError(5, "forced final-link rollback failure")
+        return real["unlink"](path, *a, **kw)
+
+    def fsync(fd):
+        p = fd_path(fd)
+        if p and is_marker(p):
+            hits["marker_file_fsyncs"] += 1
+        if p == primary_dir or p == os.path.abspath(data):
+            hits["marker_dir_fsyncs"] += 1
+        return real["fsync"](fd)
+
+    def close(fd):
+        p = fd_path(fd)
+        if fault == "marker-close" and p in (primary_dir, os.path.abspath(data)):
+            real["close"](fd)                  # the REAL close completes first
+            hits["marker_close_faults"] += 1
+            raise RuntimeError("forced marker dir-close tail failure after real close")
+        return real["close"](fd)
+
+    def bopen(path, mode="r", *a, **kw):
+        try:
+            p = os.path.abspath(os.fspath(path))
+        except TypeError:
+            p = ""
+        if fault == "marker-open" and is_marker(p) and "w" in mode:
+            hits["marker_open_faults"] += 1
+            raise PermissionError(13, "forced marker write failure at both locations")
+        return real["builtin"](path, mode, *a, **kw)
+
+    def dump(obj, fh, *a, **kw):
+        try:
+            p = os.path.abspath(os.fspath(fh.name))
+        except (AttributeError, TypeError):
+            p = ""
+        if fault == "partial" and is_marker(p):
+            fh.write('{"kind":"storage-quarantine"')
+            fh.flush()
+            hits["partial_dump_faults"] += 1
+            raise OSError(28, "forced marker JSON write failure after creation")
+        return real["dump"](obj, fh, *a, **kw)
+
+    S.os.open, S.os.unlink, S.os.close = op, unlink, close
+    S.os.fsync, builtins.open, S.json.dump = fsync, bopen, dump
+    if extra:
+        extra(real, hits)
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "R9-QUAR", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.open, S.os.unlink, S.os.close = real["open"], real["unlink"], real["close"]
+        S.os.fsync, builtins.open, S.json.dump = real["fsync"], real["builtin"], real["dump"]
+    return st, out, hits, data
+
+
+def _markers_on_disk(data):
+    return (sorted(glob.glob(os.path.join(data, S.QUARANTINE_DIRNAME,
+                                          S.STORE.candidate,
+                                          S.QUARANTINE_PREFIX + "*.json")))
+            + sorted(glob.glob(os.path.join(
+                data, "%s%s-*.json" % (S.QUARANTINE_FALLBACK_PREFIX,
+                                       S.STORE.candidate)))))
+
+
+def _restart_into(data, candidate):
+    """A genuinely fresh process over the same data directory and candidate."""
+    S.SECRETS = S.SecretIndex()
+    S.STORE = S.Store(candidate=candidate)
+    S.STORE.base_url = "http://127.0.0.1:8787"
+    S.Handler.data_dir = data
+    return S.STORE
+
+
+def block_capture_r9():
+    """`56_` — marker state as facts, complete inventories, enforced invariants.
+
+    The eight mandatory red-before-green cases from `56_` §4. Everything that can
+    be run against the pinned R8 build is, because R8 passed all of R8's tests
+    and still carried every one of these.
+    """
+    block("R9: marker facts, complete inventories, enforced invariants (56_)")
+    import hashlib                                               # noqa: PLC0415
+    import probe_runner as PR                                    # noqa: PLC0415
+
+    live = os.path.join(HERE, "stub_server.py")
+    r8 = os.path.join(HERE, "r8_reference", "stub_server_r8.py")
+    r8_digest = hashlib.sha256(open(r8, "rb").read()).hexdigest()
+    check("the pinned R8 reference is the build the verifier executed",
+          r8_digest == R8_PINNED_SHA256, R8_PINNED_SHA256[:16], r8_digest[:16])
+    if r8_digest != R8_PINNED_SHA256:
+        return
+
+    _, criterion = PR.CRITERIA["chatgpt_r8_adversarial_recheck"]
+    live_ok, live_detail = criterion(PR.run_probe(
+        "chatgpt_r8_adversarial_recheck", live, timeout=300))
+    check("the verifier's chatgpt_r8_adversarial_recheck runs green",
+          live_ok, "10 defects closed, control intact", live_detail)
+    pin_ok, pin_detail = criterion(PR.run_probe(
+        "chatgpt_r8_adversarial_recheck", r8, timeout=300))
+    check("...and red against the pinned R8 build", not pin_ok, "red", pin_detail)
+
+    # ---- §4 case 2: marker dir-close failure AFTER file and directory fsync --
+    st, out, hits, data = _quarantine_via("marker-close")
+    markers = _markers_on_disk(data)
+    check("the marker close-tail fault fired after REAL file and directory "
+          "fsyncs", hits["marker_close_faults"] >= 1
+          and hits["marker_file_fsyncs"] >= 2 and hits["marker_dir_fsyncs"] >= 2,
+          "fsyncs then close faults", hits)
+    check("item F: DURABLE survives a close-tail exception — the marker is on "
+          "disk, so the posture says so",
+          st == 503 and out.get("restart_protection") == S.PROTECT_DURABLE
+          and out.get("survives_restart") is True
+          and len(markers) == 2
+          and set(out.get("durable_records") or []) == set(markers),
+          "durable, both markers listed",
+          (out.get("restart_protection"), out.get("durable_records")))
+    check("...and the close failure is RECORDED as a soft anomaly, not dropped",
+          any(a.get("kind") == "quarantine-marker-close-after-durable-fsync"
+              for a in S.STORE.storage_anomalies),
+          "anomaly recorded", S.STORE.storage_anomalies)
+    check("...and no sentence claims a restart clears it",
+          "WILL clear the quarantine" not in json.dumps(out),
+          "no false none-claim", "")
+
+    # ---- §4 case 4: both-sibling restart reconstruction ---------------------
+    # The verifier's exact sequence: write both, restart, delete precisely what
+    # the service names, restart again — and it must end CLEAN.
+    _restart_into(data, S.STORE.candidate)
+    st_h, health = get("/health")
+    block1 = health.get("storage_quarantine") or {}
+    check("item H: a restarted process merges the two sibling markers into ONE "
+          "incident and names BOTH records",
+          health.get("storage_quarantined") is True
+          and block1.get("incidents") == 1
+          and set(block1.get("durable_records") or []) == set(markers),
+          "1 incident, 2 records",
+          (block1.get("incidents"), block1.get("durable_records")))
+    for p in (block1.get("durable_records") or []):
+        os.unlink(p)
+    _restart_into(data, S.STORE.candidate)
+    st_h2, health2 = get("/health")
+    st_r2, _ = post("/owner/artifact/register",
+                    {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                     "task_id": "R9-RECONCILED", "transition": "R",
+                     "target_role": "verifier"}, owner())
+    check("...so deleting exactly what the service named ENDS CLEAN — R8 left "
+          "the operator quarantined by the sibling it never mentioned",
+          health2.get("storage_quarantined") is False and st_r2 == 200,
+          "clean and accepting", (health2.get("storage_quarantined"), st_r2))
+
+    # ---- §4 case 1: partial marker creation (ENOSPC mid-JSON) --------------
+    st, out, hits, data = _quarantine_via("partial")
+    markers = _markers_on_disk(data)
+    sizes = [os.path.getsize(p) for p in markers]
+    check("the partial-write fault fired at both marker locations",
+          hits["partial_dump_faults"] == 2 and len(markers) == 2
+          and all(s > 0 for s in sizes), "2 partial markers", (hits, sizes))
+    check("item F: a partial marker is PRESENT, so the posture never says "
+          "nothing is on disk",
+          out.get("restart_protection") == S.PROTECT_PRESENT
+          and out.get("survives_restart") is True
+          and set(out.get("durable_records") or []) == set(markers),
+          "present_unverified, both listed",
+          (out.get("restart_protection"), out.get("durable_records")))
+    check("...and the restarted process agrees — it refuses on those same "
+          "unreadable files",
+          (_restart_into(data, S.STORE.candidate) or True)
+          and get("/health")[1].get("storage_quarantined") is True,
+          "restart quarantined", "")
+
+    # ---- §4 case 3: surviving temp + BOTH marker locations failing ---------
+    data = fresh()
+    st8 = {"created": None, "mkstemp": 0, "temp_unlink": 0}
+    real_mkstemp, real_unlink_outer = S.tempfile.mkstemp, S.os.unlink
+
+    def _arm(real, hits):
+        def mkstemp_then_raise(*a, **kw):
+            fd, path = real_mkstemp(*a, **kw)
+            os.close(fd)
+            st8["created"] = path
+            st8["mkstemp"] += 1
+            raise RuntimeError("forced after real temp create, before path return")
+
+        def keep_temp(path, *a, **kw):
+            p = os.path.abspath(os.fspath(path))
+            if st8["created"] and p == os.path.abspath(st8["created"]):
+                st8["temp_unlink"] += 1
+                raise OSError(5, "forced surviving temp unlink failure")
+            return S.os.unlink(path, *a, **kw)
+        S.tempfile.mkstemp = mkstemp_then_raise
+        prior = S.os.unlink
+        S.os.unlink = lambda p, *a, **kw: (
+            keep_temp(p, *a, **kw) if (st8["created"] and
+                                       os.path.abspath(os.fspath(p)) ==
+                                       os.path.abspath(st8["created"]))
+            else prior(p, *a, **kw))
+
+    try:
+        st, out, hits, data = _quarantine_via("marker-open", data=data, extra=_arm)
+    finally:
+        S.tempfile.mkstemp, S.os.unlink = real_mkstemp, real_unlink_outer
+    temp = st8["created"]
+    check("the temp was really created and really survived, with both marker "
+          "locations refused",
+          st8["mkstemp"] == 1 and bool(temp) and os.path.isfile(temp)
+          and hits["marker_open_faults"] >= 2 and not _markers_on_disk(data),
+          "temp present, no markers", (st8, hits["marker_open_faults"]))
+    check("item G: the LIVE posture counts the write-free temp — R8's own "
+          "mechanism was invisible to R8's own posture function",
+          out.get("restart_protection") == S.PROTECT_DURABLE
+          and out.get("survives_restart") is True
+          and temp in (out.get("durable_records") or []),
+          "durable, temp listed",
+          (out.get("restart_protection"), out.get("durable_records")))
+    check("...and no 'nothing on disk' sentence is emitted while it exists",
+          "nothing on disk" not in json.dumps(out), "no false claim", "")
+    fresh()
+
+    # ---- §4 case 5: transient primary AND fallback scan failures ------------
+    for where in ("primary", "fallback"):
+        data = fresh()
+        os.makedirs(S._quarantine_root(data), exist_ok=True)
+        sentinel = os.path.join(data, "unrelated-owner-data.txt")
+        with open(sentinel, "w", encoding="utf-8") as fh:
+            fh.write("must never be named as a quarantine record\n")
+        target = (os.path.abspath(S._quarantine_root(data)) if where == "primary"
+                  else os.path.abspath(data))
+        real_listdir = S.os.listdir
+        n = {"faults": 0}
+
+        def one_shot(path, _t=target, _n=n):
+            if os.path.abspath(os.fspath(path)) == _t and _n["faults"] == 0:
+                _n["faults"] += 1
+                raise OSError(5, "forced one-shot %s listing fault" % where)
+            return real_listdir(path)
+
+        S.os.listdir = one_shot
+        try:
+            _sth, health = get("/health")
+        finally:
+            S.os.listdir = real_listdir
+        blk = health.get("storage_quarantine") or {}
+        check("the transient %s scan fault fired" % where, n["faults"] == 1,
+              1, n)
+        check("item I: a %s scan error fails closed as UNKNOWN and mints no "
+              "durable record" % where,
+              health.get("storage_quarantined") is True
+              and blk.get("restart_protection") == S.PROTECT_UNKNOWN
+              and blk.get("survives_restart") is False
+              and not (blk.get("durable_records") or []),
+              "unknown, no records",
+              (blk.get("restart_protection"), blk.get("durable_records")))
+        check("...and NO directory is ever presented as a record to delete — "
+              "the runbook says delete every one of them",
+              all(os.path.isfile(p) for p in (blk.get("durable_records") or []))
+              and os.path.abspath(data) not in (blk.get("durable_records") or [])
+              and os.path.isfile(sentinel),
+              "files only, sentinel intact", blk.get("durable_records"))
+        _restart_into(data, S.STORE.candidate)
+        check("...and once the transient fault is gone a fresh process is clean",
+              get("/health")[1].get("storage_quarantined") is False,
+              "clean", "")
+    fresh()
+
+    # ---- §4 case 6: two processes, one (data_dir, candidate) ---------------
+    # Enforcement first: the launch path refuses the second process.
+    data = fresh()
+    fd_a, why_a = S._acquire_candidate_lock(data, "lockcand")
+    fd_b, why_b = S._acquire_candidate_lock(data, "lockcand")
+    check("item J: the launch path takes an exclusive lock on "
+          "(data_dir, candidate)", fd_a is not None and why_a is None,
+          "first acquires", why_a)
+    check("...and a SECOND process on the same pair refuses to start, naming "
+          "the holder",
+          fd_b is None and why_b and "already holds" in why_b
+          and "pid=" in why_b, "second refused", why_b)
+    fd_c, why_c = S._acquire_candidate_lock(data, "othercand")
+    check("...while a different candidate on the same data directory is "
+          "unaffected", fd_c is not None, "different candidate starts", why_c)
+    for fd in (fd_a, fd_c):
+        if fd is not None:
+            os.close(fd)
+
+    # And the sentence: the marker says EVERY process refuses, so a process
+    # that never went through the launch path must refuse too.
+    data = fresh("scanonce")
+    _sth, health_a0 = get("/health")
+    store_a = S.STORE
+    secrets_a = S.SECRETS
+    _restart_into(data, "scanonce")            # "process B"
+    st_b, out_b, hits_b, _ = _quarantine_via(None, data=data)
+    markers_b = _markers_on_disk(data)
+    S.STORE, S.SECRETS = store_a, secrets_a     # back to "process A"
+    S.Handler.data_dir = data
+    st_a, out_a = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "A-AFTER-B", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    _sth, health_a1 = get("/health")
+    check("the second process really quarantined the shared directory",
+          st_b == 503 and len(markers_b) == 2, "503 with two markers",
+          (st_b, markers_b))
+    check("item J: a process that scanned clean BEFORE the quarantine now "
+          "refuses too — the marker's 'every process' sentence is true",
+          health_a0.get("storage_quarantined") is False
+          and st_a == 503
+          and out_a.get("outcome") == "refused-storage-quarantine"
+          and health_a1.get("storage_quarantined") is True,
+          "A refuses after B quarantined",
+          (health_a0.get("storage_quarantined"), st_a,
+           health_a1.get("storage_quarantined")))
+    fresh()
+
+    # ---- §4 case 7: captures-root symlink, and no quota leak ---------------
+    for name, where in (("candidate directory", "candidate"),
+                        ("captures ROOT", "root")):
+        data = fresh()
+        outside = tempfile.mkdtemp(prefix="selftest-outside-")
+        linked = True
+        try:
+            if where == "candidate":
+                os.makedirs(os.path.join(data, "captures"), exist_ok=True)
+                os.symlink(outside, os.path.join(data, "captures", S.STORE.candidate))
+            else:
+                os.symlink(outside, os.path.join(data, "captures"))
+        except (OSError, NotImplementedError, AttributeError):
+            linked = False
+        if not linked:
+            check("§4 case 7 (%s): NOT RUN — this filesystem refuses symlinks; "
+                  "reported, not silently skipped" % name, False, "runnable", "")
+            shutil.rmtree(outside, ignore_errors=True)
+            continue
+        before = dict(S.STORE.captures)
+        raised = None
+        try:
+            S.write_capture("/poc1/receipt", "POC1", "r9link", {"outcome": "x"},
+                            data_dir=data)
+        except BaseException as exc:                              # noqa: BLE001
+            raised = "%s: %s" % (type(exc).__name__, exc)
+        after = dict(S.STORE.captures)
+        escaped = sorted(glob.glob(os.path.join(outside, "**", "*.json"),
+                                   recursive=True))
+        check("item K: a symlinked %s is refused and nothing lands outside"
+              % name,
+              raised is not None and "escapes the captures directory" in raised
+              and not escaped, "refused, nothing outside", (raised, escaped))
+        check("...and the containment refusal leaks NO quota unit (%s)" % name,
+              sum(after.values()) == sum(before.values()),
+              "no unit consumed", (before, after))
+        shutil.rmtree(outside, ignore_errors=True)
+
+    # ---- §4 case 8: the positive control ----------------------------------
+    st, out, hits, data = _quarantine_via("marker-open")
+    check("the both-locations fault fired and left nothing on disk",
+          hits["marker_open_faults"] >= 2 and not _markers_on_disk(data),
+          "no markers", hits)
+    check("item F/G control: a GENUINE no-record failure still reports none, "
+          "truthfully — the fix did not just delete the none branch",
+          out.get("restart_protection") == S.PROTECT_NONE
+          and out.get("survives_restart") is False
+          and "DO NOT RESTART" in (out.get("WARNING") or "").upper()
+          and "does not clear it" not in json.dumps(out),
+          "none + explicit warning",
+          (out.get("restart_protection"), out.get("survives_restart")))
+    _restart_into(data, S.STORE.candidate)
+    st_h, health = get("/health")
+    st_r, _ = post("/owner/artifact/register",
+                   {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                    "task_id": "R9-TRUE-NONE", "transition": "R",
+                    "target_role": "verifier"}, owner())
+    check("...and a fresh process really does start clean, which is what makes "
+          "the none claim true",
+          health.get("storage_quarantined") is False and st_r == 200,
+          "clean and accepting", (health.get("storage_quarantined"), st_r))
+    fresh()
+
+
 # --------------------------------------------------------------------------
 # outcome coverage
 # --------------------------------------------------------------------------
@@ -2234,7 +2668,7 @@ def run_self_test() -> int:
     for fn in (block_identity, block_owner_idea, block_owner_reconciliation,
                block_capability, block_evidence, block_capacity, block_policy,
                block_live_http, block_validator, block_capture_publication,
-               block_capture_r7, block_capture_r8):
+               block_capture_r7, block_capture_r8, block_capture_r9):
         fn()
     block_coverage()
 

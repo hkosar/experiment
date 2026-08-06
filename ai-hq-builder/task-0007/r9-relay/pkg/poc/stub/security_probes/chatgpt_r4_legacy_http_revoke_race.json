@@ -1,0 +1,42 @@
+{
+  "detail": "revoke=409 final_status=DELIVERED_WITH_RECEIPT receipt=present",
+  "green": false,
+  "raw": {
+    "final_status": "DELIVERED_WITH_RECEIPT",
+    "receipt": {
+      "action_request_id": "ar-89748d763f57",
+      "case_id": "case-bca61bd69f7b",
+      "delivered_attempt": 1,
+      "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+      "receipt_id": "dlv-905a8118abce"
+    },
+    "relay": [
+      200,
+      {
+        "action_request_status": "DELIVERED_WITH_RECEIPT",
+        "attempt": 1,
+        "delivered": true,
+        "destination_digest_claimed_is_provider_reported": true,
+        "destination_verified": false,
+        "outcome": "delivered",
+        "receipt": {
+          "action_request_id": "ar-89748d763f57",
+          "case_id": "case-bca61bd69f7b",
+          "delivered_attempt": 1,
+          "idempotency_key": "5dc8761e6661c0512746dafbe13892a0a75428d5a2fa5293afe33387c3fbe4a2",
+          "receipt_id": "dlv-905a8118abce"
+        },
+        "replayed": false
+      }
+    ],
+    "revoke": [
+      409,
+      {
+        "action_request_status": "DELIVERED_WITH_RECEIPT",
+        "outcome": "refused",
+        "reason": "capability is already terminal (DELIVERED_WITH_RECEIPT); no state change",
+        "refused": true
+      }
+    ]
+  }
+}

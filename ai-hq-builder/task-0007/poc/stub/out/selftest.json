@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "actual": "{'artifact_id': 'art-af8547611e4b', 'registration_ref': 'reg-VHfdUKsLglfzfAbJk7ls_i7XNGbwM2Ej', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "actual": "{'artifact_id': 'art-e94946bace78', 'registration_ref': 'reg-6RpsoUxOCiFR3Ba-DwhPK4Mwggf-1OVp', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
       "block": "identity and registration (A.1 / A.2)",
       "case": "registration mints an artifact_id and an opaque registration_ref",
       "expected": "art-/reg-",
@@ -9,7 +9,7 @@
       "ok": true
     },
     {
-      "actual": "('art-af8547611e4b', 'art-af8547611e4b')",
+      "actual": "('art-e94946bace78', 'art-e94946bace78')",
       "block": "identity and registration (A.1 / A.2)",
       "case": "re-registering the same identity is idempotent — one record, same refs",
       "expected": "same ids",
@@ -17,7 +17,7 @@
       "ok": true
     },
     {
-      "actual": "art-ea4372be81e9",
+      "actual": "art-20f77c74ca1b",
       "block": "identity and registration (A.1 / A.2)",
       "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
       "expected": "different artifact_id",
@@ -505,7 +505,7 @@
       "ok": true
     },
     {
-      "actual": "(409, 'run-3e6470bade21', 1)",
+      "actual": "(409, 'run-4755c00e1312', 1)",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
       "expected": "409 preserving prior",
@@ -513,7 +513,7 @@
       "ok": true
     },
     {
-      "actual": "run-3e6470bade21",
+      "actual": "run-4755c00e1312",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "run identity is stub-minted and the provider correlation value anchors nothing",
       "expected": "stub-minted",
@@ -945,7 +945,7 @@
       "ok": true
     },
     {
-      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'a13102b124ebb2d6d53a88f9435d499f'}",
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'c8536177073d2e613fd412ba357052bb'}",
       "block": "capacity and redaction (A.8)",
       "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
       "expected": "structured marker",
@@ -953,7 +953,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '43d4174044d7293d8d6b872be12a7c72'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '66453daae963e0662cd2de8d98fbb847'}}",
       "block": "capacity and redaction (A.8)",
       "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
       "expected": "descriptor",
@@ -961,7 +961,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '43d4174044d7293d8d6b872be12a7c72'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '66453daae963e0662cd2de8d98fbb847'}}",
       "block": "capacity and redaction (A.8)",
       "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
       "expected": "descriptor",
@@ -1017,7 +1017,7 @@
       "ok": true
     },
     {
-      "actual": "('c86256aac736', '85a53c2ec645')",
+      "actual": "('b6ce4663db3b', 'ef9704d65f61')",
       "block": "capacity and redaction (A.8)",
       "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
       "expected": "different",
@@ -1137,7 +1137,7 @@
       "ok": true
     },
     {
-      "actual": "\"Ufy5wEeeBt3ntEuB_pjpF0dTyE_3NTAzD8d6gKdfG5I\"",
+      "actual": "\"4hvY9u-3r8wbnN8F3A6xufb4xualLgMWjeCTqwtqL30\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
       "expected": "a usable string",
@@ -1145,7 +1145,7 @@
       "ok": true
     },
     {
-      "actual": "\"cap-VArtPIuakoRVsy0eg-kYeprkxOdSIOnS\"",
+      "actual": "\"cap-BwU4J8kfrTuLnhN26DcA8NOXtYJvqxfA\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "...and the execution capability likewise arrives usable",
       "expected": "a usable string",
@@ -1641,7 +1641,7 @@
       "ok": true
     },
     {
-      "actual": "['/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json']",
+      "actual": "['/tmp/selftest-t04xfedz/storage_quarantine/n8n/quarantine-20260806T221313-d8f45dd7-cbbe4534.json']",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "item 5: the quarantine is PERSISTED as a marker beside captures/, not only in memory",
       "expected": "1 primary marker",
@@ -1649,7 +1649,7 @@
       "ok": true
     },
     {
-      "actual": "['/tmp/selftest-u5w5uomi/STORAGE-QUARANTINE-n8n-20260806T032232-d5677c0d-78e7a1ee.json']",
+      "actual": "['/tmp/selftest-t04xfedz/STORAGE-QUARANTINE-n8n-20260806T221313-d8f45dd7-cbbe4534.json']",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "R8 item A: and a SECOND durable record in a different directory, so one location failing does not lose the quarantine",
       "expected": "1 fallback marker elsewhere",
@@ -1657,7 +1657,7 @@
       "ok": true
     },
     {
-      "actual": "['/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json', '/tmp/selftest-u5w5uomi/STORAGE-QUARANTINE-n8n-20260806T032232-d5677c0d-78e7a1ee.json']",
+      "actual": "['/tmp/selftest-t04xfedz/storage_quarantine/n8n/quarantine-20260806T221313-d8f45dd7-cbbe4534.json', '/tmp/selftest-t04xfedz/STORAGE-QUARANTINE-n8n-20260806T221313-d8f45dd7-cbbe4534.json']",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "...and the marker is NOT filed inside captures/, where every reader would count it as evidence",
       "expected": "outside captures/",
@@ -1689,10 +1689,10 @@
       "ok": true
     },
     {
-      "actual": "/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json",
+      "actual": "(['/tmp/selftest-t04xfedz/storage_quarantine/n8n/quarantine-20260806T221313-d8f45dd7-cbbe4534.json', '/tmp/selftest-t04xfedz/STORAGE-QUARANTINE-n8n-20260806T221313-d8f45dd7-cbbe4534.json'], ['/tmp/selftest-t04xfedz/storage_quarantine/n8n/quarantine-20260806T221313-d8f45dd7-cbbe4534.json', '/tmp/selftest-t04xfedz/STORAGE-QUARANTINE-n8n-20260806T221313-d8f45dd7-cbbe4534.json'])",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
-      "case": "...naming the marker it recovered, so recovery is actionable",
-      "expected": "marker path reported",
+      "case": "...naming EVERY record it recovered, so recovery is actionable",
+      "expected": "every marker path reported",
       "note": null,
       "ok": true
     },
@@ -1761,15 +1761,15 @@
       "ok": true
     },
     {
-      "actual": "(True, ['/tmp/selftest-t1u4rb8j/STORAGE-QUARANTINE-n8n-20260806T032232-798b9444-18774975.json'])",
+      "actual": "(True, [{'path': '/tmp/selftest-ad28pm5j/storage_quarantine/n8n/quarantine-20260806T221313-ead9da3f-a78a260a.json', 'state': 'ABSENT_KNOWN', 'error': 'OSError: [Errno 30] forced marker-directory creation failure', 'anomaly': None, 'location': 'primary'}, {'path': '/tmp/selftest-ad28pm5j/STORAGE-QUARANTINE-n8n-20260806T221313-ead9da3f-a78a260a.json', 'state': 'DURABLE', 'error': None, 'anomaly': None, 'location': 'fallback'}])",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
       "case": "primary only marker-makedirs failure: the fallback location carried the quarantine",
-      "expected": "durable via fallback",
+      "expected": "one DURABLE fallback marker",
       "note": null,
       "ok": true
     },
     {
-      "actual": "[{'location': 'primary', 'path': '/tmp/selftest-t1u4rb8j/storage_quarantine/n8n/quarantine-20260806T032232-798b9444-18774975.json', 'error': 'OSError: [Errno 30] forced marker-directory creation failure'}, {'location': 'fallback', 'path': '/tmp/selftest-t1u4rb8j/STORAGE-QUARANTINE-n8n-20260806T032232-798b9444-18774975.json', 'error': None}]",
+      "actual": "[{'path': '/tmp/selftest-ad28pm5j/storage_quarantine/n8n/quarantine-20260806T221313-ead9da3f-a78a260a.json', 'state': 'ABSENT_KNOWN', 'error': 'OSError: [Errno 30] forced marker-directory creation failure', 'anomaly': None, 'location': 'primary'}, {'path': '/tmp/selftest-ad28pm5j/STORAGE-QUARANTINE-n8n-20260806T221313-ead9da3f-a78a260a.json', 'state': 'DURABLE', 'error': None, 'anomaly': None, 'location': 'fallback'}]",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
       "case": "...and the failed PRIMARY attempt is reported, so the fallback is not silently standing in for it",
       "expected": "primary error recorded",
@@ -1801,15 +1801,15 @@
       "ok": true
     },
     {
-      "actual": "(True, ['/tmp/selftest-5616jqoq/STORAGE-QUARANTINE-n8n-20260806T032232-533d92c9-18fdf86a.json'])",
+      "actual": "(True, [{'path': '/tmp/selftest-yz200w66/storage_quarantine/n8n/quarantine-20260806T221313-d9f50b05-26d1f0dc.json', 'state': 'ABSENT_KNOWN', 'error': 'PermissionError: [Errno 13] forced marker-file open failure', 'anomaly': None, 'location': 'primary'}, {'path': '/tmp/selftest-yz200w66/STORAGE-QUARANTINE-n8n-20260806T221313-d9f50b05-26d1f0dc.json', 'state': 'DURABLE', 'error': None, 'anomaly': None, 'location': 'fallback'}])",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
       "case": "primary only marker-open failure: the fallback location carried the quarantine",
-      "expected": "durable via fallback",
+      "expected": "one DURABLE fallback marker",
       "note": null,
       "ok": true
     },
     {
-      "actual": "[{'location': 'primary', 'path': '/tmp/selftest-5616jqoq/storage_quarantine/n8n/quarantine-20260806T032232-533d92c9-18fdf86a.json', 'error': 'PermissionError: [Errno 13] forced marker-file open failure'}, {'location': 'fallback', 'path': '/tmp/selftest-5616jqoq/STORAGE-QUARANTINE-n8n-20260806T032232-533d92c9-18fdf86a.json', 'error': None}]",
+      "actual": "[{'path': '/tmp/selftest-yz200w66/storage_quarantine/n8n/quarantine-20260806T221313-d9f50b05-26d1f0dc.json', 'state': 'ABSENT_KNOWN', 'error': 'PermissionError: [Errno 13] forced marker-file open failure', 'anomaly': None, 'location': 'primary'}, {'path': '/tmp/selftest-yz200w66/STORAGE-QUARANTINE-n8n-20260806T221313-d9f50b05-26d1f0dc.json', 'state': 'DURABLE', 'error': None, 'anomaly': None, 'location': 'fallback'}]",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
       "case": "...and the failed PRIMARY attempt is reported, so the fallback is not silently standing in for it",
       "expected": "primary error recorded",
@@ -1905,7 +1905,7 @@
       "ok": true
     },
     {
-      "actual": "{'created': '/tmp/selftest-qoef6ngf/captures/n8n/POC1/.r8temp-e16e0d30d8184c4aa9cb8a062afdc8b4-gibj_lzt.tmp', 'mkstemp_faults': 1, 'rollback_open_faults': 1}",
+      "actual": "{'created': '/tmp/selftest-_06_8kc7/captures/n8n/POC1/.r8temp-3e8c1fdea49247ff849385ca3e998f06-aocwrlpe.tmp', 'mkstemp_faults': 1, 'rollback_open_faults': 1}",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
       "case": "the post-create/pre-return temp fault fired, and the rollback proof fault with it",
       "expected": "both landed",
@@ -1979,7 +1979,7 @@
     {
       "actual": "4",
       "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
-      "case": "item B: every 'restarting does not clear it' sentence is inside _restart_posture or a marker file that by definition landed (4 occurrence(s))",
+      "case": "item B: every 'restarting does not clear it' sentence is inside _restart_posture or a marker file that by definition landed (3 occurrence(s))",
       "expected": ">=1 definition and 3 call sites",
       "note": null,
       "ok": true
@@ -1993,6 +1993,286 @@
       "ok": true
     },
     {
+      "actual": "5df1408fdf2fd5db",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the pinned R8 reference is the build the verifier executed",
+      "expected": "5df1408fdf2fd5db",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "11/11 checks",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the verifier's chatgpt_r8_adversarial_recheck runs green",
+      "expected": "10 defects closed, control intact",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "1/11 checks; failing: F: a partial marker is not 'nothing on disk'; F: post-durable marker close keeps DURABLE; G: a surviving temp counts in the raising process; H: a close-tail anomaly does not delist a real marker; H: restart reconstruction ends clean; I: a fallback scan error never names the data directory; I: a transient primary scan error mints no durable record; J: a process that scanned clean first still refuses; K: a captures-ROOT symlink is refused, not resolved through; K: no quota leaks on a containment refusal",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and red against the pinned R8 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'dir_opens': 2, 'publication_faults': 1, 'final_unlink_faults': 1, 'marker_file_fsyncs': 2, 'marker_dir_fsyncs': 2, 'marker_close_faults': 2, 'marker_open_faults': 0, 'partial_dump_faults': 0}",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the marker close-tail fault fired after REAL file and directory fsyncs",
+      "expected": "fsyncs then close faults",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('durable', ['/tmp/selftest-g2ftx1sf/storage_quarantine/n8n/quarantine-20260806T221313-2ff79c48-acb862b3.json', '/tmp/selftest-g2ftx1sf/STORAGE-QUARANTINE-n8n-20260806T221313-2ff79c48-acb862b3.json'])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item F: DURABLE survives a close-tail exception — the marker is on disk, so the posture says so",
+      "expected": "durable, both markers listed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'kind': 'quarantine-marker-close-after-durable-fsync', 'incident_id': 'quar-df0681ee6d7f489b', 'path': '/tmp/selftest-g2ftx1sf/storage_quarantine/n8n/quarantine-20260806T221313-2ff79c48-acb862b3.json', 'detail': 'marker directory close failed (RuntimeError)', 'note': 'marker already durable; the record stands'}, {'kind': 'quarantine-marker-close-after-durable-fsync', 'incident_id': 'quar-df0681ee6d7f489b', 'path': '/tmp/selftest-g2ftx1sf/STORAGE-QUARANTINE-n8n-20260806T221313-2ff79c48-acb862b3.json', 'detail': 'marker directory close failed (RuntimeError)', 'note': 'marker already durable; the record stands'}]",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and the close failure is RECORDED as a soft anomaly, not dropped",
+      "expected": "anomaly recorded",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and no sentence claims a restart clears it",
+      "expected": "no false none-claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(1, ['/tmp/selftest-g2ftx1sf/storage_quarantine/n8n/quarantine-20260806T221313-2ff79c48-acb862b3.json', '/tmp/selftest-g2ftx1sf/STORAGE-QUARANTINE-n8n-20260806T221313-2ff79c48-acb862b3.json'])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item H: a restarted process merges the two sibling markers into ONE incident and names BOTH records",
+      "expected": "1 incident, 2 records",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(False, 200)",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...so deleting exactly what the service named ENDS CLEAN — R8 left the operator quarantined by the sibling it never mentioned",
+      "expected": "clean and accepting",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "({'dir_opens': 2, 'publication_faults': 1, 'final_unlink_faults': 1, 'marker_file_fsyncs': 0, 'marker_dir_fsyncs': 0, 'marker_close_faults': 0, 'marker_open_faults': 0, 'partial_dump_faults': 2}, [28, 28])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the partial-write fault fired at both marker locations",
+      "expected": "2 partial markers",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('present_unverified', ['/tmp/selftest-j53d_f19/storage_quarantine/n8n/quarantine-20260806T221313-9bc946e8-68be34c6.json', '/tmp/selftest-j53d_f19/STORAGE-QUARANTINE-n8n-20260806T221313-9bc946e8-68be34c6.json'])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item F: a partial marker is PRESENT, so the posture never says nothing is on disk",
+      "expected": "present_unverified, both listed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and the restarted process agrees — it refuses on those same unreadable files",
+      "expected": "restart quarantined",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "({'created': '/tmp/selftest-7qkk6mts/captures/n8n/POC1/.prepared-artifact-register-a3b9e40bad03493aa3c1e2a2d4defbda-ho7qdwbr.tmp', 'mkstemp': 1, 'temp_unlink': 1}, 2)",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the temp was really created and really survived, with both marker locations refused",
+      "expected": "temp present, no markers",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('durable', ['/tmp/selftest-7qkk6mts/captures/n8n/POC1/.prepared-artifact-register-a3b9e40bad03493aa3c1e2a2d4defbda-ho7qdwbr.tmp'])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item G: the LIVE posture counts the write-free temp — R8's own mechanism was invisible to R8's own posture function",
+      "expected": "durable, temp listed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and no 'nothing on disk' sentence is emitted while it exists",
+      "expected": "no false claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'faults': 1}",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the transient primary scan fault fired",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('unknown', [])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item I: a primary scan error fails closed as UNKNOWN and mints no durable record",
+      "expected": "unknown, no records",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and NO directory is ever presented as a record to delete — the runbook says delete every one of them",
+      "expected": "files only, sentinel intact",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and once the transient fault is gone a fresh process is clean",
+      "expected": "clean",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'faults': 1}",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the transient fallback scan fault fired",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('unknown', [])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item I: a fallback scan error fails closed as UNKNOWN and mints no durable record",
+      "expected": "unknown, no records",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and NO directory is ever presented as a record to delete — the runbook says delete every one of them",
+      "expected": "files only, sentinel intact",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and once the transient fault is gone a fresh process is clean",
+      "expected": "clean",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "None",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item J: the launch path takes an exclusive lock on (data_dir, candidate)",
+      "expected": "first acquires",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "another stub process already holds /tmp/selftest-5q_07dmx/.stub-lockcand.lock (pid=16898 run_instance=20260806T221313-19fc049f started=2026-08-06T22:13:13). Two processes on one data directory and candidate would each keep their own view of the quarantine, and the one that scanned first would go on accepting authority transitions after the other quarantined the directory. Stop that process, or use a different --candidate or --data.",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and a SECOND process on the same pair refuses to start, naming the holder",
+      "expected": "second refused",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "None",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...while a different candidate on the same data directory is unaffected",
+      "expected": "different candidate starts",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, ['/tmp/selftest-yfsvhwd4/storage_quarantine/scanonce/quarantine-20260806T221313-17e5d9e5-ffef0cba.json', '/tmp/selftest-yfsvhwd4/STORAGE-QUARANTINE-scanonce-20260806T221313-17e5d9e5-ffef0cba.json'])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the second process really quarantined the shared directory",
+      "expected": "503 with two markers",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(False, 503, True)",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item J: a process that scanned clean BEFORE the quarantine now refuses too — the marker's 'every process' sentence is true",
+      "expected": "A refuses after B quarantined",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError: capture path escapes the captures directory', [])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item K: a symlinked candidate directory is refused and nothing lands outside",
+      "expected": "refused, nothing outside",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "({'general': 0, 'security-refusal': 0, 'reserved-owner': 0}, {'general': 0, 'security-refusal': 0, 'reserved-owner': 0})",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and the containment refusal leaks NO quota unit (candidate directory)",
+      "expected": "no unit consumed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError: capture path escapes the captures directory: the captures root does not resolve to its physical location under the data directory', [])",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item K: a symlinked captures ROOT is refused and nothing lands outside",
+      "expected": "refused, nothing outside",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "({'general': 0, 'security-refusal': 0, 'reserved-owner': 0}, {'general': 0, 'security-refusal': 0, 'reserved-owner': 0})",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and the containment refusal leaks NO quota unit (captures ROOT)",
+      "expected": "no unit consumed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'dir_opens': 2, 'publication_faults': 1, 'final_unlink_faults': 1, 'marker_file_fsyncs': 0, 'marker_dir_fsyncs': 0, 'marker_close_faults': 0, 'marker_open_faults': 2, 'partial_dump_faults': 0}",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "the both-locations fault fired and left nothing on disk",
+      "expected": "no markers",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('none', False)",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "item F/G control: a GENUINE no-record failure still reports none, truthfully — the fix did not just delete the none branch",
+      "expected": "none + explicit warning",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(False, 200)",
+      "block": "R9: marker facts, complete inventories, enforced invariants (56_)",
+      "case": "...and a fresh process really does start clean, which is what makes the none claim true",
+      "expected": "clean and accepting",
+      "note": null,
+      "ok": true
+    },
+    {
       "actual": "[]",
       "block": "outcome coverage — no unreachable refusal reasons",
       "case": "every outcome code the source can emit is produced by some case in this suite (56 declared, 55 exercised, 1 exempt)",
@@ -2002,7 +2282,7 @@
     }
   ],
   "check": "R3 stub self-test (25_ §E)",
-  "passed": 250,
-  "total": 250,
+  "passed": 285,
+  "total": 285,
   "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
 }

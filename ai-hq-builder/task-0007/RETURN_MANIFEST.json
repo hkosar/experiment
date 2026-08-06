@@ -1,24 +1,22 @@
 {
   "baseline": {
-    "compared_against": "r8-relay/pkg/poc (my R7 return, as the relay shipped it)",
-    "note": "Every count here describes THIS relay (TASK0007_R8_Builder.zip), per 41_ §3's labelling note.",
-    "pinned_r7_matches_executed_target": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
-    "relay_authority_manifest": "112/112 verified, 0 mismatched, 0 missing; 2 unlisted on disk (SHA256SUMS.txt and authority_manifest.json itself)",
-    "relay_base_tree_independently_reproduced": "69ca5043f0e844f5c81caef7b5eae38bf52ec91d",
-    "relay_poc_against_my_r7_return": "102/102 byte-identical",
-    "relay_snapshot_SHA256SUMS": "113/113 OK",
-    "verifier_probe_byte_identical": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366"
+    "compared_against": "r9-relay/pkg/poc (my R8 return, as the relay shipped it)",
+    "denylist_exception": "poc/harness/run_all.sh only — CR-R8-01, authorized in 56_ §0 for this return. Every other denylisted file, including r1_-r7_reference/, is byte-identical.",
+    "note": "Every count here describes THIS relay (TASK0007_R9_Builder_2.zip), per 41_ §3's labelling note.",
+    "pinned_r8_matches_executed_target": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1",
+    "relay_authority_manifest": "117/117 verified, 0 mismatched, 0 missing; 2 unlisted on disk (SHA256SUMS.txt and authority_manifest.json itself)",
+    "relay_base_tree_independently_reproduced": "64bf6c8f6e0187865fca22c82094863755e96879",
+    "relay_poc_against_my_r8_return": "106/106 byte-identical",
+    "relay_snapshot_SHA256SUMS": "118/118 OK",
+    "verifier_probe_byte_identical": "282a654e2ea2ae62e4f4c892c3728b7b50b50a53fa0051bf70ebdacf8c1426e6"
   },
-  "change_requests": [
-    "CR-R8-01: 51_ item E requires editing poc/harness/run_all.sh, which 51_ §3/§5 and 25_ §0 place on the immutable denylist. Patch supplied unapplied at diffs/PROPOSED-NOT-APPLIED-item-E-run_all.sh.txt; run_all.sh ships byte-identical."
-  ],
   "counts": {
     "added": 4,
-    "modified": 8,
+    "modified": 9,
     "removed": 0,
-    "unchanged": 94
+    "unchanged": 97
   },
-  "cycle": "round R8 — replace the proxies with the facts they stand for (51_)",
+  "cycle": "round R9 — marker state as facts, complete inventories, enforced invariants (56_)",
   "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json.",
   "files": [
     {
@@ -184,10 +182,10 @@
       "state": "unchanged"
     },
     {
-      "bytes": 1993,
+      "bytes": 2919,
       "path": "harness/run_all.sh",
-      "sha256": "07ea1343a89a4f4509056cf145de669b31dd3b2dc3afe9fe211ebc2ab0464893",
-      "state": "unchanged"
+      "sha256": "35afaf443443ca5703091370a7c7a8f6c36eb2c6842e22e3413f7c7ee93ecc27",
+      "state": "modified"
     },
     {
       "bytes": 3383,
@@ -202,21 +200,21 @@
       "state": "unchanged"
     },
     {
-      "bytes": 10952,
+      "bytes": 11887,
       "path": "runbooks/RUNBOOK-n8n.md",
-      "sha256": "460b53af3cbc9b71c4dfcc11078f930209a02f52861ecdfc70b890dee11af0e1",
+      "sha256": "27bbe4c0c054a41b7384b40fd8aef584ef7fbed4ff710d801f0ebc936cf4cf10",
       "state": "modified"
     },
     {
-      "bytes": 12002,
+      "bytes": 12351,
       "path": "runbooks/RUNBOOK-owner-session.md",
-      "sha256": "6e5fd531377d9e10755a0145be1ad58b14bf5ddb548baab78e7dd61e13ad1b15",
+      "sha256": "ca77b5641768f5b70b6085a2614aef31e77395b076aa5e9ec0998b500e59bccc",
       "state": "modified"
     },
     {
-      "bytes": 5876,
+      "bytes": 6097,
       "path": "runbooks/RUNBOOK-zapier.md",
-      "sha256": "3705c1244460a159a1907731c3d1a7d16fc75677d3fe229a502c6bac224941c2",
+      "sha256": "dc14a5ffa6fcc47dbdf74837da1856713112141c3d1cf326dd2be6e9212fafab",
       "state": "modified"
     },
     {
@@ -246,7 +244,7 @@
     {
       "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "eb462939589e7f7e21e29d7b9e64c3a501cd04024c4da12b6d6d57ab9389f39d",
+      "sha256": "a83b4f53cba926eddfb8c543d4b4015cf7c28c4b521071bec9bbddd457f7b53d",
       "state": "modified"
     },
     {
@@ -277,12 +275,18 @@
       "bytes": 179582,
       "path": "stub/out/r8_acceptance.json",
       "sha256": "32513c18e1fb79a8f30eb6fb1529a7e954cc9726c9ec7495724681f304245f6a",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 494828,
+      "path": "stub/out/r9_acceptance.json",
+      "sha256": "4e616d3cdf0738c7372397cb6a249375e6efd008f6912b7d5b06cd18bfeb18b0",
       "state": "added"
     },
     {
-      "bytes": 77829,
+      "bytes": 92939,
       "path": "stub/out/selftest.json",
-      "sha256": "c9aeb62d29f9c8a984dca8f0a4fafc8c946ed4531596dc55f149e0552a1332a9",
+      "sha256": "eb2df7f2736f5562df4e5d6f59ab112b00697cae17fd7bcda98ddc62c04fee91",
       "state": "modified"
     },
     {
@@ -292,9 +296,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 33920,
+      "bytes": 40445,
       "path": "stub/probe_runner.py",
-      "sha256": "503b9ba34c34ecbdae43028a058b0bd027b038c1dbad715f2b0bb70dd6181421",
+      "sha256": "8fdb0bfce0c336d0a6382cee021b71ada1027a0c1bb88681e65025d3261a0de2",
       "state": "modified"
     },
     {
@@ -367,12 +371,24 @@
       "bytes": 909,
       "path": "stub/r7_reference/README.md",
       "sha256": "28141505eadd00d192d73c22bc0b9ff6e8441d68c52e27885fa8d3bd49ff37e9",
-      "state": "added"
+      "state": "unchanged"
     },
     {
       "bytes": 144075,
       "path": "stub/r7_reference/stub_server_r7.py",
       "sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 797,
+      "path": "stub/r8_reference/README.md",
+      "sha256": "5de6fc15553583ed0c289094dbb801f4d5b601944e32c2579b17bba46bb13f23",
+      "state": "added"
+    },
+    {
+      "bytes": 163786,
+      "path": "stub/r8_reference/stub_server_r8.py",
+      "sha256": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1",
       "state": "added"
     },
     {
@@ -505,6 +521,12 @@
       "bytes": 10536,
       "path": "stub/security_probes/chatgpt_r7_adversarial_recheck.py",
       "sha256": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 32800,
+      "path": "stub/security_probes/chatgpt_r8_adversarial_recheck.py",
+      "sha256": "282a654e2ea2ae62e4f4c892c3728b7b50b50a53fa0051bf70ebdacf8c1426e6",
       "state": "added"
     },
     {
@@ -622,15 +644,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 116929,
+      "bytes": 138824,
       "path": "stub/selftest_stub.py",
-      "sha256": "5343c2e549c003b4b53b9abe8717cdba5f58555c340f0e0f616b01f82feec2ad",
+      "sha256": "0f06135bd4eb11a35bf4f7f48b01970116df12af1d6e7aa6e8bb32a785499af7",
       "state": "modified"
     },
     {
-      "bytes": 163786,
+      "bytes": 186379,
       "path": "stub/stub_server.py",
-      "sha256": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1",
+      "sha256": "5b62ffcdd924457f9d80dec4231248f90507af60ba4a32b6cc3de6e6208efdc5",
       "state": "modified"
     },
     {

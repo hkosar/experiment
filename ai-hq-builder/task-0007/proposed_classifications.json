@@ -1,9 +1,9 @@
 {
   "SUGGESTION ONLY": "authority_manifest.json is published by Fable, never the Builder.",
-  "note": "No file here is proposed as `governing`. The governing instruction is 51_, which the Builder did not author and does not return.",
+  "note": "No file here is proposed as `governing`. The governing instruction is 56_, which the Builder did not author and does not return.",
   "proposed": {
     "evidence-only": {
-      "count": 67,
+      "count": 69,
       "paths": [
         "harness/out/boundary.json",
         "harness/out/boundary.log",
@@ -29,6 +29,7 @@
         "stub/out/r6_acceptance.json",
         "stub/out/r7_acceptance.json",
         "stub/out/r8_acceptance.json",
+        "stub/out/r9_acceptance.json",
         "stub/out/selftest.json",
         "stub/out/stub_selftest.json",
         "stub/security_probes/README.md",
@@ -53,6 +54,7 @@
         "stub/security_probes/chatgpt_r5_cleanup_rollback_r5.json",
         "stub/security_probes/chatgpt_r6_quarantine_integrity_probe.py",
         "stub/security_probes/chatgpt_r7_adversarial_recheck.py",
+        "stub/security_probes/chatgpt_r8_adversarial_recheck.py",
         "stub/security_probes/control_probes.py",
         "stub/security_probes/control_probes_results.json",
         "stub/security_probes/http_authority_races.py",
@@ -109,7 +111,7 @@
       "reason": "implementation baseline the Builder edits under the allowlist"
     },
     "superseded": {
-      "count": 12,
+      "count": 14,
       "paths": [
         "stub/r1_reference/stub_server_r1.py",
         "stub/r2_reference/README.md",
@@ -122,7 +124,9 @@
         "stub/r6_reference/README.md",
         "stub/r6_reference/stub_server_r6.py",
         "stub/r7_reference/README.md",
-        "stub/r7_reference/stub_server_r7.py"
+        "stub/r7_reference/stub_server_r7.py",
+        "stub/r8_reference/README.md",
+        "stub/r8_reference/stub_server_r8.py"
       ],
       "reason": "a pinned byte-identical copy of a build that is no longer the contract"
     }

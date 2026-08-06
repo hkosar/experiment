@@ -1,0 +1,14 @@
+{
+  "http_review_race": {
+    "statuses": [
+      200,
+      200
+    ],
+    "outcomes": [
+      "case-opened",
+      "case-opened"
+    ],
+    "case_count": 2,
+    "token_count": 2
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "detail": "cases=0 tokens=0 outcomes=['refused-internal', 'refused-internal']",
+  "green": false,
+  "raw": {
+    "http_review_race": {
+      "case_count": 0,
+      "outcomes": [
+        "refused-internal",
+        "refused-internal"
+      ],
+      "statuses": [
+        500,
+        500
+      ],
+      "token_count": 0
+    }
+  }
+}

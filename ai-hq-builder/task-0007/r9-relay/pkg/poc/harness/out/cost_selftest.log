@@ -1,0 +1,15 @@
+  [ok  ] total runs: got 651.0, expected 651
+  [ok  ] zapier units = runs x steps: got 2604.0, expected 2604
+  [ok  ] n8n units = runs: got 651.0, expected 651
+  [ok  ] zapier platform: got 26.04, expected 26.04
+  [ok  ] n8n platform + host: got 132.55, expected 132.55
+  [ok  ] zapier attention: got 50.0, expected 50.0
+  [ok  ] n8n attention: got 200.0, expected 200.0
+  [ok  ] zapier total: got 101.03999999999999, expected 101.03999999999999
+  [ok  ] n8n total: got 357.55, expected 357.55
+  [ok  ] step sensitivity: got 4.0, expected 4.0
+  [ok  ] crossover steps: got 5.0, expected 5.0
+  [ok  ] 10x scales runs linearly: got 6510.0, expected 6510
+  [ok  ] 10x scales zapier units linearly: got 26040.0, expected 26040
+  [ok  ] unpriced -> None, not 0: got None, expected None
+COST MODEL SELF-TEST PASS — 14/14

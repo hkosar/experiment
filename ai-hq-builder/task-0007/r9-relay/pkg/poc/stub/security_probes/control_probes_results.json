@@ -1,0 +1,41 @@
+{
+  "capability_in_capture_bytes": false,
+  "capability_in_route_logs": false,
+  "disclose_call_sites": [
+    [
+      1088,
+      "return 200, {\"resume_token\": Disclose(token), \"outcome\": \"case-opened\","
+    ],
+    [
+      1188,
+      "\"execution_capability\": Disclose(cap),"
+    ]
+  ],
+  "fake_disclose_shape_effect": {
+    "authority_components": [],
+    "case": "B",
+    "classification": "new-topic",
+    "external_action_taken_by_this_service": false,
+    "note": "authority is recorded per component; a single flattened authority value for the whole request would be a defect",
+    "outcome": "staged",
+    "provider_conduct": "NOT OBSERVED BY THIS SERVICE \u2014 whether the provider followed a link or took an action is measured at the provider, not asserted here",
+    "queue": "business-ideas",
+    "staged": true,
+    "suggested_next": "owner review"
+  },
+  "http_capability_plain_string": true,
+  "http_token_plain_string": true,
+  "provider_reconcile_minted": {
+    "reconciliation_result": "UNCERTAIN",
+    "state_after": "MINTED",
+    "status": 200
+  },
+  "provider_uncertain_receipt": {
+    "route_outcome": "recorded",
+    "state_after": "MINTED",
+    "state_before": "MINTED",
+    "status": 200
+  },
+  "token_in_capture_bytes": false,
+  "token_in_route_logs": false
+}
