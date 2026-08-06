@@ -1,0 +1,17 @@
+--- a/poc/runbooks/RUNBOOK-owner-session.md (R7 baseline)
++++ b/poc/runbooks/RUNBOOK-owner-session.md (R8)
+@@ -40,6 +40,14 @@
+ | **The wrapper stub running, with the candidate named** — `cd poc/stub && python3 stub_server.py --candidate n8n --port 8787`, then `curl -s http://127.0.0.1:8787/health` | The three workflows call it. `--candidate` is **required**: it keeps n8n's and Zapier's evidence separately attributable, and a defaulted value would silently merge the two corpora the round exists to compare. Restart it with `--candidate zapier` when you switch |
+ | **Both keys read into shell variables** — `read -rs OWNER_KEY`, `read -rs PROVIDER_KEY` | The stub prints them at startup as bare values. **Never paste either into a command line**; the owner key never goes near a provider, and the provider credential carries no owner authority |
+ 
++**If the stub ever answers `503 refused-storage-quarantine`, stop and check
++`restart_protection` on `/health` before restarting it.** `"durable"` means the quarantine is
++recorded on disk and a restart will keep refusing — reconcile, then delete every path in
++`durable_records`. `"none"` means **every attempt to record it failed and a restart will
++silently clear it** — do not restart; reconcile from the running process. The n8n runbook's
++Part B2 carries the full table. This is the filesystem failing underneath the apparatus, not
++the apparatus misbehaving, and it is worth recording as a finding either way.
++
+ **Cost exposure.** Both candidates have free tiers adequate for this round. If any step asks for a paid plan before a POC can complete, stop and record it — "the free tier cannot express this flow" is a genuine economics finding, not an obstacle to work around by spending.
+ 
+ ## 1. Order of work, and why this order

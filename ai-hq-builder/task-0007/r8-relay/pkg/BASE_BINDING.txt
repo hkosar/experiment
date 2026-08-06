@@ -1,0 +1,12 @@
+TASK-0007 R8 — base binding
+===========================
+Base commit : c9b82081ccad669e24606093048689f61c4e67d7
+Base tree   : 69ca5043f0e844f5c81caef7b5eae38bf52ec91d
+
+  Tree: INDEPENDENTLY VERIFIABLE from base_snapshot.tar.
+  Commit: DECLARED ONLY (shallow clone).
+
+VERIFY:
+  mkdir v && tar -xf base_snapshot.tar -C v && cd v
+  git init -q . && git add -Af . && git write-tree
+  # must print: 69ca5043f0e844f5c81caef7b5eae38bf52ec91d

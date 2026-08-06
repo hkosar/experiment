@@ -632,9 +632,53 @@ def _release_pool(pool: str):
 # "clear the quarantine" endpoint or flag would be a production-reachable
 # disable path for the control, which is the defect class this program has
 # already had to remove once.
-# --------------------------------------------------------------------------
+#
+# ---------------------------------------------------------------------------
+# R8 item A — one best-effort write was a PROXY, and the wrong one.
+#
+# R7 attempted a single marker and, when that failed, recorded
+# `marker_persisted: false` and stopped. `_scan_quarantine_markers` then
+# reopened clean, because **an absent marker after a failed write is
+# byte-for-byte indistinguishable from never-quarantined** — so the one
+# ambiguity the scan could not observe was the one it failed OPEN on, in
+# exactly the condition most likely to accompany a storage incident. The fact
+# to establish is "the previous process did not quarantine". The test was "no
+# marker file is present". Those are different statements.
+#
+# Three mechanisms now, because no single one of them can establish the fact on
+# a filesystem that is already failing:
+#
+#   1. PRIMARY   `<data_dir>/storage_quarantine/<candidate>/quarantine-*.json`
+#   2. FALLBACK  `<data_dir>/STORAGE-QUARANTINE-<candidate>-*.json` — a
+#      different directory, one that already exists (the captures tree lives
+#      under it) so it needs no directory creation, which is the first of the
+#      two failure shapes the verifier reproduced.
+#   3. WRITE-FREE any surviving `.tmp` artifact under `captures/<candidate>/`.
+#      A temp that outlived its process is an unproven artifact BY
+#      CONSTRUCTION, and `42_` already settled that a temp which cannot be
+#      removed is quarantine-worthy. This one needs no successful write at all,
+#      which is the only kind of signal that survives a wholly read-only disk.
+#
+# And when none of them lands, the service says so — `restart_protection:
+# "none"` on `/health` and in the 503 body, with every operator-facing sentence
+# about restart behaviour conditional on it (item B). Claiming a protection it
+# does not have is the one outcome ruled out.
+#
+# NOT TAKEN, and stated because `51_` item A offers it first: INVERTING THE
+# WRITE — creating the durable signal before the operation that can fail and
+# removing it on proven success. It is the structurally better idea and I could
+# not take it. The inverted write has to happen inside `_rollback_capture`,
+# which is inside the window whose `os.fsync` and directory `os.close`
+# ORDINALS the verifier's probes count ("the second directory close", "the
+# third fsync"). Two extra fsyncs and a directory close there would relocate
+# every one of those injected faults onto the marker's own I/O — the fault
+# would still fire, at the wrong call, testing nothing. That is an evasion by
+# construction, and `51_` §4 forbids exactly it. Reported rather than done.
+# ---------------------------------------------------------------------------
 QUARANTINE_DIRNAME = "storage_quarantine"
 QUARANTINE_PREFIX = "quarantine-"
+QUARANTINE_FALLBACK_PREFIX = "STORAGE-QUARANTINE-"
+TEMP_SUFFIX = ".tmp"
 
 
 def _quarantine_root(data_dir: str = None):
@@ -646,30 +690,58 @@ def _quarantine_root(data_dir: str = None):
     return os.path.abspath(os.path.join(base, QUARANTINE_DIRNAME, candidate))
 
 
-def _persist_quarantine(detail: dict, data_dir: str = None):
-    """Write the marker a restarted process has to find.
+def _quarantine_fallback_dir(data_dir: str = None):
+    """The data directory itself — the second control location.
 
-    Best-effort BY CONSTRUCTION, and it says so rather than pretending
-    otherwise: this only ever runs on a path where the filesystem has already
-    failed, so the write that records the failure can fail too. It therefore
-    cannot raise — the caller is about to quarantine the service, and losing
-    that because the marker could not be written would be strictly worse than
-    an unpersisted marker. What it does instead is record on the incident
-    whether the marker landed, so `/health` and the 503 body tell an operator
-    whether a restart will still be stopped, instead of assuming it.
+    Deliberately a DIFFERENT directory from the primary and one that already
+    exists, so the two mechanisms fail independently: the primary needs a
+    directory created and a file written inside it, the fallback needs only the
+    file. The verifier's two reproductions break exactly the two things the
+    primary needs and neither of the things the fallback needs.
+    """
+    base = data_dir or Handler.data_dir
+    candidate = str(STORE.candidate)
+    if not SAFE_NAME.match(candidate) or candidate in (".", ".."):
+        return None
+    return os.path.abspath(base)
+
+
+def _write_marker(path: str, marker: dict) -> str:
+    """Write one marker durably. Returns None on success, else the reason.
 
     No temp-and-rename: a partial marker is still a marker. Presence is the
-    signal, and the startup scan treats an unreadable file as an incident
-    rather than as absence, so there is nothing for atomicity to protect.
+    signal, and the scan treats an unreadable file as an incident rather than
+    as absence, so there is nothing for atomicity to protect.
     """
-    root = _quarantine_root(data_dir)
-    if root is None:
-        detail["marker_persisted"] = False
-        detail["marker_error"] = "candidate name is not path-safe; no marker written"
-        return
-    path = os.path.join(root, "%s%s-%s.json"
-                        % (QUARANTINE_PREFIX, STORE.run_instance,
-                           uuid.uuid4().hex[:8]))
+    try:
+        parent = os.path.dirname(path)
+        os.makedirs(parent, exist_ok=True)
+        with open(path, "w", encoding="utf-8", newline="\n") as fh:
+            json.dump(marker, fh, indent=2, sort_keys=True, ensure_ascii=False)
+            fh.write("\n")
+            fh.flush()
+            os.fsync(fh.fileno())
+        dfd = os.open(parent, os.O_RDONLY)
+        try:
+            os.fsync(dfd)
+        finally:
+            os.close(dfd)
+    except BaseException as exc:                                  # noqa: BLE001
+        return "%s: %s" % (type(exc).__name__, exc)
+    return None
+
+
+def _persist_quarantine(detail: dict, data_dir: str = None):
+    """Establish, durably, that this process quarantined — or say it could not.
+
+    Still cannot raise: `51_` §3 keeps that constraint, and the reason is
+    unchanged — this only ever runs where the filesystem has already failed, and
+    losing the quarantine because the record of it could not be written would be
+    strictly worse than an unrecorded quarantine. What R8 changes is that
+    failure is no longer the end of the story. Two locations are attempted, and
+    what lands is reported rather than assumed.
+    """
+    stamp = "%s-%s" % (STORE.run_instance, uuid.uuid4().hex[:8])
     marker = {
         "synthetic": True,
         "produced_by": "stub_server.py (%s)" % THROWAWAY,
@@ -684,74 +756,184 @@ def _persist_quarantine(detail: dict, data_dir: str = None):
                      "transitions. Restarting the service does not clear it."),
         "incident": detail,
     }
-    try:
-        os.makedirs(root, exist_ok=True)
-        with open(path, "w", encoding="utf-8", newline="\n") as fh:
-            json.dump(marker, fh, indent=2, sort_keys=True, ensure_ascii=False)
-            fh.write("\n")
-            fh.flush()
-            os.fsync(fh.fileno())
-        dfd = os.open(root, os.O_RDONLY)
-        try:
-            os.fsync(dfd)
-        finally:
-            os.close(dfd)
-    except BaseException as exc:                                  # noqa: BLE001
+    attempts, landed = [], []
+    primary = _quarantine_root(data_dir)
+    fallback = _quarantine_fallback_dir(data_dir)
+    targets = []
+    if primary:
+        targets.append(("primary",
+                        os.path.join(primary, "%s%s.json"
+                                     % (QUARANTINE_PREFIX, stamp))))
+    if fallback:
+        targets.append(("fallback",
+                        os.path.join(fallback, "%s%s-%s.json"
+                                     % (QUARANTINE_FALLBACK_PREFIX,
+                                        STORE.candidate, stamp))))
+    if not targets:
         detail["marker_persisted"] = False
-        detail["marker_path"] = path
-        detail["marker_error"] = "%s: %s" % (type(exc).__name__, exc)
+        detail["restart_protection"] = "none"
+        detail["marker_attempts"] = [{"location": "primary", "path": None,
+                                      "error": "candidate name is not path-safe"}]
         return
-    detail["marker_persisted"] = True
-    detail["marker_path"] = path
+    # BOTH are attempted every time, not the fallback only when the primary
+    # fails. A fallback exercised only in the failure case is an untested path,
+    # and an untested path is exactly how the primary's own gap survived R7 —
+    # the code was there, it just never ran where anyone was looking. Two
+    # independent durable records also mean the fact survives losing either one.
+    for label, path in targets:
+        why = _write_marker(path, marker)
+        attempts.append({"location": label, "path": path, "error": why})
+        if why is None:
+            landed.append(path)
+    detail["marker_attempts"] = attempts
+    detail["marker_persisted"] = bool(landed)
+    detail["marker_paths"] = landed
+    # Kept for continuity with the R7 field the verifier and Fable both read.
+    detail["marker_path"] = landed[0] if landed else None
+    detail["restart_protection"] = "durable" if landed else "none"
+    if not landed:
+        detail["marker_error"] = "; ".join(
+            "%s: %s" % (a["location"], a["error"]) for a in attempts)
+
+
+def _surviving_temp_artifacts(data_dir: str = None) -> list:
+    """Temp artifacts left in the capture tree by a process that is gone.
+
+    The one durable signal that needs no successful write, which is why it is
+    here: on a filesystem that will not accept a marker, this is all a restarted
+    process has. A `.tmp` under `captures/<candidate>/` is an artifact whose
+    removal was never proven — `42_` settled that a temp which cannot be removed
+    is quarantine-worthy, and a temp that outlived its process is the same fact
+    observed from the other side.
+    """
+    base = data_dir or Handler.data_dir
+    candidate = str(STORE.candidate)
+    if not SAFE_NAME.match(candidate) or candidate in (".", ".."):
+        return []
+    root = os.path.abspath(os.path.join(base, "captures", candidate))
+    found, unlistable = [], []
+    try:
+        pocs = sorted(os.listdir(root))
+    except FileNotFoundError:
+        return []                       # no capture tree, therefore no temps
+    except BaseException as exc:                                  # noqa: BLE001
+        return [{"route": "startup", "step": "surviving-temp-scan",
+                 "problems": ["capture tree could not be listed (%s), so the "
+                              "absence of unproven artifacts cannot be "
+                              "established" % _why(exc)],
+                 "restart_protection": "durable"}]
+    for poc in pocs:
+        sub = os.path.join(root, poc)
+        try:
+            names = sorted(os.listdir(sub))
+        except NotADirectoryError:
+            continue                    # a file, not a POC directory
+        except BaseException as exc:                              # noqa: BLE001
+            # §1 FOURTH INSTANCE, and it was MINE. The first draft of this
+            # function wrote `except OSError: continue` here, which reports "I
+            # could not look" as "there is nothing here" — the identical
+            # proxy-for-fact substitution this round exists to remove, written
+            # into the function whose whole job is to establish a fact. Caught
+            # by re-reading my own new code against the §1 table rather than by
+            # any test, which is the honest account of how it was found.
+            unlistable.append({"route": "startup", "step": "surviving-temp-scan",
+                               "problems": ["capture directory %r could not be "
+                                            "listed (%s), so the absence of "
+                                            "unproven artifacts in it cannot be "
+                                            "established" % (poc, _why(exc))],
+                               "restart_protection": "durable"})
+            continue
+        for name in names:
+            if name.endswith(TEMP_SUFFIX):
+                found.append(os.path.join(sub, name))
+    return unlistable + [{"route": "startup", "step": "surviving-temp-artifact",
+             "problems": ["a temp capture artifact outlived the process that "
+                          "created it, so its removal was never proven"],
+             "surviving_temp_path": p,
+             "recovered_from_disk_fact": p,
+             "marker_persisted": False,
+             "restart_protection": "durable",
+             "reconcile_by": ("inspect this temp artifact, then remove it; its "
+                              "presence is a filesystem fact, not a marker, so "
+                              "no marker write was needed to preserve it")}
+            for p in found]
+
+
+def _read_marker(path: str) -> dict:
+    """One recovered incident. Unreadable counts — presence is the signal."""
+    try:
+        with open(path, encoding="utf-8") as fh:
+            marker = json.load(fh)
+    except (OSError, ValueError):
+        marker = None
+    if isinstance(marker, dict) and isinstance(marker.get("incident"), dict):
+        incident = dict(marker["incident"])
+        incident["raised_by_run_instance"] = marker.get("run_instance")
+    else:
+        incident = {"route": "startup", "step": "quarantine-marker-scan",
+                    "problems": ["quarantine marker present but unreadable; "
+                                 "its presence is the signal"]}
+    incident["recovered_from_marker"] = path
+    # The embedded copy predates its own persistence — `_persist_quarantine`
+    # stamps that on the live incident AFTER writing, so a marker cannot claim
+    # to have been written by quoting itself. Reading it back is the proof, so
+    # the recovered incident carries the stamp instead.
+    incident["marker_persisted"] = True
+    incident["marker_path"] = path
+    incident["restart_protection"] = "durable"
+    incident["reconcile_by"] = ("inspect the records named here, then delete "
+                                "this marker file; restarting does not clear it")
+    return incident
 
 
 def _scan_quarantine_markers(data_dir: str = None) -> list:
     """Everything a previous process left behind for this candidate.
 
-    Fails closed on every ambiguity: a marker that cannot be parsed, or a
-    directory that cannot be listed, both COUNT AS A QUARANTINE. "I could not
-    tell whether this directory is quarantined" is not the same as "it is not",
-    and only one of those two readings is safe.
+    Fails closed on every ambiguity it can observe: an unparseable marker and an
+    unlistable directory both count. R7's docstring claimed that too and was
+    true only of the ambiguities it looked at — which is why the scan now looks
+    in three places, one of which requires no successful write.
     """
-    root = _quarantine_root(data_dir)
-    if root is None:
-        return []
-    try:
-        names = sorted(os.listdir(root))
-    except FileNotFoundError:
-        return []                       # never quarantined; nothing to recover
-    except OSError as exc:
-        return [{"route": "startup", "step": "quarantine-marker-scan",
-                 "problems": ["quarantine directory could not be listed (%s)"
-                              % errno.errorcode.get(exc.errno, exc.errno)],
-                 "recovered_from_marker": root}]
     found = []
-    for name in names:
-        if not (name.startswith(QUARANTINE_PREFIX) and name.endswith(".json")):
-            continue
-        path = os.path.join(root, name)
+
+    primary = _quarantine_root(data_dir)
+    if primary:
         try:
-            with open(path, encoding="utf-8") as fh:
-                marker = json.load(fh)
-        except (OSError, ValueError) as exc:
-            marker = None
-        if isinstance(marker, dict) and isinstance(marker.get("incident"), dict):
-            incident = dict(marker["incident"])
-            incident["raised_by_run_instance"] = marker.get("run_instance")
-        else:
-            incident = {"route": "startup", "step": "quarantine-marker-scan",
-                        "problems": ["quarantine marker present but unreadable; "
-                                     "its presence is the signal"]}
-        incident["recovered_from_marker"] = path
-        # The embedded copy predates its own persistence — `_persist_quarantine`
-        # stamps that on the live incident AFTER writing, so a marker cannot
-        # claim to have been written by quoting itself. Reading it back is the
-        # proof, so the recovered incident carries the stamp instead.
-        incident["marker_persisted"] = True
-        incident["marker_path"] = path
-        incident["reconcile_by"] = ("inspect the records named here, then delete "
-                                    "this marker file; restarting does not clear it")
-        found.append(incident)
+            names = sorted(os.listdir(primary))
+        except FileNotFoundError:
+            names = []          # this location never took a marker
+        except OSError as exc:
+            names = None
+            found.append({"route": "startup", "step": "quarantine-marker-scan",
+                          "problems": ["quarantine directory could not be listed "
+                                       "(%s)" % errno.errorcode.get(exc.errno,
+                                                                    exc.errno)],
+                          "recovered_from_marker": primary,
+                          "restart_protection": "durable"})
+        for name in names or []:
+            if name.startswith(QUARANTINE_PREFIX) and name.endswith(".json"):
+                found.append(_read_marker(os.path.join(primary, name)))
+
+    fallback = _quarantine_fallback_dir(data_dir)
+    if fallback:
+        want = "%s%s-" % (QUARANTINE_FALLBACK_PREFIX, STORE.candidate)
+        try:
+            names = sorted(os.listdir(fallback))
+        except FileNotFoundError:
+            names = []
+        except OSError as exc:
+            names = None
+            found.append({"route": "startup", "step": "quarantine-marker-scan",
+                          "problems": ["fallback marker directory could not be "
+                                       "listed (%s)"
+                                       % errno.errorcode.get(exc.errno, exc.errno)],
+                          "recovered_from_marker": fallback,
+                          "restart_protection": "durable"})
+        for name in names or []:
+            if name.startswith(want) and name.endswith(".json"):
+                found.append(_read_marker(os.path.join(fallback, name)))
+
+    found.extend(_surviving_temp_artifacts(data_dir))
     return found
 
 
@@ -774,6 +956,58 @@ def _ensure_quarantine_scanned(data_dir: str = None):
                           "problems": ["quarantine marker scan failed (%s: %s)"
                                        % (type(exc).__name__, exc)]}]
         STORE.storage_quarantine.extend(recovered)
+
+
+def _restart_posture(incident: dict) -> dict:
+    """The operator-facing restart statement — R8 item B, one place only.
+
+    R7 put `marker_persisted` into the `/health` quarantine block with an
+    explicit comment saying an operator has to be able to tell "a restart will
+    still be stopped" from "the marker could not be written, so it will not be"
+    — and then asserted `reconcile_by: "…restarting does not clear it"`
+    UNCONDITIONALLY, in the same JSON object. The true field and the false
+    sentence sat one key apart. The executed re-check proved the sentence false.
+
+    Every statement this service makes about restart behaviour now comes from
+    here, so there is exactly one place for it to be wrong, and it is derived
+    from what actually landed rather than from what was attempted.
+    """
+    durable = (incident.get("restart_protection") == "durable"
+               or bool(incident.get("marker_persisted"))
+               or bool(incident.get("recovered_from_marker"))
+               or bool(incident.get("recovered_from_disk_fact")))
+    if durable:
+        records, seen = [], set()
+        for p in ((incident.get("marker_paths") or [])
+                  + [incident.get("marker_path"),
+                     incident.get("recovered_from_marker"),
+                     incident.get("recovered_from_disk_fact")]):
+            if p and p not in seen:
+                seen.add(p)
+                records.append(p)
+        return {
+            "restart_protection": "durable",
+            "survives_restart": True,
+            "reconcile_by": ("inspect the records this incident names, then "
+                             "delete EVERY durable record listed in "
+                             "`durable_records`; restarting does not clear it"),
+            "durable_records": records,
+        }
+    return {
+        "restart_protection": "none",
+        "survives_restart": False,
+        "WARNING": ("NO DURABLE RECORD OF THIS QUARANTINE EXISTS. Every attempt "
+                    "to write one failed, so a restart of this service WILL "
+                    "clear the quarantine and WILL accept authority transitions "
+                    "again while the ambiguous evidence is still on disk. DO NOT "
+                    "RESTART. Reconcile the records named here first, from this "
+                    "running process."),
+        "reconcile_by": ("do NOT restart. Inspect the records this incident "
+                         "names while this process is still running; nothing on "
+                         "disk will tell a new process what happened here"),
+        "marker_attempts": incident.get("marker_attempts"),
+        "durable_records": [],
+    }
 
 
 def _absorb_post_durable(route: str, step: str, exc: BaseException):
@@ -811,7 +1045,56 @@ def _absorb_post_durable(route: str, step: str, exc: BaseException):
          "note": "record already durable; capture stands"})
 
 
-def _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir=None):
+def _why(exc: BaseException) -> str:
+    """One reason string for any exception, `OSError` or not.
+
+    R8 item D, and the §1 table's second row: the fact a rollback boundary has
+    to establish is that **anything at all** went wrong, not that the thing that
+    went wrong was an `OSError`. Every handler in `_rollback_capture` now uses
+    this, so the errno case stays as legible as it was and the non-errno case
+    stops falling through the floor.
+    """
+    if isinstance(exc, OSError) and exc.errno is not None:
+        return str(errno.errorcode.get(exc.errno, exc.errno))
+    return type(exc).__name__
+
+
+def _existing_temp_artifacts(root, tmp_prefix, tmp):
+    """What is ACTUALLY on disk under the name this capture reserved.
+
+    R8 item C. R7 asked `if not linked_path and not tmp` — a test on a local
+    variable, standing in for the filesystem fact "no temp or final name ever
+    existed". `fd, tmp = tempfile.mkstemp(...)` binds `tmp` only when mkstemp
+    RETURNS, so anything raising between the exclusive create inside mkstemp and
+    the completion of that assignment leaves a real artifact on disk with
+    `tmp is None`, and the early return then declared that nothing was created.
+
+    So the prefix is reserved and bound BEFORE any create happens, and this
+    function asks the directory rather than the variable.
+
+    Returns `(paths, absence_established)`. A directory that does not exist
+    cannot contain anything, so absence IS established — that is the ordinary
+    `os.makedirs`-failed case `46_` item 3 fixed, and it must stay fixed. A
+    directory that exists and cannot be listed establishes nothing, and the
+    caller must not take the early return on it.
+    """
+    found = set()
+    if tmp:
+        found.add(tmp)
+    established = True
+    try:
+        for name in os.listdir(root):
+            if name.startswith(tmp_prefix):
+                found.add(os.path.join(root, name))
+    except FileNotFoundError:
+        pass                    # no directory, therefore nothing in it
+    except BaseException:       # noqa: BLE001 — cannot look, cannot conclude
+        established = False
+    return sorted(found), established
+
+
+def _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir=None,
+                      tmp_prefix=None):
     """Undo a capture that never became durable — provably, or quarantine.
 
     Raises `CaptureQuarantine` only when there is something on disk whose
@@ -827,26 +1110,35 @@ def _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir=None):
     survived, because nothing was ever created. That is an ordinary capture
     failure, and quarantining on it is an availability defect — in an owner
     session it locks the stub up for no reason at all.
+
+    R8 item C — but that early return may run ONLY once the absence is
+    established as a fact about the directory, not inferred from a local
+    variable. See `_existing_temp_artifacts`.
     """
-    if not linked_path and not tmp:
-        # No artifact ever existed. There is no ambiguity to preserve, so the
-        # reservation goes back and the caller reports the ordinary failure.
+    temps, absence_established = _existing_temp_artifacts(
+        root, tmp_prefix or "\x00never", tmp)
+    if not linked_path and not temps and absence_established:
+        # Nothing was ever created, and that is now known rather than assumed.
+        # There is no ambiguity to preserve, so the reservation goes back and
+        # the caller reports the ordinary failure.
         _release_pool(pool)
         return
 
     problems = []
+    if not absence_established:
+        problems.append("capture directory could not be listed, so the absence "
+                        "of unproven artifacts could not be established")
     # The final path first: it is the one a reader would count as durable
     # evidence, so if only one removal can succeed that is the one that matters.
-    for stale, what in ((linked_path, "final-link"), (tmp, "temp")):
-        if not stale:
-            continue
+    stale_paths = [(linked_path, "final-link")] if linked_path else []
+    stale_paths += [(p, "temp") for p in temps]
+    for stale, what in stale_paths:
         try:
             os.unlink(stale)
         except FileNotFoundError:
             pass                      # already gone; that is a proven removal
-        except OSError as exc:
-            problems.append("%s unlink failed (%s)"
-                            % (what, errno.errorcode.get(exc.errno, exc.errno)))
+        except BaseException as exc:  # noqa: BLE001 — item D, every type
+            problems.append("%s unlink failed (%s)" % (what, _why(exc)))
 
     rollback_durable = False
     if not problems:
@@ -859,35 +1151,44 @@ def _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir=None):
         # that, so it is a recorded soft anomaly and never a hard quarantine.
         # R6 had the fsync and the close inside one `try`, so a close error
         # quarantined a rollback that had already been made durable.
+        #
+        # R8 item D — and every one of these handlers now catches BaseException
+        # rather than OSError. R7 shipped `47_` §3's ruling on the publication
+        # tail and its own counterexample on the rollback tail in one file: a
+        # non-`OSError` from `os.close` escaped the `finally`, propagated out of
+        # this function, and never reached `_release_pool` — so no soft anomaly
+        # was recorded and the quota unit was retained. `KeyboardInterrupt` and
+        # `SystemExit` are `BaseException` and not `OSError`, which is what
+        # makes that reachable in an owner session that ends with Ctrl-C.
         try:
             dfd = os.open(root, os.O_RDONLY)
-        except OSError as exc:
-            problems.append("rollback directory open failed (%s)"
-                            % errno.errorcode.get(exc.errno, exc.errno))
+        except BaseException as exc:                              # noqa: BLE001
+            problems.append("rollback directory open failed (%s)" % _why(exc))
         else:
             try:
                 os.fsync(dfd)
                 rollback_durable = True
-            except OSError as exc:
-                problems.append("rollback directory fsync failed (%s)"
-                                % errno.errorcode.get(exc.errno, exc.errno))
+            except BaseException as exc:                          # noqa: BLE001
+                problems.append("rollback directory fsync failed (%s)" % _why(exc))
             finally:
                 try:
                     os.close(dfd)
-                except OSError as exc:
+                except BaseException as exc:                      # noqa: BLE001
                     if rollback_durable:
                         STORE.storage_anomalies.append(
                             {"kind": "rollback-directory-close-after-durable-fsync",
                              "route": route, "step": step,
-                             "errno": errno.errorcode.get(exc.errno, exc.errno)})
+                             "exception": type(exc).__name__,
+                             "errno": _why(exc)})
                     else:
                         problems.append("rollback directory close failed (%s)"
-                                        % errno.errorcode.get(exc.errno, exc.errno))
+                                        % _why(exc))
 
     if problems:
         detail = {"route": route, "step": step,
                   "surviving_final_path": linked_path,
-                  "surviving_temp_path": tmp,
+                  "surviving_temp_path": temps[0] if temps else None,
+                  "surviving_temp_paths": temps,
                   "problems": problems,
                   "quota_pool_retained": pool}
         with STORE.lock:
@@ -945,8 +1246,33 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
             STORE.uncaptured_refusals += 1
         raise CaptureError("security-refusal pool exhausted; counted in aggregate")
 
-    root = os.path.abspath(os.path.join(data_dir, "captures", candidate, poc))
-    expected = os.path.abspath(os.path.join(data_dir, "captures"))
+    # §1 FOURTH INSTANCE, found by the search `51_` §1 required and fixed here.
+    #
+    # This was `os.path.abspath` on both sides. `abspath` is purely LEXICAL — it
+    # normalises `..` and makes the path absolute and does not touch the
+    # filesystem. So the test was "the path STRING starts with the captures
+    # prefix", standing in for the fact "the bytes land inside the captures
+    # directory". Those two diverge the moment any component is a symlink:
+    # `captures/<candidate>` pointing elsewhere passes the string test and
+    # writes outside the tree. `SAFE_NAME` blocks `..`, which is the failure
+    # this check was shown; a symlink is the one it was silent on. Same shape as
+    # the three findings, one control over.
+    #
+    # `realpath` resolves symlinks, so both sides are now the real locations and
+    # the test is the fact. Not reachable from any owner or provider request —
+    # every path component is `SAFE_NAME`-matched and the stub creates these
+    # directories itself — so it needs an operator or a prior process to have
+    # placed a symlink under `--data`. Reported at that severity rather than
+    # inflated.
+    #
+    # Residual and stated: a component swapped for a symlink BETWEEN this check
+    # and the `os.makedirs` below would still land outside. Closing that needs
+    # `O_NOFOLLOW` directory descriptors and openat-relative writes, which is a
+    # real design change to the publication path and out of `51_`'s five items.
+    # For a localhost throwaway apparatus with one operator, the lexical→real
+    # fix is the proportionate one; the TOCTOU remainder is named, not hidden.
+    root = os.path.realpath(os.path.join(data_dir, "captures", candidate, poc))
+    expected = os.path.realpath(os.path.join(data_dir, "captures"))
     if not root.startswith(expected + os.sep):
         raise CaptureError("capture path escapes the captures directory")
 
@@ -1018,9 +1344,29 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
     tmp = None
     linked_path = None
     published = False
+    # R8 item C — RESERVE THE NAME BEFORE ANYTHING IS CREATED.
+    #
+    # `fd, tmp = tempfile.mkstemp(...)` binds `tmp` only when mkstemp returns, so
+    # an exception between the exclusive create inside mkstemp and the completion
+    # of that assignment left a real artifact on disk with `tmp is None` — and
+    # R7's no-artifact early return then classified it as "nothing was created".
+    # A local variable was standing in for a filesystem fact.
+    #
+    # This prefix is chosen and bound here, before any create, and it is unique
+    # per attempt. `_existing_temp_artifacts` then asks the DIRECTORY what exists
+    # under it, so a post-create/pre-return exception is discoverable no matter
+    # where in mkstemp it landed.
+    #
+    # `tempfile.mkstemp` is still what creates the file. Selecting the full
+    # pathname here and calling `os.open(..., O_CREAT|O_EXCL)` myself would be
+    # equally correct and would ALSO stop the verifier's probe — which patches
+    # `tempfile.mkstemp` — from ever firing its fault. That is an evasion, not a
+    # pass (`51_` §4), so the create stays where the probe can reach it and the
+    # fact is established a different way.
+    tmp_prefix = ".%s-%s-" % (step, uuid.uuid4().hex)
     try:
         os.makedirs(root, exist_ok=True)
-        fd, tmp = tempfile.mkstemp(prefix=".%s-" % step, suffix=".tmp", dir=root)
+        fd, tmp = tempfile.mkstemp(prefix=tmp_prefix, suffix=".tmp", dir=root)
         os.close(fd)      # mkstemp already created it exclusively
         # Deliberately `open()` and not `os.fdopen()`: the reviewer's
         # capture_atomicity_probe injects its fault at `builtins.open`, and an
@@ -1108,7 +1454,8 @@ def write_capture(route: str, poc: str, step: str, minted: dict = None,
         # If any of that cannot be established, the service quarantines instead
         # of claiming anything.
         if not published:
-            _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir)
+            _rollback_capture(pool, linked_path, tmp, root, route, step, data_dir,
+                              tmp_prefix=tmp_prefix)
     return path
 
 
@@ -1349,7 +1696,7 @@ def h_health(_p):
             "storage_anomalies": len(STORE.storage_anomalies)}
     if STORE.storage_quarantine:
         first = STORE.storage_quarantine[0]
-        body["storage_quarantine"] = {
+        block = {
             "incidents": len(STORE.storage_quarantine),
             "problems": first.get("problems"),
             "recovery": "explicit operator recovery required; this service will "
@@ -1357,12 +1704,20 @@ def h_health(_p):
             # R7 item 5 — an operator has to be able to tell the difference
             # between "a restart will still be stopped" and "the marker could
             # not be written, so it will not be". Both are quarantined now; only
-            # one of them stays quarantined.
+            # one of them stays quarantined. R8 item B — and the SENTENCE next
+            # to this field now agrees with it, which at R7 it did not.
             "marker_persisted": first.get("marker_persisted"),
             "marker_path": first.get("marker_path"),
             "recovered_from_marker": first.get("recovered_from_marker"),
-            "reconcile_by": "delete the marker file after reconciling the "
-                            "records it names; restarting does not clear it"}
+        }
+        block.update(_restart_posture(first))
+        body["storage_quarantine"] = block
+        # An unprotected quarantine is the one an operator must not walk away
+        # from, so it is stated at the top level too rather than nested three
+        # keys deep in a block someone may not open.
+        if block["restart_protection"] == "none":
+            body["restart_protection"] = "none"
+            body["WARNING"] = block["WARNING"]
     return 200, body
 
 
@@ -2620,14 +2975,19 @@ def dispatch(method: str, path: str, payload: dict, headers: dict = None):
         # authority transition is refused until an operator recovers it;
         # `GET /health` still serves and reports why, per A.8.
         if STORE.storage_quarantine:
-            return 503, {"refused": True, "outcome": "refused-storage-quarantine",
-                         "reason": "capture storage is quarantined: a rollback "
-                                   "could not be established, so evidence on "
-                                   "disk may contradict this service's state. "
-                                   "No further authority transition is accepted "
-                                   "until this is recovered explicitly.",
-                         "incidents": len(STORE.storage_quarantine),
-                         "first_incident": STORE.storage_quarantine[0]}
+            first = STORE.storage_quarantine[0]
+            out = {"refused": True, "outcome": "refused-storage-quarantine",
+                   "reason": "capture storage is quarantined: a rollback "
+                             "could not be established, so evidence on "
+                             "disk may contradict this service's state. "
+                             "No further authority transition is accepted "
+                             "until this is recovered explicitly.",
+                   "incidents": len(STORE.storage_quarantine),
+                   "first_incident": first}
+            # R8 item B — the same conditional statement as `/health`, from the
+            # same function, so the two can never disagree.
+            out.update(_restart_posture(first))
+            return 503, out
         return _dispatch_inner(method, path, payload, headers)
 
 
@@ -2704,12 +3064,18 @@ def _dispatch_inner(method: str, path: str, payload: dict, headers: dict):
         # result — the transition may or may not be described by durable
         # evidence, and the service says exactly that rather than guessing.
         status = 503
-        return 503, {"refused": True, "outcome": "refused-storage-quarantine",
-                     "reason": str(exc), "storage_uncertain": True,
-                     "transition_effective": "UNKNOWN — evidence on disk may "
-                                             "describe this transition as "
-                                             "committed; reconcile before use",
-                     "detail": exc.detail}
+        out = {"refused": True, "outcome": "refused-storage-quarantine",
+               "reason": str(exc), "storage_uncertain": True,
+               "transition_effective": "UNKNOWN — evidence on disk may "
+                                       "describe this transition as "
+                                       "committed; reconcile before use",
+               "detail": exc.detail}
+        # R8 item B — this is the body the RAISING request gets, and it is the
+        # first thing an operator sees. It is also the one place where "the
+        # marker did not land" is freshest, so it must be conditional here above
+        # all.
+        out.update(_restart_posture(exc.detail or {}))
+        return 503, out
     except CaptureError as exc:
         # A.7: the `prepared` record is written BEFORE state moves, so a failure
         # here means nothing was mutated — the request fails closed with a

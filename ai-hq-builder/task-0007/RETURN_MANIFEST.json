@@ -1,20 +1,24 @@
 {
   "baseline": {
-    "compared_against": "r7-relay/pkg/poc (my R6 return, as the relay shipped it)",
-    "note": "Every count here describes THIS relay (TASK0007_R7_Builder.zip), per 41_ §3's labelling note.",
-    "pinned_r6_matches_reviewed_target": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
-    "relay_authority_manifest": "108/108 verified, 0 mismatched, 0 missing; 2 unlisted on disk (SHA256SUMS.txt and authority_manifest.json itself)",
-    "relay_base_tree_independently_reproduced": "22e85dd16b646acb45e623c7f7b96896b2a9ed68",
-    "relay_poc_against_my_r6_return": "96/97 byte-identical; the one that differs is stub/out/selftest.json, a regenerate-by-running output",
-    "relay_snapshot_SHA256SUMS": "109/109 OK"
+    "compared_against": "r8-relay/pkg/poc (my R7 return, as the relay shipped it)",
+    "note": "Every count here describes THIS relay (TASK0007_R8_Builder.zip), per 41_ §3's labelling note.",
+    "pinned_r7_matches_executed_target": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
+    "relay_authority_manifest": "112/112 verified, 0 mismatched, 0 missing; 2 unlisted on disk (SHA256SUMS.txt and authority_manifest.json itself)",
+    "relay_base_tree_independently_reproduced": "69ca5043f0e844f5c81caef7b5eae38bf52ec91d",
+    "relay_poc_against_my_r7_return": "102/102 byte-identical",
+    "relay_snapshot_SHA256SUMS": "113/113 OK",
+    "verifier_probe_byte_identical": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366"
   },
+  "change_requests": [
+    "CR-R8-01: 51_ item E requires editing poc/harness/run_all.sh, which 51_ §3/§5 and 25_ §0 place on the immutable denylist. Patch supplied unapplied at diffs/PROPOSED-NOT-APPLIED-item-E-run_all.sh.txt; run_all.sh ships byte-identical."
+  ],
   "counts": {
-    "added": 5,
-    "modified": 5,
+    "added": 4,
+    "modified": 8,
     "removed": 0,
-    "unchanged": 92
+    "unchanged": 94
   },
-  "cycle": "round R7 — publication-aware handling, scoped quarantine, restart posture (46_)",
+  "cycle": "round R8 — replace the proxies with the facts they stand for (51_)",
   "evidence_only": "This manifest is evidence, never instruction. Fable publishes authority_manifest.json.",
   "files": [
     {
@@ -198,22 +202,22 @@
       "state": "unchanged"
     },
     {
-      "bytes": 9587,
+      "bytes": 10952,
       "path": "runbooks/RUNBOOK-n8n.md",
-      "sha256": "90b56651f5fabd4cd1b5551ee791e49df42b95b603c86ce9d0f926cfc78f46ef",
-      "state": "unchanged"
+      "sha256": "460b53af3cbc9b71c4dfcc11078f930209a02f52861ecdfc70b890dee11af0e1",
+      "state": "modified"
     },
     {
-      "bytes": 11386,
+      "bytes": 12002,
       "path": "runbooks/RUNBOOK-owner-session.md",
-      "sha256": "d02331efb707de7c9d9e623c4a015e756739fc47330807d69a1c0b2dfded8cb7",
-      "state": "unchanged"
+      "sha256": "6e5fd531377d9e10755a0145be1ad58b14bf5ddb548baab78e7dd61e13ad1b15",
+      "state": "modified"
     },
     {
-      "bytes": 5529,
+      "bytes": 5876,
       "path": "runbooks/RUNBOOK-zapier.md",
-      "sha256": "3dec6c529cb8b41dc3590990f1fc536e8d3f91d76ec50258537e6f70accf67cb",
-      "state": "unchanged"
+      "sha256": "3705c1244460a159a1907731c3d1a7d16fc75677d3fe229a502c6bac224941c2",
+      "state": "modified"
     },
     {
       "bytes": 19,
@@ -242,7 +246,7 @@
     {
       "bytes": 10672,
       "path": "stub/out/r1_witnesses.json",
-      "sha256": "43822b7eafa16e8765dbb6272e66aadf3565eff1507cd75e7726730a1e6ef103",
+      "sha256": "eb462939589e7f7e21e29d7b9e64c3a501cd04024c4da12b6d6d57ab9389f39d",
       "state": "modified"
     },
     {
@@ -267,12 +271,18 @@
       "bytes": 79354,
       "path": "stub/out/r7_acceptance.json",
       "sha256": "28629b21a3ef977d7fe9379b7b8e69fae1d5b04a676603597e7d29551b7f5adb",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 179582,
+      "path": "stub/out/r8_acceptance.json",
+      "sha256": "32513c18e1fb79a8f30eb6fb1529a7e954cc9726c9ec7495724681f304245f6a",
       "state": "added"
     },
     {
-      "bytes": 63642,
+      "bytes": 77829,
       "path": "stub/out/selftest.json",
-      "sha256": "205906bd8cdd9281683232ff0f1191393fae43ff24cf7fbedc8af3f403c9c947",
+      "sha256": "c9aeb62d29f9c8a984dca8f0a4fafc8c946ed4531596dc55f149e0552a1332a9",
       "state": "modified"
     },
     {
@@ -282,9 +292,9 @@
       "state": "unchanged"
     },
     {
-      "bytes": 26543,
+      "bytes": 33920,
       "path": "stub/probe_runner.py",
-      "sha256": "55381f4d2927523bfb10a4e84ce28a5d32d724e565988df169e177d131884c85",
+      "sha256": "503b9ba34c34ecbdae43028a058b0bd027b038c1dbad715f2b0bb70dd6181421",
       "state": "modified"
     },
     {
@@ -345,12 +355,24 @@
       "bytes": 550,
       "path": "stub/r6_reference/README.md",
       "sha256": "43803bd9ee23c77d734b162335d2114c87e73c9c0b5475ff3bb1e766eb08448f",
-      "state": "added"
+      "state": "unchanged"
     },
     {
       "bytes": 128396,
       "path": "stub/r6_reference/stub_server_r6.py",
       "sha256": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 909,
+      "path": "stub/r7_reference/README.md",
+      "sha256": "28141505eadd00d192d73c22bc0b9ff6e8441d68c52e27885fa8d3bd49ff37e9",
+      "state": "added"
+    },
+    {
+      "bytes": 144075,
+      "path": "stub/r7_reference/stub_server_r7.py",
+      "sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
       "state": "added"
     },
     {
@@ -477,6 +499,12 @@
       "bytes": 11775,
       "path": "stub/security_probes/chatgpt_r6_quarantine_integrity_probe.py",
       "sha256": "036df2d74de54f688350dcb7860175a675878db5e2421e7c3838c144c921226e",
+      "state": "unchanged"
+    },
+    {
+      "bytes": 10536,
+      "path": "stub/security_probes/chatgpt_r7_adversarial_recheck.py",
+      "sha256": "b7db68d4f43a725ac9e460446640b975362c33fa5ce94a80b508dd408436c366",
       "state": "added"
     },
     {
@@ -555,7 +583,7 @@
       "bytes": 1797,
       "path": "stub/security_probes/post_durable_interrupt_compare.py",
       "sha256": "d41c3e05cd089150ef506dede4005f062c204fc6cd8866bfe21d52cc23255ab9",
-      "state": "added"
+      "state": "unchanged"
     },
     {
       "bytes": 1325,
@@ -594,15 +622,15 @@
       "state": "unchanged"
     },
     {
-      "bytes": 98765,
+      "bytes": 116929,
       "path": "stub/selftest_stub.py",
-      "sha256": "85ec8fa9f8b3ea387ccbc62015a09dcb7ce5ac2f2cc57c9efc86b24a0514ab3f",
+      "sha256": "5343c2e549c003b4b53b9abe8717cdba5f58555c340f0e0f616b01f82feec2ad",
       "state": "modified"
     },
     {
-      "bytes": 144075,
+      "bytes": 163786,
       "path": "stub/stub_server.py",
-      "sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
+      "sha256": "5df1408fdf2fd5dbcb5d2577a20c14699009493c32de1ba7c0d6c347c44bf7a1",
       "state": "modified"
     },
     {

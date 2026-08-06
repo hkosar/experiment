@@ -40,6 +40,49 @@ class ProbeError(RuntimeError):
     pass
 
 
+# R8 — the verifier's adversarial re-check probe binds TWO absolute paths at
+# module level (`R7 = os.path.abspath('…')` / `R6 = os.path.abspath('…')`)
+# instead of one `SRC=` line, and takes no argv. It gets the same treatment the
+# `SRC=` probes get: rewrite exactly those two lines, then prove line by line
+# that nothing else moved. `R7` is the build under test and `R6` the older
+# comparison build the probe diffs it against, so the pair is what the runner
+# supplies — for the green run (live, pinned R7) and for the red run
+# (pinned R7, pinned R6), which reproduces the verifier's own comparison.
+PAIR_LINE = re.compile(r"^(R6|R7)\s*=\s*os\.path\.abspath\('[^']*'\)\s*$")
+PAIR_PROBES = frozenset(("chatgpt_r7_adversarial_recheck",))
+
+
+def _retarget_pair(probe_path: str, under_test: str, comparison: str) -> str:
+    """Rewrite ONLY the two path-binding lines; prove nothing else changed."""
+    original = open(probe_path, encoding="utf-8").read().splitlines(keepends=True)
+    want = {"R7": under_test, "R6": comparison}
+    out, hits = [], {}
+    for line in original:
+        m = PAIR_LINE.match(line.rstrip("\n"))
+        if m:
+            name = m.group(1)
+            hits[name] = hits.get(name, 0) + 1
+            out.append("%s = os.path.abspath(%r)\n" % (name, want[name]))
+        else:
+            out.append(line)
+    if sorted(hits) != ["R6", "R7"] or set(hits.values()) != {1}:
+        raise ProbeError("%s: expected exactly one R6= and one R7= binding, "
+                         "found %r" % (os.path.basename(probe_path), hits))
+    diffs = [i for i, (a, b) in enumerate(zip(original, out)) if a != b]
+    if len(diffs) != 2 or not all(PAIR_LINE.match(original[i].rstrip("\n"))
+                                  for i in diffs):
+        raise ProbeError("%s: the retarget changed more than the two path lines"
+                         % os.path.basename(probe_path))
+    if len(original) != len(out):
+        raise ProbeError("%s: the retarget changed the line count"
+                         % os.path.basename(probe_path))
+    path = os.path.join(tempfile.mkdtemp(prefix="probe-"),
+                        os.path.basename(probe_path))
+    with open(path, "w", encoding="utf-8") as fh:
+        fh.writelines(out)
+    return path
+
+
 def _retarget(probe_path: str, target: str) -> str:
     """Rewrite ONLY the SRC= line; prove nothing else changed."""
     original = open(probe_path, encoding="utf-8").read().splitlines(keepends=True)
@@ -68,12 +111,20 @@ def _retarget(probe_path: str, target: str) -> str:
     return path
 
 
-def run_probe(name: str, target: str, timeout: int = 180) -> dict:
+def run_probe(name: str, target: str, timeout: int = 180,
+              comparison: str = None) -> dict:
     """Execute one probe against `target`; return its parsed JSON stdout."""
     probe = os.path.join(PROBE_DIR, name + ".py")
     if not os.path.exists(probe):
         raise ProbeError("probe %s is not present" % name)
-    if name in ARGV_PROBES:
+    if name in PAIR_PROBES:
+        if not comparison:
+            raise ProbeError("%s needs a comparison build; it diffs two targets"
+                             % name)
+        retargeted = _retarget_pair(probe, target, comparison)
+        argv = [sys.executable, retargeted]
+        cwd = os.path.dirname(retargeted)
+    elif name in ARGV_PROBES:
         # No retargeting at all: these take the target as argv[1], so they run
         # byte-identical with nothing rewritten.
         argv = [sys.executable, probe, target]
@@ -492,7 +543,82 @@ def _c_post_durable(r):
     return ok, " | ".join(detail)
 
 
+def _c_r7_adversarial(r):
+    """`49_` §2/§3/§4 as `51_` items A, C and D restate them.
+
+    The probe's three predicates all name a DEFECT, so the criterion is that
+    each is `False`. Every one is paired with a check that the injected fault
+    actually fired — `51_` §4 makes fault-landed assertions standing practice,
+    and here they carry unusual weight: two of these three fixes could be faked
+    by a build that simply stopped calling the thing the probe patches.
+    """
+    marker = r.get("marker_write_failures") or []
+    item3 = r.get("item3_untracked_temp_compare") or []
+    item4 = r.get("item4_non_oserror_compare") or []
+    v, detail = {}, []
+
+    # Item A — a marker that could not be written must not reopen clean.
+    for m in marker:
+        how = m.get("failure")
+        calls = m.get("fault_calls") or {}
+        fired = calls.get("marker_makedirs_faults", 0) if how == "makedirs" \
+            else calls.get("marker_open_faults", 0)
+        v["item A: marker-%s failure does not permit restart bypass" % how] = (
+            m.get("restart_bypassed") is False
+            and fired >= 1                       # the marker fault landed
+            and calls.get("final_unlink_faults", 0) >= 1   # a REAL quarantine
+            and (m.get("initial") or [0])[0] == 503
+            and (m.get("restart_health") or [0, {}])[1].get(
+                "storage_quarantined") is True
+            and (m.get("restart_register") or [0])[0] == 503
+            and m.get("restart_quarantine_count", 0) >= 1)
+        detail.append("A/%s: fired=%s restart_quarantined=%s register=%s"
+                      % (how, fired,
+                         (m.get("restart_health") or [0, {}])[1].get("storage_quarantined"),
+                         (m.get("restart_register") or [0])[0]))
+
+    # Item C — the build under test is the LAST row; the probe runs the
+    # comparison build first.
+    if item3:
+        m = item3[-1]
+        calls = m.get("fault_calls") or {}
+        v["item C: a temp that exists on disk is not 'nothing created'"] = (
+            m.get("ordinary_release_with_existing_temp") is False
+            and calls.get("mkstemp_faults", 0) >= 1      # the probe's patch fired
+            and calls.get("created_path")                # a real temp was made
+            and calls.get("rollback_open_faults", 0) >= 1
+            and (m.get("error") or {}).get("type") == "CaptureQuarantine"
+            and sum((m.get("pools") or {}).values()) == 1)
+        detail.append("C: mkstemp_fired=%s rollback_fired=%s err=%s pools=%s"
+                      % (calls.get("mkstemp_faults"), calls.get("rollback_open_faults"),
+                         (m.get("error") or {}).get("type"), m.get("pools")))
+
+    if item4:
+        m = item4[-1]
+        calls = m.get("fault_calls") or {}
+        v["item D: a non-OSError after the durable rollback close is soft"] = (
+            m.get("violates_item4") is False
+            and calls.get("rollback_fsync_succeeded") is True
+            and calls.get("runtime_close_faults", 0) >= 1
+            and len(m.get("anomalies") or []) >= 1
+            and all(x == 0 for x in (m.get("pools") or {"x": 1}).values())
+            and not (m.get("quarantine") or []))
+        detail.append("D: fsync_ok=%s tail_fired=%s anomalies=%d pools=%s"
+                      % (calls.get("rollback_fsync_succeeded"),
+                         calls.get("runtime_close_faults"),
+                         len(m.get("anomalies") or []), m.get("pools")))
+
+    if len(v) != 4:
+        return False, "probe produced %d of 4 expected scenarios" % len(v)
+    failed = sorted(k for k, ok in v.items() if not ok)
+    return not failed, ("%d/%d | %s%s" % (sum(v.values()), len(v),
+                                          " | ".join(detail),
+                                          "; FAILING: " + "; ".join(failed)
+                                          if failed else ""))
+
+
 CRITERIA = {
+    "chatgpt_r7_adversarial_recheck": ("SEC-R4-01 R8", _c_r7_adversarial),
     "chatgpt_r6_quarantine_integrity_probe": ("SEC-R4-01 R7", _c_r6_quarantine),
     "post_durable_interrupt_compare": ("SEC-R4-01 R7 item 2", _c_post_durable),
     "chatgpt_r5_cleanup_rollback_probe": ("SEC-R4-01 final", _c_rollback),
@@ -519,7 +645,9 @@ ORDER = ("http_race_probes", "http_authority_races", "http_revoke_race",
          "chatgpt_r5_cleanup_rollback_probe",
          # R7 — publication-aware handling, scoped quarantine, restart posture
          "chatgpt_r6_quarantine_integrity_probe",
-         "post_durable_interrupt_compare")
+         "post_durable_interrupt_compare",
+         # R8 — facts, not proxies
+         "chatgpt_r7_adversarial_recheck")
 
 # Probes that take the target as an argument instead of a hard-coded SRC= line.
 ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
@@ -529,13 +657,24 @@ ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
                          "post_durable_interrupt_compare"))
 
 
-def run_all(target: str, expect_green: bool, emit=None) -> list:
-    """Run every probe against `target`. Returns a row per probe."""
+def run_all(target: str, expect_green: bool, emit=None, comparison: str = None) -> list:
+    """Run every probe against `target`. Returns a row per probe.
+
+    `comparison` is the older build the PAIR probes diff `target` against. It
+    defaults to the pin immediately below `target`: `r7_reference` when the
+    target is the live build, `r6_reference` when the target is `r7_reference`,
+    so a full run in either direction supplies the right pair without the
+    caller having to know which probes need one.
+    """
     rows = []
+    if comparison is None:
+        pins = os.path.join(HERE, "r7_reference", "stub_server_r7.py")
+        comparison = (os.path.join(HERE, "r6_reference", "stub_server_r6.py")
+                      if os.path.abspath(target) == os.path.abspath(pins) else pins)
     for name in ORDER:
         finding, criterion = CRITERIA[name]
         try:
-            raw = run_probe(name, target)
+            raw = run_probe(name, target, comparison=comparison)
             green, detail = criterion(raw)
             err = None
         except (ProbeError, subprocess.SubprocessError, OSError) as exc:

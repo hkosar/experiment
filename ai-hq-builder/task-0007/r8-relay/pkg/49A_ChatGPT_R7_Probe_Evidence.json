@@ -1,0 +1,1356 @@
+{
+  "independent_adversarial_recheck": {
+    "item3_untracked_temp_compare": [
+      {
+        "created_temp_survives": true,
+        "error": {
+          "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: rollback directory fsync failed (EIO)",
+          "type": "CaptureQuarantine"
+        },
+        "fault_calls": {
+          "created_path": "/tmp/chatgpt-r7-adv-s54jci7u/captures/item3-untracked/POC1/.item3-c4llg23o.tmp",
+          "mkstemp_faults": 1,
+          "rollback_open_faults": 1
+        },
+        "files": [
+          {
+            "path": "captures/item3-untracked/POC1/.item3-c4llg23o.tmp",
+            "size": 0
+          }
+        ],
+        "ordinary_release_with_existing_temp": false,
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "quarantine": [
+          {
+            "problems": [
+              "rollback directory fsync failed (EIO)"
+            ],
+            "quota_pool_retained": "general",
+            "route": "/poc1/receipt",
+            "step": "item3",
+            "surviving_final_path": null,
+            "surviving_temp_path": null
+          }
+        ],
+        "target": "stub_server_r6.py"
+      },
+      {
+        "created_temp_survives": true,
+        "error": {
+          "text": "capture write failed: RuntimeError",
+          "type": "CaptureError"
+        },
+        "fault_calls": {
+          "created_path": "/tmp/chatgpt-r7-adv-euuuvf4g/captures/item3-untracked/POC1/.item3-sujkr137.tmp",
+          "mkstemp_faults": 1,
+          "rollback_open_faults": 0
+        },
+        "files": [
+          {
+            "path": "captures/item3-untracked/POC1/.item3-sujkr137.tmp",
+            "size": 0
+          }
+        ],
+        "ordinary_release_with_existing_temp": true,
+        "pools": {
+          "general": 0,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "quarantine": [],
+        "target": "stub_server.py"
+      }
+    ],
+    "item4_non_oserror_compare": [
+      {
+        "anomalies": [],
+        "error": {
+          "text": "forced non-OSError after real rollback directory close",
+          "type": "RuntimeError"
+        },
+        "fault_calls": {
+          "directory_closes": 2,
+          "fsyncs": 3,
+          "rollback_fsync_succeeded": true,
+          "runtime_close_faults": 1
+        },
+        "files": [],
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "quarantine": [],
+        "target": "stub_server_r6.py",
+        "violates_item4": true
+      },
+      {
+        "anomalies": [],
+        "error": {
+          "text": "forced non-OSError after real rollback directory close",
+          "type": "RuntimeError"
+        },
+        "fault_calls": {
+          "directory_closes": 2,
+          "fsyncs": 3,
+          "rollback_fsync_succeeded": true,
+          "runtime_close_faults": 1
+        },
+        "files": [],
+        "pools": {
+          "general": 1,
+          "reserved-owner": 0,
+          "security-refusal": 0
+        },
+        "quarantine": [],
+        "target": "stub_server.py",
+        "violates_item4": true
+      }
+    ],
+    "marker_write_failures": [
+      {
+        "before_restart_files": [
+          {
+            "path": "captures/markerfail-makedirs/POC1/committed-artifact-register-20260806T023250-74bcebcb-0001.json",
+            "size": 724
+          },
+          {
+            "path": "captures/markerfail-makedirs/POC1/prepared-artifact-register-20260806T023250-74bcebcb-0001.json",
+            "size": 851
+          }
+        ],
+        "current_health": [
+          200,
+          {
+            "candidate": "markerfail-makedirs",
+            "ok": false,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T023250-74bcebcb",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantine": {
+              "incidents": 1,
+              "marker_path": "/tmp/chatgpt-r7-adv-zeeq5uvr/storage_quarantine/markerfail-makedirs/quarantine-20260806T023250-74bcebcb-0ba39960.json",
+              "marker_persisted": false,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "reconcile_by": "delete the marker file after reconciling the records it names; restarting does not clear it",
+              "recovered_from_marker": null,
+              "recovery": "explicit operator recovery required; this service will accept no further authority transition"
+            },
+            "storage_quarantined": true,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "failure": "makedirs",
+        "fault_calls": {
+          "capture_dir_opens": 2,
+          "final_unlink_faults": 1,
+          "marker_makedirs_faults": 1,
+          "marker_open_faults": 0
+        },
+        "initial": [
+          503,
+          {
+            "detail": {
+              "marker_error": "OSError: [Errno 30] forced marker-directory creation failure",
+              "marker_path": "/tmp/chatgpt-r7-adv-zeeq5uvr/storage_quarantine/markerfail-makedirs/quarantine-20260806T023250-74bcebcb-0ba39960.json",
+              "marker_persisted": false,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "quota_pool_retained": "reserved-owner",
+              "route": "/owner/artifact/register",
+              "step": "committed-artifact-register",
+              "surviving_final_path": "/tmp/chatgpt-r7-adv-zeeq5uvr/captures/markerfail-makedirs/POC1/committed-artifact-register-20260806T023250-74bcebcb-0001.json",
+              "surviving_temp_path": null
+            },
+            "outcome": "refused-storage-quarantine",
+            "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+            "refused": true,
+            "storage_uncertain": true,
+            "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+          }
+        ],
+        "restart_bypassed": true,
+        "restart_health": [
+          200,
+          {
+            "candidate": "markerfail-makedirs",
+            "ok": true,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T023250-4671c15d",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantined": false,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "restart_quarantine_count": 0,
+        "restart_register": [
+          200,
+          {
+            "artifact_id": "art-a4845294e66b",
+            "outcome": "registered",
+            "registration_ref": "reg-Jt3om_f9Texs0C_iS5YzCzujC1OrN3p1",
+            "source_digest_is_authoritative": true
+          }
+        ]
+      },
+      {
+        "before_restart_files": [
+          {
+            "path": "captures/markerfail-open/POC1/committed-artifact-register-20260806T023250-d43b9941-0001.json",
+            "size": 719
+          },
+          {
+            "path": "captures/markerfail-open/POC1/prepared-artifact-register-20260806T023250-d43b9941-0001.json",
+            "size": 847
+          }
+        ],
+        "current_health": [
+          200,
+          {
+            "candidate": "markerfail-open",
+            "ok": false,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T023250-d43b9941",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantine": {
+              "incidents": 1,
+              "marker_path": "/tmp/chatgpt-r7-adv-rjt3jwah/storage_quarantine/markerfail-open/quarantine-20260806T023250-d43b9941-3f54c056.json",
+              "marker_persisted": false,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "reconcile_by": "delete the marker file after reconciling the records it names; restarting does not clear it",
+              "recovered_from_marker": null,
+              "recovery": "explicit operator recovery required; this service will accept no further authority transition"
+            },
+            "storage_quarantined": true,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "failure": "open",
+        "fault_calls": {
+          "capture_dir_opens": 2,
+          "final_unlink_faults": 1,
+          "marker_makedirs_faults": 0,
+          "marker_open_faults": 1
+        },
+        "initial": [
+          503,
+          {
+            "detail": {
+              "marker_error": "PermissionError: [Errno 13] forced marker-file open failure: '/tmp/chatgpt-r7-adv-rjt3jwah/storage_quarantine/markerfail-open/quarantine-20260806T023250-d43b9941-3f54c056.json'",
+              "marker_path": "/tmp/chatgpt-r7-adv-rjt3jwah/storage_quarantine/markerfail-open/quarantine-20260806T023250-d43b9941-3f54c056.json",
+              "marker_persisted": false,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "quota_pool_retained": "reserved-owner",
+              "route": "/owner/artifact/register",
+              "step": "committed-artifact-register",
+              "surviving_final_path": "/tmp/chatgpt-r7-adv-rjt3jwah/captures/markerfail-open/POC1/committed-artifact-register-20260806T023250-d43b9941-0001.json",
+              "surviving_temp_path": null
+            },
+            "outcome": "refused-storage-quarantine",
+            "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+            "refused": true,
+            "storage_uncertain": true,
+            "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+          }
+        ],
+        "restart_bypassed": true,
+        "restart_health": [
+          200,
+          {
+            "candidate": "markerfail-open",
+            "ok": true,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T023250-8d2bd4af",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantined": false,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "restart_quarantine_count": 0,
+        "restart_register": [
+          200,
+          {
+            "artifact_id": "art-cf8db45891d7",
+            "outcome": "registered",
+            "registration_ref": "reg-J7ra8XT-LI5ROF6z0M05Nis_EmZ-EVbI",
+            "source_digest_is_authoritative": true
+          }
+        ]
+      }
+    ]
+  },
+  "integrity": {
+    "authority_manifest": {
+      "total": 114,
+      "valid": 114
+    },
+    "post_durable_probe_sha256": "d41c3e05cd089150ef506dede4005f062c204fc6cd8866bfe21d52cc23255ab9",
+    "r5_rollback_probe_sha256": "8a35943829b0368df49f7ea974fed1e10e7ef956bb609809ee625d94eb391cd4",
+    "r6_probe_sha256": "036df2d74de54f688350dcb7860175a675878db5e2421e7c3838c144c921226e",
+    "r6_source_sha256": "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0",
+    "r7_source_sha256": "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91",
+    "reproduced_base_tree": "4134d968755f623cc358eac1c58caa66706f98c8",
+    "sha256sums": {
+      "total": 115,
+      "valid": 115
+    },
+    "zip_path": "/mnt/data/R7_Recheck(3).zip",
+    "zip_sha256": "673109fbc06fa0851dc8eb7efe36bc1971080fea7cb5340282c95b0628982062"
+  },
+  "post_durable_compare": [
+    {
+      "body": {
+        "outcome": "capture-failed",
+        "reason": "registration not recorded, and therefore not effective: capture write failed: KeyboardInterrupt",
+        "refused": true
+      },
+      "calls": {
+        "dir": 2,
+        "forced": 1
+      },
+      "identity_index": 0,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "quarantine": 0,
+      "records": [
+        {
+          "file": "captures/stub_server_r6.py/POC1/committed-artifact-register-20260806T022902-82804c92-0001.json",
+          "outcome": "committed",
+          "phase": "committed",
+          "step": "committed-artifact-register"
+        },
+        {
+          "file": "captures/stub_server_r6.py/POC1/prepared-artifact-register-20260806T022902-82804c92-0001.json",
+          "outcome": "prepared",
+          "phase": "prepared",
+          "step": "prepared-artifact-register"
+        }
+      ],
+      "registrations": 0,
+      "status": 500,
+      "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/r6_reference/stub_server_r6.py"
+    },
+    {
+      "body": {
+        "artifact_id": "art-6b3b44200161",
+        "outcome": "registered",
+        "registration_ref": "reg-0DMJhfoIf319hHcfWJPgMaEgXfshFg-P",
+        "source_digest_is_authoritative": true
+      },
+      "calls": {
+        "dir": 2,
+        "forced": 1
+      },
+      "identity_index": 1,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "quarantine": 0,
+      "records": [
+        {
+          "file": "captures/stub_server.py/POC1/committed-artifact-register-20260806T022902-257810aa-0001.json",
+          "outcome": "committed",
+          "phase": "committed",
+          "step": "committed-artifact-register"
+        },
+        {
+          "file": "captures/stub_server.py/POC1/prepared-artifact-register-20260806T022902-257810aa-0001.json",
+          "outcome": "prepared",
+          "phase": "prepared",
+          "step": "prepared-artifact-register"
+        }
+      ],
+      "registrations": 1,
+      "status": 200,
+      "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/stub_server.py"
+    }
+  ],
+  "provided_r7_probe_against_r6": {
+    "fail_closed_and_restart": {
+      "after_state": {
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 1,
+        "registrations": 1
+      },
+      "before_state": {
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 1,
+        "registrations": 1
+      },
+      "current_process_fail_closed": true,
+      "health": [
+        200,
+        {
+          "candidate": "restart",
+          "ok": false,
+          "partition": "business",
+          "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+          "run_instance": "20260806T022901-9b9c5173",
+          "service": "poc-wrapper-stub",
+          "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+          "storage_anomalies": 0,
+          "storage_quarantine": {
+            "incidents": 1,
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "recovery": "explicit operator recovery required; this service will accept no further authority transition"
+          },
+          "storage_quarantined": true,
+          "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+        }
+      ],
+      "initial": {
+        "body": {
+          "detail": {
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-rzjnds6p/captures/restart/POC1/committed-artifact-register-20260806T022901-9b9c5173-0001.json",
+            "surviving_temp_path": null
+          },
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+          "refused": true,
+          "storage_uncertain": true,
+          "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+        },
+        "status": 503
+      },
+      "owner_after": [
+        503,
+        {
+          "first_incident": {
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-rzjnds6p/captures/restart/POC1/committed-artifact-register-20260806T022901-9b9c5173-0001.json",
+            "surviving_temp_path": null
+          },
+          "incidents": 1,
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+          "refused": true
+        }
+      ],
+      "provider_after": [
+        503,
+        {
+          "first_incident": {
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-rzjnds6p/captures/restart/POC1/committed-artifact-register-20260806T022901-9b9c5173-0001.json",
+            "surviving_temp_path": null
+          },
+          "incidents": 1,
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+          "refused": true
+        }
+      ],
+      "records_unchanged_while_quarantined": true,
+      "restart": {
+        "accepted_without_explicit_recovery": true,
+        "health": [
+          200,
+          {
+            "candidate": "restart",
+            "ok": true,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T022901-2db19fb9",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantined": false,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "quarantine_count": 0,
+        "records": [
+          {
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "path": "captures/restart/POC1/committed-artifact-register-20260806T022901-2db19fb9-0001.json",
+            "phase": "committed",
+            "size": 712,
+            "step": "committed-artifact-register"
+          },
+          {
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "path": "captures/restart/POC1/committed-artifact-register-20260806T022901-9b9c5173-0001.json",
+            "phase": "committed",
+            "size": 712,
+            "step": "committed-artifact-register"
+          },
+          {
+            "final_status": null,
+            "outcome": "prepared",
+            "path": "captures/restart/POC1/prepared-artifact-register-20260806T022901-2db19fb9-0001.json",
+            "phase": "prepared",
+            "size": 839,
+            "step": "prepared-artifact-register"
+          },
+          {
+            "final_status": null,
+            "outcome": "prepared",
+            "path": "captures/restart/POC1/prepared-artifact-register-20260806T022901-9b9c5173-0001.json",
+            "phase": "prepared",
+            "size": 839,
+            "step": "prepared-artifact-register"
+          }
+        ],
+        "register": [
+          200,
+          {
+            "artifact_id": "art-ce008c6c35ec",
+            "outcome": "registered",
+            "registration_ref": "reg-BIS1fPVlX7MtGom8_jPocw6D1Wl2rmR3",
+            "source_digest_is_authoritative": true
+          }
+        ]
+      }
+    },
+    "post_durable_non_oserror": {
+      "body": {
+        "outcome": "capture-failed",
+        "reason": "registration not recorded, and therefore not effective: capture write failed: KeyboardInterrupt",
+        "refused": true
+      },
+      "contradiction": true,
+      "fault_calls": {
+        "directory_closes": 2,
+        "forced": 1
+      },
+      "identity_index": 0,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "quarantine": [],
+      "records": [
+        {
+          "final_status": "REGISTERED",
+          "outcome": "committed",
+          "path": "captures/postdurable/POC1/committed-artifact-register-20260806T022901-3c3631b1-0001.json",
+          "phase": "committed",
+          "size": 716,
+          "step": "committed-artifact-register"
+        },
+        {
+          "final_status": null,
+          "outcome": "prepared",
+          "path": "captures/postdurable/POC1/prepared-artifact-register-20260806T022901-3c3631b1-0001.json",
+          "phase": "prepared",
+          "size": 843,
+          "step": "prepared-artifact-register"
+        }
+      ],
+      "registrations": 0,
+      "status": 500,
+      "transitions": []
+    },
+    "preartifact_makedirs_failure": {
+      "body": {
+        "detail": {
+          "problems": [
+            "rollback directory fsync failed (ENOENT)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "route": "/owner/artifact/register",
+          "step": "prepared-artifact-register",
+          "surviving_final_path": null,
+          "surviving_temp_path": null
+        },
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: rollback directory fsync failed (ENOENT)",
+        "refused": true,
+        "storage_uncertain": true,
+        "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+      },
+      "fault_calls": {
+        "makedirs_faults": 1
+      },
+      "pools": {
+        "general": 0,
+        "reserved-owner": 1,
+        "security-refusal": 0
+      },
+      "quarantine": [
+        {
+          "problems": [
+            "rollback directory fsync failed (ENOENT)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "route": "/owner/artifact/register",
+          "step": "prepared-artifact-register",
+          "surviving_final_path": null,
+          "surviving_temp_path": null
+        }
+      ],
+      "records": [],
+      "registrations": 0,
+      "spurious_quarantine": true,
+      "status": 503
+    },
+    "rollback_close_after_fsync": {
+      "error": {
+        "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: rollback directory fsync failed (EIO)",
+        "type": "CaptureQuarantine"
+      },
+      "fault_calls": {
+        "directory_closes": 2,
+        "fsyncs": 3,
+        "rollback_close_faults": 1,
+        "rollback_directory_fsync_succeeded": true
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "quarantine": [
+        {
+          "problems": [
+            "rollback directory fsync failed (EIO)"
+          ],
+          "quota_pool_retained": "general",
+          "route": "/poc1/receipt",
+          "step": "rbclose",
+          "surviving_final_path": "/tmp/chatgpt-r6-independent-64to731k/captures/rbclose/POC1/rbclose-20260806T022901-0e40499c-0001.json",
+          "surviving_temp_path": null
+        }
+      ],
+      "records": [],
+      "spurious_quarantine": true
+    },
+    "summary": {
+      "current_process_fail_closed": true,
+      "ordinary_failure_with_durable_committed_evidence": true,
+      "post_rollback_fsync_spurious_quarantine": true,
+      "preartifact_spurious_quarantine": true,
+      "restart_bypasses_explicit_recovery": true
+    },
+    "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/r6_reference/stub_server_r6.py"
+  },
+  "provided_r7_probe_against_r7": {
+    "fail_closed_and_restart": {
+      "after_state": {
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 1,
+        "registrations": 1
+      },
+      "before_state": {
+        "pools": {
+          "general": 0,
+          "reserved-owner": 2,
+          "security-refusal": 0
+        },
+        "quarantine": 1,
+        "registrations": 1
+      },
+      "current_process_fail_closed": true,
+      "health": [
+        200,
+        {
+          "candidate": "restart",
+          "ok": false,
+          "partition": "business",
+          "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+          "run_instance": "20260806T022902-82342002",
+          "service": "poc-wrapper-stub",
+          "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+          "storage_anomalies": 0,
+          "storage_quarantine": {
+            "incidents": 1,
+            "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+            "marker_persisted": true,
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "reconcile_by": "delete the marker file after reconciling the records it names; restarting does not clear it",
+            "recovered_from_marker": null,
+            "recovery": "explicit operator recovery required; this service will accept no further authority transition"
+          },
+          "storage_quarantined": true,
+          "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+        }
+      ],
+      "initial": {
+        "body": {
+          "detail": {
+            "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+            "marker_persisted": true,
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-c0akfwn5/captures/restart/POC1/committed-artifact-register-20260806T022902-82342002-0001.json",
+            "surviving_temp_path": null
+          },
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+          "refused": true,
+          "storage_uncertain": true,
+          "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+        },
+        "status": 503
+      },
+      "owner_after": [
+        503,
+        {
+          "first_incident": {
+            "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+            "marker_persisted": true,
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-c0akfwn5/captures/restart/POC1/committed-artifact-register-20260806T022902-82342002-0001.json",
+            "surviving_temp_path": null
+          },
+          "incidents": 1,
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+          "refused": true
+        }
+      ],
+      "provider_after": [
+        503,
+        {
+          "first_incident": {
+            "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+            "marker_persisted": true,
+            "problems": [
+              "final-link unlink failed (EIO)"
+            ],
+            "quota_pool_retained": "reserved-owner",
+            "route": "/owner/artifact/register",
+            "step": "committed-artifact-register",
+            "surviving_final_path": "/tmp/chatgpt-r6-independent-c0akfwn5/captures/restart/POC1/committed-artifact-register-20260806T022902-82342002-0001.json",
+            "surviving_temp_path": null
+          },
+          "incidents": 1,
+          "outcome": "refused-storage-quarantine",
+          "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+          "refused": true
+        }
+      ],
+      "records_unchanged_while_quarantined": true,
+      "restart": {
+        "accepted_without_explicit_recovery": false,
+        "health": [
+          200,
+          {
+            "candidate": "restart",
+            "ok": false,
+            "partition": "business",
+            "relay_endpoint": "http://127.0.0.1:9/relay/deliver",
+            "run_instance": "20260806T022902-bc9cb1ea",
+            "service": "poc-wrapper-stub",
+            "stage_endpoint": "http://127.0.0.1:9/stage/deliver",
+            "storage_anomalies": 0,
+            "storage_quarantine": {
+              "incidents": 1,
+              "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+              "marker_persisted": true,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "reconcile_by": "delete the marker file after reconciling the records it names; restarting does not clear it",
+              "recovered_from_marker": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+              "recovery": "explicit operator recovery required; this service will accept no further authority transition"
+            },
+            "storage_quarantined": true,
+            "throwaway": "THROWAWAY POC APPARATUS — not the AI OS wrapper, no Track B credit, must not survive into production use"
+          }
+        ],
+        "quarantine_count": 1,
+        "records": [
+          {
+            "final_status": "REGISTERED",
+            "outcome": "committed",
+            "path": "captures/restart/POC1/committed-artifact-register-20260806T022902-82342002-0001.json",
+            "phase": "committed",
+            "size": 712,
+            "step": "committed-artifact-register"
+          },
+          {
+            "final_status": null,
+            "outcome": "prepared",
+            "path": "captures/restart/POC1/prepared-artifact-register-20260806T022902-82342002-0001.json",
+            "phase": "prepared",
+            "size": 839,
+            "step": "prepared-artifact-register"
+          },
+          {
+            "final_status": null,
+            "outcome": null,
+            "path": "storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+            "phase": null,
+            "size": 991,
+            "step": null
+          }
+        ],
+        "register": [
+          503,
+          {
+            "first_incident": {
+              "marker_path": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+              "marker_persisted": true,
+              "problems": [
+                "final-link unlink failed (EIO)"
+              ],
+              "quota_pool_retained": "reserved-owner",
+              "raised_by_run_instance": "20260806T022902-82342002",
+              "reconcile_by": "inspect the records named here, then delete this marker file; restarting does not clear it",
+              "recovered_from_marker": "/tmp/chatgpt-r6-independent-c0akfwn5/storage_quarantine/restart/quarantine-20260806T022902-82342002-341086ef.json",
+              "route": "/owner/artifact/register",
+              "step": "committed-artifact-register",
+              "surviving_final_path": "/tmp/chatgpt-r6-independent-c0akfwn5/captures/restart/POC1/committed-artifact-register-20260806T022902-82342002-0001.json",
+              "surviving_temp_path": null
+            },
+            "incidents": 1,
+            "outcome": "refused-storage-quarantine",
+            "reason": "capture storage is quarantined: a rollback could not be established, so evidence on disk may contradict this service's state. No further authority transition is accepted until this is recovered explicitly.",
+            "refused": true
+          }
+        ]
+      }
+    },
+    "post_durable_non_oserror": {
+      "body": {
+        "artifact_id": "art-663255f1fd6c",
+        "outcome": "registered",
+        "registration_ref": "reg-wDylq2t-n-8AirJlqD5qqQb7gRFwxwsM",
+        "source_digest_is_authoritative": true
+      },
+      "contradiction": false,
+      "fault_calls": {
+        "directory_closes": 2,
+        "forced": 1
+      },
+      "identity_index": 1,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "quarantine": [],
+      "records": [
+        {
+          "final_status": "REGISTERED",
+          "outcome": "committed",
+          "path": "captures/postdurable/POC1/committed-artifact-register-20260806T022902-89bdace7-0001.json",
+          "phase": "committed",
+          "size": 716,
+          "step": "committed-artifact-register"
+        },
+        {
+          "final_status": null,
+          "outcome": "prepared",
+          "path": "captures/postdurable/POC1/prepared-artifact-register-20260806T022902-89bdace7-0001.json",
+          "phase": "prepared",
+          "size": 843,
+          "step": "prepared-artifact-register"
+        }
+      ],
+      "registrations": 1,
+      "status": 200,
+      "transitions": [
+        {
+          "final_status": "REGISTERED",
+          "name": "artifact-register",
+          "subject": "art-663255f1fd6c",
+          "transition_id": "txn-8b80882f554a0b5d"
+        }
+      ]
+    },
+    "preartifact_makedirs_failure": {
+      "body": {
+        "outcome": "capture-failed",
+        "reason": "an evidence record could not be written; the transition is not effective: capture write failed: EACCES",
+        "refused": true
+      },
+      "fault_calls": {
+        "makedirs_faults": 1
+      },
+      "pools": {
+        "general": 0,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "quarantine": [],
+      "records": [],
+      "registrations": 0,
+      "spurious_quarantine": false,
+      "status": 500
+    },
+    "rollback_close_after_fsync": {
+      "error": {
+        "text": "capture write failed: EIO",
+        "type": "CaptureError"
+      },
+      "fault_calls": {
+        "directory_closes": 2,
+        "fsyncs": 3,
+        "rollback_close_faults": 1,
+        "rollback_directory_fsync_succeeded": true
+      },
+      "pools": {
+        "general": 0,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "quarantine": [],
+      "records": [],
+      "spurious_quarantine": false
+    },
+    "summary": {
+      "current_process_fail_closed": true,
+      "ordinary_failure_with_durable_committed_evidence": false,
+      "post_rollback_fsync_spurious_quarantine": false,
+      "preartifact_spurious_quarantine": false,
+      "restart_bypasses_explicit_recovery": false
+    },
+    "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/stub_server.py"
+  },
+  "r5_rollback_against_r6": {
+    "committed_final_link_cleanup_failure": {
+      "body": {
+        "detail": {
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "route": "/owner/artifact/register",
+          "step": "committed-artifact-register",
+          "surviving_final_path": "/tmp/chatgpt-r5-rollback-nuxefqo0/captures/commitcleanup/POC1/committed-artifact-register-20260806T022903-f4978e6c-0001.json",
+          "surviving_temp_path": null
+        },
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+        "refused": true,
+        "storage_uncertain": true,
+        "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+      },
+      "fault_calls": {
+        "committed_directory_open_faults": 1,
+        "final_cleanup_unlink_faults": 1
+      },
+      "identity_index": 1,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/commitcleanup/POC1/committed-artifact-register-20260806T022903-f4978e6c-0001.json",
+          "final_status": "REGISTERED",
+          "outcome": "committed",
+          "phase": "committed",
+          "size": 717,
+          "step": "committed-artifact-register"
+        },
+        {
+          "file": "captures/commitcleanup/POC1/prepared-artifact-register-20260806T022903-f4978e6c-0001.json",
+          "final_status": null,
+          "outcome": "prepared",
+          "phase": "prepared",
+          "size": 845,
+          "step": "prepared-artifact-register"
+        }
+      ],
+      "registrations": 1,
+      "status": 503,
+      "transition_mirror": []
+    },
+    "persistent_temp_cleanup_failure": {
+      "error": {
+        "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: temp unlink failed (EIO)",
+        "type": "CaptureQuarantine"
+      },
+      "fault_calls": {
+        "temp_unlink_faults": 2
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/templeak/POC1/.templeak-5jmls9li.tmp",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 554,
+          "step": "templeak"
+        }
+      ],
+      "returned": null
+    },
+    "post_fsync_close_plus_cleanup_failure": {
+      "error": null,
+      "fault_calls": {
+        "directory_close_faults": 1,
+        "directory_fsync_successes": 1,
+        "final_cleanup_unlink_faults": 0
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/postfsyncclose/POC1/postclose-20260806T022903-d96fe43f-0001.json",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 561,
+          "step": "postclose"
+        }
+      ],
+      "returned": "/tmp/chatgpt-r5-rollback-gc2zsl7_/captures/postfsyncclose/POC1/postclose-20260806T022903-d96fe43f-0001.json"
+    },
+    "rollback_directory_fsync": {
+      "error": {
+        "text": "capture write failed: EIO",
+        "type": "CaptureError"
+      },
+      "fsync_calls": 3,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [],
+      "returned": null,
+      "rollback_directory_fsync_observed": true
+    },
+    "standalone_final_link_cleanup_failure": {
+      "error": {
+        "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+        "type": "CaptureQuarantine"
+      },
+      "fault_calls": {
+        "directory_open_faults": 1,
+        "final_cleanup_unlink_faults": 1
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/cleanupunlink/POC1/cleanupfinal-20260806T022903-5cbf27f4-0001.json",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 563,
+          "step": "cleanupfinal"
+        }
+      ],
+      "returned": null
+    },
+    "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/r6_reference/stub_server_r6.py"
+  },
+  "r5_rollback_against_r7": {
+    "committed_final_link_cleanup_failure": {
+      "body": {
+        "detail": {
+          "marker_path": "/tmp/chatgpt-r5-rollback-s50x5sbs/storage_quarantine/commitcleanup/quarantine-20260806T022904-8bab1631-6c68c96a.json",
+          "marker_persisted": true,
+          "problems": [
+            "final-link unlink failed (EIO)"
+          ],
+          "quota_pool_retained": "reserved-owner",
+          "route": "/owner/artifact/register",
+          "step": "committed-artifact-register",
+          "surviving_final_path": "/tmp/chatgpt-r5-rollback-s50x5sbs/captures/commitcleanup/POC1/committed-artifact-register-20260806T022904-8bab1631-0001.json",
+          "surviving_temp_path": null
+        },
+        "outcome": "refused-storage-quarantine",
+        "reason": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+        "refused": true,
+        "storage_uncertain": true,
+        "transition_effective": "UNKNOWN — evidence on disk may describe this transition as committed; reconcile before use"
+      },
+      "fault_calls": {
+        "committed_directory_open_faults": 1,
+        "final_cleanup_unlink_faults": 1
+      },
+      "identity_index": 1,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 2,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/commitcleanup/POC1/committed-artifact-register-20260806T022904-8bab1631-0001.json",
+          "final_status": "REGISTERED",
+          "outcome": "committed",
+          "phase": "committed",
+          "size": 718,
+          "step": "committed-artifact-register"
+        },
+        {
+          "file": "captures/commitcleanup/POC1/prepared-artifact-register-20260806T022904-8bab1631-0001.json",
+          "final_status": null,
+          "outcome": "prepared",
+          "phase": "prepared",
+          "size": 845,
+          "step": "prepared-artifact-register"
+        },
+        {
+          "file": "storage_quarantine/commitcleanup/quarantine-20260806T022904-8bab1631-6c68c96a.json",
+          "final_status": null,
+          "outcome": null,
+          "phase": null,
+          "size": 1000,
+          "step": null
+        }
+      ],
+      "registrations": 1,
+      "status": 503,
+      "transition_mirror": []
+    },
+    "persistent_temp_cleanup_failure": {
+      "error": {
+        "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: temp unlink failed (EIO)",
+        "type": "CaptureQuarantine"
+      },
+      "fault_calls": {
+        "temp_unlink_faults": 2
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/templeak/POC1/.templeak-etp1fhsx.tmp",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 554,
+          "step": "templeak"
+        },
+        {
+          "file": "storage_quarantine/templeak/quarantine-20260806T022904-4a31e0f6-4ad5069b.json",
+          "final_status": null,
+          "outcome": null,
+          "phase": null,
+          "size": 1003,
+          "step": null
+        }
+      ],
+      "returned": null
+    },
+    "post_fsync_close_plus_cleanup_failure": {
+      "error": null,
+      "fault_calls": {
+        "directory_close_faults": 1,
+        "directory_fsync_successes": 1,
+        "final_cleanup_unlink_faults": 0
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/postfsyncclose/POC1/postclose-20260806T022904-928c2f07-0001.json",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 561,
+          "step": "postclose"
+        }
+      ],
+      "returned": "/tmp/chatgpt-r5-rollback-021ke59a/captures/postfsyncclose/POC1/postclose-20260806T022904-928c2f07-0001.json"
+    },
+    "rollback_directory_fsync": {
+      "error": {
+        "text": "capture write failed: EIO",
+        "type": "CaptureError"
+      },
+      "fsync_calls": 3,
+      "pools": {
+        "general": 0,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [],
+      "returned": null,
+      "rollback_directory_fsync_observed": true
+    },
+    "standalone_final_link_cleanup_failure": {
+      "error": {
+        "text": "capture rollback could not be established, so this service can no longer state whether the evidence on disk describes an effective transition; it is quarantined and fails closed until recovered: final-link unlink failed (EIO)",
+        "type": "CaptureQuarantine"
+      },
+      "fault_calls": {
+        "directory_open_faults": 1,
+        "final_cleanup_unlink_faults": 1
+      },
+      "pools": {
+        "general": 1,
+        "reserved-owner": 0,
+        "security-refusal": 0
+      },
+      "records": [
+        {
+          "file": "captures/cleanupunlink/POC1/cleanupfinal-20260806T022904-5a6e58db-0001.json",
+          "final_status": null,
+          "outcome": "x",
+          "phase": null,
+          "size": 563,
+          "step": "cleanupfinal"
+        },
+        {
+          "file": "storage_quarantine/cleanupunlink/quarantine-20260806T022904-5a6e58db-1ff73b10.json",
+          "final_status": null,
+          "outcome": null,
+          "phase": null,
+          "size": 952,
+          "step": null
+        }
+      ],
+      "returned": null
+    },
+    "target": "/mnt/data/r7_recheck3_work/pkg/poc/stub/stub_server.py"
+  },
+  "regression_execution": {
+    "acceptance_oracle": {
+      "r6": "7/7, 33 clauses",
+      "r7": "7/7, 33 clauses"
+    },
+    "capture_fault_suite": {
+      "r6": "9/9",
+      "r7": "9/9"
+    },
+    "deterministic_barriers": {
+      "r6": "6/6",
+      "r7": "6/6"
+    },
+    "measurement_validator": "160/160, 0 violations",
+    "r5_rollback": {
+      "r6": "5/5",
+      "r7": "5/5"
+    },
+    "structural_harness": {
+      "reason": "n8n-workflow was not bundled and the available internal npm registry returned 404; non-node structural, boundary, cost, and receipt checks ran as recorded in logs",
+      "status": "not fully rerun"
+    },
+    "stub_selftest_r7": "215/215",
+    "superseded_witnesses_r7": "34/34"
+  },
+  "repeatability": {
+    "item3_r6_r7_each_run": [
+      [
+        false,
+        true
+      ],
+      [
+        false,
+        true
+      ],
+      [
+        false,
+        true
+      ]
+    ],
+    "item4_r6_r7_each_run": [
+      [
+        true,
+        true
+      ],
+      [
+        true,
+        true
+      ],
+      [
+        true,
+        true
+      ]
+    ],
+    "marker_restart_bypass_each_run": [
+      [
+        true,
+        true
+      ],
+      [
+        true,
+        true
+      ],
+      [
+        true,
+        true
+      ]
+    ],
+    "runs": 3
+  }
+}

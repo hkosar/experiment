@@ -1,0 +1,16 @@
+{
+  "receipt_count_pre": 5000,
+  "poc1_refusal": {
+    "status": 200,
+    "outcome": "recorded"
+  },
+  "poc3_receipt": {
+    "status": 200,
+    "outcome": "recorded"
+  },
+  "ideas_count_pre": 5000,
+  "poc2_triage": {
+    "status": 200,
+    "outcome": "staged"
+  }
+}

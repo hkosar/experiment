@@ -1,7 +1,7 @@
 {
   "cases": [
     {
-      "actual": "{'artifact_id': 'art-42c8af3d81bd', 'registration_ref': 'reg-jkJ5_RVs7T3BiuC99k0n4KIRf5AU_lXM', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "actual": "{'artifact_id': 'art-af8547611e4b', 'registration_ref': 'reg-VHfdUKsLglfzfAbJk7ls_i7XNGbwM2Ej', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
       "block": "identity and registration (A.1 / A.2)",
       "case": "registration mints an artifact_id and an opaque registration_ref",
       "expected": "art-/reg-",
@@ -9,7 +9,7 @@
       "ok": true
     },
     {
-      "actual": "('art-42c8af3d81bd', 'art-42c8af3d81bd')",
+      "actual": "('art-af8547611e4b', 'art-af8547611e4b')",
       "block": "identity and registration (A.1 / A.2)",
       "case": "re-registering the same identity is idempotent — one record, same refs",
       "expected": "same ids",
@@ -17,7 +17,7 @@
       "ok": true
     },
     {
-      "actual": "art-303f9ec1afea",
+      "actual": "art-ea4372be81e9",
       "block": "identity and registration (A.1 / A.2)",
       "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
       "expected": "different artifact_id",
@@ -505,7 +505,7 @@
       "ok": true
     },
     {
-      "actual": "(409, 'run-179d26a09d20', 1)",
+      "actual": "(409, 'run-3e6470bade21', 1)",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
       "expected": "409 preserving prior",
@@ -513,7 +513,7 @@
       "ok": true
     },
     {
-      "actual": "run-179d26a09d20",
+      "actual": "run-3e6470bade21",
       "block": "capability state machine and reconciliation (A.4 / A.5)",
       "case": "run identity is stub-minted and the provider correlation value anchors nothing",
       "expected": "stub-minted",
@@ -945,7 +945,7 @@
       "ok": true
     },
     {
-      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'a6aded48389ee737f19096a872ba548d'}",
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'a13102b124ebb2d6d53a88f9435d499f'}",
       "block": "capacity and redaction (A.8)",
       "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
       "expected": "structured marker",
@@ -953,7 +953,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '43d4174044d7293d8d6b872be12a7c72'}}",
       "block": "capacity and redaction (A.8)",
       "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
       "expected": "descriptor",
@@ -961,7 +961,7 @@
       "ok": true
     },
     {
-      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '43d4174044d7293d8d6b872be12a7c72'}}",
       "block": "capacity and redaction (A.8)",
       "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
       "expected": "descriptor",
@@ -1017,7 +1017,7 @@
       "ok": true
     },
     {
-      "actual": "('506c43c7e1ec', '2e2f39dc7111')",
+      "actual": "('c86256aac736', '85a53c2ec645')",
       "block": "capacity and redaction (A.8)",
       "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
       "expected": "different",
@@ -1137,7 +1137,7 @@
       "ok": true
     },
     {
-      "actual": "\"Eub0ibaIXjFyss19LKnC7CH4M33KmNXKAbd5v7Pnrdo\"",
+      "actual": "\"Ufy5wEeeBt3ntEuB_pjpF0dTyE_3NTAzD8d6gKdfG5I\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
       "expected": "a usable string",
@@ -1145,7 +1145,7 @@
       "ok": true
     },
     {
-      "actual": "\"cap-Dc_Q7RMA8wIsnEKfFVclU5vTW9k6SsS5\"",
+      "actual": "\"cap-VArtPIuakoRVsy0eg-kYeprkxOdSIOnS\"",
       "block": "live HTTP — a real socket, a real token, a real capability",
       "case": "...and the execution capability likewise arrives usable",
       "expected": "a usable string",
@@ -1625,7 +1625,7 @@
       "ok": true
     },
     {
-      "actual": "[{'kind': 'rollback-directory-close-after-durable-fsync', 'route': '/poc1/receipt', 'step': 'r7rollback', 'errno': 'EIO'}]",
+      "actual": "[{'kind': 'rollback-directory-close-after-durable-fsync', 'route': '/poc1/receipt', 'step': 'r7rollback', 'exception': 'OSError', 'errno': 'EIO'}]",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "...and the anomaly is recorded rather than dropped",
       "expected": "rollback-directory-close-after-durable-fsync",
@@ -1641,15 +1641,23 @@
       "ok": true
     },
     {
-      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "actual": "['/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json']",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "item 5: the quarantine is PERSISTED as a marker beside captures/, not only in memory",
-      "expected": "1 marker",
+      "expected": "1 primary marker",
       "note": null,
       "ok": true
     },
     {
-      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "actual": "['/tmp/selftest-u5w5uomi/STORAGE-QUARANTINE-n8n-20260806T032232-d5677c0d-78e7a1ee.json']",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "R8 item A: and a SECOND durable record in a different directory, so one location failing does not lose the quarantine",
+      "expected": "1 fallback marker elsewhere",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json', '/tmp/selftest-u5w5uomi/STORAGE-QUARANTINE-n8n-20260806T032232-d5677c0d-78e7a1ee.json']",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "...and the marker is NOT filed inside captures/, where every reader would count it as evidence",
       "expected": "outside captures/",
@@ -1681,7 +1689,7 @@
       "ok": true
     },
     {
-      "actual": "/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json",
+      "actual": "/tmp/selftest-u5w5uomi/storage_quarantine/n8n/quarantine-20260806T032232-d5677c0d-78e7a1ee.json",
       "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
       "case": "...naming the marker it recovered, so recovery is actionable",
       "expected": "marker path reported",
@@ -1713,6 +1721,278 @@
       "ok": true
     },
     {
+      "actual": "69b98fb09ae94d4f",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the pinned R7 reference is the build the verifier executed",
+      "expected": "69b98fb09ae94d4f",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "4/4 | A/makedirs: fired=1 restart_quarantined=True register=503 | A/open: fired=1 restart_quarantined=True register=503 | C: mkstemp_fired=1 rollback_fired=1 err=CaptureQuarantine pools={'general': 1, 'reserved-owner': 0, 'security-refusal': 0} | D: fsync_ok=True tail_fired=1 anomalies=1 pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the verifier's chatgpt_r7_adversarial_recheck runs green",
+      "expected": "all three findings closed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0/4 | A/makedirs: fired=1 restart_quarantined=False register=200 | A/open: fired=1 restart_quarantined=False register=200 | C: mkstemp_fired=1 rollback_fired=0 err=CaptureError pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0} | D: fsync_ok=True tail_fired=1 anomalies=0 pools={'general': 1, 'reserved-owner': 0, 'security-refusal': 0}; FAILING: item A: marker-makedirs failure does not permit restart bypass; item A: marker-open failure does not permit restart bypass; item C: a temp that exists on disk is not 'nothing created'; item D: a non-OSError after the durable rollback close is soft",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and red against the pinned R7 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'makedirs': 1, 'file_open': 0, 'dir_open': 2, 'unlink': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the primary only marker-makedirs failure fault actually fired",
+      "expected": "fault landed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-makedirs failure: the raising process still quarantines",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(True, ['/tmp/selftest-t1u4rb8j/STORAGE-QUARANTINE-n8n-20260806T032232-798b9444-18774975.json'])",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-makedirs failure: the fallback location carried the quarantine",
+      "expected": "durable via fallback",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'location': 'primary', 'path': '/tmp/selftest-t1u4rb8j/storage_quarantine/n8n/quarantine-20260806T032232-798b9444-18774975.json', 'error': 'OSError: [Errno 30] forced marker-directory creation failure'}, {'location': 'fallback', 'path': '/tmp/selftest-t1u4rb8j/STORAGE-QUARANTINE-n8n-20260806T032232-798b9444-18774975.json', 'error': None}]",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and the failed PRIMARY attempt is reported, so the fallback is not silently standing in for it",
+      "expected": "primary error recorded",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(True, 503)",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-makedirs failure: a restarted process FINDS the fallback and refuses — this is the R7 bypass, closed",
+      "expected": "quarantined and refusing",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'makedirs': 0, 'file_open': 1, 'dir_open': 2, 'unlink': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the primary only marker-open failure fault actually fired",
+      "expected": "fault landed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-open failure: the raising process still quarantines",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(True, ['/tmp/selftest-5616jqoq/STORAGE-QUARANTINE-n8n-20260806T032232-533d92c9-18fdf86a.json'])",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-open failure: the fallback location carried the quarantine",
+      "expected": "durable via fallback",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'location': 'primary', 'path': '/tmp/selftest-5616jqoq/storage_quarantine/n8n/quarantine-20260806T032232-533d92c9-18fdf86a.json', 'error': 'PermissionError: [Errno 13] forced marker-file open failure'}, {'location': 'fallback', 'path': '/tmp/selftest-5616jqoq/STORAGE-QUARANTINE-n8n-20260806T032232-533d92c9-18fdf86a.json', 'error': None}]",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and the failed PRIMARY attempt is reported, so the fallback is not silently standing in for it",
+      "expected": "primary error recorded",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(True, 503)",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "primary only marker-open failure: a restarted process FINDS the fallback and refuses — this is the R7 bypass, closed",
+      "expected": "quarantined and refusing",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'makedirs': 2, 'file_open': 0, 'dir_open': 2, 'unlink': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the every location marker-makedirs failure fault actually fired",
+      "expected": "fault landed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "every location marker-makedirs failure: the raising process still quarantines",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('none', False)",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "every location marker-makedirs failure: restart_protection is reported as NONE, not assumed",
+      "expected": "none + explicit warning",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and no sentence claims a restart will be stopped",
+      "expected": "no false restart claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "none",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and /health says the same at the TOP level, not nested where an operator may not look",
+      "expected": "top-level warning",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'makedirs': 0, 'file_open': 2, 'dir_open': 2, 'unlink': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the every location marker-open failure fault actually fired",
+      "expected": "fault landed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "every location marker-open failure: the raising process still quarantines",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('none', False)",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "every location marker-open failure: restart_protection is reported as NONE, not assumed",
+      "expected": "none + explicit warning",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and no sentence claims a restart will be stopped",
+      "expected": "no false restart claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "none",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and /health says the same at the TOP level, not nested where an operator may not look",
+      "expected": "top-level warning",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'created': '/tmp/selftest-qoef6ngf/captures/n8n/POC1/.r8temp-e16e0d30d8184c4aa9cb8a062afdc8b4-gibj_lzt.tmp', 'mkstemp_faults': 1, 'rollback_open_faults': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the post-create/pre-return temp fault fired, and the rollback proof fault with it",
+      "expected": "both landed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "CaptureQuarantine",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "item C: a temp that exists on disk is NOT classified as 'nothing created' just because the local variable is None",
+      "expected": "CaptureQuarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 1, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and the quota unit is retained, because the removal of a real artifact could not be proven",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and the ordinary makedirs-failed case is still NOT a quarantine (46_ item 3 must not regress)",
+      "expected": "checked below",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(500, 'capture-failed', 0)",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...confirmed: nothing ever created stays an ordinary capture failure",
+      "expected": "500 capture-failed, no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'fsyncs': 3, 'dir_closes': 2, 'rollback_fsync_ok': True, 'raised': 1}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "the real rollback deletion and fsync completed, and only the tail raised a non-OSError",
+      "expected": "fsync ok, tail raised",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError', [{'kind': 'rollback-directory-close-after-durable-fsync', 'route': '/poc1/receipt', 'step': 'r8tail', 'exception': 'RuntimeError', 'errno': 'RuntimeError'}])",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "item D: a NON-OSError after the durable rollback close is a recorded soft anomaly, not an escaping exception",
+      "expected": "CaptureError + RuntimeError anomaly",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and the quota release still happens, which R7 skipped entirely because the exception escaped before it",
+      "expected": "all pools 0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "...and it is NOT a quarantine: the rollback was durable",
+      "expected": "no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "4",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "item B: every 'restarting does not clear it' sentence is inside _restart_posture or a marker file that by definition landed (4 occurrence(s))",
+      "expected": ">=1 definition and 3 call sites",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError: capture path escapes the captures directory', [])",
+      "block": "R8: facts, not proxies — marker durability, temp as fact, tail completeness (51_)",
+      "case": "§1 fourth instance: a SYMLINKED capture directory is refused — the containment check resolves the real path, it does not just compare path strings",
+      "expected": "refused, nothing written outside",
+      "note": null,
+      "ok": true
+    },
+    {
       "actual": "[]",
       "block": "outcome coverage — no unreachable refusal reasons",
       "case": "every outcome code the source can emit is produced by some case in this suite (56 declared, 55 exercised, 1 exempt)",
@@ -1722,7 +2002,7 @@
     }
   ],
   "check": "R3 stub self-test (25_ §E)",
-  "passed": 215,
-  "total": 215,
+  "passed": 250,
+  "total": 250,
   "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
 }

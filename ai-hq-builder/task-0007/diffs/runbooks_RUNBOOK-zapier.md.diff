@@ -1,0 +1,14 @@
+--- a/poc/runbooks/RUNBOOK-zapier.md (R7 baseline)
++++ b/poc/runbooks/RUNBOOK-zapier.md (R8)
+@@ -19,6 +19,11 @@
+ separately attributable from n8n's — the round exists to compare the two, and one shared
+ directory would make that impossible.
+ 
++If the stub answers `503 refused-storage-quarantine` at any point, follow the
++`restart_protection` table in **RUNBOOK-n8n Part B2** before restarting it. The short
++version: `"durable"` means reconcile then delete every path in `durable_records`; `"none"`
++means **do not restart at all** — nothing on disk will tell a new process what happened.
++
+ Read both keys into shell variables (`read -rs OWNER_KEY`, `read -rs PROVIDER_KEY`) rather
+ than pasting them into commands. **`AIOS_PROVIDER_KEY` goes into the Zap's HTTP steps;
+ `OWNER_KEY` never does.**

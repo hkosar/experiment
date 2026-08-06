@@ -1,0 +1,11 @@
+  [ok  ] well-formed control — expected accept, got accept
+  [ok  ] malformed JSON — expected reject, got reject
+  [ok  ] no trigger — expected reject, got reject
+  [ok  ] duplicate node names — expected reject, got reject
+  [ok  ] duplicate node ids — expected reject, got reject
+  [ok  ] connection to a nonexistent node — expected reject, got reject
+  [ok  ] connection from a nonexistent node — expected reject, got reject
+  [ok  ] orphaned node — expected reject, got reject
+  [ok  ] node missing a required field — expected reject, got reject
+  [ok  ] malformed position — expected reject, got reject
+VALIDATOR SELF-TEST PASS — 10 cases

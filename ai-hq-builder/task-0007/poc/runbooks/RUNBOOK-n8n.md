@@ -47,6 +47,21 @@ survive into production use.
 **Do not redirect the stub's stderr to a shared or checked-in file** — the startup banner
 contains both keys. Run it in a terminal you can see.
 
+**If the stub answers `503 refused-storage-quarantine`, read `restart_protection` before
+you do anything else.** That refusal means a capture could not be cleaned up provably, so a
+success-named record may be sitting on disk for a transition the stub does not believe
+happened. It will refuse every further authority transition until reconciled. `curl -s
+http://127.0.0.1:8787/health` tells you which of two situations you are in:
+
+| `restart_protection` | What it means | What to do |
+| --- | --- | --- |
+| `"durable"` | The quarantine is recorded on disk. A restart will find it and keep refusing | Inspect the files named in `durable_records` and the records they point at, decide what actually happened, then **delete every path in `durable_records`**. Only then restart |
+| `"none"` | **Every attempt to record the quarantine failed** — usually the disk is full or read-only. Nothing on disk will tell a new process what happened | **Do not restart.** A restart silently clears it. Reconcile from this running process, copy the `first_incident` block somewhere off this disk, and treat the surviving capture records as unverified |
+
+Neither case is a stub bug — it means the filesystem underneath it failed. Record it as a
+finding either way: an evidence apparatus that cannot state whether its own evidence is
+sound is itself a measurement of the round.
+
 **The owner decision surface.** The stub stands in for the Discord/AI OS card. The provider
 never learns the case id, so you list your own pending cases:
 

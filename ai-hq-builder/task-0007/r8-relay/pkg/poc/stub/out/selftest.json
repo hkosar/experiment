@@ -1,0 +1,1728 @@
+{
+  "cases": [
+    {
+      "actual": "{'artifact_id': 'art-42c8af3d81bd', 'registration_ref': 'reg-jkJ5_RVs7T3BiuC99k0n4KIRf5AU_lXM', 'outcome': 'registered', 'source_digest_is_authoritative': True}",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "registration mints an artifact_id and an opaque registration_ref",
+      "expected": "art-/reg-",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('art-42c8af3d81bd', 'art-42c8af3d81bd')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "re-registering the same identity is idempotent — one record, same refs",
+      "expected": "same ids",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "art-303f9ec1afea",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a re-registration differing ONLY in target_role is a DISTINCT registration, not a silent role change",
+      "expected": "different artifact_id",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "the owner cannot register an unauthorized target_role (A.2 requires an A.1-authorized role)",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['note', 'outcome', 'resume_token']",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a bound review-case opens and returns the token ONLY — no case id, no case content, no decision (A.6)",
+      "expected": "token only",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "duplicate-suppressed",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "the same five identity components suppress reprocessing and return the prior receipt (reprocessed: false)",
+      "expected": "duplicate-suppressed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "case-opened",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "the same artifact under a DIFFERENT task_id is a distinct identity and processes independently",
+      "expected": "case-opened",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'rejected-unauthorized-target')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "an unauthorized target_role REJECTS 403 rejected-unauthorized-target, distinguishable from duplicate-suppression success",
+      "expected": "403 rejected-unauthorized-target",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(400, 'rejected-unknown-target')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "an UNKNOWN role is a 400 rejected-unknown-target, distinguishable from the unauthorized case",
+      "expected": "400 rejected-unknown-target",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'rejected-artifact-binding')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a registration-binding mismatch on task_id refuses 403 rejected-artifact-binding",
+      "expected": "403 rejected-artifact-binding",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'rejected-artifact-binding')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a registration-binding mismatch on transition refuses 403 rejected-artifact-binding",
+      "expected": "403 rejected-artifact-binding",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'rejected-artifact-binding')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a registration-binding mismatch on artifact_digest refuses 403 rejected-artifact-binding",
+      "expected": "403 rejected-artifact-binding",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'rejected-artifact-binding')",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "an unknown registration_ref refuses 403 — a provider-supplied digest is only ever CHECKED AGAINST the owner-registered one, never trusted alone",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a malformed artifact_digest is a captured 400 — a raw archive hash alone is not identity",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "a negative submission_epoch is a captured 400",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "4c04f54f4ee63014f51848e3b9b862eda23bb311fa66760b02ed00ce0f13d49d",
+      "block": "identity and registration (A.1 / A.2)",
+      "case": "the idempotency key TRAVELS IN THE ACTIONREQUEST PAYLOAD to the target, not only on the envelope",
+      "expected": "present and equal",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "18e4d1c2814bace1282fb04bc3242f5bc2c254d4ef8f6afb243324cca6b66b77",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "the owner idea is stored server-side with an owner_content_digest",
+      "expected": "idea- ref + digest",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a matching convenience copy is accepted and triages the STORED content",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'owner_content': 'owner-authorized', 'external_items[0]': 'none'}",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "authority is recorded PER COMPONENT — owner_content owner-authorized, each external item none (a flattened value for the whole request is a defect)",
+      "expected": "per-component",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'refused-content-mismatch')",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a valid idea_ref with an ALTERED body is refused and never appears as owner-authorized",
+      "expected": "403 refused-content-mismatch",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'refused-content-mismatch')",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a valid idea_ref with an ALTERED title is refused and never appears as owner-authorized",
+      "expected": "403 refused-content-mismatch",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'refused-content-mismatch')",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a valid idea_ref with an ALTERED project is refused and never appears as owner-authorized",
+      "expected": "403 refused-content-mismatch",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'refused-content-mismatch')",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a valid idea_ref with an ALTERED tags is refused and never appears as owner-authorized",
+      "expected": "403 refused-content-mismatch",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "owner_content WITHOUT a valid idea_ref is refused — it is never owner-authored",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "an external_items entry lacking its OWN envelope is a captured 400",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'owner_content': 'owner-authorized', 'external_items[0]': 'none'}",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "a valid idea_ref never elevates an external item, and provider-supplied origin/trust/instruction_authority never increase authority",
+      "expected": "external item authority none",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "2",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "per-component authority appears in the CAPTURE, not only the response",
+      "expected": "authority_components in capture",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, {'external_items[0]': 'none'})",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "Case B (no idea_ref) requires the top-level external-untrusted envelope, classifies and summarises only, and carries no owner-authorized component",
+      "expected": "case B, authority none",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "...and Case B without that envelope is refused",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "None",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "the response never carries a single flattened authority value for the whole request — A.3 calls that a defect",
+      "expected": "per-component only",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "owner-idea authority, bound to canonical content (A.3)",
+      "case": "an unknown idea_ref refuses",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "a PROVIDER cannot reach the owner-reconciliation route at all",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'MINTED')",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "owner reconcile from a NON-UNCERTAIN state is refused with no state change",
+      "expected": "409, still MINTED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "UNCERTAIN",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "a delivery whose committed record fails leaves the subject UNCERTAIN",
+      "expected": "UNCERTAIN",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(400, 'UNCERTAIN')",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "owner reconcile with outcome='delivered' is refused with no state change — this route cannot create a delivered state",
+      "expected": "400, still UNCERTAIN",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'RECONCILED_NOT_DELIVERED')",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "owner reconcile with outcome='not_delivered' from UNCERTAIN is accepted once",
+      "expected": "200 RECONCILED_NOT_DELIVERED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'refused')",
+      "block": "owner reconciliation — R5Q-01 (A.5)",
+      "case": "a REPLAY of the same owner reconciliation returns the prior result or a refusal, never a second transition",
+      "expected": "no second transition",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "MINTED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a terminal owner ACCEPT mints the capability (MINTED)",
+      "expected": "MINTED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(403, 'refused-payload-mismatch')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a provider-chosen payload does not match the capability binding and is refused",
+      "expected": "403 refused-payload-mismatch",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a mismatched action_request_id in the binding is refused",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a forged capability cannot produce the side effect — /relay/deliver fails closed without a valid one",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'delivered')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "the authorized delivery succeeds and the SERVICE mints the receipt",
+      "expected": "delivered + service receipt",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "DELIVERED_WITH_RECEIPT",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "delivery reaches DELIVERED_WITH_RECEIPT",
+      "expected": "DELIVERED_WITH_RECEIPT",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'replayed-no-second-side-effect')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a REPLAY from DELIVERED_WITH_RECEIPT returns the PRIOR receipt with replayed:true and no_second_side_effect:true",
+      "expected": "prior receipt replayed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a second DISTINCT delivery from DELIVERED_WITH_RECEIPT is refused — a replay is not a second side effect",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'DELIVERED_WITH_RECEIPT')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a provider receipt is corroborating only: recorded, cannot mark delivered, cannot alter capability state",
+      "expected": "recorded, no state change",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a provider refusal likewise records and alters nothing",
+      "expected": "recorded, no state change",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "REVOKED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "the owner surface can revoke a non-terminal capability",
+      "expected": "REVOKED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/relay/deliver on REVOKED is a captured refusal with no state change",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'REVOKED')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a LATE provider receipt on REVOKED is captured, refused and changes nothing",
+      "expected": "409, still REVOKED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "EXPIRED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "CAPABILITY_TTL_S expiry moves the capability to EXPIRED and delivery fails closed",
+      "expected": "EXPIRED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "409",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a LATE provider receipt on EXPIRED is captured, refused and changes nothing",
+      "expected": "409",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('UNCERTAIN', 'MINTED')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/poc1/reconcile on a MINTED capability answers UNCERTAIN but does NOT move it — A.4 lists no MINTED -> UNCERTAIN, and a provider must not be able to strand its own authorization",
+      "expected": "UNCERTAIN result, MINTED state",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "reconciled-delivered",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "with a SERVICE-owned receipt, /poc1/reconcile answers reconciled-delivered",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "uncertain",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "every local receipt removed after a simulated uncertain external completion: /poc1/reconcile answers UNCERTAIN and can NEVER return RECONCILED_NOT_DELIVERED",
+      "expected": "UNCERTAIN, never NOT_DELIVERED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'refused-uncertain')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and no retry becomes authorized from UNCERTAIN",
+      "expected": "refused",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "UNCERTAIN",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a PROVIDER-ASSERTED outcome on /poc1/reconcile is never accepted",
+      "expected": "not accepted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "RECONCILED_NOT_DELIVERED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "RECONCILED_NOT_DELIVERED is reachable ONLY via owner attestation",
+      "expected": "RECONCILED_NOT_DELIVERED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 2, 0)",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "exactly one re-attempt is permitted, and it increments `attempt` without creating a new submission",
+      "expected": "attempt 2, no new case",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'refused-second-reattempt')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a SECOND re-attempt is refused",
+      "expected": "409 refused-second-reattempt",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'refused-revoked-in-flight', None)",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "SEC-R3-02: a revocation landing after the delivery claimed its epoch stops the delivery at the terminal commit — no receipt is minted",
+      "expected": "409 refused-revoked-in-flight, no receipt",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "REVOKED",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and the subject is REVOKED, not delivered",
+      "expected": "REVOKED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and the attempt it claimed was given back",
+      "expected": "0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(409, 'run-179d26a09d20', 1)",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a duplicate POC-3 run declaration is a 409 that PRESERVES the prior started_at and checkpoint count — a measurement, never an overwrite",
+      "expected": "409 preserving prior",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "run-179d26a09d20",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "run identity is stub-minted and the provider correlation value anchors nothing",
+      "expected": "stub-minted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "False",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/poc3/reconcile compares only what the service recorded and states external_post_state_checked: false",
+      "expected": "false",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 200, 2)",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/stage/deliver is retry-tolerant by design — a single-use rule there would mis-score the provider retry POC-3 exists to measure",
+      "expected": "two attempts accepted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/poc3/receipt records without attesting",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "404",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a checkpoint for an unannounced run refuses",
+      "expected": "404",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'owner-rejected')",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "an owner REJECT consumes the token and returns authorized:false",
+      "expected": "owner-rejected",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "409",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "the first valid decision is TERMINAL — a second is a captured 409",
+      "expected": "409",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "...and the consumed token cannot be replayed",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "an unknown token is refused",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a provider_status outside {ok,error,uncertain} refuses malformed",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "404",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "/poc1/reconcile on an unknown subject refuses",
+      "expected": "404",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "409",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "a delivery while an attempt is already in flight refuses",
+      "expected": "409",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "429",
+      "block": "capability state machine and reconciliation (A.4 / A.5)",
+      "case": "MAX_ATTEMPTS_PER_AR refuses on quota",
+      "expected": "429",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "500",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "boundary 1 (owner decision): a failed committed write refuses",
+      "expected": ">=400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "False",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and the decision is NOT effective — no authority from an uncommitted transition",
+      "expected": "no decision record",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "pending",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...so verify-decision still reports pending and does NOT consume the token",
+      "expected": "pending",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "pending",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...the token survives a second pending probe",
+      "expected": "pending again",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "500",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "boundaries 2-3 (token spend, capability mint): a failed committed write refuses",
+      "expected": ">=400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and leaves no capability behind",
+      "expected": "no new capability",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and the token was NOT spent — the same request succeeds once the write works",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(500, 'MINTED')",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "boundary 4 (capability spend): a failed committed write rolls the subject back — rollback IS possible before the external effect",
+      "expected": "rolled back to MINTED",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and the attempt counter rolls back with it",
+      "expected": "0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "None",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "boundary 5 (delivery): a failed committed write never reports delivered",
+      "expected": "not delivered",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "UNCERTAIN",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and, rollback of an external effect being impossible, the subject enters an explicit non-authoritative UNCERTAIN that fails closed",
+      "expected": "UNCERTAIN",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(500, 'UNCERTAIN')",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "boundary 6 (reconciliation): a failed committed write refuses and the attestation is not effective",
+      "expected": "still UNCERTAIN",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "1",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "an interrupted transition leaves an ORPHAN prepared record with no committed partner",
+      "expected": ">=1 orphan",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "MINTED",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and only a transition with a matching committed record satisfies an acceptance check — the orphan is never reported complete",
+      "expected": "not complete",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "12",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "every capture carries stub-minted candidate / run_instance / route / authored_by / poc / step / recorded_at",
+      "expected": "all present",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "12",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "recorded_at is labelled a local wall clock with NO clock authority",
+      "expected": "labelled",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "12",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "capture filenames cannot collide across process lifetimes",
+      "expected": "unique + run-instance stamped",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['destination_digest_claimed']",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "§C: the capture records the owner-registered source_digest as stub-minted, destination_digest_claimed under the PROVIDER provenance key, and destination_verified false",
+      "expected": "split by provenance",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and destination_verified_reason states why it cannot be established",
+      "expected": "reason present",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "1",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "the owner-key refusal captures that an attempt occurred",
+      "expected": ">0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "2",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "a boundary 400 captures too",
+      "expected": ">1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "False",
+      "block": "evidence: prepared -> committed, six write boundaries (A.7)",
+      "case": "...and the refusal captures record that an attempt occurred, never the material presented",
+      "expected": "material absent",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "registered",
+      "block": "capacity and redaction (A.8)",
+      "case": "with the general and security-refusal pools FULL, an owner write still succeeds — no provider-reachable event may draw from reserved-owner",
+      "expected": "owner write ok",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "429",
+      "block": "capacity and redaction (A.8)",
+      "case": "...while a provider write gets a captured refusal",
+      "expected": ">=400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'/owner/artifact/register'}",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and every reserved-owner capture came from an owner route",
+      "expected": "owner routes only",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "500",
+      "block": "capacity and redaction (A.8)",
+      "case": "with EVERY pool full the service fails closed rather than silently dropping evidence",
+      "expected": ">=400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and GET /health is still served",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['candidate', 'ok', 'partition', 'relay_endpoint', 'run_instance', 'service', 'stage_endpoint', 'storage_anomalies', 'storage_quarantined', 'throwaway']",
+      "block": "capacity and redaction (A.8)",
+      "case": "/health reveals no case, decision or capture-activity counts",
+      "expected": "no counts",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "capacity and redaction (A.8)",
+      "case": "the live-secret index reports full at MAX_ACTIVE_SECRETS",
+      "expected": "True",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "429",
+      "block": "capacity and redaction (A.8)",
+      "case": "minting a token beyond MAX_ACTIVE_SECRETS is refused, not silently dropped out of the index",
+      "expected": "429",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(0, 1)",
+      "block": "capacity and redaction (A.8)",
+      "case": "no live token or capability exists outside the secret index",
+      "expected": "all indexed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(0, 1)",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and all of them redact",
+      "expected": "all redact",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: authority_id survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: authority_version survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: tokens_used survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: receipt_id survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: idempotency_key survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: action_request_id survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "value",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8 allowlist: side_effect_status survives redaction",
+      "expected": "value",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{\"note\": \"[REDACTED:live-secret]\"}",
+      "block": "capacity and redaction (A.8)",
+      "case": "a live capability under a BENIGN key does not survive redaction",
+      "expected": "scrubbed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{\"note\": \"prefix[REDACTED:live-secret]suffix\"}",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and concatenation does not defeat it — substrings are compared too",
+      "expected": "scrubbed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'__withheld__': 'secret-key-name', 'name': 'password', 'type': 'str', 'bytes': 9, 'hmac': 'a6aded48389ee737f19096a872ba548d'}",
+      "block": "capacity and redaction (A.8)",
+      "case": "a withheld value becomes a STRUCTURED marker, never a bare constant the harness would score PRESENT",
+      "expected": "structured marker",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': '<disclosed>', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
+      "block": "capacity and redaction (A.8)",
+      "case": "a Disclose value still reduces to a descriptor on the CAPTURE path — the response exemption is identity-based and one-directional",
+      "expected": "descriptor",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'resume_token': {'__withheld__': 'secret-key-name', 'name': 'resume_token', 'type': 'str', 'bytes': 12, 'hmac': '74a90b7387380e86803d6cc4528f261b'}}",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and a provider cannot name its way out of redaction: a plain string under the same key is still withheld",
+      "expected": "descriptor",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "capacity and redaction (A.8)",
+      "case": "A.8's allowlist contains nothing that is neither named by A.8 nor load-bearing — a dead row in a control table is a defect",
+      "expected": "no dead rows",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "capacity and redaction (A.8)",
+      "case": "...and every name A.8 enumerates is present",
+      "expected": "all present",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "capacity and redaction (A.8)",
+      "case": "MAX_OBJECT_FIELDS refuses BEFORE handler dispatch",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "capacity and redaction (A.8)",
+      "case": "MAX_LIST_ITEMS refuses BEFORE handler dispatch",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "capacity and redaction (A.8)",
+      "case": "MAX_STRING_BYTES refuses BEFORE handler dispatch",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "capacity and redaction (A.8)",
+      "case": "MAX_REDACT_DEPTH refuses BEFORE handler dispatch",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('506c43c7e1ec', '2e2f39dc7111')",
+      "block": "capacity and redaction (A.8)",
+      "case": "the HMAC descriptor differs across two process runs for the same value — per-process keying prevents precomputation and cross-run correlation",
+      "expected": "different",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "404",
+      "block": "transport and policy (§B / A.8)",
+      "case": "an unknown route fails closed with no policy row",
+      "expected": "404",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "404",
+      "block": "transport and policy (§B / A.8)",
+      "case": "DELETING a route-policy row makes the route fail closed — the table is the authority, not the handler",
+      "expected": "404",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "transport and policy (§B / A.8)",
+      "case": "an owner route refuses a provider credential",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "transport and policy (§B / A.8)",
+      "case": "a provider route refuses the owner key — neither credential confers the other's identity",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "transport and policy (§B / A.8)",
+      "case": "a provider-authored decision field is refused at DISPATCH on every route whose policy says so",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "refused",
+      "block": "transport and policy (§B / A.8)",
+      "case": "...and /owner/decide is the ONLY route where a decision field is allowed",
+      "expected": "not refused for that",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "400",
+      "block": "transport and policy (§B / A.8)",
+      "case": "a route whose policy requires an envelope refuses without one",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "verify-decision accepts only a resume token; the request also carried 1 additional field(s)",
+      "block": "transport and policy (§B / A.8)",
+      "case": "verify-decision accepts `token` ONLY; an extra key is a captured 403 recording the COUNT",
+      "expected": "count only",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "verify-decision accepts only a resume token; the request also carried 1 additional field(s)",
+      "block": "transport and policy (§B / A.8)",
+      "case": "...and never the key names — a live token can be smuggled in as a key",
+      "expected": "name absent",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{\"cases\": [], \"undecided\": 0}",
+      "block": "transport and policy (§B / A.8)",
+      "case": "a TRUTHY non-dict nested value produces a structured result, never a traceback",
+      "expected": "structured",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "transport and policy (§B / A.8)",
+      "case": "...and an EMPTY list does not reproduce it (the falsy case passes, which is why the truthy one is the required probe)",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "transport and policy (§B / A.8)",
+      "case": "a non-ASCII credential yields a verdict rather than raising before one",
+      "expected": "403",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "403",
+      "block": "transport and policy (§B / A.8)",
+      "case": "an item declaring a partition other than `business` is refused",
+      "expected": ">=400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "no-store",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "Cache-Control: no-store on every response",
+      "expected": "no-store",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "\"Eub0ibaIXjFyss19LKnC7CH4M33KmNXKAbd5v7Pnrdo\"",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "OVER HTTP the provider receives the actual resume token, not a descriptor — the service can hand out the credential it minted",
+      "expected": "a usable string",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "\"cap-Dc_Q7RMA8wIsnEKfFVclU5vTW9k6SsS5\"",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "...and the execution capability likewise arrives usable",
+      "expected": "a usable string",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'delivered')",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "the whole POC-1 path completes end to end over a socket",
+      "expected": "delivered",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "present",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "...and neither credential, token nor capability reached any capture",
+      "expected": "absent from captures",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "HTTP/1.0 415 Unsupported Media Type\r\nCon",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "a browser-simple text/plain POST is refused",
+      "expected": "415",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "HTTP/1.0 400 Bad Request\r\nContent-Type: ",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "a negative Content-Length is refused",
+      "expected": "400/closed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "HTTP/1.0 400 Bad Request\r\nContent-Type: ",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "conflicting duplicate Content-Length headers are refused",
+      "expected": "400/closed",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "HTTP/1.0 501 Not Implemented\r\nContent-Ty",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "a non-identity transfer encoding is refused",
+      "expected": "refused",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "8.0s",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "a slow body (declared length, nothing sent) is bounded by the socket timeout",
+      "expected": "<30s",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "HTTP/1.0 400 Bad Request\r\nContent-Type: ",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "deeply malformed JSON is a structured refusal",
+      "expected": "400",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "200",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "...and the service is still healthy afterwards",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "absent",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "a secret placed in the PATH or QUERY is absent from the log",
+      "expected": "absent",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "logging emits a ROUTE-MATCHED CONSTANT plus status and nothing caller-supplied — every logged line is a policy-table label and a code",
+      "expected": "all lines label+status",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "live HTTP — a real socket, a real token, a real capability",
+      "case": "...including unmatched routes, malformed request lines and secrets in the path: none of them contributes a logged line",
+      "expected": "none",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "MEASUREMENT VALIDATION PASS — 160 measurements checked against 160 expected combinations, 0 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "the shipped template validates clean",
+      "expected": "0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "n-null `value`\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MEASURED with no value FAILS",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "ement is 'n8n'\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MEASURED whose evidence record names a different CANDIDATE fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "cost_incurred'\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MEASURED whose evidence record names a different MEASURE fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "ment reports 7\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MEASURED whose evidence record reports a different VALUE fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "vidence record\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MEASURED whose evidence_ref resolves to nothing fails — a named file is not a record",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "tegrity check)\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a cited source_path that does not exist fails the preliminary integrity check",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "ne', not 'n8n'\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "an UNSUPPORTED whose capability-gap evidence names a different candidate fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "idence` object\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "an UNSUPPORTED without capability-gap evidence fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "empty `reason`\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a NOT_TESTED without a reason fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "m the document\n\nMEASUREMENT VALIDATION FAIL — 159 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a MISSING (candidate x POC x measure) combination fails — nothing disappears by omission",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "m the document\n\nMEASUREMENT VALIDATION FAIL — 154 measurements checked against 160 expected combinations, 6 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "dropping a §D required-family measure everywhere fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "'UNSUPPORTED']\n\nMEASUREMENT VALIDATION FAIL — 160 measurements checked against 160 expected combinations, 1 violation(s)",
+      "block": "measurement validator (§D)",
+      "case": "a status outside {MEASURED, NOT_TESTED, UNSUPPORTED} fails",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "2876522bec584678",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "the pinned R4 reference is the build the verifier examined",
+      "expected": "2876522bec584678",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 CONTROL (no fault) — a capture still publishes",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 link failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 temp-unlink failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 directory-open failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 directory-fsync failure after the link",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 R6 final-link cleanup failure during rollback",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 R6 persistent temp cleanup failure",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 R6 rollback directory-fsync failure",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "R4-01 R6 directory-close after a successful publication fsync",
+      "expected": "holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "972c30d532a957a9",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "the pinned R5 reference is the build the verifier examined",
+      "expected": "972c30d532a957a9",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and every R6 rollback boundary FAILS against it (4 of 4 red)",
+      "expected": "all red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "5/5 scenarios",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "the verifier's chatgpt_r5_cleanup_rollback_probe runs green",
+      "expected": "5/5 scenarios",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0/5 scenarios; failing: committed_final_link_cleanup_failure, persistent_temp_cleanup_failure, post_fsync_close_plus_cleanup_failure, rollback_directory_fsync, standalone_final_link_cleanup_failure",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and red against the pinned R5 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "an unprovable rollback returns the DISTINCT quarantine result, never the ordinary 'not effective' claim",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 1}",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and the quota unit is retained, because it is the last accounting for a record that may still exist",
+      "expected": ">=1 retained",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and the service then FAILS CLOSED to further authority transitions",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...while GET /health is still served and says why (A.8)",
+      "expected": "health reports the quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['link failure after the link']",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...and the same boundaries FAIL against the pinned R4 build (7 of 8 fault boundaries red)",
+      "expected": ">=3 red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "",
+      "block": "capture publication: every post-link boundary (SEC-R4-01)",
+      "case": "...while the pin's CONTROL still publishes, so the red is the defect and not a broken harness",
+      "expected": "control holds",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "d0fd4c449e797be4",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the pinned R6 reference is the build the verifier examined",
+      "expected": "d0fd4c449e797be4",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "5/5 checks",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the verifier's chatgpt_r6_quarantine_integrity_probe runs green",
+      "expected": "5/5 checks",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "1/5 checks; failing: item 1: no ordinary ineffective claim beside a durable committed record; item 3: no quarantine when no artifact was ever created; item 4: a close error after a durable rollback fsync is a soft anomaly; item 5: a fresh process finds the quarantine and still refuses",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and red against the pinned R6 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "stub_server.py: forced=1 status=200 outcome=registered committed=1 regs=1",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the verifier's post_durable_interrupt_compare runs green",
+      "expected": "no ineffective claim",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "stub_server_r6.py: forced=1 status=500 outcome=capture-failed committed=1 regs=0",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and red against the pinned R6 build",
+      "expected": "red",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'dirs': 2, 'forced': 1}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the injected post-durability interruption actually fired",
+      "expected": "1",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'registered', 1)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 1: a durably committed capture STAYS committed — no ordinary 'not effective' claim after the publication fsync succeeded",
+      "expected": "200 with the registration live",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'kind': 'post-durable-capture-tail-failure', 'route': '/owner/artifact/register', 'step': 'committed-artifact-register', 'exception': 'KeyboardInterrupt', 'detail': 'forced after the committed dir fsync', 'note': 'record already durable; capture stands'}]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the tail failure is RECORDED as a soft anomaly, not swallowed",
+      "expected": "post-durable-capture-tail-failure",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "0",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the service is NOT quarantined by it, because nothing is unproven — the record is on disk",
+      "expected": "no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(500, 'capture-failed', 0)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 3: a failure BEFORE any temp or final name exists is an ordinary capture failure, never a quarantine",
+      "expected": "500 capture-failed, no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the capture reservation is RELEASED, because there is no record left for it to account for",
+      "expected": "all pools 0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'fsyncs': 3, 'rollback_fsync_ok': True, 'close_faults': 1, 'dir_closes': 2}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the rollback's own directory fsync succeeded and only its CLOSE was faulted",
+      "expected": "fsync ok, close faulted",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "('CaptureError', 0)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 4: a close error after a DURABLE rollback fsync is a soft anomaly — ordinary failure, no quarantine",
+      "expected": "CaptureError, no quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "{'general': 0, 'security-refusal': 0, 'reserved-owner': 0}",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the quota unit is released, because the rollback was proven",
+      "expected": "all pools 0",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[{'kind': 'rollback-directory-close-after-durable-fsync', 'route': '/poc1/receipt', 'step': 'r7rollback', 'errno': 'EIO'}]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the anomaly is recorded rather than dropped",
+      "expected": "rollback-directory-close-after-durable-fsync",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "a genuine unprovable rollback still quarantines (R6, preserved)",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: the quarantine is PERSISTED as a marker beside captures/, not only in memory",
+      "expected": "1 marker",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "['/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json']",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the marker is NOT filed inside captures/, where every reader would count it as evidence",
+      "expected": "outside captures/",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and the incident says whether the marker landed, so an operator is not left guessing whether a restart will be stopped",
+      "expected": "True",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(0, False)",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "the restarted process starts with an EMPTY in-memory register, so anything it refuses comes from the marker on disk",
+      "expected": "empty and unscanned",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "True",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: the restarted process FINDS the marker and reports the quarantine on /health",
+      "expected": "storage_quarantined true",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "/tmp/selftest-pcadxt_u/storage_quarantine/n8n/quarantine-20260805T215022-69196aee-99f27b74.json",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...naming the marker it recovered, so recovery is actionable",
+      "expected": "marker path reported",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(503, 'refused-storage-quarantine')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "item 5: and it REFUSES authority transitions — restarting is not reconciliation",
+      "expected": "503 refused-storage-quarantine",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "(200, 'registered')",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "...and only once an operator has removed the marker does the service accept again, so the refusal was the marker's doing",
+      "expected": "200",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "R7: publication-aware handling, scoped quarantine, restart (46_)",
+      "case": "no in-service path clears a quarantine: STORE.storage_quarantine is only appended to or extended, never cleared, popped or reassigned",
+      "expected": "no clear path",
+      "note": null,
+      "ok": true
+    },
+    {
+      "actual": "[]",
+      "block": "outcome coverage — no unreachable refusal reasons",
+      "case": "every outcome code the source can emit is produced by some case in this suite (56 declared, 55 exercised, 1 exempt)",
+      "expected": "none unreached",
+      "note": null,
+      "ok": true
+    }
+  ],
+  "check": "R3 stub self-test (25_ §E)",
+  "passed": 215,
+  "total": 215,
+  "witness_method": "r1_witnesses.py — probes against the SHA-pinned R1 and R2 builds; no defect switch exists in this service"
+}

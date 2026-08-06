@@ -1,0 +1,61 @@
+{
+  "committed_registration_directory_fsync": {
+    "body": {
+      "outcome": "capture-failed",
+      "reason": "registration not recorded, and therefore not effective: capture write failed: EIO",
+      "refused": true
+    },
+    "fsync_calls": 4,
+    "identity_index": 0,
+    "pools": {
+      "general": 0,
+      "reserved-owner": 2,
+      "security-refusal": 0
+    },
+    "records": [
+      {
+        "file": "captures/falsecommit/POC1/committed-artifact-register-20260804T155426-c2f7d74a-0001.json",
+        "final_status": "REGISTERED",
+        "outcome": "committed",
+        "phase": "committed",
+        "size": 716,
+        "step": "committed-artifact-register"
+      },
+      {
+        "file": "captures/falsecommit/POC1/prepared-artifact-register-20260804T155426-c2f7d74a-0001.json",
+        "final_status": null,
+        "outcome": "prepared",
+        "phase": "prepared",
+        "size": 843,
+        "step": "prepared-artifact-register"
+      }
+    ],
+    "registrations": 0,
+    "status": 500,
+    "transition_mirror": []
+  },
+  "standalone_directory_fsync": {
+    "error": {
+      "text": "capture write failed: EIO",
+      "type": "CaptureError"
+    },
+    "fsync_calls": 2,
+    "pools": {
+      "general": 1,
+      "reserved-owner": 0,
+      "security-refusal": 0
+    },
+    "records": [
+      {
+        "file": "captures/standalone/POC1/postpub-fault-20260804T155426-3a68268e-0001.json",
+        "final_status": null,
+        "outcome": "x",
+        "phase": null,
+        "size": 559,
+        "step": "postpub-fault"
+      }
+    ],
+    "returned": null
+  },
+  "target": "/mnt/data/r4_review/pkg/poc/stub/r3_reference/stub_server_r3.py"
+}

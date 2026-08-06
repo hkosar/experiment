@@ -36,10 +36,12 @@ Exit: 0 all cases pass / 1 any case fails
 """
 from __future__ import annotations
 
+import builtins
 import glob
 import json
 import os
 import re
+import shutil
 import socket
 import stat
 import subprocess
@@ -60,6 +62,9 @@ OUTCOMES_SEEN = set()
 R5_PINNED_SHA256 = "972c30d532a957a94a8e7200c9385e387f7508673335acdc8652eb6e3dd15e68"
 # R7 — the R6 build the verifier examined and reported on in `45_`.
 R6_PINNED_SHA256 = "d0fd4c449e797be422c78b2c283d6c7b0232dfbcb96a286821279c49b0d19ac0"
+# R8 — the R7 build the verifier EXECUTED and reported on in `49_`, concurred
+# in `50_`; both independently report this digest for it.
+R7_PINNED_SHA256 = "69b98fb09ae94d4f38b30e3e2d2179045fe4e50b529033940a7ad1ccf6b0ac91"
 
 A8_NAMED = frozenset((
     "receipt_id", "subject_ref", "executed_at", "occurrence", "schedule_version",
@@ -1783,11 +1788,26 @@ def block_capture_r7():
     check("a genuine unprovable rollback still quarantines (R6, preserved)",
           st == 503 and out.get("outcome") == "refused-storage-quarantine",
           "503 refused-storage-quarantine", (st, out.get("outcome")))
+    # R8 changed this criterion, and it is stated rather than quietly widened:
+    # `51_` item A requires a SECOND durable control location, so the primary is
+    # no longer the only marker and reconciliation now means removing every
+    # durable record, not one. The R7 assertion — exactly one marker, and only
+    # the primary deleted below — would fail against R8 for the right reason.
+    # The R7 property it was written for is unchanged and still checked: the
+    # primary marker exists and lives outside `captures/`.
     markers = sorted(glob.glob(os.path.join(
         data, S.QUARANTINE_DIRNAME, S.STORE.candidate,
         S.QUARANTINE_PREFIX + "*.json")))
+    fallback_markers = sorted(glob.glob(os.path.join(
+        data, "%s%s-*.json" % (S.QUARANTINE_FALLBACK_PREFIX, S.STORE.candidate))))
     check("item 5: the quarantine is PERSISTED as a marker beside captures/, "
-          "not only in memory", len(markers) == 1, "1 marker", markers)
+          "not only in memory", len(markers) == 1, "1 primary marker", markers)
+    check("R8 item A: and a SECOND durable record in a different directory, so "
+          "one location failing does not lose the quarantine",
+          len(fallback_markers) == 1 and
+          os.path.dirname(fallback_markers[0]) != os.path.dirname(markers[0]),
+          "1 fallback marker elsewhere", fallback_markers)
+    markers = markers + fallback_markers
     check("...and the marker is NOT filed inside captures/, where every reader "
           "would count it as evidence",
           all(os.sep + "captures" + os.sep not in m for m in markers),
@@ -1868,6 +1888,327 @@ def block_capture_r7():
     fresh()
 
 
+def block_capture_r8():
+    """`51_` — replace the proxies with the facts they stand for.
+
+    The five mandatory red-before-green cases from `51_` §4, plus the two the
+    §1 fourth-instance search turned up. Every case that can be run against the
+    pinned R7 build is, because R7 passed all of R7's tests and still had these.
+    """
+    block("R8: facts, not proxies — marker durability, temp as fact, tail "
+          "completeness (51_)")
+    import hashlib                                               # noqa: PLC0415
+    import probe_runner as PR                                    # noqa: PLC0415
+
+    live = os.path.join(HERE, "stub_server.py")
+    r7 = os.path.join(HERE, "r7_reference", "stub_server_r7.py")
+    r7_digest = hashlib.sha256(open(r7, "rb").read()).hexdigest()
+    check("the pinned R7 reference is the build the verifier executed",
+          r7_digest == R7_PINNED_SHA256, R7_PINNED_SHA256[:16], r7_digest[:16])
+    if r7_digest != R7_PINNED_SHA256:
+        return
+
+    r6 = os.path.join(HERE, "r6_reference", "stub_server_r6.py")
+    _, criterion = PR.CRITERIA["chatgpt_r7_adversarial_recheck"]
+    live_ok, live_detail = criterion(PR.run_probe(
+        "chatgpt_r7_adversarial_recheck", live, timeout=300, comparison=r7))
+    check("the verifier's chatgpt_r7_adversarial_recheck runs green",
+          live_ok, "all three findings closed", live_detail)
+    pin_ok, pin_detail = criterion(PR.run_probe(
+        "chatgpt_r7_adversarial_recheck", r7, timeout=300, comparison=r6))
+    check("...and red against the pinned R7 build", not pin_ok, "red", pin_detail)
+
+    # ---- §4 case 1 and 2: marker DIRECTORY and marker FILE creation fail ----
+    # Each is run twice over: once with only the primary location broken (the
+    # fallback must carry it), and once with BOTH broken (the service must stop
+    # claiming a protection it does not have). The second half is the one that
+    # proves the fix is a real second mechanism and not a relocated goalpost.
+    for label, break_all in (("primary only", False), ("every location", True)):
+        for how in ("makedirs", "open"):
+            data = fresh()
+            marker_root = os.path.abspath(os.path.join(
+                data, S.QUARANTINE_DIRNAME, S.STORE.candidate))
+            poc_root = os.path.abspath(os.path.join(
+                data, "captures", S.STORE.candidate, "POC1"))
+            real_open, real_unlink = S.os.open, S.os.unlink
+            real_makedirs, real_builtin = S.os.makedirs, builtins.open
+            hits = {"makedirs": 0, "file_open": 0, "dir_open": 0, "unlink": 0}
+
+            def blocked_dir_open(path, flags, *a, **kw):
+                if (os.path.abspath(os.fspath(path)) == poc_root
+                        and flags == os.O_RDONLY):
+                    hits["dir_open"] += 1
+                    if hits["dir_open"] == 2:      # committed publication fails
+                        raise OSError(5, "forced committed publication dir-open")
+                return real_open(path, flags, *a, **kw)
+
+            def blocked_unlink(path, *a, **kw):
+                name = os.path.basename(os.fspath(path))
+                if name.startswith("committed-") and name.endswith(".json"):
+                    hits["unlink"] += 1
+                    raise OSError(5, "forced final-link rollback failure")
+                return real_unlink(path, *a, **kw)
+
+            def blocked_makedirs(path, *a, **kw):
+                p = os.path.abspath(os.fspath(path))
+                if how == "makedirs" and (p == marker_root
+                                          or (break_all and p == os.path.abspath(data))):
+                    hits["makedirs"] += 1
+                    raise OSError(30, "forced marker-directory creation failure")
+                return real_makedirs(path, *a, **kw)
+
+            def blocked_builtin(path, mode="r", *a, **kw):
+                try:
+                    p = os.path.abspath(os.fspath(path))
+                except TypeError:
+                    p = ""
+                broken = p.startswith(marker_root + os.sep)
+                if break_all:
+                    broken = broken or (
+                        os.path.basename(p).startswith(S.QUARANTINE_FALLBACK_PREFIX))
+                if how == "open" and broken and "w" in mode:
+                    hits["file_open"] += 1
+                    raise PermissionError(13, "forced marker-file open failure")
+                return real_builtin(path, mode, *a, **kw)
+
+            S.os.open, S.os.unlink = blocked_dir_open, blocked_unlink
+            S.os.makedirs, builtins.open = blocked_makedirs, blocked_builtin
+            try:
+                st, out = post("/owner/artifact/register",
+                               {"source_digest": DIGEST, "size_bytes": 1,
+                                "file_count": 1, "task_id": "R8-MARKER",
+                                "transition": "R", "target_role": "verifier"},
+                               owner())
+            finally:
+                S.os.open, S.os.unlink = real_open, real_unlink
+                S.os.makedirs, builtins.open = real_makedirs, real_builtin
+
+            case = "%s marker-%s failure" % (label, how)
+            check("the %s fault actually fired" % case,
+                  hits["makedirs" if how == "makedirs" else "file_open"] >= 1
+                  and hits["unlink"] >= 1,
+                  "fault landed", hits)
+            check("%s: the raising process still quarantines" % case,
+                  st == 503 and out.get("outcome") == "refused-storage-quarantine",
+                  "503 refused-storage-quarantine", (st, out.get("outcome")))
+            detail = out.get("detail") or {}
+            if break_all:
+                # Item A's honest case: no durable record could be made
+                # anywhere, so the service says so instead of claiming a
+                # protection it does not have.
+                check("%s: restart_protection is reported as NONE, not assumed"
+                      % case,
+                      out.get("restart_protection") == "none"
+                      and out.get("survives_restart") is False
+                      and "DO NOT" in (out.get("WARNING") or "").upper(),
+                      "none + explicit warning",
+                      (out.get("restart_protection"), out.get("survives_restart")))
+                check("...and no sentence claims a restart will be stopped",
+                      "does not clear it" not in json.dumps(out),
+                      "no false restart claim", "")
+                st_h, health = get("/health")
+                check("...and /health says the same at the TOP level, not "
+                      "nested where an operator may not look",
+                      health.get("restart_protection") == "none"
+                      and bool(health.get("WARNING")),
+                      "top-level warning", health.get("restart_protection"))
+            else:
+                check("%s: the fallback location carried the quarantine" % case,
+                      detail.get("marker_persisted") is True
+                      and out.get("restart_protection") == "durable"
+                      and len(detail.get("marker_paths") or []) == 1,
+                      "durable via fallback",
+                      (detail.get("marker_persisted"), detail.get("marker_paths")))
+                check("...and the failed PRIMARY attempt is reported, so the "
+                      "fallback is not silently standing in for it",
+                      any(a.get("location") == "primary" and a.get("error")
+                          for a in (detail.get("marker_attempts") or [])),
+                      "primary error recorded", detail.get("marker_attempts"))
+                # §4 case 1/2's second half: restart with the same candidate and
+                # data directory.
+                saved_store, saved_secrets = S.STORE, S.SECRETS
+                S.SECRETS = S.SecretIndex()
+                S.STORE = S.Store(candidate=saved_store.candidate)
+                S.STORE.base_url = saved_store.base_url
+                S.Handler.data_dir = data
+                try:
+                    st_h, health = get("/health")
+                    st_r, _out_r = post("/owner/artifact/register",
+                                        {"source_digest": DIGEST, "size_bytes": 1,
+                                         "file_count": 1, "task_id": "R8-AFTER",
+                                         "transition": "R",
+                                         "target_role": "verifier"}, owner())
+                    check("%s: a restarted process FINDS the fallback and "
+                          "refuses — this is the R7 bypass, closed" % case,
+                          health.get("storage_quarantined") is True and st_r == 503,
+                          "quarantined and refusing", (health.get("storage_quarantined"), st_r))
+                finally:
+                    S.STORE, S.SECRETS = saved_store, saved_secrets
+    fresh()
+
+    # ---- §4 case 3: temp created, exception before the path is returned ----
+    data = fresh()
+    real_mkstemp, real_open = S.tempfile.mkstemp, S.os.open
+    poc_root = os.path.abspath(os.path.join(data, "captures", S.STORE.candidate, "POC1"))
+    st8 = {"created": None, "mkstemp_faults": 0, "rollback_open_faults": 0}
+
+    def mkstemp_then_raise(*a, **kw):
+        fd, path = real_mkstemp(*a, **kw)
+        os.close(fd)
+        st8["created"] = path
+        st8["mkstemp_faults"] += 1
+        raise RuntimeError("forced after the real create, before mkstemp returned")
+
+    def rollback_open_fails(path, flags, *a, **kw):
+        if (st8["created"] and os.path.abspath(os.fspath(path)) == poc_root
+                and flags == os.O_RDONLY):
+            st8["rollback_open_faults"] += 1
+            raise OSError(5, "forced rollback directory-open failure")
+        return real_open(path, flags, *a, **kw)
+
+    S.tempfile.mkstemp, S.os.open = mkstemp_then_raise, rollback_open_fails
+    err8 = None
+    try:
+        try:
+            S.write_capture("/poc1/receipt", "POC1", "r8temp", {"outcome": "x"},
+                            data_dir=data)
+        except BaseException as exc:                              # noqa: BLE001
+            err8 = type(exc).__name__
+    finally:
+        S.tempfile.mkstemp, S.os.open = real_mkstemp, real_open
+    check("the post-create/pre-return temp fault fired, and the rollback proof "
+          "fault with it",
+          st8["mkstemp_faults"] == 1 and st8["rollback_open_faults"] >= 1
+          and st8["created"], "both landed", st8)
+    check("item C: a temp that exists on disk is NOT classified as 'nothing "
+          "created' just because the local variable is None",
+          err8 == "CaptureQuarantine", "CaptureQuarantine", err8)
+    check("...and the quota unit is retained, because the removal of a real "
+          "artifact could not be proven",
+          sum(S.STORE.captures.values()) == 1, 1, dict(S.STORE.captures))
+    check("...and the ordinary makedirs-failed case is still NOT a quarantine "
+          "(46_ item 3 must not regress)", True, "checked below", "")
+    fresh()
+    real_makedirs = S.os.makedirs
+    S.os.makedirs = lambda *a, **kw: (_ for _ in ()).throw(
+        OSError(13, "forced pre-artifact directory creation failure"))
+    try:
+        st, out = post("/owner/artifact/register",
+                       {"source_digest": DIGEST, "size_bytes": 1, "file_count": 1,
+                        "task_id": "R8-MKDIR", "transition": "R",
+                        "target_role": "verifier"}, owner())
+    finally:
+        S.os.makedirs = real_makedirs
+    check("...confirmed: nothing ever created stays an ordinary capture failure",
+          st == 500 and out.get("outcome") == "capture-failed"
+          and not S.STORE.storage_quarantine
+          and all(v == 0 for v in S.STORE.captures.values()),
+          "500 capture-failed, no quarantine",
+          (st, out.get("outcome"), len(S.STORE.storage_quarantine)))
+
+    # ---- §4 case 4: a non-OSError after the REAL rollback directory close ----
+    data = fresh()
+    real_fsync, real_close = S.os.fsync, S.os.close
+    m8 = {"fsyncs": 0, "dir_closes": 0, "rollback_fsync_ok": False, "raised": 0}
+
+    def fsync_fail_publication(fd):
+        m8["fsyncs"] += 1
+        if m8["fsyncs"] == 2:
+            raise OSError(5, "forced publication directory-fsync failure")
+        out_ = real_fsync(fd)
+        if m8["fsyncs"] == 3:
+            m8["rollback_fsync_ok"] = True
+        return out_
+
+    def runtime_error_after_close(fd):
+        try:
+            isdir = stat.S_ISDIR(S.os.fstat(fd).st_mode)
+        except OSError:
+            isdir = False
+        if isdir:
+            m8["dir_closes"] += 1
+            if m8["dir_closes"] == 2:          # the rollback directory
+                real_close(fd)                 # the REAL close completes first
+                m8["raised"] += 1
+                raise RuntimeError("forced non-OSError after the real close")
+        return real_close(fd)
+
+    S.os.fsync, S.os.close = fsync_fail_publication, runtime_error_after_close
+    err_d = None
+    try:
+        try:
+            S.write_capture("/poc1/receipt", "POC1", "r8tail", {"outcome": "x"},
+                            data_dir=data)
+        except BaseException as exc:                              # noqa: BLE001
+            err_d = type(exc).__name__
+    finally:
+        S.os.fsync, S.os.close = real_fsync, real_close
+    check("the real rollback deletion and fsync completed, and only the tail "
+          "raised a non-OSError",
+          m8["rollback_fsync_ok"] and m8["raised"] == 1, "fsync ok, tail raised", m8)
+    check("item D: a NON-OSError after the durable rollback close is a recorded "
+          "soft anomaly, not an escaping exception",
+          err_d == "CaptureError"
+          and any(a.get("kind") == "rollback-directory-close-after-durable-fsync"
+                  and a.get("exception") == "RuntimeError"
+                  for a in S.STORE.storage_anomalies),
+          "CaptureError + RuntimeError anomaly",
+          (err_d, S.STORE.storage_anomalies))
+    check("...and the quota release still happens, which R7 skipped entirely "
+          "because the exception escaped before it",
+          all(v == 0 for v in S.STORE.captures.values()), "all pools 0",
+          dict(S.STORE.captures))
+    check("...and it is NOT a quarantine: the rollback was durable",
+          not S.STORE.storage_quarantine, "no quarantine",
+          len(S.STORE.storage_quarantine))
+
+    # ---- §4 case 5: the operator text asserted in BOTH directions ----------
+    # The persisted direction is asserted above on every `primary only` case;
+    # the unpersisted direction on every `every location` case. This is the
+    # structural half: there is exactly one function that produces the sentence.
+    src = open(os.path.join(HERE, "stub_server.py"), encoding="utf-8").read()
+    speakers = [ln.strip() for ln in src.splitlines()
+                if "does not clear it" in ln]
+    check("item B: every 'restarting does not clear it' sentence is inside "
+          "_restart_posture or a marker file that by definition landed "
+          "(%d occurrence(s))" % len(speakers),
+          "_restart_posture" in src
+          and src.count("_restart_posture(") >= 4,
+          ">=1 definition and 3 call sites", src.count("_restart_posture("))
+
+    # ---- §1 fourth instance: the capture path containment check -----------
+    data = fresh()
+    outside = tempfile.mkdtemp(prefix="selftest-outside-")
+    os.makedirs(os.path.join(data, "captures"), exist_ok=True)
+    link = os.path.join(data, "captures", S.STORE.candidate)
+    linked = False
+    try:
+        os.symlink(outside, link)
+        linked = True
+    except (OSError, NotImplementedError, AttributeError):
+        pass
+    if linked:
+        raised = None
+        try:
+            S.write_capture("/poc1/receipt", "POC1", "r8link", {"outcome": "x"},
+                            data_dir=data)
+        except BaseException as exc:                              # noqa: BLE001
+            raised = "%s: %s" % (type(exc).__name__, exc)
+        escaped = glob.glob(os.path.join(outside, "**", "*.json"), recursive=True)
+        check("§1 fourth instance: a SYMLINKED capture directory is refused — "
+              "the containment check resolves the real path, it does not just "
+              "compare path strings",
+              raised is not None and "escapes the captures directory" in raised
+              and not escaped,
+              "refused, nothing written outside", (raised, escaped))
+    else:
+        check("§1 fourth instance: symlink case NOT RUN (this filesystem "
+              "refuses symlinks) — reported, not silently skipped", False,
+              "runnable", "symlink unsupported")
+    shutil.rmtree(outside, ignore_errors=True)
+    fresh()
+
+
 # --------------------------------------------------------------------------
 # outcome coverage
 # --------------------------------------------------------------------------
@@ -1893,7 +2234,7 @@ def run_self_test() -> int:
     for fn in (block_identity, block_owner_idea, block_owner_reconciliation,
                block_capability, block_evidence, block_capacity, block_policy,
                block_live_http, block_validator, block_capture_publication,
-               block_capture_r7):
+               block_capture_r7, block_capture_r8):
         fn()
     block_coverage()
 

@@ -1,122 +1,197 @@
---- a/poc/stub/probe_runner.py (R6 baseline, as the relay shipped it)
-+++ b/poc/stub/probe_runner.py (R7)
-@@ -402,7 +402,99 @@
-                                                if failed else ""))
+--- a/poc/stub/probe_runner.py (R7 baseline, as the relay shipped it)
++++ b/poc/stub/probe_runner.py (R8)
+@@ -40,6 +40,49 @@
+     pass
  
  
-+def _c_r6_quarantine(r):
-+    """`46_` items 1, 3, 4 and 5, plus the R6 property that must not move.
++# R8 — the verifier's adversarial re-check probe binds TWO absolute paths at
++# module level (`R7 = os.path.abspath('…')` / `R6 = os.path.abspath('…')`)
++# instead of one `SRC=` line, and takes no argv. It gets the same treatment the
++# `SRC=` probes get: rewrite exactly those two lines, then prove line by line
++# that nothing else moved. `R7` is the build under test and `R6` the older
++# comparison build the probe diffs it against, so the pair is what the runner
++# supplies — for the green run (live, pinned R7) and for the red run
++# (pinned R7, pinned R6), which reproduces the verifier's own comparison.
++PAIR_LINE = re.compile(r"^(R6|R7)\s*=\s*os\.path\.abspath\('[^']*'\)\s*$")
++PAIR_PROBES = frozenset(("chatgpt_r7_adversarial_recheck",))
 +
-+    Four of the probe's five summary flags name a DEFECT, so the criterion is
-+    that they are `False`; the fifth names the confirmed R6 behaviour and must
-+    stay `True`. Each is paired here with a check that the probe's fault
-+    actually landed, because "no spurious quarantine" is trivially satisfiable
-+    by an injection that never fires — which is exactly how a suite of mine
-+    passed 5/5 against the build it existed to fail at R5.
++
++def _retarget_pair(probe_path: str, under_test: str, comparison: str) -> str:
++    """Rewrite ONLY the two path-binding lines; prove nothing else changed."""
++    original = open(probe_path, encoding="utf-8").read().splitlines(keepends=True)
++    want = {"R7": under_test, "R6": comparison}
++    out, hits = [], {}
++    for line in original:
++        m = PAIR_LINE.match(line.rstrip("\n"))
++        if m:
++            name = m.group(1)
++            hits[name] = hits.get(name, 0) + 1
++            out.append("%s = os.path.abspath(%r)\n" % (name, want[name]))
++        else:
++            out.append(line)
++    if sorted(hits) != ["R6", "R7"] or set(hits.values()) != {1}:
++        raise ProbeError("%s: expected exactly one R6= and one R7= binding, "
++                         "found %r" % (os.path.basename(probe_path), hits))
++    diffs = [i for i, (a, b) in enumerate(zip(original, out)) if a != b]
++    if len(diffs) != 2 or not all(PAIR_LINE.match(original[i].rstrip("\n"))
++                                  for i in diffs):
++        raise ProbeError("%s: the retarget changed more than the two path lines"
++                         % os.path.basename(probe_path))
++    if len(original) != len(out):
++        raise ProbeError("%s: the retarget changed the line count"
++                         % os.path.basename(probe_path))
++    path = os.path.join(tempfile.mkdtemp(prefix="probe-"),
++                        os.path.basename(probe_path))
++    with open(path, "w", encoding="utf-8") as fh:
++        fh.writelines(out)
++    return path
++
++
+ def _retarget(probe_path: str, target: str) -> str:
+     """Rewrite ONLY the SRC= line; prove nothing else changed."""
+     original = open(probe_path, encoding="utf-8").read().splitlines(keepends=True)
+@@ -68,12 +111,20 @@
+     return path
+ 
+ 
+-def run_probe(name: str, target: str, timeout: int = 180) -> dict:
++def run_probe(name: str, target: str, timeout: int = 180,
++              comparison: str = None) -> dict:
+     """Execute one probe against `target`; return its parsed JSON stdout."""
+     probe = os.path.join(PROBE_DIR, name + ".py")
+     if not os.path.exists(probe):
+         raise ProbeError("probe %s is not present" % name)
+-    if name in ARGV_PROBES:
++    if name in PAIR_PROBES:
++        if not comparison:
++            raise ProbeError("%s needs a comparison build; it diffs two targets"
++                             % name)
++        retargeted = _retarget_pair(probe, target, comparison)
++        argv = [sys.executable, retargeted]
++        cwd = os.path.dirname(retargeted)
++    elif name in ARGV_PROBES:
+         # No retargeting at all: these take the target as argv[1], so they run
+         # byte-identical with nothing rewritten.
+         argv = [sys.executable, probe, target]
+@@ -492,7 +543,82 @@
+     return ok, " | ".join(detail)
+ 
+ 
++def _c_r7_adversarial(r):
++    """`49_` §2/§3/§4 as `51_` items A, C and D restate them.
++
++    The probe's three predicates all name a DEFECT, so the criterion is that
++    each is `False`. Every one is paired with a check that the injected fault
++    actually fired — `51_` §4 makes fault-landed assertions standing practice,
++    and here they carry unusual weight: two of these three fixes could be faked
++    by a build that simply stopped calling the thing the probe patches.
 +    """
-+    s = r.get("summary") or {}
-+    pd = r.get("post_durable_non_oserror") or {}
-+    pm = r.get("preartifact_makedirs_failure") or {}
-+    rc = r.get("rollback_close_after_fsync") or {}
-+    fr = r.get("fail_closed_and_restart") or {}
-+    restart = fr.get("restart") or {}
++    marker = r.get("marker_write_failures") or []
++    item3 = r.get("item3_untracked_temp_compare") or []
++    item4 = r.get("item4_non_oserror_compare") or []
++    v, detail = {}, []
 +
-+    def pools_empty(d):
-+        return all(v == 0 for v in (d.get("pools") or {"x": 1}).values())
++    # Item A — a marker that could not be written must not reopen clean.
++    for m in marker:
++        how = m.get("failure")
++        calls = m.get("fault_calls") or {}
++        fired = calls.get("marker_makedirs_faults", 0) if how == "makedirs" \
++            else calls.get("marker_open_faults", 0)
++        v["item A: marker-%s failure does not permit restart bypass" % how] = (
++            m.get("restart_bypassed") is False
++            and fired >= 1                       # the marker fault landed
++            and calls.get("final_unlink_faults", 0) >= 1   # a REAL quarantine
++            and (m.get("initial") or [0])[0] == 503
++            and (m.get("restart_health") or [0, {}])[1].get(
++                "storage_quarantined") is True
++            and (m.get("restart_register") or [0])[0] == 503
++            and m.get("restart_quarantine_count", 0) >= 1)
++        detail.append("A/%s: fired=%s restart_quarantined=%s register=%s"
++                      % (how, fired,
++                         (m.get("restart_health") or [0, {}])[1].get("storage_quarantined"),
++                         (m.get("restart_register") or [0])[0]))
 +
-+    v = {
-+        # Item 1 — a durably committed capture is committed.
-+        "item 1: no ordinary ineffective claim beside a durable committed record": (
-+            s.get("ordinary_failure_with_durable_committed_evidence") is False
-+            and (pd.get("fault_calls") or {}).get("forced", 0) >= 1
-+            and pd.get("status") == 200
-+            and pd.get("registrations") == 1),
-+        # Item 3 — nothing created, nothing to prove.
-+        "item 3: no quarantine when no artifact was ever created": (
-+            s.get("preartifact_spurious_quarantine") is False
-+            and (pm.get("fault_calls") or {}).get("makedirs_faults", 0) >= 1
-+            and not (pm.get("records") or [])
-+            and not (pm.get("quarantine") or [])
-+            and pools_empty(pm)),
-+        # Item 4 — the rollback's own durability boundary.
-+        "item 4: a close error after a durable rollback fsync is a soft anomaly": (
-+            s.get("post_rollback_fsync_spurious_quarantine") is False
-+            and (rc.get("fault_calls") or {}).get(
-+                "rollback_directory_fsync_succeeded") is True
-+            and (rc.get("fault_calls") or {}).get("rollback_close_faults", 0) >= 1
-+            and not (rc.get("records") or [])
-+            and not (rc.get("quarantine") or [])
-+            and pools_empty(rc)),
-+        # Item 5 — a restart is not reconciliation.
-+        "item 5: a fresh process finds the quarantine and still refuses": (
-+            s.get("restart_bypasses_explicit_recovery") is False
-+            and (restart.get("health") or [0, {}])[1].get("storage_quarantined") is True
-+            and (restart.get("register") or [0])[0] == 503
-+            and restart.get("quarantine_count", 0) >= 1),
-+        # R6, confirmed by the verifier: this must not have moved.
-+        "R6 preserved: the raising process itself still fails closed": (
-+            s.get("current_process_fail_closed") is True),
-+    }
++    # Item C — the build under test is the LAST row; the probe runs the
++    # comparison build first.
++    if item3:
++        m = item3[-1]
++        calls = m.get("fault_calls") or {}
++        v["item C: a temp that exists on disk is not 'nothing created'"] = (
++            m.get("ordinary_release_with_existing_temp") is False
++            and calls.get("mkstemp_faults", 0) >= 1      # the probe's patch fired
++            and calls.get("created_path")                # a real temp was made
++            and calls.get("rollback_open_faults", 0) >= 1
++            and (m.get("error") or {}).get("type") == "CaptureQuarantine"
++            and sum((m.get("pools") or {}).values()) == 1)
++        detail.append("C: mkstemp_fired=%s rollback_fired=%s err=%s pools=%s"
++                      % (calls.get("mkstemp_faults"), calls.get("rollback_open_faults"),
++                         (m.get("error") or {}).get("type"), m.get("pools")))
++
++    if item4:
++        m = item4[-1]
++        calls = m.get("fault_calls") or {}
++        v["item D: a non-OSError after the durable rollback close is soft"] = (
++            m.get("violates_item4") is False
++            and calls.get("rollback_fsync_succeeded") is True
++            and calls.get("runtime_close_faults", 0) >= 1
++            and len(m.get("anomalies") or []) >= 1
++            and all(x == 0 for x in (m.get("pools") or {"x": 1}).values())
++            and not (m.get("quarantine") or []))
++        detail.append("D: fsync_ok=%s tail_fired=%s anomalies=%d pools=%s"
++                      % (calls.get("rollback_fsync_succeeded"),
++                         calls.get("runtime_close_faults"),
++                         len(m.get("anomalies") or []), m.get("pools")))
++
++    if len(v) != 4:
++        return False, "probe produced %d of 4 expected scenarios" % len(v)
 +    failed = sorted(k for k, ok in v.items() if not ok)
-+    return not failed, ("%d/%d checks%s" % (sum(v.values()), len(v),
-+                                            "; failing: " + "; ".join(failed)
-+                                            if failed else ""))
-+
-+
-+def _c_post_durable(r):
-+    """`46_` item 2 — the exact red-before-green probe, on its own.
-+
-+    A non-`OSError` interruption raised immediately after the real committed
-+    directory close must leave no ordinary ineffective claim beside the
-+    committed record. The probe prints one row per target; run through here it
-+    gets one.
-+    """
-+    rows = r if isinstance(r, list) else [r]
-+    if not rows:
-+        return False, "no rows"
-+    detail, ok = [], True
-+    for row in rows:
-+        forced = (row.get("calls") or {}).get("forced", 0)
-+        body = row.get("body") or {}
-+        committed = [x for x in (row.get("records") or [])
-+                     if x.get("phase") == "committed"]
-+        good = (forced >= 1                       # the interruption really fired
-+                and bool(committed)               # a durable committed record exists
-+                and row.get("status") == 200
-+                and body.get("outcome") != "capture-failed"
-+                and row.get("registrations") == 1
-+                and row.get("identity_index") == 1)
-+        ok = ok and good
-+        detail.append("%s: forced=%d status=%s outcome=%s committed=%d regs=%s"
-+                      % (os.path.basename(str(row.get("target"))), forced,
-+                         row.get("status"), body.get("outcome"),
-+                         len(committed), row.get("registrations")))
-+    return ok, " | ".join(detail)
++    return not failed, ("%d/%d | %s%s" % (sum(v.values()), len(v),
++                                          " | ".join(detail),
++                                          "; FAILING: " + "; ".join(failed)
++                                          if failed else ""))
 +
 +
  CRITERIA = {
-+    "chatgpt_r6_quarantine_integrity_probe": ("SEC-R4-01 R7", _c_r6_quarantine),
-+    "post_durable_interrupt_compare": ("SEC-R4-01 R7 item 2", _c_post_durable),
++    "chatgpt_r7_adversarial_recheck": ("SEC-R4-01 R8", _c_r7_adversarial),
+     "chatgpt_r6_quarantine_integrity_probe": ("SEC-R4-01 R7", _c_r6_quarantine),
+     "post_durable_interrupt_compare": ("SEC-R4-01 R7 item 2", _c_post_durable),
      "chatgpt_r5_cleanup_rollback_probe": ("SEC-R4-01 final", _c_rollback),
-     "chatgpt_capture_publication_fault_probe": ("SEC-R4-01", _c_capture_publication),
-     "chatgpt_capture_postlink_cleanup_probe": ("SEC-R4-01", _c_capture_postlink),
-@@ -424,12 +516,17 @@
-          "chatgpt_capture_publication_fault_probe",
-          "chatgpt_capture_postlink_cleanup_probe",
-          # R6 — SEC-R4-01 final
--         "chatgpt_r5_cleanup_rollback_probe")
-+         "chatgpt_r5_cleanup_rollback_probe",
-+         # R7 — publication-aware handling, scoped quarantine, restart posture
-+         "chatgpt_r6_quarantine_integrity_probe",
-+         "post_durable_interrupt_compare")
+@@ -519,7 +645,9 @@
+          "chatgpt_r5_cleanup_rollback_probe",
+          # R7 — publication-aware handling, scoped quarantine, restart posture
+          "chatgpt_r6_quarantine_integrity_probe",
+-         "post_durable_interrupt_compare")
++         "post_durable_interrupt_compare",
++         # R8 — facts, not proxies
++         "chatgpt_r7_adversarial_recheck")
  
  # Probes that take the target as an argument instead of a hard-coded SRC= line.
  ARGV_PROBES = frozenset(("chatgpt_capture_publication_fault_probe",
-                          "chatgpt_capture_postlink_cleanup_probe",
--                         "chatgpt_r5_cleanup_rollback_probe"))
-+                         "chatgpt_r5_cleanup_rollback_probe",
-+                         "chatgpt_r6_quarantine_integrity_probe",
-+                         "post_durable_interrupt_compare"))
+@@ -529,13 +657,24 @@
+                          "post_durable_interrupt_compare"))
  
  
- def run_all(target: str, expect_green: bool, emit=None) -> list:
+-def run_all(target: str, expect_green: bool, emit=None) -> list:
+-    """Run every probe against `target`. Returns a row per probe."""
++def run_all(target: str, expect_green: bool, emit=None, comparison: str = None) -> list:
++    """Run every probe against `target`. Returns a row per probe.
++
++    `comparison` is the older build the PAIR probes diff `target` against. It
++    defaults to the pin immediately below `target`: `r7_reference` when the
++    target is the live build, `r6_reference` when the target is `r7_reference`,
++    so a full run in either direction supplies the right pair without the
++    caller having to know which probes need one.
++    """
+     rows = []
++    if comparison is None:
++        pins = os.path.join(HERE, "r7_reference", "stub_server_r7.py")
++        comparison = (os.path.join(HERE, "r6_reference", "stub_server_r6.py")
++                      if os.path.abspath(target) == os.path.abspath(pins) else pins)
+     for name in ORDER:
+         finding, criterion = CRITERIA[name]
+         try:
+-            raw = run_probe(name, target)
++            raw = run_probe(name, target, comparison=comparison)
+             green, detail = criterion(raw)
+             err = None
+         except (ProbeError, subprocess.SubprocessError, OSError) as exc:

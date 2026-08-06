@@ -1,0 +1,549 @@
+{
+  "acceptance_oracle": {
+    "against_pinned_r3": {
+      "hold": 5,
+      "rows": [
+        {
+          "clauses": 6,
+          "failed_clauses": [],
+          "observed": {
+            "captures_added": 1,
+            "cases": 0,
+            "outcome": "rejected-artifact-binding",
+            "status": 403
+          },
+          "ok": true,
+          "route": "/poc1/review-case — unknown registration"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [],
+          "observed": {
+            "outcome": "refused-no-capability",
+            "status": 403
+          },
+          "ok": true,
+          "route": "/relay/deliver — no capability"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [
+            "expected_evidence pool security-refusal, never reserved-owner"
+          ],
+          "observed": {
+            "outcome": "refused-auth",
+            "pools": [
+              "reserved-owner"
+            ],
+            "status": 403
+          },
+          "ok": false,
+          "route": "/owner/decide — provider credential"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [],
+          "observed": {
+            "first": [
+              403,
+              "pending"
+            ],
+            "second": [
+              403,
+              "pending"
+            ]
+          },
+          "ok": true,
+          "route": "/poc1/verify-decision — pending"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [],
+          "observed": {
+            "first": 200,
+            "second": 409,
+            "second_outcome": "refused"
+          },
+          "ok": true,
+          "route": "/owner/decide — terminal decision"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [],
+          "observed": {
+            "outcome": "refused",
+            "status": 400
+          },
+          "ok": true,
+          "route": "/owner/reconcile — outcome=delivered"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [
+            "concurrency_cardinality: exactly one case-opened",
+            "concurrency_cardinality: the loser is truthfully suppressed",
+            "expected_state_delta exactly one case",
+            "forbidden: never two effective transitions"
+          ],
+          "observed": {
+            "cases": 2,
+            "outcomes": [
+              "case-opened",
+              "case-opened"
+            ]
+          },
+          "ok": false,
+          "route": "/poc1/review-case — concurrency cardinality"
+        }
+      ],
+      "total": 7
+    },
+    "against_r4": {
+      "clauses": 33,
+      "hold": 7,
+      "rows": [
+        {
+          "clauses": 6,
+          "failed_clauses": [],
+          "observed": {
+            "captures_added": 1,
+            "cases": 0,
+            "outcome": "rejected-artifact-binding",
+            "status": 403
+          },
+          "ok": true,
+          "route": "/poc1/review-case — unknown registration"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [],
+          "observed": {
+            "outcome": "refused-no-capability",
+            "status": 403
+          },
+          "ok": true,
+          "route": "/relay/deliver — no capability"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [],
+          "observed": {
+            "outcome": "refused-auth",
+            "pools": [
+              "security-refusal"
+            ],
+            "status": 403
+          },
+          "ok": true,
+          "route": "/owner/decide — provider credential"
+        },
+        {
+          "clauses": 5,
+          "failed_clauses": [],
+          "observed": {
+            "first": [
+              403,
+              "pending"
+            ],
+            "second": [
+              403,
+              "pending"
+            ]
+          },
+          "ok": true,
+          "route": "/poc1/verify-decision — pending"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [],
+          "observed": {
+            "first": 200,
+            "second": 409,
+            "second_outcome": "refused"
+          },
+          "ok": true,
+          "route": "/owner/decide — terminal decision"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [],
+          "observed": {
+            "outcome": "refused",
+            "status": 400
+          },
+          "ok": true,
+          "route": "/owner/reconcile — outcome=delivered"
+        },
+        {
+          "clauses": 4,
+          "failed_clauses": [],
+          "observed": {
+            "cases": 1,
+            "outcomes": [
+              "case-opened",
+              "duplicate-suppressed"
+            ]
+          },
+          "ok": true,
+          "route": "/poc1/review-case — concurrency cardinality"
+        }
+      ],
+      "total": 7
+    }
+  },
+  "check": "R4 concurrency rework — acceptance evidence",
+  "deterministic_barriers": {
+    "against_pinned_r3": {
+      "hold": 0,
+      "rows": [
+        {
+          "detail": {
+            "distinct_artifact_ids": 2,
+            "distinct_registration_refs": 2,
+            "outcomes": [
+              "registered",
+              "registered"
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": false,
+          "scenario": "one registration identity -> one record"
+        },
+        {
+          "detail": {
+            "cases_for_identity": 2,
+            "distinct_tokens": 2,
+            "outcomes": [
+              "case-opened",
+              "case-opened"
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": false,
+          "scenario": "one submission identity -> one case + one token"
+        },
+        {
+          "detail": {
+            "authorized": [
+              true,
+              true
+            ],
+            "distinct_action_requests": 2,
+            "distinct_capabilities": 2,
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": false,
+          "scenario": "one resume token -> one ActionRequest + one capability"
+        },
+        {
+          "detail": {
+            "delivered": [
+              true,
+              true
+            ],
+            "distinct_receipts": 2,
+            "replayed": [
+              false,
+              false
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": false,
+          "scenario": "one capability -> one delivery receipt"
+        },
+        {
+          "detail": {
+            "distinct_run_ids": 2,
+            "outcomes": [
+              "run-started",
+              "run-started"
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": false,
+          "scenario": "one schedule occurrence -> one run"
+        },
+        {
+          "detail": {
+            "_verdicts": {
+              "revoke_after_delivery": true,
+              "revoke_before_deliver": true,
+              "revoke_races_deliver": false
+            },
+            "revoke_after_delivery": {
+              "delivered": true,
+              "revoke_outcome": "refused",
+              "revoke_status": 409
+            },
+            "revoke_before_deliver": {
+              "deliver_status": 403,
+              "delivered": null,
+              "revoke_status": 200
+            },
+            "revoke_races_deliver": {
+              "deliver_status": 200,
+              "delivered": true,
+              "revoke_outcome": "revoked",
+              "revoke_status": 200
+            }
+          },
+          "ok": false,
+          "scenario": "revoke vs deliver, all three orderings"
+        }
+      ],
+      "total": 6
+    },
+    "against_r4": {
+      "hold": 6,
+      "rows": [
+        {
+          "detail": {
+            "distinct_artifact_ids": 1,
+            "distinct_registration_refs": 1,
+            "outcomes": [
+              "already-registered",
+              "registered"
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": true,
+          "scenario": "one registration identity -> one record"
+        },
+        {
+          "detail": {
+            "cases_for_identity": 1,
+            "distinct_tokens": 1,
+            "outcomes": [
+              "duplicate-suppressed",
+              "case-opened"
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": true,
+          "scenario": "one submission identity -> one case + one token"
+        },
+        {
+          "detail": {
+            "authorized": [
+              null,
+              true
+            ],
+            "distinct_action_requests": 1,
+            "distinct_capabilities": 1,
+            "statuses": [
+              403,
+              200
+            ]
+          },
+          "ok": true,
+          "scenario": "one resume token -> one ActionRequest + one capability"
+        },
+        {
+          "detail": {
+            "delivered": [
+              false,
+              true
+            ],
+            "distinct_receipts": 1,
+            "replayed": [
+              true,
+              false
+            ],
+            "statuses": [
+              200,
+              200
+            ]
+          },
+          "ok": true,
+          "scenario": "one capability -> one delivery receipt"
+        },
+        {
+          "detail": {
+            "distinct_run_ids": 1,
+            "outcomes": [
+              "duplicate-run-declaration",
+              "run-started"
+            ],
+            "statuses": [
+              409,
+              200
+            ]
+          },
+          "ok": true,
+          "scenario": "one schedule occurrence -> one run"
+        },
+        {
+          "detail": {
+            "_verdicts": {
+              "revoke_after_delivery": true,
+              "revoke_before_deliver": true,
+              "revoke_races_deliver": true
+            },
+            "revoke_after_delivery": {
+              "delivered": true,
+              "revoke_outcome": "refused",
+              "revoke_status": 409
+            },
+            "revoke_before_deliver": {
+              "deliver_status": 403,
+              "delivered": null,
+              "revoke_status": 200
+            },
+            "revoke_races_deliver": {
+              "deliver_status": 200,
+              "delivered": true,
+              "revoke_outcome": "refused",
+              "revoke_status": 409
+            }
+          },
+          "ok": true,
+          "scenario": "revoke vs deliver, all three orderings"
+        }
+      ],
+      "total": 6
+    }
+  },
+  "reviewer_probes": {
+    "against_pinned_r3": {
+      "green": 1,
+      "rows": [
+        {
+          "detail": "cases=2 tokens=2 outcomes=['case-opened', 'case-opened']",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "http_race_probes"
+        },
+        {
+          "detail": "token: authorized=[True, True] caps=2 ars=2 store=2 | capability: delivered=[True, True] receipts=['dlv-171433ef7a0c', 'dlv-776977a06db3']",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "http_authority_races"
+        },
+        {
+          "detail": "revoke=200 final_status=DELIVERED_WITH_RECEIPT receipt=present",
+          "finding": "SEC-R3-02",
+          "green": false,
+          "probe": "http_revoke_race"
+        },
+        {
+          "detail": "registrations=2 distinct_refs=2 | runs=2 distinct_run_ids=2",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "more_race_probes"
+        },
+        {
+          "detail": "0/8 sub-probes green; failing: concurrent_capability_spend, concurrent_review_case, concurrent_token_spend, expiry_without_transition_evidence, false_capability_commit_on_secret_index_failure, false_case_opened_capture_on_token_failure, revoke_vs_delivery_race, stage_attempt_mutates_without_capture",
+          "finding": "SEC-R3-03/04",
+          "green": false,
+          "probe": "security_probes"
+        },
+        {
+          "detail": "after forced failure=1; next attempt reported=2 counter=2",
+          "finding": "SEC-R3-04",
+          "green": false,
+          "probe": "stage_precise_probe"
+        },
+        {
+          "detail": "files_left=[{'path': 'captures/capatomic/POC1/atomic-test-20260804T075704-c4565da0-0001.json', 'size': 0}] pools={'general': 1, 'reserved-owner': 0, 'security-refusal': 0}",
+          "finding": "SEC-R3-05",
+          "green": false,
+          "probe": "capture_atomicity_probe"
+        },
+        {
+          "detail": "poc1_refusal->200/recorded; poc3_receipt->200/recorded; poc2_triage->200/staged",
+          "finding": "SEC-R3-06",
+          "green": false,
+          "probe": "quota_enforcement_probe"
+        },
+        {
+          "detail": "{\"capability_in_capture_bytes\": false, \"capability_in_route_logs\": false, \"disclose_call_sites\": [[1088, \"return 200, {\\\"resume_token\\\": Disclose(token), \\\"outcome\\\": \\\"case-opened\\\",\"], [1188, \"\\\"execution_capability\\\":",
+          "finding": "positive control",
+          "green": true,
+          "probe": "control_probes"
+        }
+      ],
+      "total": 9
+    },
+    "against_r4": {
+      "green": 4,
+      "rows": [
+        {
+          "detail": "cases=0 tokens=0 outcomes=['refused-internal', 'refused-internal']",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "http_race_probes"
+        },
+        {
+          "detail": "token: authorized=[None, None] caps=0 ars=0 store=0 | capability: delivered=[None, None] receipts=[]",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "http_authority_races"
+        },
+        {
+          "detail": "revoke=409 final_status=DELIVERED_WITH_RECEIPT receipt=present",
+          "finding": "SEC-R3-02",
+          "green": false,
+          "probe": "http_revoke_race"
+        },
+        {
+          "detail": "registrations=0 distinct_refs=1 | runs=0 distinct_run_ids=1",
+          "finding": "SEC-R3-01",
+          "green": false,
+          "probe": "more_race_probes"
+        },
+        {
+          "detail": "4/8 sub-probes green; failing: concurrent_capability_spend, concurrent_review_case, concurrent_token_spend, revoke_vs_delivery_race",
+          "finding": "SEC-R3-03/04",
+          "green": false,
+          "probe": "security_probes"
+        },
+        {
+          "detail": "after forced failure=0; next attempt reported=1 counter=1",
+          "finding": "SEC-R3-04",
+          "green": true,
+          "probe": "stage_precise_probe"
+        },
+        {
+          "detail": "files_left=[] pools={'general': 0, 'reserved-owner': 0, 'security-refusal': 0}",
+          "finding": "SEC-R3-05",
+          "green": true,
+          "probe": "capture_atomicity_probe"
+        },
+        {
+          "detail": "poc1_refusal->429/refused-quota; poc3_receipt->429/refused-quota; poc2_triage->429/refused-quota",
+          "finding": "SEC-R3-06",
+          "green": true,
+          "probe": "quota_enforcement_probe"
+        },
+        {
+          "detail": "{\"capability_in_capture_bytes\": false, \"capability_in_route_logs\": false, \"disclose_call_sites\": [[1370, \"return 200, {\\\"resume_token\\\": Disclose(token), \\\"outcome\\\": \\\"case-opened\\\",\"], [1498, \"\\\"execution_capability\\\":",
+          "finding": "positive control",
+          "green": true,
+          "probe": "control_probes"
+        }
+      ],
+      "total": 9
+    }
+  }
+}
